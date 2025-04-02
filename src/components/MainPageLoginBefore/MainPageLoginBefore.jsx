@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "./style.css";
 
-export const MainPageBefore = () => {
+export const MainPageLoginBefore = () => {
   const postList = [
     {
       title: "Title",
@@ -175,4 +175,4 @@ export const MainPageBefore = () => {
   );
 };
 
-export default MainPageBefore;
+export default MainPageLoginBefore;
