@@ -1,0 +1,42 @@
+.component {
+  border: 1px solid;
+  border-color: #1d1652;
+  border-radius: 9px;
+  height: 26px;
+  width: 102px;
+  position: relative;
+  background-color: #ffffff;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  cursor: pointer;
+}
+
+.component .text-wrapper {
+  font-family: "Inter", Helvetica;
+  font-size: 12px;
+  font-weight: 400;
+  left: 32px;
+  letter-spacing: 0;
+  line-height: 10px;
+  position: absolute;
+  text-align: center;
+  top: 6px;
+  white-space: nowrap;
+  color: #1d1652;
+  transition: color 0.3s ease;
+}
+
+.component.default:hover {
+  background-color: #1d1652;
+}
+
+.component.default:hover .text-wrapper {
+  color: #ffffff;
+}
+
+.component.fill {
+  background-color: #1d1652;
+}
+
+.component.fill .text-wrapper {
+  color: #ffffff;
+}

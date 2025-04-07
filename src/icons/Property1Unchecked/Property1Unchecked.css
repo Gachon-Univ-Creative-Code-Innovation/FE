@@ -1,0 +1,11 @@
+.check-path {
+    stroke-dasharray: 24;
+    stroke-dashoffset: 24;
+    transition: stroke-dashoffset 0.4s ease, stroke 0.3s ease;
+  }
+  
+  .check-path.checked {
+    stroke-dashoffset: 0;
+    stroke: #1d1652;
+  }
+  

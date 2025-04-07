@@ -1,0 +1,34 @@
+.component-9 {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  position: relative;
+  width: 111px;
+}
+
+.component-9 .text-wrapper-8 {
+  color: #000000;
+  flex: 1;
+  font-family: "Inter", Helvetica;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 30px;
+  position: relative;
+  text-align: center;
+}
+
+.component-9.property-1-hover {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-color: #1d1652;
+}
+
+.component-9.property-1-hover .text-wrapper-8 {
+  margin-top: -2.00px;
+}
+
+.component-9.property-1-default .text-wrapper-8 {
+  margin-top: -1.00px;
+}

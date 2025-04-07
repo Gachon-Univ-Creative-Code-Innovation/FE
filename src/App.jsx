@@ -1,19 +1,28 @@
+// App.jsx
 import React from "react";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import MainPageBefore from "./components/MainPageLoginBefore/MainPageLoginBefore";
-import Login from "./components/Login/Login";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
+import MainPageBefore from "./screens/MainPageBefore/MainPageBefore";
+import Login from "./screens/Login/Login";
 
-const router = createBrowserRouter([
-  {
-    path: "/*",
-    element: <MainPageBefore />,
-  },
-  {
-    path: "/login",
-    element: <Login />,
-  },
-]);
+const AnimatedRoutes = () => {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<MainPageBefore />} />
+        <Route path="/MainPageBefore" element={<MainPageBefore />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </AnimatePresence>
+  );
+};
 
 export const App = () => {
-  return <RouterProvider router={router} />;
+  return (
+    <BrowserRouter>
+      <AnimatedRoutes />
+    </BrowserRouter>
+  );
 };
