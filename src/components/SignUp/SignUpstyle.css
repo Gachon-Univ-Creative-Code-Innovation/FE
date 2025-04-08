@@ -1,0 +1,28 @@
+.sign-up {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 40px;
+  justify-content: center;
+  position: relative;
+  width: 250px;
+  cursor: pointer;
+}
+
+.sign-up .text-wrapper {
+  font-family: "Inter", Helvetica;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 10px;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+  color: #a0a0a0;
+  transition: color 0.3s ease;
+}
+
+.sign-up:hover .text-wrapper {
+  color: #1d1652;
+}

@@ -1,0 +1,219 @@
+.select-mode {
+  background-color: #00000099;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
+.select-mode .select-mode-wrapper {
+  background-color: #00000099;
+  border: 1px solid;
+  border-color: #000000;
+  height: 500px;
+  overflow-x: hidden;
+  width: 410px;
+}
+
+.select-mode .div-4 {
+  background-color: #ffffff;
+  border: 1px solid;
+  border-color: #000000;
+  height: 502px;
+  left: 4029px;
+  position: relative;
+  top: 9008px;
+  width: 412px;
+}
+
+.select-mode .overlap-19 {
+  height: 31px;
+  left: 370px;
+  position: absolute;
+  top: 10px;
+  width: 31px;
+}
+
+.select-mode .group {
+  background-color: #ffffff;
+  height: 24px;
+  left: 4px;
+  position: absolute;
+  top: 3px;
+  width: 24px;
+}
+
+.select-mode .vector-2 {
+  height: 19px;
+  left: 3px;
+  position: absolute;
+  top: 3px;
+  width: 19px;
+}
+
+.select-mode .rectangle-27 {
+  border: 2px solid;
+  border-color: #fa0000;
+  height: 31px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 31px;
+}
+
+.select-mode .choose-your {
+  color: #000000;
+  font-family: "Inter", Helvetica;
+  font-size: 14px;
+  font-weight: 400;
+  height: 190px;
+  left: 30px;
+  letter-spacing: 0;
+  line-height: 20px;
+  position: absolute;
+  top: 58px;
+  width: 350px;
+}
+
+.select-mode .overlap-group-7 {
+  height: 215px;
+  left: 7px;
+  position: absolute;
+  top: 271px;
+  width: 391px;
+}
+
+.select-mode .group-2 {
+  height: 160px;
+  left: 23px;
+  position: absolute;
+  top: 28px;
+  width: 350px;
+}
+
+.select-mode .frame-45 {
+  align-items: center;
+  border: 1px solid;
+  border-color: #000000;
+  border-radius: 5px;
+  display: flex;
+  gap: 10px;
+  height: 162px;
+  justify-content: center;
+  left: -1px;
+  padding: 10px;
+  position: absolute;
+  top: -1px;
+  width: 162px;
+}
+
+.select-mode .text-wrapper-40 {
+  color: #000000;
+  font-family: "Inter", Helvetica;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 10px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.select-mode .frame-46 {
+  align-items: center;
+  border: 1px solid;
+  border-color: #000000;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 162px;
+  justify-content: center;
+  left: 189px;
+  overflow: hidden;
+  padding: 10px;
+  position: absolute;
+  top: -1px;
+  width: 162px;
+}
+
+.select-mode .text-wrapper-41 {
+  align-self: stretch;
+  color: #000000;
+  font-family: "Inter", Helvetica;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 50px;
+  position: relative;
+  text-align: center;
+}
+
+.select-mode .rectangle-28 {
+  border: 2px solid;
+  border-color: #0011ff;
+  height: 215px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 391px;
+}
+
+.select-mode .rectangle-29 {
+  border: 2px solid;
+  border-color: #fa0000;
+  height: 172px;
+  left: 17px;
+  position: absolute;
+  top: 22px;
+  width: 172px;
+}
+
+.select-mode .rectangle-30 {
+  border: 2px solid;
+  border-color: #fa0000;
+  height: 172px;
+  left: 207px;
+  position: absolute;
+  top: 22px;
+  width: 172px;
+}
+
+.select-mode .line-3 {
+  height: 195px;
+  left: 195px;
+  position: absolute;
+  top: 486px;
+  width: 15px;
+}
+
+.select-mode .line-4 {
+  height: 69px;
+  left: 275px;
+  position: absolute;
+  top: -69px;
+  width: 15px;
+}
+
+/* ✅ 팝업 중앙에 위치하도록 하는 오버레이 스타일 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ✅ 위치 강제 고정 (이전 이상한 좌표 제거) */
+.select-mode .div-4 {
+  position: relative;
+  top: 0 !important;
+  left: 0 !important;
+  margin: 0 auto;
+}

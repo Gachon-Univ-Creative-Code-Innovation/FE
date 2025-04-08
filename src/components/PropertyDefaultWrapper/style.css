@@ -1,0 +1,42 @@
+.property-default-wrapper {
+  border-color: #1d1652;
+  border-left-style: solid;
+  border-left-width: 1px;
+  border-right-style: solid;
+  border-right-width: 1px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  height: 52px;
+  position: relative;
+  width: 137px;
+}
+
+.property-default-wrapper .div {
+  font-family: "Inter", Helvetica;
+  font-size: 15px;
+  font-weight: 400;
+  height: 14px;
+  left: 59px;
+  letter-spacing: 0;
+  line-height: 14px;
+  position: absolute;
+  text-align: center;
+  top: 18px;
+  white-space: nowrap;
+}
+
+.property-default-wrapper.property-1-0-hover {
+  background-color: #ffffff;
+}
+
+.property-default-wrapper.property-1-0-default {
+  background-color: #1d1652;
+}
+
+.property-default-wrapper.property-1-0-hover .div {
+  color: #1d1652;
+}
+
+.property-default-wrapper.property-1-0-default .div {
+  color: #ffffff;
+}
