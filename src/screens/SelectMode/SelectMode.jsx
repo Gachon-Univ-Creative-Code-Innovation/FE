@@ -1,60 +1,80 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import "./style.css";
+import { motion, AnimatePresence } from "framer-motion";
+import Component22 from "../../components/Component22/Component22";
+import Component23 from "../../components/Component23/Component23";
+import "./SelectModestyle.css";
 
-export const SelectMode = ({ onClose }) => {
-  const navigate = useNavigate();
+const MotionDiv = motion.div;
 
-  const handleUserClick = () => {
-    onClose(); // 모달 닫기
-    navigate("/login"); // login 페이지로 이동
+const SelectMode = ({ isOpen, onClose }) => {
+  const handleOverlayClick = (e) => {
+    if (e.target.classList.contains("modal-overlay")) {
+      onClose();
+    }
   };
 
   return (
-    <div className="select-mode">
-      <div className="select-mode-wrapper">
-        <div className="div-4" style={{ top: 0, left: 0 }}>
-          {/* 닫기 버튼 */}
-          <div
-            className="overlap-19"
-            onClick={onClose}
-            style={{ cursor: "pointer" }}
+    <AnimatePresence>
+      {isOpen && (
+        <div className="modal-overlay" onClick={handleOverlayClick}>
+          <MotionDiv
+            className="modal-content"
+            initial={{ opacity: 0, y: -30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -30 }}
+            transition={{ duration: 0.3 }}
           >
-            <div className="group">
-              <img className="vector-2" alt="닫기" src="/img/vector.svg" />
-            </div>
-          </div>
+            <button className="modal-close" onClick={onClose}>
+              ✖
+            </button>
 
-          <p className="choose-your">
-            Choose your preferred mode.
-            <br />
-            <br />
-            User Mode
-            <br />
-            Read, write, and follow posts from other users.
-            <br />
-            <br />
-            Headhunter Mode
-            <br />
-            Discover talented individuals and explore their work.
-          </p>
+            <div className="select-mode-wrapper">
+              <div className="div-6">
+                <p className="choose-your-role">
+                  <span className="span">
+                    Choose your role.
+                    <br />
+                  </span>
+                  <span className="text-wrapper-62">
+                    <br />
+                  </span>
+                  <span className="span">
+                    User
+                    <br />
+                  </span>
+                  <span className="text-wrapper-62">
+                    Read, write, and follow posts from other users.
+                    <br />
+                    <br />
+                  </span>
+                  <span className="span">
+                    Headhunter
+                    <br />
+                  </span>
+                  <span className="text-wrapper-62">
+                    Discover talented individuals and explore their work.
+                  </span>
+                </p>
 
-          <div className="overlap-group-7">
-            <div className="group-2">
-              <div
-                className="frame-45"
-                onClick={handleUserClick}
-                style={{ cursor: "pointer" }}
-              >
-                <div className="text-wrapper-40">User</div>
-              </div>
-              <div className="frame-46">
-                <div className="text-wrapper-41">Headhunter</div>
+                <div className="frame-47">
+                  <Component22
+                    className="component-22-instance"
+                    property1="frame-38"
+                    to="/signu95up"
+                  />
+                  <Component23
+                    className="component-23-instance"
+                    property1="frame-38"
+                    to="/signu95up"
+                  />
+                </div>
               </div>
             </div>
-          </div>
+          </MotionDiv>
         </div>
-      </div>
-    </div>
+      )}
+    </AnimatePresence>
   );
 };
+
+export default SelectMode;

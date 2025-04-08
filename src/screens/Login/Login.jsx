@@ -1,15 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ForgotPassword from "../../components/ForgotPassword/ForgotPassword";
 import ForgotUsername from "../../components/ForgotUsername/ForgotUsername";
 import SignUp from "../../components/SignUp/SignUp";
+import SelectMode from "../../screens/SelectMode/SelectMode";
 import Component18 from "../../icons/Component18/Component18";
-import Property1Unchecked from "../../icons/Property1Unchecked/Property1Unchecked";
+import Property1Unchecked from "../../icons/PropertyUnchecked/PropertyUnchecked";
 import "./Loginstyle.css";
-import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper"; // ✅ 애니메이션 래퍼 import
+import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
+import { AnimatePresence } from "framer-motion"; // ✅ 추가
 
 export const Login = () => {
   const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
+
+  const openModal = () => setShowModal(true);
+  const closeModal = () => setShowModal(false);
 
   return (
     <PageTransitionWrapper>
@@ -22,7 +28,9 @@ export const Login = () => {
           <div className="menu">
             <div className="overlap-group">
               <div className="sign-up-wrapper">
-                <SignUp property1="default" />
+                <div onClick={openModal}>
+                  <SignUp property1="default" />
+                </div>
               </div>
 
               <div className="forgot-username-wrapper">
@@ -70,14 +78,12 @@ export const Login = () => {
               alt="Element kakaotalk logo"
               src="/img/kakaotalk-logo.png"
             />
-
             <div className="web-light-rd-na">
               <img
                 className="google-round"
                 alt="google-round"
                 src="/img/google-round.svg"
               />
-
               <img
                 className="clip-path-group"
                 alt="Clip path group"
@@ -86,6 +92,11 @@ export const Login = () => {
             </div>
           </div>
         </div>
+
+        {/* ✅ 모달은 AnimatePresence로 감싸고 isOpen 전달 */}
+        <AnimatePresence>
+          <SelectMode isOpen={showModal} onClose={closeModal} />
+        </AnimatePresence>
       </div>
     </PageTransitionWrapper>
   );
