@@ -1,0 +1,52 @@
+.component-23 {
+  align-items: center;
+  border: 1px solid;
+  border-color: #1d1652;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 142px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 10px;
+  position: relative;
+  width: 142px;
+  background-color: #ffffff;
+  cursor: pointer;
+
+  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+
+.component-23 .text-wrapper-16 {
+  align-self: stretch;
+  font-family: "Inter", Helvetica;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 50px;
+  position: relative;
+  text-align: center;
+  transition: color 0.3s ease;
+}
+
+.component-23.frame-106 {
+  background-color: #1d1652;
+}
+
+.component-23.frame-106 .text-wrapper-16 {
+  color: #ffffff;
+}
+
+.component-23.frame-38 .text-wrapper-16 {
+  color: #1d1652;
+}
+
+.component-23:hover {
+  background-color: #1d1652;
+  border-color: #1d1652;
+}
+
+.component-23:hover .text-wrapper-16 {
+  color: #ffffff;              
+}

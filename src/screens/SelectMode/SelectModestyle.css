@@ -1,0 +1,77 @@
+/* 모달 전체 배경 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+/* 가운데 모달 박스 */
+.modal-content {
+  background-color: #fafdff;
+  border: 1px solid #1d1652;
+  border-radius: 16px;
+  width: 410px;
+  height: 500px;
+  position: relative;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* X 버튼 */
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #888;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  color: #000;
+}
+
+/* 내부 내용 스타일 */
+.choose-your-role {
+  color: #000;
+  font-family: "Inter-SemiBold", Helvetica;
+  font-size: 14px;
+  line-height: 30px;
+  margin-bottom: 2rem;
+}
+
+.span {
+  font-weight: 600;
+}
+
+.property-1-group-3 {
+  position: absolute !important;
+  top: 12px !important;
+  right: 12px !important;
+  height: 24px !important;
+  width: 24px !important;
+}
+
+.frame-47 {
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 310px;
+}
+
+.component-22-instance,
+.component-23-instance {
+  margin: 0;
+}

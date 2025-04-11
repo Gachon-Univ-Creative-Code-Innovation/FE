@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React, { useState } from "react";
-import "./Property1Unchecked.css"; //애니메이션 구현
+import "./PropertyUnchecked.css"; //애니메이션 구현
 
 export const Property1Unchecked = ({ className = "" }) => {
   const [checked, setChecked] = useState(false);
