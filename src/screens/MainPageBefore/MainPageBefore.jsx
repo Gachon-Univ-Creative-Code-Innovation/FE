@@ -12,8 +12,9 @@ import PropertyFrameWrapper from "../../components/PropertyFrameWrapper/Property
 import PropertyHoverWrapper from "../../components/PropertyHoverWrapper/PropertyHoverWrapper";
 import PropertyResumeWrapper from "../../components/PropertyResumeWrapper/PropertyResumeWrapper";
 import Component19 from "../../icons/Component19/Component19";
-import "./MainPageBeforestyle.css";
+import "./MainPageBefore.css";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
+import NoticeBell from "../../icons/NoticeBell/NoticeBell"; // 실제 경로 맞게 수정
 
 const generatePosts = (startId, count) =>
   Array.from({ length: count }).map((_, i) => ({
@@ -134,11 +135,7 @@ export const MainPageBefore = () => {
             </div>
             <div className="frame-9">
               <img className="icon" alt="Icon" src="/img/icon.svg" />
-              <img
-                className="img"
-                alt="Rectangle"
-                src="/img/rectangle-13.svg"
-              />
+              <NoticeBell className="img" />
               <div className="mode-edit">
                 <div className="group">
                   <div className="overlap-group-wrapper">

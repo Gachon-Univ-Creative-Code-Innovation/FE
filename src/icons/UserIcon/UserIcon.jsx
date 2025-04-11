@@ -1,6 +1,6 @@
 import React from "react";
 
-export const UserUser02 = ({ className }) => {
+export const UserIcon = ({ className }) => {
   return (
     <svg
       className={`user-user-02 ${className}`}
@@ -22,4 +22,4 @@ export const UserUser02 = ({ className }) => {
   );
 };
 
-export default UserUser02;
+export default UserIcon;
