@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import "./style.css";
+import "./Component.css";
 
 export const Component = ({ property1, className }) => {
   const navigate = useNavigate();
