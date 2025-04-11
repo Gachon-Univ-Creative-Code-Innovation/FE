@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import "./style.css";
+import "./Component4.css";
 
 export const Component4 = ({ property1, className, divClassName }) => {
   return (

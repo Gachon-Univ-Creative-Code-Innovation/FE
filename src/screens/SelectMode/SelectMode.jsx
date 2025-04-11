@@ -60,7 +60,7 @@ const SelectMode = ({ isOpen, onClose }) => {
                   <Component22
                     className="component-22-instance"
                     property1="frame-38"
-                    to="/signu95up"
+                    to="/signup"
                   />
                   <Component23
                     className="component-23-instance"
