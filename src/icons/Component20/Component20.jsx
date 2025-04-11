@@ -1,6 +1,6 @@
 import React from "react";
 
-export const ComponentLoginBack = ({ className }) => {
+export const Component20 = ({ className }) => {
   return (
     <svg
       className={`component-18 ${className}`}
@@ -22,4 +22,4 @@ export const ComponentLoginBack = ({ className }) => {
   );
 };
 
-export default ComponentLoginBack;
+export default Component20;

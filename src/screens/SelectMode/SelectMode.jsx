@@ -2,7 +2,7 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Component22 from "../../components/Component22/Component22";
 import Component23 from "../../components/Component23/Component23";
-import "./SelectModestyle.css";
+import "./SelectMode.css";
 
 const MotionDiv = motion.div;
 
@@ -65,7 +65,7 @@ const SelectMode = ({ isOpen, onClose }) => {
                   <Component23
                     className="component-23-instance"
                     property1="frame-38"
-                    to="/signu95up"
+                    to="/signup"
                   />
                 </div>
               </div>
