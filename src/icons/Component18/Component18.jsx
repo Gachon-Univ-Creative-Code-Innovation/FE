@@ -1,11 +1,12 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import "./Component18.css";
 
 export const Component18 = ({ className }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate("/MainPagebefore");
+    navigate(-1);
   };
 
   return (

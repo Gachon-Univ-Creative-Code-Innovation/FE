@@ -6,19 +6,22 @@ import SignUp from "../../components/SignUp/SignUp";
 import SelectMode from "../../screens/SelectMode/SelectMode";
 import Component18 from "../../icons/Component18/Component18";
 import Property1Unchecked from "../../icons/PropertyUnchecked/PropertyUnchecked";
-import "./Loginstyle.css";
+import "./Login.css";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
-import { AnimatePresence } from "framer-motion"; // ✅ 추가
+import { AnimatePresence } from "framer-motion";
 
 export const Login = () => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
+  const [id, setId] = useState("");
+  const [password, setPassword] = useState("");
 
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
 
   return (
     <PageTransitionWrapper>
+      <Component18 className="component-18" />
       <div className="login">
         <div className="div-2">
           <button className="login-button">
@@ -33,12 +36,7 @@ export const Login = () => {
                 </div>
               </div>
 
-              <div className="forgot-username-wrapper">
-                <ForgotUsername
-                  className="forgot-username-instance"
-                  property1="default"
-                />
-              </div>
+              <div className="forgot-username-wrapper"></div>
 
               <div className="forgot-password-wrapper">
                 <ForgotPassword property1="default" />
@@ -47,11 +45,23 @@ export const Login = () => {
           </div>
 
           <div className="id">
-            <div className="text-wrapper-3">id</div>
+            <input
+              type="text"
+              className="text-input"
+              placeholder="Id"
+              value={id}
+              onChange={(e) => setId(e.target.value)}
+            />
           </div>
 
           <div className="password">
-            <div className="text-wrapper-3">password</div>
+            <input
+              type="password"
+              className="text-input"
+              placeholder="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </div>
 
           <div className="group">
@@ -61,8 +71,6 @@ export const Login = () => {
               color="#D9D9D9"
             />
           </div>
-
-          <Component18 className="component-18" />
 
           <img
             className="alog-logo"
@@ -93,7 +101,6 @@ export const Login = () => {
           </div>
         </div>
 
-        {/* ✅ 모달은 AnimatePresence로 감싸고 isOpen 전달 */}
         <AnimatePresence>
           <SelectMode isOpen={showModal} onClose={closeModal} />
         </AnimatePresence>
