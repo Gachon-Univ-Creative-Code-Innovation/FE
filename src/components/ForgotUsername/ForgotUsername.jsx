@@ -1,5 +1,5 @@
 import React from "react";
-import "./ForgotUsernamestyle.css";
+import "./ForgotUsername.css";
 
 export const ForgotUsername = ({ className = "" }) => {
   return (

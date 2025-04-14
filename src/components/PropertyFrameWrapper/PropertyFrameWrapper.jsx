@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import "./style.css";
+import "./PropertyFrameWrapper.css";
 
 export const PropertyFrameWrapper = ({ property1 }) => {
   return (

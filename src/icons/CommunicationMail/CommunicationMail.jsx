@@ -5,9 +5,9 @@ export const CommunicationMail = ({ className }) => {
     <svg
       className={`communication-mail ${className}`}
       fill="none"
-      height="24"
-      viewBox="0 0 24 24"
-      width="24"
+      height="36"
+      viewBox="0 0 27 27"
+      width="36"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
