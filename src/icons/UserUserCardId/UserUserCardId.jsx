@@ -5,9 +5,9 @@ export const UserUserCardId = ({ className }) => {
     <svg
       className={`user-user-card-id ${className}`}
       fill="none"
-      height="36"
+      height="24"
       viewBox="0 0 35 36"
-      width="35"
+      width="24"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
