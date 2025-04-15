@@ -8,7 +8,7 @@ import LockLight1 from "../../icons/LockLight1/LockLight1";
 import UserIcon from "../../icons/UserIcon/UserIcon";
 import UserUserCardId from "../../icons/UserUserCardId/UserUserCardId";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
-import "./Signup.css";
+import "./SignUp.css";
 
 export const SignUp = () => {
   const [nickname, setNickname] = useState("");
@@ -98,7 +98,7 @@ export const SignUp = () => {
             </div>
 
             <div className="password-2">
-              <CommunicationMail className="icon-instance-node" />
+              <CommunicationMail className="user-user-card-ID" />
               <input
                 type="email"
                 placeholder="Enter your email"
@@ -117,7 +117,7 @@ export const SignUp = () => {
             <div className="text-wrapper-22">{emailMessage}</div>
 
             <div className="password-3">
-              <InterfaceCheck className="icon-instance-node" />
+              <InterfaceCheck className="user-user-card-ID" />
               <input
                 type="text"
                 placeholder="Enter verification code"

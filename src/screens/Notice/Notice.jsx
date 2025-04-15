@@ -1,131 +1,169 @@
-import React from "react";
-import Component30 from "../../components/Component30/Component30";
-import Component31 from "../../components/Component31/Component31";
-import PropertySelectedWrapper from "../../components/PropertySelectedWrapper/PropertySelectedWrapper";
-import Component18 from "../../icons//Component20/Component20";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import TabsGroup from "../../components/Tabs/TabsGroup";
+import Component20 from "../../icons/Component20/Component20";
+import Component18 from "../../icons/Component18/Component18";
 import InterfaceTrashFull from "../../icons/InterfaceTrashFull/InterfaceTrashFull";
+import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
+import SelectModeScreen from "../SelectModeScreen/SelectModeScreen";
 import "./Notice.css";
 
 export const Notice = () => {
+  const [selectedTab, setSelectedTab] = useState("All");
+  const [notifications, setNotifications] = useState([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const observer = useRef(null);
+  const navigate = useNavigate();
+
+  const tabs = ["All", "Unread", "Read"];
+  const ITEMS_PER_PAGE = 10;
+
+  useEffect(() => {
+    const dummy = Array.from({ length: 50 }).map((_, i) => ({
+      id: i + 1,
+      content: `Notice ${i + 1}`,
+      date: "2025.03.23",
+      isRead: false,
+    }));
+    setNotifications(dummy);
+  }, []);
+
+  const markAsRead = (id) => {
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
+    );
+  };
+
+  const filteredNotifications = notifications.filter((n) => {
+    if (selectedTab === "Unread") return !n.isRead;
+    if (selectedTab === "Read") return n.isRead;
+    return true;
+  });
+
+  const displayedNotifications = filteredNotifications.slice(
+    0,
+    page * ITEMS_PER_PAGE
+  );
+
+  const lastItemRef = useCallback(
+    (node) => {
+      if (!hasMore) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          setPage((prev) => {
+            const nextStart = (prev + 1) * ITEMS_PER_PAGE;
+            if (nextStart >= filteredNotifications.length) {
+              setHasMore(false);
+              return prev;
+            }
+            return prev + 1;
+          });
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [hasMore, filteredNotifications.length]
+  );
+
+  const handleDeleteClick = () => {
+    setShowModal(true);
+  };
+
+  const handleCancel = () => {
+    setShowModal(false);
+  };
+
+  const handleDeleteAll = () => {
+    setNotifications([]);
+    setShowModal(false);
+  };
+
   return (
-    <div className="notice">
-      <div className="div-6">
-        <div className="post-list-4">
-          <div className="frame-63">
-            <div className="frame-64">
-              <PropertySelectedWrapper
-                className="component-62"
-                property1="selected"
-              />
-              <Component30 className="component-62" property1="default" />
-              <Component31 className="component-62" property1="default" />
-            </div>
+    <PageTransitionWrapper>
+      <Component18 className="component-18" />
 
-            <InterfaceTrashFull className="interface-trash-full" />
-          </div>
-
-          <div className="post-list-5">
-            <div className="frame-65">
-              <div className="comment-9">
-                <div className="text-wrapper-75">Notice 1</div>
+      <div className="notice">
+        <div className="div-6">
+          <div className="post-list-4">
+            <div className="frame-63">
+              <div className="frame-64">
+                <TabsGroup
+                  tabs={tabs}
+                  selected={selectedTab}
+                  onSelect={(tab) => {
+                    setSelectedTab(tab);
+                    setPage(1);
+                    setHasMore(true);
+                  }}
+                />
               </div>
-
-              <div className="text-wrapper-76">2025.03.23</div>
-            </div>
-
-            <div className="frame-65">
-              <div className="comment-9">
-                <div className="text-wrapper-75">Notice 2</div>
+              <div onClick={handleDeleteClick}>
+                <InterfaceTrashFull className="interface-trash-full" />
               </div>
-
-              <div className="text-wrapper-76">2025.03.23</div>
             </div>
 
-            <div className="frame-65">
-              <div className="comment-9">
-                <div className="text-wrapper-75">Notice 3</div>
-              </div>
-
-              <div className="text-wrapper-76">2025.03.23</div>
-            </div>
-
-            <div className="frame-65">
-              <div className="comment-9">
-                <div className="text-wrapper-75">Notice 4</div>
-              </div>
-
-              <div className="text-wrapper-76">2025.03.23</div>
-            </div>
-
-            <div className="frame-65">
-              <div className="comment-9">
-                <div className="text-wrapper-75">Notice 5</div>
-              </div>
-
-              <div className="text-wrapper-76">2025.03.23</div>
-            </div>
-
-            <div className="frame-65">
-              <div className="comment-9">
-                <div className="text-wrapper-77">Notice 6</div>
-              </div>
-
-              <div className="text-wrapper-78">2025.03.23</div>
-            </div>
-
-            <div className="frame-65">
-              <div className="comment-9">
-                <div className="text-wrapper-77">Notice 7</div>
-              </div>
-
-              <div className="text-wrapper-78">2025.03.23</div>
-            </div>
-          </div>
-        </div>
-
-        <div className="frame-66">
-          <div className="component-wrapper">
-            <Component18 className="component-63" />
-          </div>
-
-          <img
-            className="alog-logo-6"
-            alt="Alog logo"
-            src="/img/alog-logo.png"
-          />
-
-          <div className="frame-67">
-            <img className="icon-5" alt="Icon" src="/img/icon.svg" />
-
-            <img
-              className="rectangle-15"
-              alt="Rectangle"
-              src="/img/rectangle-13.svg"
-            />
-
-            <div className="interface-trash-full">
-              <img className="group-18" alt="Group" src="/img/group.png" />
-
-              <div className="group-19">
-                <div className="group-20">
-                  <img
-                    className="group-21"
-                    alt="Group"
-                    src="/img/group-1.png"
-                  />
-
-                  <img
-                    className="group-22"
-                    alt="Group"
-                    src="/img/group-11.png"
-                  />
+            <div className="post-list-5">
+              {displayedNotifications.map((notice, idx) => (
+                <div
+                  className="frame-65"
+                  key={notice.id}
+                  ref={
+                    idx === displayedNotifications.length - 1
+                      ? lastItemRef
+                      : null
+                  }
+                  onClick={() => markAsRead(notice.id)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <div className="comment-9">
+                    <div
+                      className={
+                        notice.isRead ? "text-wrapper-77" : "text-wrapper-75"
+                      }
+                    >
+                      {notice.content}
+                    </div>
+                  </div>
+                  <div
+                    className={
+                      notice.isRead ? "text-wrapper-78" : "text-wrapper-76"
+                    }
+                  >
+                    {notice.date}
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
+          </div>
+
+          <div className="frame-66">
+            <div className="component-wrapper">
+              <Component20 className="component-63" />
+            </div>
+            <img
+              className="alog-logo-6"
+              alt="Alog logo"
+              src="/img/alog-logo.png"
+              onClick={() => navigate("/MainPagebefore")}
+              style={{ cursor: "pointer" }}
+            />
+            <div className="frame-67"></div>
           </div>
         </div>
       </div>
-    </div>
+
+      {showModal && (
+        <div className="select-mode-screen__overlay">
+          <SelectModeScreen
+            onCancel={handleCancel}
+            onDeleteAll={handleDeleteAll}
+          />
+        </div>
+      )}
+    </PageTransitionWrapper>
   );
 };
 

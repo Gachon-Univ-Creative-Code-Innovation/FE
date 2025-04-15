@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom"; // 라우팅 기능 사용
 
 export const NoticeBell = ({ className = "", style = {} }) => {
-  const navigate = useNavigate(); // 페이지 이동을 위한 훅
+  const navigate = useNavigate(); //
 
   const handleClick = () => {
     navigate("/notice"); // 아이콘 클릭 시 /notice 페이지로 이동
@@ -11,7 +11,7 @@ export const NoticeBell = ({ className = "", style = {} }) => {
   return (
     <svg
       className={className}
-      style={{ ...style, cursor: "pointer" }} // 클릭 가능 표시
+      style={{ ...style, cursor: "pointer" }} // 포인터 커서
       width="22"
       height="24"
       viewBox="0 0 22 24"

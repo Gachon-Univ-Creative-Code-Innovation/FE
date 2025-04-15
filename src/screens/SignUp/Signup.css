@@ -4,6 +4,8 @@
   flex-direction: row;
   justify-content: center;
   width: 100%;
+  transform: scale(0.80); /* 뷰 크기 축소 */
+  transform-origin: top center; /* 축소 기준점을 상단 중앙으로 */
 }
 
 .sign-up-screen .sign-up-2 {
@@ -145,8 +147,9 @@
 
 .sign-up-screen .icon-instance-node {
   height: 24px !important;
-  position: relative !important;
   width: 24px !important;
+  position: absolute;
+  margin-left: 1px;
 }
 
 .sign-up-screen .text-wrapper-21 {
@@ -261,8 +264,12 @@
   height: 30px !important;
   margin-bottom: -2.00px !important;
   margin-top: -4.00px !important;
-  position: relative !important;
+  position: relative;
   width: 30px !important;
+}
+
+.password-4 .text-input {
+  padding-left: -1px;
 }
 
 .sign-up-screen .text-wrapper-25 {
@@ -397,4 +404,9 @@
 .frame-2.active:hover {
   background-color: #1d1652;
   transform: scale(1.02);
+}
+
+.text-input::placeholder {
+  font-size: 15px;
+  color: #333;     
 }
