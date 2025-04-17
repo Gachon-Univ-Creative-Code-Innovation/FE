@@ -1,0 +1,24 @@
+.logout-component {
+  display: flex;
+  align-items: center;         /* 수직 가운데 정렬 */
+  justify-content: center;     /* 수평 가운데 정렬 */
+  border: 1px solid #1d1652;
+  border-radius: 6px;
+  padding: 0;                  /* 패딩 제거 */
+  height: 23px;
+  width: 60px;
+  background-color: transparent;
+  box-sizing: border-box;
+}
+
+.logout-component .text-wrapper {
+  font-family: "Inter", Helvetica;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 12px;
+  color: #1d1652;
+  text-align: center;
+  white-space: nowrap;
+  margin: 0;                  /* 여백 제거 */
+  padding: 0;                 /* 여백 제거 */
+}

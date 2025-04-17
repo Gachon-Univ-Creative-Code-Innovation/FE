@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import TabsGroup from "../../components/Tabs/TabsGroup";
 import Component20 from "../../icons/Component20/Component20";
-import Component18 from "../../icons/Component18/Component18";
+import Component18 from "../../icons/GoBackIcon/GoBackIcon";
 import InterfaceTrashFull from "../../icons/InterfaceTrashFull/InterfaceTrashFull";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import SelectModeScreen from "../SelectModeScreen/SelectModeScreen";
+import ScrollUp from "../../icons/ScrollUp/ScrollUp";
 import "./Notice.css";
 
 export const Notice = () => {
@@ -163,6 +164,14 @@ export const Notice = () => {
           />
         </div>
       )}
+
+      {/* Scroll to top button */}
+      <div className="overlap-wrapper">
+        <div className="overlap">
+          <div className="text">{""}</div>
+          <ScrollUp className="component-19" />
+        </div>
+      </div>
     </PageTransitionWrapper>
   );
 };
