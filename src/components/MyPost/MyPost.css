@@ -70,17 +70,16 @@
   width: 60px !important;
   display: flex !important;
   align-items: center !important;
-  justify-content: center !important; /* ✅ 가로 중앙 정렬 */
+  justify-content: center !important; /* 가로 중앙 정렬 */
 }
 
 .my-post-2 .component-20 {
   font-size: 10px !important;
   line-height: 1 !important;
   height: auto !important;
-  width: 100% !important;             /* ✅ 가로 꽉 채우기 */
-  text-align: center !important;      /* ✅ 텍스트 중앙 정렬 */
+  width: 100% !important;            
+  text-align: center !important;      /* 텍스트 중앙 정렬 */
   padding: 0 !important;
-  margin-left: -31px !important;
 }
 
 
