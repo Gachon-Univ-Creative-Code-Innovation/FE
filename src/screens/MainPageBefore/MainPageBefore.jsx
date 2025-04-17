@@ -1,19 +1,20 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import Component from "../../components/LoginComponent/LoginComponent";
-import Component3 from "../../components/CategoryComponent/CategoryComponent";
-import Component4 from "../../components/FeedComponent/FeedComponent";
-import Component5 from "../../components/RecomendComponent/RecomendComponent";
-import Component7 from "../../components/ResumeComponent/ResumeComponent";
-import Component8 from "../../components/PortfolioComponent/PortfolioComponent";
-import Component9 from "../../components/RoadmapComponent/RoadmapComponent";
-import PropertyDefaultWrapper from "../../components/AllComponent/AllComponent";
+import { AnimatePresence } from "framer-motion";
+import LoginComponent from "../../components/LoginComponent/LoginComponent";
+import CategoryComponent from "../../components/CategoryComponent/CategoryComponent";
+import FeedComponent from "../../components/FeedComponent/FeedComponent";
+import RecommnedComponent from "../../components/RecommendComponent/RecommendComponent";
+import PortfolioComponent from "../../components/PortfolioComponent/PortfolioComponent";
+import RoadmapComponent from "../../components/RoadmapComponent/RoadmapComponent";
+import AllComponent from "../../components/AllComponent/AllComponent";
 import PropertyFrameWrapper from "../../components/PropertyFrameWrapper/PropertyFrameWrapper";
 import PropertyHoverWrapper from "../../components/PropertyHoverWrapper/PropertyHoverWrapper";
-import Component19 from "../../icons/ScrollUp/ScrollUp";
-import "./MainPageBefore.css";
+import Scrollup from "../../icons/ScrollUp/ScrollUp";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import NoticeBell from "../../icons/NoticeBell/NoticeBell";
+import LoginRequiredPopup from "../../components/LoginRequiredPopup/LoginRequiredPopup";
+import "./MainPageBefore.css";
 
 const generatePosts = (startId, count) =>
   Array.from({ length: count }).map((_, i) => ({
@@ -30,6 +31,7 @@ export const MainPageBefore = () => {
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [showPopup, setShowPopup] = useState(false);
   const observer = useRef();
   const navigate = useNavigate();
   const POSTS_PER_PAGE = 10;
@@ -116,12 +118,12 @@ export const MainPageBefore = () => {
             />
             <div className="frame-8">
               <PropertyFrameWrapper property1="frame-117" />
-              <Component8
+              <PortfolioComponent
                 className="component-6"
                 divClassName="component-11"
                 property1="default"
               />
-              <Component9
+              <RoadmapComponent
                 className="component-6"
                 divClassName="component-11"
                 property1="default"
@@ -129,8 +131,24 @@ export const MainPageBefore = () => {
             </div>
             <div className="frame-9">
               <img className="icon" alt="Icon" src="/img/icon.svg" />
-              <NoticeBell className="img" />
-              <div className="mode-edit">
+              <NoticeBell
+                className="img"
+                style={{ cursor: "pointer" }}
+                onClick={() => {
+                  const isLoggedIn = false; // 실제로는 localStorage나 전역 상태값 사용
+                  if (isLoggedIn) {
+                    navigate("/notice");
+                  } else {
+                    setShowPopup(true); // 팝업 띄우기
+                  }
+                }}
+              />
+
+              <div
+                className="mode-edit"
+                style={{ cursor: "pointer" }}
+                onClick={() => setShowPopup(true)}
+              >
                 <div className="group">
                   <div className="overlap-group-wrapper">
                     <div className="overlap-group">
@@ -155,7 +173,7 @@ export const MainPageBefore = () => {
         <div className="div-2">
           <div className="my-post">
             <p className="p">Log in to access more features</p>
-            <Component className="component-1" property1="default" />
+            <LoginComponent className="component-1" property1="default" />
           </div>
 
           <PropertyHoverWrapper
@@ -168,22 +186,22 @@ export const MainPageBefore = () => {
               <div className="frame">
                 <div className="text-wrapper-9">Hot</div>
               </div>
-              <PropertyDefaultWrapper
+              <AllComponent
                 className="component-instance"
                 divClassName="component-2"
                 property1="default"
               />
-              <Component3
+              <CategoryComponent
                 className="component-instance"
                 divClassName="component-3-instance"
                 property1="default"
               />
-              <Component4
+              <FeedComponent
                 className="component-instance"
                 divClassName="component-4-instance"
                 property1="default"
               />
-              <Component5
+              <RecommnedComponent
                 className="component-5-instance"
                 divClassName="design-component-instance-node"
                 property1="default"
@@ -202,10 +220,17 @@ export const MainPageBefore = () => {
           <div className="overlap-wrapper">
             <div className="overlap">
               <div className="text">{""}</div>
-              <Component19 className="component-19" />
+              <Scrollup className="component-19" />
             </div>
           </div>
         </div>
+
+        {/* 팝업 렌더링 */}
+        <AnimatePresence>
+          {showPopup && (
+            <LoginRequiredPopup onClose={() => setShowPopup(false)} />
+          )}
+        </AnimatePresence>
       </div>
     </PageTransitionWrapper>
   );

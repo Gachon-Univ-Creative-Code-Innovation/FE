@@ -1,0 +1,40 @@
+.followtab-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.3s ease;
+}
+
+.followtab-label {
+  font-size: 15px;
+  font-weight: 400;
+  color: #1d1652;
+  font-family: "Inter", Helvetica;
+  position: relative;
+  white-space: nowrap;
+  padding: 0 30px 5px;
+  display: inline-block;
+  text-align: center;
+}
+
+/* ✅ 밑줄을 텍스트보다 살짝 넓게 */
+.followtab-label::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: -5%;                  /* 왼쪽으로 5% 확장 */
+  width: 110%;                /* 텍스트보다 10% 더 넓게 */
+  height: 2px;
+  background-color: #1d1652;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease-in-out;
+}
+
+.followtab-label.selected::after {
+  transform: scaleX(1);
+}

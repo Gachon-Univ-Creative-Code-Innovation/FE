@@ -27,10 +27,16 @@ export const Login = () => {
 
   const handleLogin = () => {
     if (id === dummyUser.id && password === dummyUser.password) {
-      // 로그인 성공 → mainpageafter 이동
       navigate("/MainPageAfter");
     } else {
       setErrorMessage("아이디 또는 비밀번호가 올바르지 않습니다.");
+    }
+  };
+
+  // Enter 키 감지
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleLogin();
     }
   };
 
@@ -72,6 +78,7 @@ export const Login = () => {
               placeholder="Id"
               value={id}
               onChange={(e) => setId(e.target.value)}
+              onKeyDown={handleKeyDown}
             />
           </div>
 
@@ -82,6 +89,7 @@ export const Login = () => {
               placeholder="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={handleKeyDown}
             />
           </div>
 
