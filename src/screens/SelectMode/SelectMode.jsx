@@ -1,7 +1,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Component22 from "../../components/Component22/Component22";
-import Component23 from "../../components/Component23/Component23";
+import Component22 from "../../components/SelectUserComponent/SelectUserComponent";
+import Component23 from "../../components/SelectHeadhunterComponent/SelectHeadhunterComponent";
 import "./SelectMode.css";
 
 const MotionDiv = motion.div;

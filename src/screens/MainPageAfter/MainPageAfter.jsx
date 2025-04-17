@@ -1,32 +1,20 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import Component from "../../components/LoginComponent/LoginComponent";
 import Component3 from "../../components/CategoryComponent/CategoryComponent";
 import Component4 from "../../components/FeedComponent/FeedComponent";
 import Component5 from "../../components/RecomendComponent/RecomendComponent";
-import Component7 from "../../components/ResumeComponent/ResumeComponent";
 import Component8 from "../../components/PortfolioComponent/PortfolioComponent";
 import Component9 from "../../components/RoadmapComponent/RoadmapComponent";
 import PropertyDefaultWrapper from "../../components/AllComponent/AllComponent";
 import PropertyFrameWrapper from "../../components/PropertyFrameWrapper/PropertyFrameWrapper";
 import PropertyHoverWrapper from "../../components/PropertyHoverWrapper/PropertyHoverWrapper";
-import Component19 from "../../icons/ScrollUp/ScrollUp";
-import "./MainPageBefore.css";
-import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
+import ScrollUp from "../../icons/ScrollUp/ScrollUp";
 import NoticeBell from "../../icons/NoticeBell/NoticeBell";
+import MyPost from "../../components/MyPost/MyPost";
+import "./MainPageAfter.css";
+import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 
-const generatePosts = (startId, count) =>
-  Array.from({ length: count }).map((_, i) => ({
-    id: startId + i,
-    author: "Songhui",
-    title: "[GitHub] 깃허브로 협업하기",
-    content: "Github".repeat(3),
-    date: "2025.03.23",
-    comments: 0,
-    views: 0,
-  }));
-
-export const MainPageBefore = () => {
+export const MainPageAfter = () => {
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -40,10 +28,15 @@ export const MainPageBefore = () => {
       setHasMore(false);
       return;
     }
-    const newPosts = generatePosts(
-      (pageNum - 1) * POSTS_PER_PAGE,
-      POSTS_PER_PAGE
-    );
+    const newPosts = Array.from({ length: POSTS_PER_PAGE }).map((_, i) => ({
+      id: (pageNum - 1) * POSTS_PER_PAGE + i,
+      author: "Songhui",
+      title: "[GitHub] 깃허브로 협업하기",
+      content: "Github".repeat(3),
+      date: "2025.03.23",
+      comments: 0,
+      views: 0,
+    }));
     setPosts((prev) => [...prev, ...newPosts]);
   };
 
@@ -104,14 +97,14 @@ export const MainPageBefore = () => {
 
   return (
     <PageTransitionWrapper>
-      <div className="main-page-before">
+      <div className="main-page-after">
         <div className="navbar">
           <div className="frame-7">
             <img
               className="alog-logo"
               alt="Alog logo"
               src="/img/alog-logo.png"
-              onClick={() => navigate("/MainPagebefore")}
+              onClick={() => navigate("/MainPageBefore")}
               style={{ cursor: "pointer" }}
             />
             <div className="frame-8">
@@ -153,15 +146,14 @@ export const MainPageBefore = () => {
         </div>
 
         <div className="div-2">
-          <div className="my-post">
-            <p className="p">Log in to access more features</p>
-            <Component className="component-1" property1="default" />
-          </div>
-
           <PropertyHoverWrapper
-            className="component-10"
+            className="component-15"
             property1="front-real"
           />
+
+          <div className="my-post-wrapper">
+            <MyPost />
+          </div>
 
           <div className="post-list-hot">
             <div className="category">
@@ -202,7 +194,7 @@ export const MainPageBefore = () => {
           <div className="overlap-wrapper">
             <div className="overlap">
               <div className="text">{""}</div>
-              <Component19 className="component-19" />
+              <ScrollUp className="component-19" />
             </div>
           </div>
         </div>
@@ -211,4 +203,4 @@ export const MainPageBefore = () => {
   );
 };
 
-export default MainPageBefore;
+export default MainPageAfter;

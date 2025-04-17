@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import CommunicationMail from "../../icons/CommunicationMail/CommunicationMail";
-import Component18 from "../../icons/Component18/Component18";
+import Component18 from "../../icons/GoBackIcon/GoBackIcon";
 import InterfaceCheck from "../../icons/InterfaceCheck/InterfaceCheck";
 import InterfaceLinkHorizontal from "../../icons/InterfaceLinkHorizontal/InterfaceLinkHorizontal";
 import LockLight1 from "../../icons/LockLight1/LockLight1";

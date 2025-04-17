@@ -23,6 +23,7 @@
   padding: 18px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   animation: popup-fade-slide 0.25s ease-out;
+  box-sizing: border-box;
 }
 
 .select-mode-screen__title {
@@ -47,7 +48,8 @@
 
 .select-mode-screen__button-group {
   display: flex;
-  border-top: 1px solid #a3b3bf;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .select-mode-screen__button {
@@ -55,10 +57,13 @@
   padding: 12px 0;
   text-align: center;
   cursor: pointer;
+  box-sizing: border-box;
+  border-top: 1px solid #a3b3bf;
+  border-right: 1px solid #a3b3bf;
 }
 
-.select-mode-screen__button.cancel {
-  border-right: 1px solid #a3b3bf;
+.select-mode-screen__button:last-child {
+  border-right: none;
 }
 
 .select-mode-screen__button-text {
