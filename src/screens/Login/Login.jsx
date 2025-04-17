@@ -16,7 +16,6 @@ export const Login = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  // 더미 데이터
   const dummyUser = {
     id: "test",
     password: "1234",
@@ -33,7 +32,6 @@ export const Login = () => {
     }
   };
 
-  // Enter 키 감지
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       handleLogin();
@@ -45,9 +43,39 @@ export const Login = () => {
       <Component18 className="component-18" />
       <div className="login">
         <div className="div-2">
-          <button className="login-button" onClick={handleLogin}>
-            <div className="LOGIN">LOGIN</div>
-          </button>
+          <form autoComplete="off" onSubmit={(e) => e.preventDefault()}>
+            <div className="id">
+              <input
+                type="text"
+                className="text-input"
+                placeholder="Id"
+                autoComplete="off"
+                value={id}
+                onChange={(e) => setId(e.target.value)}
+                onKeyDown={handleKeyDown}
+              />
+            </div>
+
+            <div className="password">
+              <input
+                type="password"
+                className="text-input"
+                placeholder="password"
+                autoComplete="new-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={handleKeyDown}
+              />
+            </div>
+
+            <button
+              type="button"
+              className="login-button"
+              onClick={handleLogin}
+            >
+              <div className="LOGIN">LOGIN</div>
+            </button>
+          </form>
 
           {errorMessage && (
             <div style={{ color: "red", marginTop: "10px" }}>
@@ -69,28 +97,6 @@ export const Login = () => {
                 <ForgotPassword property1="default" />
               </div>
             </div>
-          </div>
-
-          <div className="id">
-            <input
-              type="text"
-              className="text-input"
-              placeholder="Id"
-              value={id}
-              onChange={(e) => setId(e.target.value)}
-              onKeyDown={handleKeyDown}
-            />
-          </div>
-
-          <div className="password">
-            <input
-              type="password"
-              className="text-input"
-              placeholder="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              onKeyDown={handleKeyDown}
-            />
           </div>
 
           <div className="group">
@@ -128,11 +134,11 @@ export const Login = () => {
               />
             </div>
           </div>
-        </div>
 
-        <AnimatePresence>
-          <SelectMode isOpen={showModal} onClose={closeModal} />
-        </AnimatePresence>
+          <AnimatePresence>
+            <SelectMode isOpen={showModal} onClose={closeModal} />
+          </AnimatePresence>
+        </div>
       </div>
     </PageTransitionWrapper>
   );
