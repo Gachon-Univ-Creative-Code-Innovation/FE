@@ -1,0 +1,36 @@
+.follow-delete-wrapper {
+  align-items: center;
+  border: 1px solid #1d1652;
+  border-radius: 10px;
+  display: inline-flex;
+  gap: 10px;
+  justify-content: center;
+  padding: 10px 20px;
+  position: relative;
+  background-color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.follow-delete-wrapper:hover {
+  background-color: #1d1652;
+}
+
+.follow-delete-wrapper:hover .follow-delete-text {
+  color: white;
+}
+
+.follow-delete-text {
+  color: #1d1652;
+  font-family: "Inter", Helvetica;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 14px;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+  transition: color 0.2s ease;
+}

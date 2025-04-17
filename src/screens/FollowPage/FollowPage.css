@@ -1,0 +1,178 @@
+.followpage-wrapper {
+  background-color: #fafdff;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.followpage-container {
+  background-color: #fafdff;
+  width: 100%;
+  max-width: 1440px;
+  position: relative;
+  min-height: 100vh;
+}
+
+.followpage-content {
+  margin-top: 126px;
+  width: 100%;
+  max-width: 809px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.followpage-category {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 809px;
+  margin: 100px auto 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.followtab-wrapper {
+  flex: 1;
+  text-align: center;
+  padding: 10px 0;
+  cursor: pointer;
+}
+
+.followtab-label {
+  position: relative;
+  font-size: 15px;
+  color: #1d1652;
+  font-family: "Inter", Helvetica;
+  font-weight: 400;
+  transition: color 0.3s ease;
+}
+
+.followtab-label::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 100%;
+  height: 2px;
+  background-color: #1d1652;
+  transition: transform 0.3s ease;
+  transform-origin: center;
+}
+
+.followtab-label.selected::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+.followpage-user-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 0;
+  width: 100%;
+}
+
+.followpage-user-row {
+  width: 809px;               /* 알림 카드와 동일한 너비 */
+  margin: 0 auto;             /* 가운데 정렬 */
+  padding: 28px 23px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #a3b3bf;
+  background-color: #fafdff;  /* 일관된 배경 */
+}
+
+.followpage-user-info {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.followpage-avatar {
+  background-color: #d9d9d9;
+  border-radius: 25px;
+  height: 50px;
+  width: 50px;
+}
+
+.followpage-username {
+  color: #000000;
+  font-family: "Inter", Helvetica;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 14px;
+  white-space: nowrap;
+}
+
+.followpage-delete-button {
+  flex: 0 0 auto !important;
+}
+
+.followpage-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fafdff;
+  gap: 81px;
+  height: 80px;
+  padding: 0 30px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  max-width: 1440px;
+  z-index: 1000;
+}
+
+.followpage-header-left {
+  flex: 1;
+  display: flex;
+  gap: 10px;
+}
+
+.followpage-component-18 {
+  height: 34px !important;
+  width: 24px !important;
+}
+
+.followpage-logo {
+  height: 80px;
+  object-fit: cover;
+  width: 200px;
+}
+
+.followpage-header-right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 30px;
+}
+
+@media screen and (max-width: 768px) {
+  .followpage-content {
+    padding: 0 10px;
+  }
+
+  .followpage-user-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .followpage-header {
+    padding: 0 10px;
+  }
+
+  .followpage-category {
+    margin-top: 90px;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .followtab-wrapper {
+    width: 100%;
+  }
+}

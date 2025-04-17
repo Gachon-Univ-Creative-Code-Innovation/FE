@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import TabsGroup from "../../components/Tabs/TabsGroup";
-import Component20 from "../../icons/Component20/Component20";
+import TabsGroup from "../../components/AlarmTabs/TabsGroup";
 import Component18 from "../../icons/GoBackIcon/GoBackIcon";
 import InterfaceTrashFull from "../../icons/InterfaceTrashFull/InterfaceTrashFull";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
@@ -141,14 +140,12 @@ export const Notice = () => {
           </div>
 
           <div className="frame-66">
-            <div className="component-wrapper">
-              <Component20 className="component-63" />
-            </div>
+            <div className="component-wrapper"></div>
             <img
               className="alog-logo-6"
               alt="Alog logo"
               src="/img/alog-logo.png"
-              onClick={() => navigate("/MainPagebefore")}
+              onClick={() => navigate("/MainPageAfter")}
               style={{ cursor: "pointer" }}
             />
             <div className="frame-67"></div>

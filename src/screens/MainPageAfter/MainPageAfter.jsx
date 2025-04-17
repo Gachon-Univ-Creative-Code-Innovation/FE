@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import Component3 from "../../components/CategoryComponent/CategoryComponent";
-import Component4 from "../../components/FeedComponent/FeedComponent";
-import Component5 from "../../components/RecomendComponent/RecomendComponent";
-import Component8 from "../../components/PortfolioComponent/PortfolioComponent";
-import Component9 from "../../components/RoadmapComponent/RoadmapComponent";
-import PropertyDefaultWrapper from "../../components/AllComponent/AllComponent";
+import CategoryComponent from "../../components/CategoryComponent/CategoryComponent";
+import FeedComponent from "../../components/FeedComponent/FeedComponent";
+import RecommendComponent from "../../components/RecommendComponent/RecommendComponent";
+import PortfolioComponent from "../../components/PortfolioComponent/PortfolioComponent";
+import RoadmapComponent from "../../components/RoadmapComponent/RoadmapComponent";
+import AllComponent from "../../components/AllComponent/AllComponent";
 import PropertyFrameWrapper from "../../components/PropertyFrameWrapper/PropertyFrameWrapper";
 import PropertyHoverWrapper from "../../components/PropertyHoverWrapper/PropertyHoverWrapper";
 import ScrollUp from "../../icons/ScrollUp/ScrollUp";
@@ -104,17 +104,17 @@ export const MainPageAfter = () => {
               className="alog-logo"
               alt="Alog logo"
               src="/img/alog-logo.png"
-              onClick={() => navigate("/MainPageBefore")}
+              onClick={() => navigate("/MainPageAfter")}
               style={{ cursor: "pointer" }}
             />
             <div className="frame-8">
               <PropertyFrameWrapper property1="frame-117" />
-              <Component8
+              <PortfolioComponent
                 className="component-6"
                 divClassName="component-11"
                 property1="default"
               />
-              <Component9
+              <RoadmapComponent
                 className="component-6"
                 divClassName="component-11"
                 property1="default"
@@ -122,7 +122,7 @@ export const MainPageAfter = () => {
             </div>
             <div className="frame-9">
               <img className="icon" alt="Icon" src="/img/icon.svg" />
-              <NoticeBell className="img" />
+              <NoticeBell className="img" onClick={() => navigate("/notice")} />
               <div className="mode-edit">
                 <div className="group">
                   <div className="overlap-group-wrapper">
@@ -160,22 +160,22 @@ export const MainPageAfter = () => {
               <div className="frame">
                 <div className="text-wrapper-9">Hot</div>
               </div>
-              <PropertyDefaultWrapper
+              <AllComponent
                 className="component-instance"
                 divClassName="component-2"
                 property1="default"
               />
-              <Component3
+              <CategoryComponent
                 className="component-instance"
                 divClassName="component-3-instance"
                 property1="default"
               />
-              <Component4
+              <FeedComponent
                 className="component-instance"
                 divClassName="component-4-instance"
                 property1="default"
               />
-              <Component5
+              <RecommendComponent
                 className="component-5-instance"
                 divClassName="design-component-instance-node"
                 property1="default"

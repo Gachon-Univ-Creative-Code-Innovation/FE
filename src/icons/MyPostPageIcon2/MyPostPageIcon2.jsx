@@ -1,6 +1,6 @@
 import React from "react";
 
-export const Property1Default = ({ className }) => {
+export const MyPostPageIcon2 = ({ className }) => {
   return (
     <svg
       className={`property-1-default ${className}`}
@@ -22,4 +22,4 @@ export const Property1Default = ({ className }) => {
   );
 };
 
-export default Property1Default;
+export default MyPostPageIcon2;

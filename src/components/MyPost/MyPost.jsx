@@ -1,11 +1,18 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import LogoutComponent from "../LogoutComponent/LogoutComponent";
 import ComponentSeeAll from "../ComponentSeeAll/ComponentSeeAll";
-import Component18_2 from "../../icons/Component18_2/Component18_2";
-import Property1Default from "../../icons/Property1Default/Property1Default";
+import MyPostPageIcon from "../../icons/MyPostPageIcon/MyPostPageIcon";
+import MyPostPageIcon2 from "../../icons/MyPostPageIcon2/MyPostPageIcon2";
 import "./MyPost.css";
 
 export const MyPost = () => {
+  const navigate = useNavigate();
+
+  const handleFollowClick = () => {
+    navigate("/follow");
+  };
+
   return (
     <div className="my-post-2">
       <header className="header">
@@ -31,9 +38,21 @@ export const MyPost = () => {
           </div>
 
           <div className="follow">
-            <div className="text-wrapper-39">Follower</div>
+            <div
+              className="text-wrapper-39"
+              onClick={handleFollowClick}
+              style={{ cursor: "pointer" }}
+            >
+              Follower
+            </div>
             <div className="text-wrapper-40">0</div>
-            <div className="text-wrapper-39">Following</div>
+            <div
+              className="text-wrapper-39"
+              onClick={handleFollowClick}
+              style={{ cursor: "pointer" }}
+            >
+              Following
+            </div>
             <div className="text-wrapper-40">0</div>
           </div>
         </div>
@@ -75,8 +94,8 @@ export const MyPost = () => {
           property1="frame-20"
         />
         <div className="frame-22">
-          <Component18_2 className="component-18-2" />
-          <Property1Default className="page-button" />
+          <MyPostPageIcon className="component-18-2" />
+          <MyPostPageIcon2 className="page-button" />
         </div>
       </div>
     </div>
