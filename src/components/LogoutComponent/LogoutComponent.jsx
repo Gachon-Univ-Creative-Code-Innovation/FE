@@ -4,7 +4,7 @@ import "./LogoutComponent.css";
 
 export const LogoutComponent = ({ className, divClassName }) => {
   return (
-    <div className={`component ${className}`}>
+    <div className={`logout-component ${className}`}>
       <div className={`text-wrapper ${divClassName}`}>Logout</div>
     </div>
   );
