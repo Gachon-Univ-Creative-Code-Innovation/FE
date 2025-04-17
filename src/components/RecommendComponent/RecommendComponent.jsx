@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import "./RecomendComponent.css";
+import "./RecommendComponent.css";
 
 export const RecomendComponent = ({ property1, className, divClassName }) => {
   return (

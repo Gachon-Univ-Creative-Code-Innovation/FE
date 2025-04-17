@@ -1,9 +1,9 @@
 import React from "react";
 
-export const Component21 = ({ className }) => {
+export const MyPostPageIcon = ({ className }) => {
   return (
     <svg
-      className={`component-18 ${className}`}
+      className={`component-18-2 ${className}`}
       fill="none"
       height="16"
       viewBox="0 0 11 16"
@@ -22,4 +22,4 @@ export const Component21 = ({ className }) => {
   );
 };
 
-export default Component21;
+export default MyPostPageIcon;

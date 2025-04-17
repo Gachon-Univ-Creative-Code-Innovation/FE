@@ -1,30 +1,32 @@
+/* 기본 버튼 스타일 */
 .component {
-  border: 1px solid;
-  border-color: #1d1652;
-  border-radius: 9px;
-  height: 26px;
   width: 102px;
-  position: relative;
+  height: 26px;
+  border: 1px solid #1d1652;
+  border-radius: 9px;
   background-color: #ffffff;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  position: relative;
   cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* 텍스트 스타일 */
 .component .text-wrapper {
   font-family: "Inter", Helvetica;
   font-size: 12px;
   font-weight: 400;
-  left: 33px;
   letter-spacing: 0;
   line-height: 10px;
-  position: absolute;
-  text-align: center;
-  top: 6px;
   white-space: nowrap;
+  text-align: center;
   color: #1d1652;
+  position: absolute;
+  left: 33px;
+  top: 6px;
   transition: color 0.3s ease;
 }
 
+/* Hover 시 색 반전 (default 상태만 적용) */
 .component.default:hover {
   background-color: #1d1652;
 }
@@ -33,6 +35,7 @@
   color: #ffffff;
 }
 
+/* fill 상태: 어두운 배경 + 흰 글씨 */
 .component.fill {
   background-color: #1d1652;
 }

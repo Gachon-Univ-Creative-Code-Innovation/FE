@@ -1,0 +1,36 @@
+.component-28 {
+  align-items: center;
+  border: 1px solid;
+  border-color: #1d1652;
+  border-radius: 10px;
+  display: inline-flex;
+  gap: 10px;
+  justify-content: center;
+  padding: 10px 20px;
+  position: relative;
+}
+
+.component-28 .text-wrapper-4 {
+  font-family: "Inter", Helvetica;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 14px;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.component-28.property-1-hover {
+  background-color: #1d1652;
+}
+
+.component-28.property-1-hover .text-wrapper-4 {
+  color: #ffffff;
+}
+
+.component-28.property-1-default .text-wrapper-4 {
+  color: #1d1652;
+}
