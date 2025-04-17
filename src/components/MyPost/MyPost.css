@@ -1,0 +1,211 @@
+.my-post-2 {
+  align-items: flex-start;
+  background-color: #fafdffcc;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px #a3b3bf;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 272px;
+}
+
+.my-post-2 .header {
+  align-items: center;
+  background-color: transparent;
+  border-radius: 10px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  padding: 20px 10px;
+  width: 100%;
+}
+
+.my-post-2 .profile-img {
+  background-color: #d9d9d9;
+  height: 60px;
+  width: 48px;
+}
+
+.my-post-2 .frame-16 {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex-grow: 1;
+}
+
+.my-post-2 .frame-17 {
+  align-items: center;
+  display: flex;
+  gap: 25px;
+  width: 100%;
+}
+
+.my-post-2 .frame-18 {
+  align-items: center;
+  display: inline-flex;
+  gap: 2px;
+}
+
+.my-post-2 .text-wrapper-38 {
+  color: #000;
+  font-family: "Inter", Helvetica;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 10px;
+  white-space: nowrap;
+}
+
+.my-post-2 .subtract {
+  height: 12px;
+  width: 12px;
+}
+
+.my-post-2 .component-16-instance {
+  flex: 0 0 auto !important;
+  margin-bottom: -1.00px !important;
+  margin-top: -1.00px !important;
+  padding: 0 !important;
+  height: 23px !important;
+  width: 60px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important; /* ✅ 가로 중앙 정렬 */
+}
+
+.my-post-2 .component-20 {
+  font-size: 10px !important;
+  line-height: 1 !important;
+  height: auto !important;
+  width: 100% !important;             /* ✅ 가로 꽉 채우기 */
+  text-align: center !important;      /* ✅ 텍스트 중앙 정렬 */
+  padding: 0 !important;
+  margin-left: -31px !important;
+}
+
+
+
+.my-post-2 .follow {
+  align-items: center;
+  display: flex;
+  width: 100%;
+}
+
+.my-post-2 .text-wrapper-39,
+.my-post-2 .text-wrapper-40 {
+  font-family: "Inter", Helvetica;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 14px;
+  white-space: nowrap;
+}
+
+.my-post-2 .text-wrapper-39 {
+  flex: 1;
+}
+
+.my-post-2 .text-wrapper-40 {
+  width: 31px;
+}
+
+.my-post-2 .body {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  height: 498px;
+  padding: 10px;
+  width: 100%;
+}
+
+.my-post-2 .post,
+.my-post-2 .post-2 {
+  align-items: center;
+  border-bottom: 1px solid #a3b3bf;
+  display: flex;
+  gap: 10px;
+  height: 67px;
+  padding: 10px 10px 20px;
+  width: 100%;
+}
+
+.my-post-2 .frame-19 {
+  align-items: flex-start;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 15px;
+  height: 50px;
+  justify-content: center;
+  margin-bottom: -5.50px;
+  margin-top: -7.50px;
+  position: relative;
+}
+
+.my-post-2 .text-wrapper-41 {
+  color: #000;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.my-post-2 .frame-21 {
+  display: inline-flex;
+  gap: 10px;
+  height: 14px;
+}
+
+.my-post-2 .text-wrapper-42,
+.my-post-2 .text-wrapper-43,
+.my-post-2 .text-wrapper-44 {
+  font-family: "Inter", Helvetica;
+  font-size: 10px;
+  font-weight: 400;
+  color: #a3b3bf;
+  text-align: center;
+}
+
+.my-post-2 .comment-3,
+.my-post-2 .comment-4 {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+}
+
+.my-post-2 .comment-icon-2 {
+  width: 10px;
+  height: 10px;
+}
+
+.my-post-2 .rectangle-4 {
+  background-color: #d9d9d9;
+  width: 45px;
+  height: 45px;
+}
+
+.my-post-2 .foot {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 12px 10px;
+  width: 100%;
+}
+
+.my-post-2 .component-17-instance {
+  margin-top: -2px;
+  margin-bottom: -2px;
+}
+
+.my-post-2 .frame-22 {
+  display: flex;
+  gap: 20px;
+}
+
+.my-post-2 .component-18-2 {
+  width: 11px !important;
+  height: 15px !important;
+}
+
+.my-post-2 .page-button {
+  height: 16px !important;
+}

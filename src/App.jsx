@@ -5,6 +5,7 @@ import MainPageBefore from "./screens/MainPageBefore/MainPageBefore";
 import Login from "./screens/Login/Login";
 import SignUp from "./screens/SignUp/SignUp";
 import Notice from "./screens/Notice/Notice";
+import MainPageAfter from "./screens/MainPageAfter/MainPageAfter";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -17,6 +18,7 @@ const AnimatedRoutes = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/notice" element={<Notice />} />
+        <Route path="/MainPageAfter" element={<MainPageAfter />} />
       </Routes>
     </AnimatePresence>
   );
