@@ -165,7 +165,7 @@ export const Notice = () => {
         </div>
       )}
 
-      {/* Scroll to top button */}
+      {/* Scroll control top button */}
       <div className="overlap-wrapper">
         <div className="overlap">
           <div className="text">{""}</div>
