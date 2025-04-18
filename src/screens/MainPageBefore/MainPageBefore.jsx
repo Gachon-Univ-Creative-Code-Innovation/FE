@@ -6,6 +6,7 @@ import CategoryComponent from "../../components/CategoryComponent/CategoryCompon
 import FeedComponent from "../../components/FeedComponent/FeedComponent";
 import RecommnedComponent from "../../components/RecommendComponent/RecommendComponent";
 import PortfolioComponent from "../../components/PortfolioComponent/PortfolioComponent";
+import ReadmeComponent from "../../components/ReadmeComponent/ReadmeComponent";
 import RoadmapComponent from "../../components/RoadmapComponent/RoadmapComponent";
 import AllComponent from "../../components/AllComponent/AllComponent";
 import MyBlogComponent from "../../components/MyBlogComponent/MyBlogComponent";
@@ -104,6 +105,15 @@ export const MainPageBefore = () => {
     </div>
   );
 
+  const handleReadmeClick = () => {
+    const isLoggedIn = false; // 실제 로그인 상태는 localStorage 또는 context에서 가져오기
+    if (isLoggedIn) {
+      navigate("/generate-readme");
+    } else {
+      setShowPopup(true);
+    }
+  };
+
   return (
     <PageTransitionWrapper>
       <div className="main-page-before">
@@ -118,6 +128,12 @@ export const MainPageBefore = () => {
             />
             <div className="frame-8">
               <MyBlogComponent property1="frame-117" />
+              <ReadmeComponent
+                className="component-6"
+                divClassName="component-11"
+                property1="default"
+                onClick={handleReadmeClick} // 클릭 이벤트 연결
+              />
               <PortfolioComponent
                 className="component-6"
                 divClassName="component-11"
@@ -135,11 +151,11 @@ export const MainPageBefore = () => {
                 className="img"
                 style={{ cursor: "pointer" }}
                 onClick={() => {
-                  const isLoggedIn = false; // 실제로는 localStorage나 전역 상태값 사용
+                  const isLoggedIn = false;
                   if (isLoggedIn) {
                     navigate("/notice");
                   } else {
-                    setShowPopup(true); // 팝업 띄우기
+                    setShowPopup(true);
                   }
                 }}
               />

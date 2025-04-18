@@ -1,0 +1,50 @@
+.generate-README {
+  height: 50px;
+  width: 270px;
+  position: relative;
+  cursor: pointer;
+}
+
+.generate-README .frame {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  left: 60px;
+  padding: 10px;
+  position: relative;
+  top: 8px;
+  width: 150px;
+}
+
+.generate-README .text-wrapper {
+  color: #1d1652;
+  font-family: "Inter", Helvetica;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 14px;
+  margin-left: -1px;
+  margin-right: -1px;
+  margin-top: -2px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.generate-README.default .text-wrapper::after,
+.generate-README.selected .text-wrapper::after {
+  content: "";
+  position: absolute;
+  bottom: -9px;
+  left: -8px;
+  width: 0%;
+  height: 2px;
+  background-color: #1d1652;
+  transition: width 0.3s ease-in-out;
+}
+
+.generate-README.selected .text-wrapper::after {
+  width: calc(100% + 16px);
+}

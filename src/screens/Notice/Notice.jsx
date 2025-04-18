@@ -1,3 +1,4 @@
+// Notice.jsx
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import TabsGroup from "../../components/AlarmTabs/TabsGroup";
@@ -86,10 +87,10 @@ export const Notice = () => {
       <Component18 className="component-18" />
 
       <div className="notice">
-        <div className="div-6">
-          <div className="post-list-4">
-            <div className="frame-63">
-              <div className="frame-64">
+        <div className="notice-div-6">
+          <div className="notice-post-list-4">
+            <div className="notice-frame-63">
+              <div className="notice-frame-64">
                 <TabsGroup
                   tabs={tabs}
                   selected={selectedTab}
@@ -101,14 +102,14 @@ export const Notice = () => {
                 />
               </div>
               <div onClick={handleDeleteClick}>
-                <InterfaceTrashFull className="interface-trash-full" />
+                <InterfaceTrashFull className="notice-interface-trash-full" />
               </div>
             </div>
 
-            <div className="post-list-5">
+            <div className="notice-post-list-5">
               {displayedNotifications.map((notice, idx) => (
                 <div
-                  className="frame-65"
+                  className="notice-frame-65"
                   key={notice.id}
                   ref={
                     idx === displayedNotifications.length - 1
@@ -118,10 +119,12 @@ export const Notice = () => {
                   onClick={() => markAsRead(notice.id)}
                   style={{ cursor: "pointer" }}
                 >
-                  <div className="comment-9">
+                  <div className="notice-comment-9">
                     <div
                       className={
-                        notice.isRead ? "text-wrapper-77" : "text-wrapper-75"
+                        notice.isRead
+                          ? "notice-text-wrapper-77"
+                          : "notice-text-wrapper-75"
                       }
                     >
                       {notice.content}
@@ -129,7 +132,9 @@ export const Notice = () => {
                   </div>
                   <div
                     className={
-                      notice.isRead ? "text-wrapper-78" : "text-wrapper-76"
+                      notice.isRead
+                        ? "notice-text-wrapper-78"
+                        : "notice-text-wrapper-76"
                     }
                   >
                     {notice.date}
@@ -139,16 +144,16 @@ export const Notice = () => {
             </div>
           </div>
 
-          <div className="frame-66">
-            <div className="component-wrapper"></div>
+          <div className="notice-frame-66">
+            <div className="notice-component-wrapper"></div>
             <img
-              className="alog-logo-6"
+              className="notice-alog-logo-6"
               alt="Alog logo"
               src="/img/alog-logo.png"
               onClick={() => navigate("/MainPageAfter")}
               style={{ cursor: "pointer" }}
             />
-            <div className="frame-67"></div>
+            <div className="notice-frame-67"></div>
           </div>
         </div>
       </div>
@@ -162,11 +167,10 @@ export const Notice = () => {
         </div>
       )}
 
-      {/* Scroll control top button */}
-      <div className="overlap-wrapper">
-        <div className="overlap">
-          <div className="text">{""}</div>
-          <ScrollUp className="component-19" />
+      <div className="notice-overlap-wrapper">
+        <div className="notice-overlap">
+          <div className="notice-text">{""}</div>
+          <ScrollUp className="notice-component-19" />
         </div>
       </div>
     </PageTransitionWrapper>

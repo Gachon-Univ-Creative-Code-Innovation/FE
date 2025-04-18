@@ -4,6 +4,7 @@ import CategoryComponent from "../../components/CategoryComponent/CategoryCompon
 import FeedComponent from "../../components/FeedComponent/FeedComponent";
 import RecommendComponent from "../../components/RecommendComponent/RecommendComponent";
 import PortfolioComponent from "../../components/PortfolioComponent/PortfolioComponent";
+import ReadmeComponent from "../../components/ReadmeComponent/ReadmeComponent";
 import RoadmapComponent from "../../components/RoadmapComponent/RoadmapComponent";
 import AllComponent from "../../components/AllComponent/AllComponent";
 import MyBlogComponent from "../../components/MyBlogComponent/MyBlogComponent";
@@ -109,6 +110,11 @@ export const MainPageAfter = () => {
             />
             <div className="frame-8">
               <MyBlogComponent property1="frame-117" />
+              <ReadmeComponent
+                className="component-6"
+                divClassName="component-11"
+                property1="default"
+              />
               <PortfolioComponent
                 className="component-6"
                 divClassName="component-11"
