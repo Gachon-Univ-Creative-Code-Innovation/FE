@@ -6,7 +6,7 @@ import RecommendComponent from "../../components/RecommendComponent/RecommendCom
 import PortfolioComponent from "../../components/PortfolioComponent/PortfolioComponent";
 import RoadmapComponent from "../../components/RoadmapComponent/RoadmapComponent";
 import AllComponent from "../../components/AllComponent/AllComponent";
-import PropertyFrameWrapper from "../../components/PropertyFrameWrapper/PropertyFrameWrapper";
+import MyBlogComponent from "../../components/MyBlogComponent/MyBlogComponent";
 import PropertyHoverWrapper from "../../components/PropertyHoverWrapper/PropertyHoverWrapper";
 import ScrollUp from "../../icons/ScrollUp/ScrollUp";
 import NoticeBell from "../../icons/NoticeBell/NoticeBell";
@@ -108,7 +108,7 @@ export const MainPageAfter = () => {
               style={{ cursor: "pointer" }}
             />
             <div className="frame-8">
-              <PropertyFrameWrapper property1="frame-117" />
+              <MyBlogComponent property1="frame-117" />
               <PortfolioComponent
                 className="component-6"
                 divClassName="component-11"
