@@ -8,7 +8,8 @@
 
 .main-page-after .div-2 {
   background-color: #f9fcff;
-  min-height: 100vh;              
+  min-height: 100vh;
+  height: 100%;           
   overflow: visible;              
   position: relative;
   width: 100%;
