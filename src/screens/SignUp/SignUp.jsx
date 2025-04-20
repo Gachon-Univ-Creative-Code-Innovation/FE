@@ -8,6 +8,7 @@ import LockLight1 from "../../icons/LockLight1/LockLight1";
 import UserIcon from "../../icons/UserIcon/UserIcon";
 import UserUserCardId from "../../icons/UserUserCardId/UserUserCardId";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
+import AlogLogo from "../../icons/AlogLogo/AlogLogo";
 import "./SignUp.css";
 
 export const SignUp = () => {
@@ -178,11 +179,7 @@ export const SignUp = () => {
           </div>
 
           <Link to="/">
-            <img
-              className="alog-logo"
-              alt="Alog logo"
-              src="/img/alog-logo.png"
-            />
+            <AlogLogo className="alog-logo" width={200} height={80} />
           </Link>
         </div>
       </div>

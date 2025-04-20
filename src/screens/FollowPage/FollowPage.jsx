@@ -4,6 +4,7 @@ import FollowTab from "../../components/FollowTab/FollowTab";
 import FollowDelete from "../../components/FollowDelete/FollowDelete";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import GoBackIcon from "../../icons/GoBackIcon/GoBackIcon";
+import AlogLogo from "../../icons/AlogLogo/AlogLogo";
 import "./FollowPage.css";
 
 export const FollowPage = () => {
@@ -66,12 +67,12 @@ export const FollowPage = () => {
         <div className="followpage-container">
           <div className="followpage-header">
             <div className="followpage-header-left" />
-            <img
+            <AlogLogo
               className="followpage-logo"
-              alt="Alog logo"
-              src="/img/alog-logo.png"
-              onClick={() => navigate("/MainPageAfter")}
+              width={200}
+              height={80}
               style={{ cursor: "pointer" }}
+              onClick={() => navigate("/MainPageAfter")}
             />
             <div className="followpage-header-right" />
           </div>

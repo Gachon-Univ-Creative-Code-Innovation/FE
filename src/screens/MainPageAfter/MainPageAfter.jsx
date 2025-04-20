@@ -12,6 +12,7 @@ import PropertyHoverWrapper from "../../components/PropertyHoverWrapper/Property
 import ScrollUp from "../../icons/ScrollUp/ScrollUp";
 import NoticeBell from "../../icons/NoticeBell/NoticeBell";
 import MyPost from "../../components/MyPost/MyPost";
+import AlogLogo from "../../icons/AlogLogo/AlogLogo";
 import "./MainPageAfter.css";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 
@@ -101,12 +102,12 @@ export const MainPageAfter = () => {
       <div className="main-page-after">
         <div className="navbar">
           <div className="frame-7">
-            <img
+            <AlogLogo
               className="alog-logo"
-              alt="Alog logo"
-              src="/img/alog-logo.png"
               onClick={() => navigate("/MainPageAfter")}
               style={{ cursor: "pointer" }}
+              width={200}
+              height={80}
             />
             <div className="frame-8">
               <MyBlogComponent property1="frame-117" />

@@ -5,6 +5,7 @@ import SignUp from "../../components/SignUp/SignUp";
 import SelectMode from "../../screens/SelectMode/SelectMode";
 import Component18 from "../../icons/GoBackIcon/GoBackIcon";
 import Property1Unchecked from "../../icons/PropertyUnchecked/PropertyUnchecked";
+import AlogLogo from "../../icons/AlogLogo/AlogLogo";
 import "./Login.css";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import { AnimatePresence } from "framer-motion";
@@ -107,13 +108,12 @@ export const Login = () => {
             />
           </div>
 
-          <img
-            className="alog-logo"
-            alt="Alog logo"
-            src="/img/alog-logo.png"
+          <div
             onClick={() => navigate("/MainPageBefore")}
             style={{ cursor: "pointer" }}
-          />
+          >
+            <AlogLogo className="alog-logo" width={200} height={80} />
+          </div>
 
           <div className="frame">
             <img
