@@ -114,6 +114,7 @@ export const MainPageAfter = () => {
                 className="component-6"
                 divClassName="component-11"
                 property1="default"
+                onClick={() => navigate("/generatereadme")}
               />
               <PortfolioComponent
                 className="component-6"
