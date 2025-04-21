@@ -8,6 +8,7 @@ import ReadmeGenerator from "../../components/ReadmeGenerator/ReadmeGenerator";
 import PaperPlaneIcon from "../../icons/PaperPlaneIcon/PaperPlaneIcon";
 import HistoryList from "../../components/HistoryList/HistoryList";
 import { Readme } from "../ShowReadme/ShowReadme";
+import AlogLogo from "../../icons/AlogLogo/AlogLogo";
 import "./GenerateReadmeScreen.css";
 
 export const GenerateReadmeScreen = () => {
@@ -79,12 +80,12 @@ export const GenerateReadmeScreen = () => {
 
           <div className="frame-2">
             <div className="component-wrapper" />
-            <img
+            <AlogLogo
               className="alog-logo"
-              alt="Alog logo"
-              src="/img/alog-logo.png"
-              onClick={() => navigate("/MainPageAfter")}
+              width={200}
+              height={80}
               style={{ cursor: "pointer" }}
+              onClick={() => navigate("/MainPageAfter")}
             />
             <div className="frame-3">
               <div className="mode-edit">

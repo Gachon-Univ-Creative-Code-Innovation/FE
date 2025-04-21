@@ -15,6 +15,7 @@ import Scrollup from "../../icons/ScrollUp/ScrollUp";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import NoticeBell from "../../icons/NoticeBell/NoticeBell";
 import LoginRequiredPopup from "../../components/LoginRequiredPopup/LoginRequiredPopup";
+import AlogLogo from "../../icons/AlogLogo/AlogLogo";
 import "./MainPageBefore.css";
 
 const generatePosts = (startId, count) =>
@@ -106,7 +107,7 @@ export const MainPageBefore = () => {
   );
 
   const handleReadmeClick = () => {
-    const isLoggedIn = false; // 실제 로그인 상태는 localStorage 또는 context에서 가져오기
+    const isLoggedIn = false;
     if (isLoggedIn) {
       navigate("/generate-readme");
     } else {
@@ -119,20 +120,19 @@ export const MainPageBefore = () => {
       <div className="main-page-before">
         <div className="navbar">
           <div className="frame-7">
-            <img
-              className="alog-logo"
-              alt="Alog logo"
-              src="/img/alog-logo.png"
+            <div
               onClick={() => navigate("/MainPagebefore")}
               style={{ cursor: "pointer" }}
-            />
+            >
+              <AlogLogo className="alog-logo" width={200} height={80} />
+            </div>
             <div className="frame-8">
               <MyBlogComponent property1="frame-117" />
               <ReadmeComponent
                 className="component-6"
                 divClassName="component-11"
                 property1="default"
-                onClick={handleReadmeClick} // 클릭 이벤트 연결
+                onClick={handleReadmeClick}
               />
               <PortfolioComponent
                 className="component-6"
@@ -159,7 +159,6 @@ export const MainPageBefore = () => {
                   }
                 }}
               />
-
               <div
                 className="mode-edit"
                 style={{ cursor: "pointer" }}
@@ -241,7 +240,6 @@ export const MainPageBefore = () => {
           </div>
         </div>
 
-        {/* 팝업 렌더링 */}
         <AnimatePresence>
           {showPopup && (
             <LoginRequiredPopup onClose={() => setShowPopup(false)} />

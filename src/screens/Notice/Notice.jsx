@@ -1,4 +1,3 @@
-// Notice.jsx
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import TabsGroup from "../../components/AlarmTabs/TabsGroup";
@@ -7,6 +6,7 @@ import InterfaceTrashFull from "../../icons/InterfaceTrashFull/InterfaceTrashFul
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import SelectModeScreen from "../SelectModeScreen/SelectModeScreen";
 import ScrollUp from "../../icons/ScrollUp/ScrollUp";
+import AlogLogo from "../../icons/AlogLogo/AlogLogo";
 import "./Notice.css";
 
 export const Notice = () => {
@@ -146,10 +146,10 @@ export const Notice = () => {
 
           <div className="notice-frame-66">
             <div className="notice-component-wrapper"></div>
-            <img
+            <AlogLogo
               className="notice-alog-logo-6"
-              alt="Alog logo"
-              src="/img/alog-logo.png"
+              width={200}
+              height={80}
               onClick={() => navigate("/MainPageAfter")}
               style={{ cursor: "pointer" }}
             />
