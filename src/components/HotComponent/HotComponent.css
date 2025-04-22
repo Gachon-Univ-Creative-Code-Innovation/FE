@@ -1,4 +1,4 @@
-.categorycomponent {
+.hotcomponent {
   position: relative;
   width: 137px;
   height: 52px;
@@ -11,7 +11,7 @@
 }
 
 /* 전체 너비 밑줄 애니메이션 */
-.categorycomponent::after {
+.hotcomponent::after {
   content: "";
   position: absolute;
   bottom: 0;
@@ -20,15 +20,15 @@
   width: 100%;
   background-color: #1d1652;
   transform: scaleX(0);
-  transform-origin: left; /* 왼쪽에서 시작! */
+  transform-origin: left;
   transition: transform 0.3s ease-in-out;
 }
 
-.categorycomponent.categorycomponent-hover::after {
+.hotcomponent.hotcomponent-hover::after {
   transform: scaleX(1);
 }
 
-.categorycomponent-text {
+.hotcomponent-text {
   font-family: "Inter", Helvetica;
   font-size: 20px;
   letter-spacing: 0;
@@ -39,12 +39,12 @@
   transition: all 0.25s ease-in-out;
 }
 
-.categorycomponent.categorycomponent-hover .categorycomponent-text {
+.hotcomponent.hotcomponent-hover .hotcomponent-text {
   color: #1d1652;
   font-weight: 600;
 }
 
-.categorycomponent.categorycomponent-default .categorycomponent-text {
+.hotcomponent.hotcomponent-default .hotcomponent-text {
   color: #a0a0a0;
   font-weight: 400;
 }

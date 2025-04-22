@@ -152,17 +152,19 @@
 }
 
 .notice-frame-66 {
-  align-items: center;
-  background-color: #fafdff;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fafdff;
   gap: 81px;
   height: 80px;
-  justify-content: center;
+  padding: 0 30px;
+  position: fixed;
+  top: 0;
   left: 0;
-  padding: 0px 30px;
-  position: absolute;
-  top: 26px;
-  width: 1440px;
+  width: 100%;
+  max-width: 1440px;
+  z-index: 1000;
 }
 
 .notice-component-wrapper {
@@ -188,7 +190,6 @@
 .notice-alog-logo-6 {
   height: 80px;
   object-fit: cover;
-  position: relative;
   width: 200px;
 }
 

@@ -1,19 +1,19 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { Link } from "react-router-dom";
-import "./SelectUserComponent.css";
+import "./SelectOKComponent.css";
 
-export const SelectUserComponent = ({ property1, className, to }) => {
+export const SelectOKComponent = ({ property1, className, to }) => {
   return (
     <Link className={`component-22 ${property1} ${className}`} to={to}>
-      <div className="text-wrapper-15">User</div>
+      <div className="text-wrapper-15">OK</div>
     </Link>
   );
 };
 
-SelectUserComponent.propTypes = {
+SelectOKComponent.propTypes = {
   property1: PropTypes.oneOf(["frame-105", "frame-38"]),
   to: PropTypes.string,
 };
 
-export default SelectUserComponent;
+export default SelectOKComponent;

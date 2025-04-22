@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import LogoutComponent from "../LogoutComponent/LogoutComponent";
+import LogoutComponent from "../LogoutButtonComponent/LogoutButtonComponent";
 import ComponentSeeAll from "../ComponentSeeAll/ComponentSeeAll";
 import MyPostPageIcon from "../../icons/MyPostPageIcon/MyPostPageIcon";
 import MyPostPageIcon2 from "../../icons/MyPostPageIcon2/MyPostPageIcon2";

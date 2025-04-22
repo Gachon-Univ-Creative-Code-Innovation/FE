@@ -1,0 +1,26 @@
+.hamburger-screen {
+  align-items: flex-start;
+  background-color: #fafdff;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  height: 944px;
+  padding: 50px 40px;
+  position: relative;
+}
+
+.hamburger-myblog-instance {
+  justify-content: center !important;
+}
+
+.hamburger-component-instance {
+  flex: 0 0 auto !important;
+  display: flex;
+  align-items: center;    /* 세로 중앙 정렬 */
+  justify-content: flex-start; /* 좌측 정렬 (또는 center도 가능) */
+  width: 100%;             /* 전체 너비로 정렬 가능 */
+}
+
+.hamburger-screen .logout-component .text-wrapper {
+  color: #1d1652 !important;
+}

@@ -1,5 +1,4 @@
-/* 모달 전체 배경 */
-.modal-overlay {
+.selectmode-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -12,8 +11,7 @@
   z-index: 2000;
 }
 
-/* 가운데 모달 박스 */
-.modal-content {
+.selectmode-content {
   background-color: #fafdff;
   border: 1px solid #1d1652;
   border-radius: 16px;
@@ -24,8 +22,7 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
-/* X 버튼 */
-.modal-close {
+.selectmode-close {
   position: absolute;
   top: 12px;
   right: 16px;
@@ -36,34 +33,33 @@
   cursor: pointer;
 }
 
-.modal-close:hover {
+.selectmode-close:hover {
   color: #000;
 }
 
-/* 내부 내용 스타일 */
-.choose-your-role {
+.selectmode-role-text {
   color: #000;
-  font-family: "Inter-SemiBold", Helvetica;
+  font-family: "Inter", Helvetica, sans-serif;
   font-size: 14px;
   line-height: 30px;
   margin-bottom: 2rem;
+  text-align: center;
 }
 
-.span {
+.selectmode-bold {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 8px;
+  font-size: 20px;
+}
+
+.selectmode-role-text .span {
   font-weight: 600;
 }
 
-.property-1-group-3 {
-  position: absolute !important;
-  top: 12px !important;
-  right: 12px !important;
-  height: 24px !important;
-  width: 24px !important;
-}
-
-.frame-47 {
+.selectmode-button-wrapper {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   position: absolute;
   bottom: 40px;
   left: 50%;
@@ -71,7 +67,8 @@
   width: 310px;
 }
 
-.component-22-instance,
-.component-23-instance {
-  margin: 0;
+.selectmode-button {
+  flex: 1;
+  max-width: 310px;
+  height: 60px;
 }
