@@ -2,16 +2,31 @@ import PropTypes from "prop-types";
 import React from "react";
 import "./CategoryComponent.css";
 
-export const CategoryComponent = ({ property1, className, divClassName }) => {
+export const CategoryComponent = ({
+  property1,
+  className,
+  divClassName,
+  onClick,
+}) => {
+  const finalTextClass = divClassName?.includes("categorycomponent-text")
+    ? divClassName
+    : `categorycomponent-text ${divClassName || ""}`;
+
   return (
-    <div className={`component-3 property-1-2-${property1} ${className}`}>
-      <div className={`text-wrapper-2 ${divClassName}`}>Category</div>
+    <div
+      className={`categorycomponent categorycomponent-${property1} ${className}`}
+      onClick={onClick}
+    >
+      <div className={finalTextClass}>Category</div>
     </div>
   );
 };
 
 CategoryComponent.propTypes = {
   property1: PropTypes.oneOf(["hover", "default"]),
+  className: PropTypes.string,
+  divClassName: PropTypes.string,
+  onClick: PropTypes.func,
 };
 
 export default CategoryComponent;

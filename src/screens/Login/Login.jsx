@@ -95,7 +95,13 @@ export const Login = () => {
               <div className="forgot-username-wrapper"></div>
 
               <div className="forgot-password-wrapper">
-                <ForgotPassword property1="default" />
+                {/* ✅ 클릭 시 /forgotpassword 페이지로 이동 */}
+                <div
+                  onClick={() => navigate("/forgotpassword")}
+                  style={{ cursor: "pointer" }}
+                >
+                  <ForgotPassword property1="default" />
+                </div>
               </div>
             </div>
           </div>

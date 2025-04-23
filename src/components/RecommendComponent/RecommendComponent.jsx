@@ -2,16 +2,31 @@ import PropTypes from "prop-types";
 import React from "react";
 import "./RecommendComponent.css";
 
-export const RecomendComponent = ({ property1, className, divClassName }) => {
+export const RecommendComponent = ({
+  property1,
+  className,
+  divClassName,
+  onClick,
+}) => {
+  const finalTextClass = divClassName?.includes("recommendcomponent-text")
+    ? divClassName
+    : `recommendcomponent-text ${divClassName || ""}`;
+
   return (
-    <div className={`component-5 property-1-6-${property1} ${className}`}>
-      <div className={`text-wrapper-4 ${divClassName}`}>Recommend</div>
+    <div
+      className={`recommendcomponent recommendcomponent-${property1} ${className}`}
+      onClick={onClick}
+    >
+      <div className={finalTextClass}>Recommend</div>
     </div>
   );
 };
 
-RecomendComponent.propTypes = {
+RecommendComponent.propTypes = {
   property1: PropTypes.oneOf(["hover", "default"]),
+  className: PropTypes.string,
+  divClassName: PropTypes.string,
+  onClick: PropTypes.func,
 };
 
-export default RecomendComponent;
+export default RecommendComponent;

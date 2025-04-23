@@ -10,6 +10,7 @@ import Notice from "./screens/Notice/Notice";
 import MainPageAfter from "./screens/MainPageAfter/MainPageAfter";
 import FollowPage from "./screens/FollowPage/FollowPage";
 import GenerateReadmeScreen from "./screens/GenerateReadmeScreen/GenerateReadmeScreen";
+import ForgotPassword from "./screens/ForgotPassword/ForgotPassword";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -25,6 +26,7 @@ const AnimatedRoutes = () => {
         <Route path="/MainPageAfter" element={<MainPageAfter />} />
         <Route path="/follow" element={<FollowPage />} />
         <Route path="/generatereadme" element={<GenerateReadmeScreen />} />
+        <Route path="/forgotpassword" element={<ForgotPassword />} />
       </Routes>
     </AnimatePresence>
   );

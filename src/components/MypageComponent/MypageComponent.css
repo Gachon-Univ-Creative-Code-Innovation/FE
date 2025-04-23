@@ -1,4 +1,4 @@
-.myblogcomponent-container {
+.mypage {
   align-items: center;
   display: inline-flex;
   gap: 10px;
@@ -6,7 +6,7 @@
   position: relative;
 }
 
-.myblogcomponent-text {
+.mypage .text-wrapper {
   color: #1d1652;
   font-family: "Inter", Helvetica;
   font-size: 15px;

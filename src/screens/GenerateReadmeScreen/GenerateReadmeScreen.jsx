@@ -80,13 +80,12 @@ export const GenerateReadmeScreen = () => {
 
           <div className="frame-2">
             <div className="component-wrapper" />
-            <AlogLogo
-              className="alog-logo"
-              width={200}
-              height={80}
-              style={{ cursor: "pointer" }}
+            <div
               onClick={() => navigate("/MainPageAfter")}
-            />
+              style={{ cursor: "pointer" }}
+            >
+              <AlogLogo className="alog-logo" width={200} height={80} />
+            </div>
             <div className="frame-3">
               <div className="mode-edit">
                 <div className="group">

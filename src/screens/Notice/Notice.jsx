@@ -146,13 +146,16 @@ export const Notice = () => {
 
           <div className="notice-frame-66">
             <div className="notice-component-wrapper"></div>
-            <AlogLogo
-              className="notice-alog-logo-6"
-              width={200}
-              height={80}
+            <div
               onClick={() => navigate("/MainPageAfter")}
               style={{ cursor: "pointer" }}
-            />
+            >
+              <AlogLogo
+                className="notice-alog-logo-6"
+                width={200}
+                height={80}
+              />
+            </div>
             <div className="notice-frame-67"></div>
           </div>
         </div>
@@ -169,7 +172,6 @@ export const Notice = () => {
 
       <div className="notice-overlap-wrapper">
         <div className="notice-overlap">
-          <div className="notice-text">{""}</div>
           <ScrollUp className="notice-component-19" />
         </div>
       </div>

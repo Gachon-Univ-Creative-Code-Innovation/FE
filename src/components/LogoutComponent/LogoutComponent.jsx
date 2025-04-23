@@ -3,28 +3,33 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./LogoutComponent.css";
 
-export const LogoutComponent = ({ className, divClassName }) => {
+export const LogoutComponent = ({ property1 = "default", text = "LOGOUT" }) => {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    //예시: localStorage의 로그인 정보 제거
-    //localStorage.removeItem("isLoggedIn");
-    //localStorage.removeItem("user");
+  const handleClick = () => {
+    if (text === "LOGOUT") {
+      // 로그인 정보 삭제
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("user");
 
-    // ✅ 메인 페이지로 이동
-    navigate("/MainPageBefore");
+      // 로그아웃 후 메인 페이지 이동
+      navigate("/MainPageBefore");
+    } else if (text === "LOGIN") {
+      // 로그인 페이지로 이동
+      navigate("/login");
+    }
   };
 
   return (
-    <div className={`logout-component ${className}`} onClick={handleLogout}>
-      <div className={`text-wrapper ${divClassName}`}>Logout</div>
+    <div className={`logout logout-${property1}`} onClick={handleClick}>
+      <div className="logout-text">{text}</div>
     </div>
   );
 };
 
 LogoutComponent.propTypes = {
-  className: PropTypes.string,
-  divClassName: PropTypes.string,
+  property1: PropTypes.oneOf(["default"]),
+  text: PropTypes.string,
 };
 
 export default LogoutComponent;

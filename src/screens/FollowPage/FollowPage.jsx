@@ -5,6 +5,7 @@ import FollowDelete from "../../components/FollowDelete/FollowDelete";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import GoBackIcon from "../../icons/GoBackIcon/GoBackIcon";
 import AlogLogo from "../../icons/AlogLogo/AlogLogo";
+import ScrollUp from "../../icons/ScrollUp/ScrollUp";
 import "./FollowPage.css";
 
 export const FollowPage = () => {
@@ -67,13 +68,12 @@ export const FollowPage = () => {
         <div className="followpage-container">
           <div className="followpage-header">
             <div className="followpage-header-left" />
-            <AlogLogo
-              className="followpage-logo"
-              width={200}
-              height={80}
-              style={{ cursor: "pointer" }}
+            <div
               onClick={() => navigate("/MainPageAfter")}
-            />
+              style={{ cursor: "pointer" }}
+            >
+              <AlogLogo className="followpage-logo" width={200} height={80} />
+            </div>
             <div className="followpage-header-right" />
           </div>
 
@@ -109,6 +109,11 @@ export const FollowPage = () => {
               </div>
             ))}
           </div>
+        </div>
+      </div>
+      <div className="followpage-scrollup-wrapper">
+        <div className="followpage-scrollup-inner">
+          <ScrollUp className="followpage-scrollup-icon" />
         </div>
       </div>
     </PageTransitionWrapper>

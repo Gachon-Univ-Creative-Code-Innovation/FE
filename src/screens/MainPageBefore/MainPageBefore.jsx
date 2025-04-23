@@ -2,20 +2,16 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import LoginComponent from "../../components/LoginComponent/LoginComponent";
+import HotComponent from "../../components/HotComponent/HotComponent";
 import CategoryComponent from "../../components/CategoryComponent/CategoryComponent";
 import FeedComponent from "../../components/FeedComponent/FeedComponent";
 import RecommnedComponent from "../../components/RecommendComponent/RecommendComponent";
-import PortfolioComponent from "../../components/PortfolioComponent/PortfolioComponent";
-import ReadmeComponent from "../../components/ReadmeComponent/ReadmeComponent";
-import RoadmapComponent from "../../components/RoadmapComponent/RoadmapComponent";
 import AllComponent from "../../components/AllComponent/AllComponent";
-import MyBlogComponent from "../../components/MyBlogComponent/MyBlogComponent";
 import PropertyHoverWrapper from "../../components/PropertyHoverWrapper/PropertyHoverWrapper";
 import Scrollup from "../../icons/ScrollUp/ScrollUp";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
-import NoticeBell from "../../icons/NoticeBell/NoticeBell";
 import LoginRequiredPopup from "../../components/LoginRequiredPopup/LoginRequiredPopup";
-import AlogLogo from "../../icons/AlogLogo/AlogLogo";
+import Navbar from "../../components/Navbar/Navbar";
 import "./MainPageBefore.css";
 
 const generatePosts = (startId, count) =>
@@ -34,8 +30,11 @@ export const MainPageBefore = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
+  const [selectedTab, setSelectedTab] = useState("Hot");
+  const [scrolled, setScrolled] = useState(false);
   const observer = useRef();
   const navigate = useNavigate();
+
   const POSTS_PER_PAGE = 10;
   const MAX_PAGES = 5;
 
@@ -54,6 +53,18 @@ export const MainPageBefore = () => {
   useEffect(() => {
     fetchPosts(page);
   }, [page]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 0) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const lastPostRef = useCallback(
     (node) => {
@@ -118,72 +129,12 @@ export const MainPageBefore = () => {
   return (
     <PageTransitionWrapper>
       <div className="main-page-before">
-        <div className="navbar">
-          <div className="frame-7">
-            <div
-              onClick={() => navigate("/MainPagebefore")}
-              style={{ cursor: "pointer" }}
-            >
-              <AlogLogo className="alog-logo" width={200} height={80} />
-            </div>
-            <div className="frame-8">
-              <MyBlogComponent property1="frame-117" />
-              <ReadmeComponent
-                className="component-6"
-                divClassName="component-11"
-                property1="default"
-                onClick={handleReadmeClick}
-              />
-              <PortfolioComponent
-                className="component-6"
-                divClassName="component-11"
-                property1="default"
-              />
-              <RoadmapComponent
-                className="component-6"
-                divClassName="component-11"
-                property1="default"
-              />
-            </div>
-            <div className="frame-9">
-              <img className="icon" alt="Icon" src="/img/icon.svg" />
-              <NoticeBell
-                className="img"
-                style={{ cursor: "pointer" }}
-                onClick={() => {
-                  const isLoggedIn = false;
-                  if (isLoggedIn) {
-                    navigate("/notice");
-                  } else {
-                    setShowPopup(true);
-                  }
-                }}
-              />
-              <div
-                className="mode-edit"
-                style={{ cursor: "pointer" }}
-                onClick={() => setShowPopup(true)}
-              >
-                <div className="group">
-                  <div className="overlap-group-wrapper">
-                    <div className="overlap-group">
-                      <img
-                        className="group-2"
-                        alt="Group"
-                        src="/img/group-1.png"
-                      />
-                      <img
-                        className="group-3"
-                        alt="Group"
-                        src="/img/group-2.png"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Navbar
+          onShowPopup={() => setShowPopup(true)}
+          onReadmeClick={handleReadmeClick}
+          scrolled={scrolled}
+          isLoggedIn={false}
+        />
 
         <div className="div-2">
           <div className="my-post">
@@ -198,28 +149,35 @@ export const MainPageBefore = () => {
 
           <div className="post-list-hot">
             <div className="category">
-              <div className="frame">
-                <div className="text-wrapper-9">Hot</div>
-              </div>
+              <HotComponent
+                className="component-instance"
+                divClassName="hotcomponent-text"
+                property1={selectedTab === "Hot" ? "hover" : "default"}
+                onClick={() => setSelectedTab("Hot")}
+              />
               <AllComponent
                 className="component-instance"
-                divClassName="component-2"
-                property1="default"
+                divClassName="allcomponent-text"
+                property1={selectedTab === "All" ? "hover" : "default"}
+                onClick={() => setSelectedTab("All")}
               />
               <CategoryComponent
                 className="component-instance"
-                divClassName="component-3-instance"
-                property1="default"
+                divClassName="categorycomponent-text"
+                property1={selectedTab === "Category" ? "hover" : "default"}
+                onClick={() => setSelectedTab("Category")}
               />
               <FeedComponent
                 className="component-instance"
-                divClassName="component-4-instance"
-                property1="default"
+                divClassName="feedcomponent-text"
+                property1={selectedTab === "Feed" ? "hover" : "default"}
+                onClick={() => setSelectedTab("Feed")}
               />
               <RecommnedComponent
-                className="component-5-instance"
-                divClassName="design-component-instance-node"
-                property1="default"
+                className="component-instance"
+                divClassName="recommendcomponent-text"
+                property1={selectedTab === "Recommend" ? "hover" : "default"}
+                onClick={() => setSelectedTab("Recommend")}
               />
             </div>
 

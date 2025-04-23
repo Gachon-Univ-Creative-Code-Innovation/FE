@@ -1,41 +1,21 @@
-.logout-component {
-  display: flex;
+.logout {
   align-items: center;
-  justify-content: center;
-  border: 1px solid #1d1652;
-  border-radius: 6px;
-  padding: 0;
-  height: 23px;
-  width: 60px;
-  background-color: transparent;
-  box-sizing: border-box;
+  display: inline-flex;
+  gap: 10px;
+  height: 30px;
+  position: relative;
   cursor: pointer;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-.logout-component .text-wrapper {
-  display: flex;                   /* ✅ 추가 */
-  justify-content: center;        /* ✅ 추가 */
-  align-items: center;            /* ✅ 추가 */
-  width: 100%;                    /* ✅ 버튼 영역에 맞게 꽉 채움 */
-  height: 100%;                   /* ✅ 수직 정렬 위해 높이도 */
+.logout .logout-text {
+  color: #1d1652 !important;
   font-family: "Inter", Helvetica;
-  font-size: 10px;
+  font-size: 15px;
   font-weight: 400;
-  line-height: 12px;
-  color: #1d1652;
-  text-align: center;
+  letter-spacing: 0;
+  line-height: 30px;
+  margin-top: -1.00px;
+  position: relative;
   white-space: nowrap;
-  margin: 0;
-  padding: 0;
-  transition: color 0.3s ease;
-}
-
-.logout-component:hover {
-  background-color: #1d1652;
-  border-color: #1d1652;
-}
-
-.logout-component:hover .text-wrapper {
-  color: #ffffff;
+  width: fit-content;
 }
