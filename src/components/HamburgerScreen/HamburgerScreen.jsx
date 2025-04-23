@@ -9,24 +9,49 @@ import Roadmap from "../RoadmapComponent/RoadmapComponent";
 import Readme from "../ReadmeComponent/ReadmeComponent";
 import "./HamburgerScreen.css";
 
-export const HamburgerScreen = ({ isLoggedIn, onClose }) => {
+export const HamburgerScreen = ({ isLoggedIn, onClose, onShowPopup }) => {
   const navigate = useNavigate();
+
+  const handleProtectedRoute = (path) => {
+    onClose();
+    if (isLoggedIn) {
+      navigate(path);
+    } else {
+      onShowPopup(); // 로그인 안 되어 있으면 팝업
+    }
+  };
 
   return (
     <div className="hamburger-screen">
-      <Mypage property1="default" />
-      <Myblog className="hamburger-component-instance" property1="default" />
-      <Community className="hamburger-component-instance" property1="default" />
-      <Portfolio className="hamburger-component-instance" property1="default" />
-      <Roadmap className="hamburger-component-instance" property1="default" />
-
+      <Mypage
+        className="hamburger-component-instance"
+        property1="default"
+        onClick={() => handleProtectedRoute("/mypage")}
+      />
+      <Myblog
+        className="hamburger-component-instance"
+        property1="default"
+        onClick={() => handleProtectedRoute("/myblog")}
+      />
+      <Community
+        className="hamburger-component-instance"
+        property1="default"
+        onClick={() => handleProtectedRoute("/community")}
+      />
+      <Portfolio
+        className="hamburger-component-instance"
+        property1="default"
+        onClick={() => handleProtectedRoute("/portfolio")}
+      />
+      <Roadmap
+        className="hamburger-component-instance"
+        property1="default"
+        onClick={() => handleProtectedRoute("/roadmap")}
+      />
       <Readme
         property1="default"
         className="hamburger-component-instance"
-        onClick={() => {
-          onClose();
-          navigate("/generatereadme");
-        }}
+        onClick={() => handleProtectedRoute("/generatereadme")}
       />
 
       <div onClick={onClose}>
@@ -35,3 +60,5 @@ export const HamburgerScreen = ({ isLoggedIn, onClose }) => {
     </div>
   );
 };
+
+export default HamburgerScreen;

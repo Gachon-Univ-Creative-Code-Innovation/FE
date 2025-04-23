@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import TabsGroup from "../../components/AlarmTabs/TabsGroup";
-import Component18 from "../../icons/GoBackIcon/GoBackIcon";
 import InterfaceTrashFull from "../../icons/InterfaceTrashFull/InterfaceTrashFull";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import SelectModeScreen from "../SelectModeScreen/SelectModeScreen";
 import ScrollUp from "../../icons/ScrollUp/ScrollUp";
-import AlogLogo from "../../icons/AlogLogo/AlogLogo";
+import Navbar2 from "../../components/Navbar2/Navbar2";
 import "./Notice.css";
 
 export const Notice = () => {
@@ -16,8 +14,6 @@ export const Notice = () => {
   const [hasMore, setHasMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const observer = useRef(null);
-  const navigate = useNavigate();
-
   const tabs = ["All", "Unread", "Read"];
   const ITEMS_PER_PAGE = 10;
 
@@ -84,8 +80,7 @@ export const Notice = () => {
 
   return (
     <PageTransitionWrapper>
-      <Component18 className="component-18" />
-
+      <Navbar2 />
       <div className="notice">
         <div className="notice-div-6">
           <div className="notice-post-list-4">
@@ -143,24 +138,8 @@ export const Notice = () => {
               ))}
             </div>
           </div>
-
-          <div className="notice-frame-66">
-            <div className="notice-component-wrapper"></div>
-            <div
-              onClick={() => navigate("/MainPageAfter")}
-              style={{ cursor: "pointer" }}
-            >
-              <AlogLogo
-                className="notice-alog-logo-6"
-                width={200}
-                height={80}
-              />
-            </div>
-            <div className="notice-frame-67"></div>
-          </div>
         </div>
       </div>
-
       {showModal && (
         <div className="select-mode-screen__overlay">
           <SelectModeScreen
@@ -169,7 +148,6 @@ export const Notice = () => {
           />
         </div>
       )}
-
       <div className="notice-overlap-wrapper">
         <div className="notice-overlap">
           <ScrollUp className="notice-component-19" />

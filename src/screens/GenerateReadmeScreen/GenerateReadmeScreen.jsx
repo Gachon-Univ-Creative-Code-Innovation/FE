@@ -1,14 +1,12 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import GenerateReadme from "../../components/GenerateReadme/GenerateReadme";
 import History from "../../components/Historys/Historys";
-import GoBackIcon from "../../icons/GoBackIcon/GoBackIcon";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import ReadmeGenerator from "../../components/ReadmeGenerator/ReadmeGenerator";
 import PaperPlaneIcon from "../../icons/PaperPlaneIcon/PaperPlaneIcon";
 import HistoryList from "../../components/HistoryList/HistoryList";
 import { Readme } from "../ShowReadme/ShowReadme";
-import AlogLogo from "../../icons/AlogLogo/AlogLogo";
+import Navbar2 from "../../components/Navbar2/Navbar2";
 import "./GenerateReadmeScreen.css";
 
 export const GenerateReadmeScreen = () => {
@@ -19,7 +17,6 @@ export const GenerateReadmeScreen = () => {
   const [showReadmePopup, setShowReadmePopup] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewUrl, setPreviewUrl] = useState("");
-  const navigate = useNavigate();
 
   const handleGenerate = () => {
     if (!url.trim()) {
@@ -60,7 +57,7 @@ export const GenerateReadmeScreen = () => {
 
   return (
     <PageTransitionWrapper>
-      <GoBackIcon className="gobackcomponent" />
+      <Navbar2 /> {/* ✅ 고정 네비게이션 바 삽입 */}
       <div className="generate-README-screen">
         <div className="generate-README-2">
           <div className="category">
@@ -75,25 +72,6 @@ export const GenerateReadmeScreen = () => {
                 className="history-instance"
                 property1={selectedTab === "history" ? "selected" : "default"}
               />
-            </div>
-          </div>
-
-          <div className="frame-2">
-            <div className="component-wrapper" />
-            <div
-              onClick={() => navigate("/MainPageAfter")}
-              style={{ cursor: "pointer" }}
-            >
-              <AlogLogo className="alog-logo" width={200} height={80} />
-            </div>
-            <div className="frame-3">
-              <div className="mode-edit">
-                <div className="group">
-                  <div className="overlap-group-wrapper">
-                    <div className="overlap-group" />
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
 
