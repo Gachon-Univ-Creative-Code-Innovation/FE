@@ -72,13 +72,14 @@ const Navbar = ({ onShowPopup, scrolled, isLoggedIn }) => {
           </div>
         </div>
       </div>
-
-      {/* 햄버거 사이드바 */}
       <div className={`hamburger-sidebar ${showSidebar ? "open" : ""}`}>
-        <HamburgerScreen onClose={closeSidebar} isLoggedIn={isLoggedIn} />
+        <HamburgerScreen
+          isLoggedIn={isLoggedIn}
+          onClose={closeSidebar}
+          onShowPopup={onShowPopup}
+        />
       </div>
 
-      {/* 오버레이 */}
       {showSidebar && (
         <div className="hamburger-overlay" onClick={closeSidebar} />
       )}

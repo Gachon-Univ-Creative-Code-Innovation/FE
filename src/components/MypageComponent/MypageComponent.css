@@ -1,19 +1,20 @@
-.mypage {
+.mypagecomponent-container {
   align-items: center;
   display: inline-flex;
   gap: 10px;
   height: 30px;
   position: relative;
+  cursor: pointer;
 }
 
-.mypage .text-wrapper {
+.mypagecomponent-text {
   color: #1d1652;
   font-family: "Inter", Helvetica;
   font-size: 15px;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 30px;
-  margin-top: -1.00px;
+  margin-top: -1px;
   position: relative;
   white-space: nowrap;
   width: fit-content;

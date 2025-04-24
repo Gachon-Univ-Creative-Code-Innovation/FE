@@ -7,7 +7,6 @@
     background-color: #f9fcff;
   }
   
-  /* navbar-frame 구조 수정: 정중앙 로고 & 양쪽 요소들 배치 */
   .navbar-frame {
     position: relative;
     height: 80px;
@@ -24,14 +23,12 @@
     box-sizing: border-box;
   }
   
-  /* 햄버거 아이콘 왼쪽 */
   .navbar-left {
     display: flex;
     align-items: center;
     z-index: 2;
   }
   
-  /* 중앙 로고 */
   .navbar-center {
     position: absolute;
     left: 50%;
@@ -39,14 +36,12 @@
     z-index: 1;
   }
   
-  /* 로고 이미지 */
   .navbar-logo {
     height: 80px;
     object-fit: cover;
     width: 200px;
   }
   
-  /* 메뉴(중앙 구성요소 제거된 상태에서 유지용, 필요시 우측에 배치 가능) */
   .navbar-menu {
     align-items: center;
     display: flex;
@@ -55,7 +50,6 @@
     flex-grow: 1;
   }
   
-  /* 각 메뉴 항목 */
   .navbar-item {
     display: inline-flex !important;
     flex: 0 0 auto !important;
@@ -67,7 +61,6 @@
     width: 111px !important;
   }
   
-  /* 오른쪽 아이콘들 */
   .navbar-right {
     display: flex;
     align-items: center;
@@ -81,19 +74,16 @@
     gap: 30px;
   }
   
-  /* 알림 아이콘 */
   .navbar-icon {
     height: 21.72px;
     width: 21.7px;
   }
   
-  /* 벨 아이콘 */
   .navbar-bell {
     height: 23.39px;
     width: 20.34px;
   }
   
-  /* 연필 아이콘 */
   .navbar-edit {
     height: 24px;
     width: 24px;
