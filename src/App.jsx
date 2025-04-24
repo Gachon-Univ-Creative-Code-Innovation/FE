@@ -10,7 +10,8 @@ import MainPageAfter from "./screens/MainPageAfter/MainPageAfter";
 import FollowPage from "./screens/FollowPage/FollowPage";
 import GenerateReadmeScreen from "./screens/GenerateReadmeScreen/GenerateReadmeScreen";
 import ForgotPassword from "./screens/ForgotPassword/ForgotPassword";
-import MyPage from "./screens/MyPage/MyPage"; // ✅ MyPage 컴포넌트 import
+import MyPage from "./screens/MyPage/MyPage";
+import EditUser from "./screens/EditUser/EditUser";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -27,7 +28,8 @@ const AnimatedRoutes = () => {
         <Route path="/follow" element={<FollowPage />} />
         <Route path="/generatereadme" element={<GenerateReadmeScreen />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
-        <Route path="/mypage" element={<MyPage />} />{" "}
+        <Route path="/mypage" element={<MyPage />} />
+        <Route path="/edituser" element={<EditUser />} />
       </Routes>
     </AnimatePresence>
   );
