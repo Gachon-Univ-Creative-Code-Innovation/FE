@@ -282,3 +282,55 @@
     white-space: nowrap;
     width: fit-content;
 }
+
+.nickname-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.4);
+    opacity: 1;
+    transition: opacity 0.25s ease-out;
+  }
+  
+  .nickname-popup-overlay.fade-in {
+    opacity: 1;
+  }
+  
+  .nickname-popup-overlay.fade-out {
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  .nickname-popup-content {
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    animation: fade-in-popup 0.25s ease-out;
+  }
+  
+  @keyframes fade-in-popup {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .edituser-input {
+    border: none;
+    font-size: 15px;
+    font-family: "Inter", Helvetica;
+    background-color: transparent;
+    outline: none;
+    flex: 1;
+    padding: 5px 0;
+    color: #000;
+  }
