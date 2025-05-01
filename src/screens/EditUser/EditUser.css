@@ -1,0 +1,337 @@
+
+.edituser-screen {
+    background-color: #fafdff;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+}
+
+.edituser-div {
+    background-color: #fafdff;
+    height: 1100px;
+    position: relative;
+    width: 1440px;
+}
+
+.edituser-frame {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: 70px;
+    padding: 0;
+    margin: 53px auto 0;
+    width: 750px;
+}
+
+.edituser-view-wrapper {
+    align-items: center;
+    align-self: stretch;
+    display: flex;
+    flex: 0 0 auto;
+    gap: 10px;
+    justify-content: center;
+    padding: 0px 0px;
+    position: relative;
+    width: 100%;
+}
+
+.edituser-view {
+    align-items: flex-end;
+    background-color: #d9d9d9;
+    display: flex;
+    flex-direction: column;
+    height: 200px;
+    justify-content: flex-end;
+    position: relative;
+    width: 200px;
+}
+
+.edituser-div-wrapper {
+    align-items: flex-end;
+    align-self: stretch;
+    display: flex;
+    flex: 1;
+    flex-grow: 1;
+    gap: 20px;
+    justify-content: center;
+    padding: 0px 10px;
+    position: relative;
+    width: 100%;
+}
+
+.edituser-text-wrapper {
+    color: #000000;
+    font-family: "Inter", Helvetica;
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 30px;
+    position: relative;
+    text-align: center;
+    white-space: nowrap;
+    width: fit-content;
+}
+
+.edituser-edit-ic-wrapper {
+    align-items: flex-end;
+    align-self: stretch;
+    display: flex;
+    flex: 1;
+    flex-grow: 1;
+    gap: 10px;
+    justify-content: flex-end;
+    padding: 10px;
+    position: relative;
+    width: 100%;
+}
+
+.edituser-view-2 {
+    align-items: flex-start;
+    align-self: stretch;
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    gap: 30px;
+    position: relative;
+    width: 100%;
+}
+
+.edituser-password {
+    align-items: center;
+    align-self: stretch;
+    border: 1px solid;
+    border-color: #1d1652;
+    border-radius: 10px;
+    display: flex;
+    gap: 30px;
+    height: 62px;
+    margin-left: -1px;
+    margin-right: -1px;
+    margin-top: -1px;
+    padding: 10px 20px;
+    position: relative;
+    width: 100%;
+}
+
+.edituser-user-user {
+    height: 25px !important;
+    position: relative !important;
+    width: 25px !important;
+}
+
+.edituser-frame-2 {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;  /* 좌우 정렬 */
+    width: 100%;
+    gap: 30px;
+    position: relative;
+  }
+
+.edituser-text-wrapper-2 {
+    color: #000000;
+    font-family: "Inter", Helvetica;
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 10px;
+    position: relative;
+    text-align: center;
+    white-space: nowrap;
+    width: fit-content;
+}
+
+.edituser-div-2 {
+    align-items: center;
+    border: 1px solid;
+    border-color: #1d1652;
+    border-radius: 10px;
+    display: flex;
+    gap: 30px;
+    height: 62px;
+    margin-right: -1px;
+    padding: 0px 0px 0px 20px;
+    position: relative;
+    width: 752px;
+}
+
+.edituser-user-user-card-ID {
+    height: 24px !important;
+    position: relative !important;
+    width: 24px !important;
+}
+
+.edituser-text-wrapper-3 {
+    color: #000000;
+    font-family: "Inter", Helvetica;
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 10px;
+    position: relative;
+    white-space: nowrap;
+    width: fit-content;
+}
+
+.edituser-vector-wrapper {
+    align-items: center;
+    display: flex;
+    gap: 10px;
+    height: 15px;
+    justify-content: center;
+    position: relative;
+    width: 15px;
+}
+
+.edituser-communication-mail {
+    height: 24px !important;
+    position: relative !important;
+    width: 24px !important;
+}
+
+.edituser-password-2 {
+    align-items: center;
+    align-self: stretch;
+    border: 1px solid;
+    border-color: #1d1652;
+    border-radius: 10px;
+    display: flex;
+    gap: 30px;
+    height: 62px;
+    margin-left: -1px;
+    margin-right: -1px;
+    padding: 19px 20px;
+    position: relative;
+    width: 100%;
+}
+
+.edituser-lock-light {
+    height: 24px !important;
+    position: relative !important;
+    width: 24px !important;
+}
+
+.edituser-password-3 {
+    align-items: center;
+    align-self: stretch;
+    border: 1px solid;
+    border-color: #1d1652;
+    border-radius: 10px;
+    display: flex;
+    gap: 30px;
+    height: 62px;
+    margin-bottom: -1px;
+    margin-left: -1px;
+    margin-right: -1px;
+    padding: 18px 20px;
+    position: relative;
+    width: 100%;
+}
+
+.edituser-interface-link {
+    height: 24px !important;
+    margin-bottom: -1px !important;
+    margin-top: -3px !important;
+    position: relative !important;
+    width: 24px !important;
+}
+
+.edituser-foot {
+    all: unset;
+    align-items: flex-start;
+    box-sizing: border-box;
+    display: inline-flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+}
+
+.edituser-login-button {
+    all: unset;
+    align-items: center;
+    background-color: #1d1652;
+    border: 1px solid;
+    border-color: #000000;
+    border-radius: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 62px;
+    justify-content: center;
+    margin-bottom: -1px;
+    margin-left: -1px;
+    margin-right: -1px;
+    margin-top: -1px;
+    padding: 10px 43px;
+    position: relative;
+    width: 752px;
+    cursor: pointer;
+}
+
+.edituser-LOGIN {
+    color: #ffffff;
+    font-family: "Inter", Helvetica;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    line-height: 10px;
+    position: relative;
+    text-align: center;
+    white-space: nowrap;
+    width: fit-content;
+}
+
+.nickname-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.4);
+    opacity: 1;
+    transition: opacity 0.25s ease-out;
+  }
+  
+  .nickname-popup-overlay.fade-in {
+    opacity: 1;
+  }
+  
+  .nickname-popup-overlay.fade-out {
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  .nickname-popup-content {
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    animation: fade-in-popup 0.25s ease-out;
+  }
+  
+  @keyframes fade-in-popup {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .edituser-input {
+    border: none;
+    font-size: 15px;
+    font-family: "Inter", Helvetica;
+    background-color: transparent;
+    outline: none;
+    flex: 1;
+    padding: 5px 0;
+    color: #000;
+  }

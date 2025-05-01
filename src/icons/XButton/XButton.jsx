@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 
-export const XButton = ({ color = "white", className = "", onClick }) => {
+export const XButton = ({ color = "#A3B3BF", className = "", onClick }) => {
   return (
     <svg
       className={`x-button ${className}`}
