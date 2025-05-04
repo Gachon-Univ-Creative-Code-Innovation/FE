@@ -1,0 +1,116 @@
+.write-editor {
+  background: #FAFDFF;
+  min-height: 100vh;
+  font-family: sans-serif;
+  color: #222;
+}
+
+/* 상단 바 */
+.editor-top-bar {
+  padding: 18px 40px 10px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 본문 영역 */
+.editor-content {
+  max-width: 1240px;
+  width: 90%;
+  margin: 20px auto 0;
+  padding: 0 24px;
+}
+
+/* 제목 및 모드 선택 영역 */
+.editor-title-category {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.editor-title-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 32px;
+  font-weight: 500;
+  background: #FAFDFF;
+  color: #444;
+}
+
+.editor-mode-select {
+  width: 150px;
+  font-size: 16px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: #FAFDFF;
+  cursor: pointer;
+}
+
+/* 태그 및 카테고리 선택 영역 */
+.editor-tag-category {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.editor-category-select {
+  font-size: 16px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #FAFDFF;
+  cursor: pointer;
+}
+
+.editor-tag-input {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 16px;
+  border: none;
+  margin-right: 12px;
+  background: #FAFDFF;
+}
+
+/* 에디터 영역 */
+.editor-area {
+  min-height: 550px;
+  margin-bottom: 24px;
+}
+
+.reactquill-editor {
+  height: 500px;
+  background: #FFF;
+}
+
+/* 액션 버튼 영역 */
+.editor-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 40px;
+}
+
+.editor-button {
+  background: #1d1652;
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  padding: 12px 24px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.spell-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.editor-button-group {
+  display: flex;
+  gap: 12px;
+}
