@@ -1,0 +1,224 @@
+.messageroom-screen {
+    display: flex;
+    justify-content: center;
+    background-color: #fafdff;
+    padding-top: 50px;
+  }
+  
+  .messageroom-view {
+    background: white;
+    border-radius: 50px 50px 0 0;
+    box-shadow: 0 0 30px #a3b3bf;
+    width: 850px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+  }
+  
+  .messageroom-view::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .messageroom-header {
+    background: #d7e3ed;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 30px;
+    border-radius: 50px 50px 0 0;
+  }
+  
+  .messageroom-back-icon {
+    width: 24px;
+    height: 34px;
+  }
+  
+  .messageroom-username {
+    font-size: 40px;
+    font-weight: bold;
+    color: #1d1652;
+  }
+  
+  .messageroom-link-icon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .messageroom-notice {
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .messageroom-notice-text {
+    font-size: 15px;
+    line-height: 27px;
+  }
+  
+  .messageroom-rule-link {
+    font-size: 15px;
+    color: black;
+    text-decoration: underline;
+    margin-top: 5px;
+  }
+  
+  .messageroom-chat {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .messageroom-date {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .messageroom-date-text {
+    border: 1px solid #a3b3bf;
+    border-radius: 20px;
+    padding: 5px 15px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  
+  .messageroom-other-message,
+  .messageroom-my-message {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+  }
+  
+  .messageroom-other-message {
+    justify-content: flex-start;
+  }
+  
+  .messageroom-my-message {
+    justify-content: flex-end;
+  }
+  
+  .messageroom-profile img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .messageroom-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .messageroom-nickname {
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 7px;
+  }
+  
+  .messageroom-bubble-other {
+    background-color: #d7e3ed;
+    border-radius: 0 15px 15px 15px;
+    padding: 5px 15px;
+    font-size: 15px;
+  }
+  
+  .messageroom-bubble-my {
+    background-color: #fafdff;
+    border: 1px solid #a3b3bf;
+    border-radius: 15px 0 15px 15px;
+    padding: 5px 15px;
+    font-size: 15px;
+  }
+  
+  .messageroom-time-left,
+  .messageroom-time-right {
+    font-size: 15px;
+    color: #a3b3bf;
+  }
+  
+  .messageroom-input-wrapper {
+    padding: 20px;
+    text-align: center;
+    background: #fff;
+  }
+  
+  .messageroom-input-icon {
+    width: 800px;
+    height: 40px;
+  }
+
+  @keyframes popup-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes popup-fade-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+  
+  .fade-in {
+    animation: popup-fade-in 0.25s ease-out forwards;
+  }
+  
+  .fade-out {
+    animation: popup-fade-out 0.25s ease-out forwards;
+  }
+  
+  .messageroom-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  .messageroom-modal-content {
+    width: 100%;
+    max-width: 850px;
+    background-color: #ffffff;
+    border-radius: 1px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  }
+  
+  .exitpopup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  
+  .exitpopup-content {
+    animation: popup-fade-in 0.25s ease-out;
+  }
+  
+  @keyframes popup-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  
