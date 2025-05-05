@@ -12,6 +12,7 @@ import GenerateReadmeScreen from "./screens/GenerateReadmeScreen/GenerateReadmeS
 import ForgotPassword from "./screens/ForgotPassword/ForgotPassword";
 import MyPage from "./screens/MyPage/MyPage";
 import EditUser from "./screens/EditUser/EditUser";
+import Message from "./screens/Message/Message";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -30,6 +31,7 @@ const AnimatedRoutes = () => {
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/mypage" element={<MyPage />} />
         <Route path="/edituser" element={<EditUser />} />
+        <Route path="/message" element={<Message />} />
       </Routes>
     </AnimatePresence>
   );
