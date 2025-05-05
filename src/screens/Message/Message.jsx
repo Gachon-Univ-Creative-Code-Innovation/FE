@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar2 from "../../components/Navbar2/Navbar2";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import "./Message.css";
 
 export const Message = () => {
+  const navigate = useNavigate();
   const ITEMS_PER_PAGE = 10;
-
   const [allData, setAllData] = useState([]);
   const [dummyList, setDummyList] = useState([]);
   const [page, setPage] = useState(1);
@@ -25,7 +26,6 @@ export const Message = () => {
 
   useEffect(() => {
     if (allData.length === 0) return;
-
     const start = (page - 1) * ITEMS_PER_PAGE;
     const end = start + ITEMS_PER_PAGE;
     const newData = allData.slice(start, end);
@@ -65,6 +65,8 @@ export const Message = () => {
                 className="message-item"
                 key={item.id}
                 ref={idx === dummyList.length - 1 ? lastItemRef : null}
+                onClick={() => navigate(`/message-room/${item.id}`)}
+                style={{ cursor: "pointer" }}
               >
                 <div className="message-profile">
                   <img

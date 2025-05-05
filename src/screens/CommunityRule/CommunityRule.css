@@ -1,0 +1,65 @@
+.communityrule-screen {
+    align-items: center;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  
+  .communityrule-header {
+    align-items: center;
+    align-self: stretch;
+    background-color: transparent;
+    display: flex;
+    flex: 0 0 auto;
+    gap: 10px;
+    justify-content: flex-end;
+    padding: 15px;
+    position: relative;
+    width: 100%;
+  }
+  
+  .communityrule-x-button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 10;
+  }
+  
+  .communityrule-wrapper {
+    align-items: center;
+    align-self: stretch;
+    display: flex;
+    flex: 0 0 auto;
+    gap: 10px;
+    justify-content: center;
+    padding: 0px 30px 20px;
+    position: relative;
+    width: 100%;
+  }
+  
+  .communityrule-text {
+    color: transparent;
+    flex: 1;
+    font-family: "Inter", Helvetica;
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 27px;
+    margin-top: -1.00px;
+    position: relative;
+  }
+  
+  .communityrule-bold {
+    color: #1d1652;
+    font-weight: 700;
+  }
+  
+  .communityrule-regular {
+    color: #000000;
+  }
+  
