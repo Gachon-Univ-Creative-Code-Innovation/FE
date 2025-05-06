@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ForgotPassword from "../../components/ForgotPassword/ForgotPassword";
 import SignUp from "../../components/SignUp/SignUp";
 import SelectMode from "../../screens/SelectMode/SelectMode";
-import Component18 from "../../icons/GoBackIcon/GoBackIcon";
+import GoBackIcon from "../../icons/GoBackIcon/GoBackIcon";
 import Property1Unchecked from "../../icons/PropertyUnchecked/PropertyUnchecked";
 import AlogLogo from "../../icons/AlogLogo/AlogLogo";
 import "./Login.css";
@@ -41,15 +41,15 @@ export const Login = () => {
 
   return (
     <PageTransitionWrapper>
-      <Component18 className="component-18" />
+      <GoBackIcon className="login-component-18" />
       <div className="login">
-        <div className="div-2">
+        <div className="login-div-2">
           <form autoComplete="off" onSubmit={(e) => e.preventDefault()}>
-            <div className="id">
+            <div className="login-id">
               <input
                 type="text"
-                className="text-input"
-                placeholder="Id"
+                className="login-text-input"
+                placeholder="ID"
                 autoComplete="off"
                 value={id}
                 onChange={(e) => setId(e.target.value)}
@@ -57,11 +57,11 @@ export const Login = () => {
               />
             </div>
 
-            <div className="password">
+            <div className="login-password">
               <input
                 type="password"
-                className="text-input"
-                placeholder="password"
+                className="login-text-input"
+                placeholder="PASSWORD"
                 autoComplete="new-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -74,7 +74,7 @@ export const Login = () => {
               className="login-button"
               onClick={handleLogin}
             >
-              <div className="LOGIN">LOGIN</div>
+              <div className="login-LOGIN">LOGIN</div>
             </button>
           </form>
 
@@ -84,18 +84,15 @@ export const Login = () => {
             </div>
           )}
 
-          <div className="menu">
-            <div className="overlap-group">
-              <div className="sign-up-wrapper">
+          <div className="login-menu">
+            <div className="login-overlap-group">
+              <div className="login-sign-up-wrapper">
                 <div onClick={openModal}>
                   <SignUp property1="default" />
                 </div>
               </div>
 
-              <div className="forgot-username-wrapper"></div>
-
-              <div className="forgot-password-wrapper">
-                {/* ✅ 클릭 시 /forgotpassword 페이지로 이동 */}
+              <div className="login-forgot-password-wrapper">
                 <div
                   onClick={() => navigate("/forgotpassword")}
                   style={{ cursor: "pointer" }}
@@ -106,10 +103,10 @@ export const Login = () => {
             </div>
           </div>
 
-          <div className="group">
-            <div className="text-wrapper-4">Keep me logged in</div>
+          <div className="login-group">
+            <div className="login-text-wrapper-4">Keep me logged in</div>
             <Property1Unchecked
-              className="property-1-unchecked"
+              className="login-property-1-unchecked"
               color="#D9D9D9"
             />
           </div>
@@ -118,23 +115,23 @@ export const Login = () => {
             onClick={() => navigate("/MainPageBefore")}
             style={{ cursor: "pointer" }}
           >
-            <AlogLogo className="alog-logo" width={200} height={80} />
+            <AlogLogo className="login-alog-logo" width={200} height={80} />
           </div>
 
-          <div className="frame">
+          <div className="login-frame">
             <img
-              className="element-kakaotalk-logo"
+              className="login-element-kakaotalk-logo"
               alt="Element kakaotalk logo"
               src="/img/kakaotalk-logo.png"
             />
-            <div className="web-light-rd-na">
+            <div className="login-web-light-rd-na">
               <img
-                className="google-round"
+                className="login-google-round"
                 alt="google-round"
                 src="/img/google-round.svg"
               />
               <img
-                className="clip-path-group"
+                className="login-clip-path-group"
                 alt="Clip path group"
                 src="/img/google-logo.png"
               />

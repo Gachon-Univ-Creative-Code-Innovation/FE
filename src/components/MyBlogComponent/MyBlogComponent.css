@@ -4,6 +4,7 @@
   gap: 10px;
   height: 30px;
   position: relative;
+  cursor: pointer;
 }
 
 .myblogcomponent-text {

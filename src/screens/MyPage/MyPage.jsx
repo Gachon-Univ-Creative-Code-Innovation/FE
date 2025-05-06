@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ArrowRightIcon from "../../icons/ArrowRightIcon/ArrowRightIcon";
 import MypageUserIcon from "../../icons/MypageUserIcon/MypageUserIcon";
@@ -8,13 +8,24 @@ import MypageFollowIcon from "../../icons/MypageFollowIcon/MypageFollowIcon";
 import MypageWithdrawIcon from "../../icons/MypageWithdrawIcon/MypageWithdrawIcon";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import Navbar2 from "../../components/Navbar2/Navbar2";
+import DeleteUser from "../DeleteUserScreen/DeleteUserScreen";
 import "./MyPage.css";
 
 export const MyPage = () => {
   const navigate = useNavigate();
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [closingDelete, setClosingDelete] = useState(false);
 
-  const goToEditUser = () => {
-    navigate("/edituser"); // 🔁 EditUser 라우터 경로에 맞게 수정하세요
+  const goToEditUser = () => navigate("/edituser");
+
+  const openDeletePopup = () => {
+    setShowDeletePopup(true);
+    setClosingDelete(false);
+  };
+
+  const closeDeletePopup = () => {
+    setClosingDelete(true);
+    setTimeout(() => setShowDeletePopup(false), 250);
   };
 
   return (
@@ -37,11 +48,7 @@ export const MyPage = () => {
 
         <div className="mypage-post-list">
           <div className="mypage-scrollable-div">
-            <div
-              className="mypage-item-frame"
-              onClick={goToEditUser}
-              style={{ cursor: "pointer" }}
-            >
+            <div className="mypage-item-frame" onClick={goToEditUser}>
               <MypageUserIcon className="mypage-vector" />
               <div className="mypage-text">회원정보 수정</div>
               <ArrowRightIcon className="mypage-arrow" />
@@ -65,7 +72,11 @@ export const MyPage = () => {
               <ArrowRightIcon className="mypage-arrow" />
             </div>
 
-            <div className="mypage-item-frame">
+            <div
+              className="mypage-item-frame"
+              onClick={openDeletePopup}
+              style={{ cursor: "pointer" }}
+            >
               <MypageWithdrawIcon className="mypage-vector-2" />
               <div className="mypage-text">회원 탈퇴</div>
               <ArrowRightIcon className="mypage-arrow" />
@@ -73,6 +84,19 @@ export const MyPage = () => {
           </div>
         </div>
       </div>
+
+      {showDeletePopup && (
+        <div className="deleteuser-overlay" onClick={closeDeletePopup}>
+          <div
+            className={`deleteuser-content ${
+              closingDelete ? "fade-out" : "fade-in"
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <DeleteUser onClose={closeDeletePopup} />
+          </div>
+        </div>
+      )}
     </PageTransitionWrapper>
   );
 };

@@ -10,6 +10,7 @@ import RecommendComponent from "../../components/RecommendComponent/RecommendCom
 import AllComponent from "../../components/AllComponent/AllComponent";
 import PropertyHoverWrapper from "../../components/PropertyHoverWrapper/PropertyHoverWrapper";
 import ScrollUp from "../../icons/ScrollUp/ScrollUp";
+import CommentIcon from "../../icons/CommentIcon/CommentIcon";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import "./MainPageAfter.css";
 
@@ -17,7 +18,7 @@ const generatePosts = (startId, count) =>
   Array.from({ length: count }).map((_, i) => ({
     id: startId + i,
     author: "Songhui",
-    title: "[GitHub] 깃허브로 협업하기",
+    title: "[GitHub] 긋하브로 협업하기",
     content: "Github".repeat(3),
     date: "2025.03.23",
     comments: 0,
@@ -93,11 +94,7 @@ export const MainPageAfter = () => {
           <div className="frame-6">
             <div className="text-wrapper-13">{post.date}</div>
             <div className="comment">
-              <img
-                className="comment-icon"
-                alt="Comment icon"
-                src="/img/comment-icon-12.png"
-              />
+              <CommentIcon className="comment-icon" />
               <div className="text-wrapper-14">{post.comments}</div>
             </div>
             <div className="comment-2">

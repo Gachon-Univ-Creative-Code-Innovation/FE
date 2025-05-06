@@ -5,10 +5,11 @@ import LoginComponent from "../../components/LoginComponent/LoginComponent";
 import HotComponent from "../../components/HotComponent/HotComponent";
 import CategoryComponent from "../../components/CategoryComponent/CategoryComponent";
 import FeedComponent from "../../components/FeedComponent/FeedComponent";
-import RecommnedComponent from "../../components/RecommendComponent/RecommendComponent";
+import RecommendComponent from "../../components/RecommendComponent/RecommendComponent";
 import AllComponent from "../../components/AllComponent/AllComponent";
 import PropertyHoverWrapper from "../../components/PropertyHoverWrapper/PropertyHoverWrapper";
 import Scrollup from "../../icons/ScrollUp/ScrollUp";
+import CommentIcon from "../../icons/CommentIcon/CommentIcon";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import LoginRequiredPopup from "../../components/LoginRequiredPopup/LoginRequiredPopup";
 import Navbar from "../../components/Navbar/Navbar";
@@ -56,11 +57,7 @@ export const MainPageBefore = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 0) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      setScrolled(window.scrollY > 0);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -99,11 +96,7 @@ export const MainPageBefore = () => {
           <div className="frame-6">
             <div className="text-wrapper-13">{post.date}</div>
             <div className="comment">
-              <img
-                className="comment-icon"
-                alt="Comment icon"
-                src="/img/comment-icon-12.png"
-              />
+              <CommentIcon className="comment-icon" />
               <div className="text-wrapper-14">{post.comments}</div>
             </div>
             <div className="comment-2">
@@ -173,7 +166,7 @@ export const MainPageBefore = () => {
                 property1={selectedTab === "Feed" ? "hover" : "default"}
                 onClick={() => setSelectedTab("Feed")}
               />
-              <RecommnedComponent
+              <RecommendComponent
                 className="component-instance"
                 divClassName="recommendcomponent-text"
                 property1={selectedTab === "Recommend" ? "hover" : "default"}
@@ -192,7 +185,6 @@ export const MainPageBefore = () => {
 
           <div className="overlap-wrapper">
             <div className="overlap">
-              <div className="text">{""}</div>
               <Scrollup className="component-19" />
             </div>
           </div>
