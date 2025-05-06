@@ -4,6 +4,7 @@ import LogoutComponent from "../LogoutButtonComponent/LogoutButtonComponent";
 import ComponentSeeAll from "../ComponentSeeAll/ComponentSeeAll";
 import MyPostPageIcon from "../../icons/MyPostPageIcon/MyPostPageIcon";
 import MyPostPageIcon2 from "../../icons/MyPostPageIcon2/MyPostPageIcon2";
+import CommentIcon2 from "../../icons/CommentIcon2/CommentIcon2"; // ✅ 추가
 import "./MyPost.css";
 
 export const MyPost = () => {
@@ -22,7 +23,6 @@ export const MyPost = () => {
           <div className="frame-17">
             <div className="frame-18">
               <div className="text-wrapper-38">KimSonghui</div>
-
               <img
                 className="subtract"
                 alt="Subtract"
@@ -68,10 +68,9 @@ export const MyPost = () => {
                 <div className="text-wrapper-42">2025.03.23</div>
 
                 <div className="comment-3">
-                  <img
+                  <CommentIcon2
                     className="comment-icon-2"
-                    alt="Comment icon"
-                    src="/img/comment-icon2.svg"
+                    style={{ fill: "#A3B3BF" }}
                   />
                   <div className="text-wrapper-43">0</div>
                 </div>

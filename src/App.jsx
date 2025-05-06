@@ -14,6 +14,7 @@ import MyPage from "./screens/MyPage/MyPage";
 import EditUser from "./screens/EditUser/EditUser";
 import Message from "./screens/Message/Message";
 import MessageRoom from "./screens/MessageRoom/MessageRoom";
+import MyBlog from "./screens/MyBlog/MyBlog";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -34,6 +35,7 @@ const AnimatedRoutes = () => {
         <Route path="/edituser" element={<EditUser />} />
         <Route path="/message" element={<Message />} />
         <Route path="/message-room/:id" element={<MessageRoom />} />
+        <Route path="/myblog" element={<MyBlog />} />
       </Routes>
     </AnimatePresence>
   );

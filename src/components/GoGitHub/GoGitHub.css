@@ -1,0 +1,19 @@
+.git-hub {
+  height: 23px;
+  position: relative;
+  width: 75px;
+}
+
+.git-hub .div {
+  color: #ffffff;
+  font-family: "Inter", Helvetica;
+  font-size: 15px;
+  font-weight: 400;
+  left: 0;
+  letter-spacing: 0;
+  line-height: 23px;
+  position: absolute;
+  text-align: center;
+  top: -1px;
+  white-space: nowrap;
+}
