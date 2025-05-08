@@ -14,6 +14,7 @@ export const Notice = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [menuOpenId, setMenuOpenId] = useState(null);
   const observer = useRef(null);
   const tabs = ["All", "Unread", "Read"];
   const ITEMS_PER_PAGE = 10;
@@ -74,6 +75,23 @@ export const Notice = () => {
     } catch (err) {
       console.error("알림 읽음 처리 실패:", err);
     }
+  };
+
+  const handleDeleteOne = async (id) => {
+    const token = localStorage.getItem("jwtToken");
+    try {
+      await axios.delete(`http://localhost:8080/api/alarm-service/notifications/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setNotifications(prev => prev.filter(n => n.id !== id));
+    } catch (err) {
+      console.error("특정 알림 삭제 실패:", err);
+    }
+  };
+
+  const handleNoticeClick = (notice) => {
+    // TODO: 상세 페이지 이동 등 구현 예정
+    // 예: navigate(`/notice/${notice.id}`);
   };
 
   const filteredNotifications = notifications.filter((n) => {
@@ -168,33 +186,54 @@ export const Notice = () => {
                 <div
                   className="notice-frame-65"
                   key={notice.id}
-                  ref={
-                    idx === displayedNotifications.length - 1
-                      ? lastItemRef
-                      : null
-                  }
-                  onClick={() => markAsRead(notice.id)}
-                  style={{ cursor: "pointer" }}
+                  ref={idx === displayedNotifications.length - 1 ? lastItemRef : null}
+                  style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "space-between" }}
                 >
-                  <div className="notice-comment-9">
-                    <div
-                      className={
-                        notice.read
-                          ? "notice-text-wrapper-77"
-                          : "notice-text-wrapper-75"
-                      }
-                    >
+                  <div
+                    onClick={() => handleNoticeClick(notice)}
+                    style={{ flex: 1, cursor: "pointer" }}
+                  >
+                    <div className={notice.read ? "notice-text-wrapper-77" : "notice-text-wrapper-75"}>
                       {notice.content}
                     </div>
+                    <div className={notice.read ? "notice-text-wrapper-78" : "notice-text-wrapper-76"}>
+                      {notice.date}
+                    </div>
                   </div>
-                  <div
-                    className={
-                      notice.read
-                        ? "notice-text-wrapper-78"
-                        : "notice-text-wrapper-76"
-                    }
-                  >
-                    {notice.date}
+                  <div style={{ position: "relative" }}>
+                    <button
+                      className="notice-more-btn"
+                      onClick={e => {
+                        e.stopPropagation();
+                        setMenuOpenId(menuOpenId === notice.id ? null : notice.id);
+                      }}
+                    >
+                      ⋯
+                    </button>
+                    {menuOpenId === notice.id && (
+                      <div className="notice-popover-menu">
+                        <button
+                          className="notice-popover-item"
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            await markAsRead(notice.id);
+                            setMenuOpenId(null);
+                          }}
+                        >
+                          읽음 처리
+                        </button>
+                        <button
+                          className="notice-popover-item danger"
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            await handleDeleteOne(notice.id);
+                            setMenuOpenId(null);
+                          }}
+                        >
+                          삭제
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
