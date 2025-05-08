@@ -58,10 +58,22 @@ export const Notice = () => {
     }
   };
 
-  const markAsRead = (id) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-    );
+  const markAsRead = async (id) => {
+    const token = localStorage.getItem("jwtToken");
+    try {
+      await axios.patch(
+        `http://localhost:8080/api/alarm-service/notifications/${id}/read`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+      );
+    } catch (err) {
+      console.error("알림 읽음 처리 실패:", err);
+    }
   };
 
   const filteredNotifications = notifications.filter((n) => {
