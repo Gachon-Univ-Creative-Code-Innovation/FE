@@ -147,6 +147,18 @@ export const Notice = () => {
     }
   };
 
+  const handleMarkAllRead = async () => {
+    const token = localStorage.getItem("jwtToken");
+    try {
+      await axios.patch("http://localhost:8080/api/alarm-service/notifications/read/all", {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    } catch (err) {
+      console.error("전체 알림 읽음 처리 실패:", err);
+    }
+  };
+
   return (
     <PageTransitionWrapper>
       <Navbar2 />
@@ -176,8 +188,19 @@ export const Notice = () => {
                   }}
                 />
               </div>
-              <div onClick={handleDeleteClick}>
-                <InterfaceTrashFull className="notice-interface-trash-full" />
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <button
+                  className="notice-shark-btn"
+                  onClick={handleMarkAllRead}
+                >
+                  <img
+                    src="/img/strong-shark.png"
+                    alt="전체 읽음"
+                  />
+                </button>
+                <div onClick={handleDeleteClick}>
+                  <InterfaceTrashFull className="notice-interface-trash-full" />
+                </div>
               </div>
             </div>
 
