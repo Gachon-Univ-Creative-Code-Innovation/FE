@@ -94,13 +94,7 @@ export const Notice = () => {
     // 예: navigate(`/notice/${notice.id}`);
   };
 
-  const filteredNotifications = notifications.filter((n) => {
-    if (selectedTab === "Unread") return !n.read;
-    if (selectedTab === "Read") return n.read;
-    return true;
-  });
-
-  const displayedNotifications = filteredNotifications.slice(
+  const displayedNotifications = notifications.slice(
     0,
     page * ITEMS_PER_PAGE
   );
@@ -113,7 +107,7 @@ export const Notice = () => {
         if (entries[0].isIntersecting) {
           setPage((prev) => {
             const nextStart = (prev + 1) * ITEMS_PER_PAGE;
-            if (nextStart >= filteredNotifications.length) {
+            if (nextStart >= notifications.length) {
               setHasMore(false);
               return prev;
             }
@@ -123,7 +117,7 @@ export const Notice = () => {
       });
       if (node) observer.current.observe(node);
     },
-    [hasMore, filteredNotifications.length]
+    [hasMore, notifications.length]
   );
 
   const handleDeleteClick = () => {
