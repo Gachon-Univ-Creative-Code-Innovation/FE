@@ -46,15 +46,27 @@ export const Notice = () => {
     }
   };
 
+  const fetchReadNotifications = async () => {
+    const token = localStorage.getItem("jwtToken");
+    try {
+      const res = await axios.get("http://localhost:8080/api/alarm-service/notifications/read", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setNotifications(res.data.data.content);
+    } catch (err) {
+      console.error("읽은 알림 불러오기 실패:", err);
+    }
+  };
+
   const markAsRead = (id) => {
     setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
+      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
     );
   };
 
   const filteredNotifications = notifications.filter((n) => {
-    if (selectedTab === "Unread") return !n.isRead;
-    if (selectedTab === "Read") return n.isRead;
+    if (selectedTab === "Unread") return !n.read;
+    if (selectedTab === "Read") return n.read;
     return true;
   });
 
@@ -147,7 +159,7 @@ export const Notice = () => {
                   <div className="notice-comment-9">
                     <div
                       className={
-                        notice.isRead
+                        notice.read
                           ? "notice-text-wrapper-77"
                           : "notice-text-wrapper-75"
                       }
@@ -157,7 +169,7 @@ export const Notice = () => {
                   </div>
                   <div
                     className={
-                      notice.isRead
+                      notice.read
                         ? "notice-text-wrapper-78"
                         : "notice-text-wrapper-76"
                     }
