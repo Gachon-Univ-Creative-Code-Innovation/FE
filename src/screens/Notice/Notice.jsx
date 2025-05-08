@@ -116,9 +116,17 @@ export const Notice = () => {
     setShowModal(false);
   };
 
-  const handleDeleteAll = () => {
-    setNotifications([]);
-    setShowModal(false);
+  const handleDeleteAll = async () => {
+    const token = localStorage.getItem("jwtToken");
+    try {
+      await axios.delete("http://localhost:8080/api/alarm-service/notifications", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setNotifications([]);
+      setShowModal(false);
+    } catch (err) {
+      console.error("전체 알림 삭제 실패:", err);
+    }
   };
 
   return (
