@@ -119,7 +119,6 @@ export const Notice = () => {
       await api.patch(`/notifications/${id}/read`, {}, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      // setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
       fetchNotifications(selectedTab, page);
     } catch (err) {
       console.error("알림 읽음 처리 실패:", err);
