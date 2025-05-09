@@ -1,0 +1,17 @@
+.close-icon {
+    height: 24px;
+    width: 24px;
+    position: relative;
+    cursor: pointer;
+}
+
+.close-icon .vector path {
+    stroke: #A3B3BF; /* 기본 색상 */
+    transition: stroke 0.3s ease;
+}
+
+
+/* 마우스 호버 시 색상 변경 */
+.close-icon:hover .vector path {
+    stroke: #1D1652; /* 원하는 색상으로 변경 가능 */
+}
