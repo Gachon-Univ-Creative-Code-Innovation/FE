@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import TabsGroup from "../../components/AlarmTabs/TabsGroup";
 import InterfaceTrashFull from "../../icons/InterfaceTrashFull/InterfaceTrashFull";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
@@ -15,6 +15,20 @@ const api = axios.create({
 
 // 알림 아이템 컴포넌트
 function NotificationItem({ notice, onClick, onMenuOpen, menuOpen, onMarkAsRead, onDelete }) {
+  const popoverRef = useRef(null);
+
+  // 팝오버 바깥 클릭 시 닫기
+  useEffect(() => {
+    if (menuOpen !== notice.id) return;
+    function handleClickOutside(e) {
+      if (popoverRef.current && !popoverRef.current.contains(e.target)) {
+        onMenuOpen(null);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [menuOpen, notice.id, onMenuOpen]);
+
   return (
     <div
       className="notice-frame-65"
@@ -37,13 +51,13 @@ function NotificationItem({ notice, onClick, onMenuOpen, menuOpen, onMarkAsRead,
           className="notice-more-btn"
           onClick={e => {
             e.stopPropagation();
-            onMenuOpen(notice.id);
+            onMenuOpen(menuOpen === notice.id ? null : notice.id);
           }}
         >
           ⋯
         </button>
         {menuOpen === notice.id && (
-          <div className="notice-popover-menu">
+          <div className="notice-popover-menu" ref={popoverRef}>
             <button
               className="notice-popover-item"
               onClick={async (e) => {
