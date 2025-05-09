@@ -8,16 +8,20 @@ import Navbar2 from "../../components/Navbar2/Navbar2";
 import "./Notice.css";
 import axios from "axios";
 
-// axios 인스턴스 생성
 const api = axios.create({
   baseURL: "http://localhost:8080/api/alarm-service",
 });
 
-// 알림 아이템 컴포넌트
-function NotificationItem({ notice, onClick, onMenuOpen, menuOpen, onMarkAsRead, onDelete }) {
+function NotificationItem({
+  notice,
+  onClick,
+  onMenuOpen,
+  menuOpen,
+  onMarkAsRead,
+  onDelete,
+}) {
   const popoverRef = useRef(null);
 
-  // 팝오버 바깥 클릭 시 닫기
   useEffect(() => {
     if (menuOpen !== notice.id) return;
     function handleClickOutside(e) {
@@ -32,24 +36,37 @@ function NotificationItem({ notice, onClick, onMenuOpen, menuOpen, onMarkAsRead,
   return (
     <div
       className="notice-frame-65"
-      style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "space-between" }}
+      style={{
+        position: "relative",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+      }}
       key={notice.id}
     >
       <div
         onClick={() => onClick(notice)}
         style={{ flex: 1, cursor: "pointer" }}
       >
-        <div className={notice.read ? "notice-text-wrapper-77" : "notice-text-wrapper-75"}>
+        <div
+          className={
+            notice.read ? "notice-text-wrapper-77" : "notice-text-wrapper-75"
+          }
+        >
           {notice.content}
         </div>
-        <div className={notice.read ? "notice-text-wrapper-78" : "notice-text-wrapper-76"}>
+        <div
+          className={
+            notice.read ? "notice-text-wrapper-78" : "notice-text-wrapper-76"
+          }
+        >
           {notice.date}
         </div>
       </div>
       <div style={{ position: "relative" }}>
         <button
           className="notice-more-btn"
-          onClick={e => {
+          onClick={(e) => {
             e.stopPropagation();
             onMenuOpen(menuOpen === notice.id ? null : notice.id);
           }}
@@ -86,7 +103,7 @@ function NotificationItem({ notice, onClick, onMenuOpen, menuOpen, onMarkAsRead,
 }
 
 export const Notice = () => {
-  const [selectedTab, setSelectedTab] = useState("All");
+  const [selectedTab, setSelectedTab] = useState("전체");
   const [notifications, setNotifications] = useState([]);
   const [page, setPage] = useState(0);
   const [showModal, setShowModal] = useState(false);
@@ -94,20 +111,21 @@ export const Notice = () => {
   const [totalPages, setTotalPages] = useState(1);
   const ITEMS_PER_PAGE = 10;
 
-  // 페이지네이션 그룹화
-  const [pageGroup, setPageGroup] = useState(0); // 0: 1~10, 1: 11~20 ...
+  const [pageGroup, setPageGroup] = useState(0);
   const PAGE_GROUP_SIZE = 10;
 
-  // API 호출 통합
-  const fetchNotifications = async (tab = "All", pageNum = 0) => {
+  const fetchNotifications = async (tab = "전체", pageNum = 0) => {
     const token = localStorage.getItem("jwtToken");
     let url = "/notifications";
-    if (tab === "Unread") url += "/unread";
-    else if (tab === "Read") url += "/read";
+    if (tab === "안읽음") url += "/unread";
+    else if (tab === "읽음") url += "/read";
     try {
-      const res = await api.get(`${url}?page=${pageNum}&size=${ITEMS_PER_PAGE}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await api.get(
+        `${url}?page=${pageNum}&size=${ITEMS_PER_PAGE}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setNotifications(res.data.data.content);
       setTotalPages(res.data.data.totalPages || 1);
     } catch (err) {
@@ -121,7 +139,6 @@ export const Notice = () => {
     fetchNotifications(selectedTab, page);
   }, [selectedTab, page]);
 
-  // 탭 변경 시 페이지 그룹도 0으로 초기화
   useEffect(() => {
     setPageGroup(0);
     setPage(0);
@@ -130,9 +147,13 @@ export const Notice = () => {
   const markAsRead = async (id) => {
     const token = localStorage.getItem("jwtToken");
     try {
-      await api.patch(`/notifications/${id}/read`, {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await api.patch(
+        `/notifications/${id}/read`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       fetchNotifications(selectedTab, page);
     } catch (err) {
       console.error("알림 읽음 처리 실패:", err);
@@ -149,10 +170,6 @@ export const Notice = () => {
     } catch (err) {
       console.error("특정 알림 삭제 실패:", err);
     }
-  };
-
-  const handleNoticeClick = (notice) => {
-    // TODO: 상세 페이지 이동 등 구현 예정
   };
 
   const handleDeleteClick = () => setShowModal(true);
@@ -174,16 +191,19 @@ export const Notice = () => {
   const handleMarkAllRead = async () => {
     const token = localStorage.getItem("jwtToken");
     try {
-      await api.patch("/notifications/read/all", {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await api.patch(
+        "/notifications/read/all",
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
     } catch (err) {
       console.error("전체 알림 읽음 처리 실패:", err);
     }
   };
 
-  // 페이지네이션 그룹 계산
   const startPage = pageGroup * PAGE_GROUP_SIZE;
   const endPage = Math.min(startPage + PAGE_GROUP_SIZE, totalPages);
   const canPrevGroup = pageGroup > 0;
@@ -198,14 +218,18 @@ export const Notice = () => {
             <div className="notice-frame-63">
               <div className="notice-frame-64">
                 <TabsGroup
-                  tabs={["All", "Unread", "Read"]}
+                  tabs={["전체", "안읽음", "읽음"]}
                   selected={selectedTab}
                   onSelect={(tab) => setSelectedTab(tab)}
                 />
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <button className="notice-shark-btn" onClick={handleMarkAllRead}>
-                  <img src="/img/strong-shark.png" alt="전체 읽음" />
+                {/* ✅ 이미지 대신 텍스트 버튼 */}
+                <button
+                  className="notice-shark-btn"
+                  onClick={handleMarkAllRead}
+                >
+                  전체 읽음
                 </button>
                 <div onClick={handleDeleteClick}>
                   <InterfaceTrashFull className="notice-interface-trash-full" />
@@ -217,7 +241,6 @@ export const Notice = () => {
                 <NotificationItem
                   key={notice.id}
                   notice={notice}
-                  onClick={handleNoticeClick}
                   onMenuOpen={setMenuOpenId}
                   menuOpen={menuOpenId}
                   onMarkAsRead={markAsRead}
@@ -230,7 +253,10 @@ export const Notice = () => {
       </div>
       {showModal && (
         <div className="select-mode-screen__overlay">
-          <SelectModeScreen onCancel={handleCancel} onDeleteAll={handleDeleteAll} />
+          <SelectModeScreen
+            onCancel={handleCancel}
+            onDeleteAll={handleDeleteAll}
+          />
         </div>
       )}
       <div className="notice-overlap-wrapper">
@@ -238,7 +264,6 @@ export const Notice = () => {
           <ScrollUp className="notice-component-19" />
         </div>
       </div>
-      {/* 페이지네이션 UI */}
       <div className="notice-pagination">
         <button
           className="notice-pagination-arrow"
@@ -247,7 +272,9 @@ export const Notice = () => {
             if (page === startPage) {
               if (canPrevGroup) {
                 setPageGroup(pageGroup - 1);
-                setPage((pageGroup - 1) * PAGE_GROUP_SIZE + PAGE_GROUP_SIZE - 1);
+                setPage(
+                  (pageGroup - 1) * PAGE_GROUP_SIZE + PAGE_GROUP_SIZE - 1
+                );
               }
             } else {
               setPage(page - 1);
@@ -259,7 +286,9 @@ export const Notice = () => {
         {Array.from({ length: endPage - startPage }).map((_, idx) => (
           <button
             key={startPage + idx}
-            className={`notice-pagination-btn${page === startPage + idx ? " active" : ""}`}
+            className={`notice-pagination-btn${
+              page === startPage + idx ? " active" : ""
+            }`}
             onClick={() => setPage(startPage + idx)}
             disabled={page === startPage + idx}
           >

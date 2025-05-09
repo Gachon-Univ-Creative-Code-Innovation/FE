@@ -1,0 +1,46 @@
+.seeroadmap-button {
+  width: 150px;
+  height: 50px;
+  position: relative;
+  cursor: pointer;
+
+  display: flex;                 /* ✅ 부모 박스에서 frame을 중앙 정렬하기 위해 */
+  align-items: center;
+  justify-content: center;
+}
+
+.seeroadmap-frame {
+  display: flex;                 /* ✅ 내부 텍스트를 중앙 정렬 */
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  width: fit-content;           /* ✅ 텍스트 크기에 맞게 */
+}
+
+.seeroadmap-text {
+  color: #1d1652;
+  font-family: "Inter", Helvetica;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 14px;
+  white-space: nowrap;
+  text-align: center;
+  position: relative;
+}
+
+/* 밑줄 애니메이션 */
+.seeroadmap-button.default .seeroadmap-text::after,
+.seeroadmap-button.selected .seeroadmap-text::after {
+  content: "";
+  position: absolute;
+  bottom: -9px;
+  left: -8px;
+  width: 0%;
+  height: 2px;
+  background-color: #1d1652;
+  transition: width 0.3s ease-in-out;
+}
+
+.seeroadmap-button.selected .seeroadmap-text::after {
+  width: calc(100% + 16px);
+}

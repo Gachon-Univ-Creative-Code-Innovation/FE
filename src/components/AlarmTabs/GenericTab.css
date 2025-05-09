@@ -1,3 +1,10 @@
+@font-face {
+  font-family: 'GmarketSansMedium';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
 .generic-tab {
     position: relative;
     display: inline-flex;
@@ -10,9 +17,9 @@
   
   .generic-tab .tab-label {
     color: #1d1652;
-    font-family: "Inter", Helvetica;
+    font-family: 'GmarketSans', sans-serif; /* ✅ 지마켓산스 적용 */
     font-size: 15px;
-    font-weight: 400;
+    font-weight: 500;                        /* ✅ Medium 굵기 */
     line-height: 30px;
     white-space: nowrap;
     width: fit-content;

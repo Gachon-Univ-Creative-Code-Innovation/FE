@@ -106,10 +106,12 @@
   line-height: 30px;
   margin-top: -1px;
   position: relative;
+  cursor: pointer;
 }
 
 .mypage-arrow {
   align-self: stretch;
   flex: 0 0 auto;
   position: relative;
+  cursor: pointer;
 }
