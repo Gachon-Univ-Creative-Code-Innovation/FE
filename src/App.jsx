@@ -15,6 +15,7 @@ import EditUser from "./screens/EditUser/EditUser";
 import Message from "./screens/Message/Message";
 import MessageRoom from "./screens/MessageRoom/MessageRoom";
 import MyBlog from "./screens/MyBlog/MyBlog";
+import SSEAlarmConnector from "./SSEAlarmConnector";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -43,9 +44,12 @@ const AnimatedRoutes = () => {
 
 export const App = () => {
   return (
-    <BrowserRouter>
-      <AnimatedRoutes />
-    </BrowserRouter>
+    <>
+      <SSEAlarmConnector />
+      <BrowserRouter>
+        <AnimatedRoutes />
+      </BrowserRouter>
+    </>
   );
 };
 

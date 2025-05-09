@@ -6,12 +6,14 @@ import PencilIcon from "../../icons/PencilIcon/PencilIcon";
 import MailIcon from "../../icons/MailIcon/MailIcon";
 import HamburgerIcon from "../../icons/HamburgerIcon/HamburgerIcon";
 import { HamburgerScreen } from "../HamburgerScreen/HamburgerScreen";
+import { useAlarmStore } from "../../store/useAlarmStore";
 import "./Navbar.css";
 
 const Navbar = ({ onShowPopup, scrolled, isLoggedIn }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [showSidebar, setShowSidebar] = useState(false);
+  const hasUnread = useAlarmStore((state) => state.hasUnread);
 
   const toggleSidebar = () => setShowSidebar(!showSidebar);
   const closeSidebar = () => setShowSidebar(false);
@@ -47,13 +49,16 @@ const Navbar = ({ onShowPopup, scrolled, isLoggedIn }) => {
           <div className="navbar-right">
             <div className="navbar-icons">
               <img className="navbar-icon" alt="Icon" src="/img/icon.svg" />
-              <NoticeBell
-                className="navbar-bell"
-                style={{ cursor: "pointer" }}
-                onClick={() => {
-                  isLoggedIn ? navigate("/notice") : onShowPopup();
-                }}
-              />
+              <div style={{ position: "relative", display: "inline-block" }}>
+                <NoticeBell
+                  className="navbar-bell"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    isLoggedIn ? navigate("/notice") : onShowPopup();
+                  }}
+                />
+                {hasUnread && <span className="alarm-badge"></span>}
+              </div>
               <MailIcon
                 className="navbar-mail"
                 style={{ cursor: "pointer" }}
