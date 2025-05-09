@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import DownloadIcon from "../../icons/DownloadIcon/DownloadIcon";
 import AnalyzeResult from "../../components/AnalyzeResult/AnalyzeResult";
 import SeeRoadMap from "../../components/SeeRoadmap/SeeRoadmap";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import RoundedCube from "../../components/RoundedCube/RoundedCube";
+import RoadmapList from "../../components/RoadmapList/RoadmapList";
+import RoadmapPopup from "../ShowRoadMap/ShowRoadMap";
 import { Canvas } from "@react-three/fiber";
 import Navbar2 from "../../components/Navbar2/Navbar2";
 import "./RoadMap.css";
@@ -12,11 +13,6 @@ const AnalysisResult = () => {
   return (
     <div className="roadmap-result-wrapper">
       <div className="roadmap-result-container">
-        <div className="roadmap-result-topbar">
-          <div className="roadmap-result-flex-fill" />
-          <div className="roadmap-result-flex-fill" />
-        </div>
-
         <p className="roadmap-result-text">
           <span>분석 결과, 송짱님은 </span>
           <span className="highlight">Frontend 개발자</span>
@@ -26,11 +22,6 @@ const AnalysisResult = () => {
             지금부터 송짱님만을 위한 맞춤 로드맵을 안내해드릴게요.
           </span>
         </p>
-
-        <div className="roadmap-result-download">
-          <DownloadIcon className="roadmap-result-icon" color="black" />
-          <div className="roadmap-result-download-text">Download</div>
-        </div>
 
         <img
           className="roadmap-result-image"
@@ -45,12 +36,28 @@ const AnalysisResult = () => {
 export const RoadMap = () => {
   const [selectedTab, setSelectedTab] = useState("AnalyzeResult");
   const [isAnalyzing, setIsAnalyzing] = useState(true);
+  const [showCube, setShowCube] = useState(false);
+  const [showText, setShowText] = useState(false);
+
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupImage, setPopupImage] = useState("");
+  const [popupTitle, setPopupTitle] = useState("");
+
+  const handleCardClick = (image, title) => {
+    setPopupImage(image);
+    setPopupTitle(title);
+    setShowPopup(true);
+  };
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsAnalyzing(false);
-    }, 5000);
-    return () => clearTimeout(timer);
+    const timerText = setTimeout(() => setShowText(true), 500);
+    const timerCube = setTimeout(() => setShowCube(true), 1000);
+    const timerDone = setTimeout(() => setIsAnalyzing(false), 5000);
+    return () => {
+      clearTimeout(timerText);
+      clearTimeout(timerCube);
+      clearTimeout(timerDone);
+    };
   }, []);
 
   return (
@@ -58,7 +65,6 @@ export const RoadMap = () => {
       <Navbar2 />
       <div className="roadmap-screen">
         <div className="roadmap-container">
-          {/* 탭 메뉴 */}
           <div className="roadmap-category">
             <div onClick={() => setSelectedTab("AnalyzeResult")}>
               <AnalyzeResult
@@ -78,25 +84,37 @@ export const RoadMap = () => {
             </div>
           </div>
 
-          {/* 콘텐츠 영역 */}
           <div className="roadmap-content">
             {isAnalyzing ? (
-              <div
-                className="roadmap-cube-wrapper"
-                style={{ flexDirection: "column", alignItems: "center" }}
-              >
-                <Canvas
-                  style={{ width: 300, height: 300 }}
-                  camera={{ position: [0, 0, 7], fov: 50 }}
-                >
-                  <RoundedCube />
-                </Canvas>
-                <div className="roadmap-loading-text">분석 중입니다</div>
+              <div className="roadmap-cube-wrapper">
+                {showCube && (
+                  <Canvas
+                    style={{ width: 300, height: 300 }}
+                    camera={{ position: [0, 0, 7], fov: 50 }}
+                  >
+                    <RoundedCube />
+                  </Canvas>
+                )}
+                {showText && (
+                  <div className="roadmap-loading-text">분석 중입니다</div>
+                )}
               </div>
-            ) : (
+            ) : selectedTab === "AnalyzeResult" ? (
               <AnalysisResult />
+            ) : (
+              <RoadmapList onCardClick={handleCardClick} />
             )}
           </div>
+
+          {showPopup && (
+            <div className="readme-popup-overlay">
+              <RoadmapPopup
+                image={popupImage}
+                title={popupTitle}
+                onClose={() => setShowPopup(false)}
+              />
+            </div>
+          )}
         </div>
       </div>
     </PageTransitionWrapper>

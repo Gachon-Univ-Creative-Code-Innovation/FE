@@ -46,8 +46,12 @@ export const HamburgerScreen = ({ isLoggedIn, onClose, onShowPopup }) => {
       <Roadmap
         className="hamburger-component-instance"
         property1="default"
-        onClick={() => handleProtectedRoute("/roadmap")}
+        onClick={() => {
+          onClose();
+          navigate("/roadmap");
+        }}
       />
+
       <Readme
         property1="default"
         className="hamburger-component-instance"

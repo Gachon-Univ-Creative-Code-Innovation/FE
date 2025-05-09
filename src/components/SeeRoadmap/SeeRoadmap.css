@@ -3,18 +3,19 @@
   height: 50px;
   position: relative;
   cursor: pointer;
-
-  display: flex;                 /* ✅ 부모 박스에서 frame을 중앙 정렬하기 위해 */
+  display: flex; 
   align-items: center;
   justify-content: center;
 }
 
 .seeroadmap-frame {
-  display: flex;                 /* ✅ 내부 텍스트를 중앙 정렬 */
+  display: flex;
   align-items: center;
   justify-content: center;
+  gap: 10px;
   padding: 10px;
-  width: fit-content;           /* ✅ 텍스트 크기에 맞게 */
+  width: 100%;
+  position: relative;
 }
 
 .seeroadmap-text {
