@@ -1,7 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-
 import MainPageBefore from "./screens/MainPageBefore/MainPageBefore";
 import Login from "./screens/Login/Login";
 import SignUp from "./screens/SignUp/SignUp";
