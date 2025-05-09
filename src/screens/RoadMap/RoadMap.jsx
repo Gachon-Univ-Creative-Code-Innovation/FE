@@ -49,7 +49,7 @@ export const RoadMap = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsAnalyzing(false);
-    }, 7000);
+    }, 5000);
     return () => clearTimeout(timer);
   }, []);
 
