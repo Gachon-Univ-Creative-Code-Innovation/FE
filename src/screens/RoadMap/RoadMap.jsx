@@ -14,12 +14,12 @@ const AnalysisResult = () => {
     <div className="roadmap-result-wrapper">
       <div className="roadmap-result-container">
         <p className="roadmap-result-text">
-          <span>분석 결과, 송짱님은 </span>
+          <span>분석 결과, 송히님은 </span>
           <span className="highlight">Frontend 개발자</span>
           <span>
-            로서의 역량과 성향을 지니고 있어요.
+            의 역량과 성향을 지니고 있어요.
             <br />
-            지금부터 송짱님만을 위한 맞춤 로드맵을 안내해드릴게요.
+            지금부터 송히님만을 위한 맞춤 로드맵을 안내해드릴게요.
           </span>
         </p>
 
