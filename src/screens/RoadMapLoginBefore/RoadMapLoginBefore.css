@@ -35,10 +35,10 @@
   
   .roadmapbefore-ellipse {
     position: absolute;
-    width: 571px;
-    height: 571px;
-    left: 869px;
-    top: 250px;
+    width: 800px;
+    height: 800px;
+    left: 750px;
+    top: 150px;
     background: linear-gradient(
       180deg,
       rgba(215, 228, 238, 0.48) 25.64%,
@@ -93,6 +93,7 @@
     position: absolute;
     text-align: center;
     top: 113px;
+    width: max-content;
   }
   
   .roadmapbefore-login-button {
