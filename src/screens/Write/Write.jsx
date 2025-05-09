@@ -31,6 +31,22 @@ const Categories = [
   { key: "기타", label: "기타" },
 ];
 
+const formats = [
+  "font",
+  "header",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "list",
+  "bullet",
+  "link",
+  "image",
+  "align",
+  "color",
+  "background",
+];
+
 export default function Write() {
   const [mode, setMode] = useState("basic");
   const [basicValue, setBasicValue] = useState("");
@@ -41,48 +57,83 @@ export default function Write() {
   const [isSummaryPopupOpen, setIsSummaryPopupOpen] = useState(false);
   const [summaryText, setSummaryText] = useState(
     "Expo로 리액트 네이티브 앱 개발 요약\n" +
-    "Expo CLI로 프로젝트 생성 후, Expo Go 앱에서 실시간 테스트 가능\n" +
-    "파일 기반 라우팅 지원: 폴더/파일 구조로 경로 자동 생성\n" +
-    "Stack, Tab 등 다양한 내비게이션 패턴 제공\n" +
-    "React Navigation 라이브러리와 통합\n" +
-    "Expo SDK로 카메라, 위치 정보 등 다양한 기능 제공\n"
+      "Expo CLI로 프로젝트 생성 후, Expo Go 앱에서 실시간 테스트 가능\n" +
+      "파일 기반 라우팅 지원: 폴더/파일 구조로 경로 자동 생성\n" +
+      "Stack, Tab 등 다양한 내비게이션 패턴 제공\n" +
+      "React Navigation 라이브러리와 통합\n" +
+      "Expo SDK로 카메라, 위치 정보 등 다양한 기능 제공\n"
   );
 
-  // textarea의 ref를 생성
   const textAreaRef = useRef(null);
-  const popupRef = useRef(null); 
+  const popupRef = useRef(null);
 
   useEffect(() => {
     if (isSummaryPopupOpen && textAreaRef.current) {
       textAreaRef.current.focus();
       textAreaRef.current.setSelectionRange(summaryText.length, summaryText.length);
     }
-
     const handleClickOutside = (e) => {
       if (popupRef.current && !popupRef.current.contains(e.target)) {
         setIsSummaryPopupOpen(false);
       }
     };
-
     if (isSummaryPopupOpen) {
-      document.addEventListener("mousedown", handleClickOutside); // ✅ 팝업 바깥 클릭 감지
-    } 
-
+      document.addEventListener("mousedown", handleClickOutside);
+    }
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside); // ✅ 팝업이 닫히면 이벤트 제거
+      document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isSummaryPopupOpen]);
+  }, [isSummaryPopupOpen, summaryText]);
 
-  // 텍스트 길이에 따라 동적 높이 설정
-  const calculateHeight = () => {
-    const baseHeight = 80;
-    const maxHeight = 450;
-    const heightPerLine = 20;
+  // 기본 에디터 값의 HTML 태그를 제거하여 실제 텍스트를 추출하는 함수
+  const extractTextFromHtml = (htmlString) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlString, "text/html");
+    return doc.body.textContent || "";
+  };
 
-    const lineCount = summaryText.split("\n").length;
-    const calculatedHeight = baseHeight + lineCount * heightPerLine;
+  // 필수 입력 필드를 검사하는 함수
+  const getMissingFields = () => {
+    const missing = [];
+    if (title.trim() === "") missing.push("제목");
+    if (category === null) missing.push("카테고리");
 
-    return Math.min(calculatedHeight, maxHeight);
+    let content = "";
+    if (mode === "basic") {
+      // ReactQuill은 빈 상태에서 <p><br></p>를 반환할 수 있음
+      content = extractTextFromHtml(basicValue).trim();
+    } else {
+      content = markdownValue.trim();
+    }
+    if (content === "") missing.push("내용");
+    return missing;
+  };
+
+  const handleSaveDraft = () => {
+    const missing = getMissingFields();
+    if (missing.length > 0) {
+      alert(missing.join(", ") + "을(를) 입력해 주세요!");
+      return; // 누락된 필드가 있으면 임시 저장 실행 안 함
+    }
+    alert("임시 저장되었습니다!");
+  };
+
+  const handlePost = () => {
+    const missing = getMissingFields();
+    if (missing.length > 0) {
+      alert(missing.join(", ") + "을(를) 입력해 주세요!");
+      return; // 누락된 필드가 있으면 게시하지 않음
+    }
+    setIsSummaryPopupOpen(true);
+  };
+
+  const handlePublish = () => {
+    const missing = getMissingFields();
+    if (missing.length > 0) {
+      alert(missing.join(", ") + "을(를) 입력해 주세요!");
+      return;
+    }
+    alert("게시되었습니다!");
   };
 
   return (
@@ -141,7 +192,6 @@ export default function Write() {
           />
         </div>
 
-
         {/* 에디터 영역 */}
         <div className="editor-area">
           {mode === "basic" ? (
@@ -152,7 +202,7 @@ export default function Write() {
               placeholder="내용을 입력하세요"
               modules={{
                 toolbar: [
-                  [{ font: ["arial", "times-new-roman", "comic-sans"] }], // 🔥 사용자 지정 폰트 추가
+                  [{ font: ["arial", "times-new-roman", "comic-sans"] }],
                   [{ header: [1, 2, 3, 4, 5, 6, false] }],
                   ["bold", "italic", "underline", "strike"],
                   [{ list: "ordered" }, { list: "bullet" }],
@@ -161,10 +211,15 @@ export default function Write() {
                   [{ color: [] }, { background: [] }],
                 ],
               }}
+              formats={formats}
               className="reactquill-editor"
             />
           ) : (
-            <MDEditor value={markdownValue} onChange={setMarkdownValue} height={500} />
+            <MDEditor
+              value={markdownValue}
+              onChange={setMarkdownValue}
+              height={500}
+            />
           )}
         </div>
 
@@ -177,8 +232,16 @@ export default function Write() {
             onMouseLeave={(e) => e.currentTarget.classList.remove("hover")}
           />
           <div className="editor-button-group">
-            <SaveDraftComponent property1="default" className="save-draft-component" onClick={() => alert("임시 저장되었습니다!")} />
-            <PostComponent property1="default" className="post-component" onClick={() => setIsSummaryPopupOpen(true)} />
+            <SaveDraftComponent
+              property1="default"
+              className="save-draft-component"
+              onClick={handleSaveDraft}
+            />
+            <PostComponent
+              property1="default"
+              className="post-component"
+              onClick={handlePost}
+            />
           </div>
         </div>
       </div>
@@ -188,8 +251,13 @@ export default function Write() {
         <div className="summary-popup-overlay">
           <div ref={popupRef} className="summary-popup-content">
             <div className="popup-header">
-              <div className="popup-title">🫧 AlOG가 주요 내용을 간단하게 정리했어요!</div>
-              <CloseIcon onClick={() => setIsSummaryPopupOpen(false)} className="close-icon" />
+              <div className="popup-title">
+                🫧 AlOG가 주요 내용을 간단하게 정리했어요!
+              </div>
+              <CloseIcon
+                onClick={() => setIsSummaryPopupOpen(false)}
+                className="close-icon"
+              />
             </div>
             <textarea
               ref={textAreaRef}
@@ -197,8 +265,12 @@ export default function Write() {
               onChange={(e) => setSummaryText(e.target.value)}
               className="summary-textarea"
               style={{
-                height: `${calculateHeight()}px`,
-                overflowY: summaryText.split("\n").length > 10 ? "auto" : "hidden",
+                height: `${Math.min(
+                  80 + summaryText.split("\n").length * 20,
+                  450
+                )}px`,
+                overflowY:
+                  summaryText.split("\n").length > 10 ? "auto" : "hidden",
               }}
             />
             <div className="popup-buttons">
@@ -207,7 +279,7 @@ export default function Write() {
                 className="publish-component"
                 onMouseEnter={(e) => e.currentTarget.classList.add("hover")}
                 onMouseLeave={(e) => e.currentTarget.classList.remove("hover")}
-                onClick={() => alert("게시되었습니다!")}
+                onClick={handlePublish}
               />
             </div>
           </div>
