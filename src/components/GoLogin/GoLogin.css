@@ -1,0 +1,29 @@
+.gologin-component {
+  height: 30px;
+  position: relative;
+  width: 131px;
+  cursor: pointer;
+}
+
+.gologin-span-wrapper {
+  color: #1d1652;
+  font-family: "Inter", Helvetica;
+  font-size: 20px;
+  font-weight: 400;
+  left: 0;
+  letter-spacing: 0;
+  line-height: 30px;
+  position: absolute;
+  text-align: center;
+  top: -1px;
+  white-space: nowrap;
+}
+
+.gologin-text-wrapper {
+  color: #1d1652;
+  font-family: "Inter", Helvetica;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 30px;
+}

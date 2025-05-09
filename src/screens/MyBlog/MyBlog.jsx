@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import GoGitHub from "../../components/GoGitHub/GoGitHub";
 import GoPortfolio from "../../components/GoPortfolio/GoPortfolio";
@@ -15,6 +15,31 @@ export const MyBlog = () => {
   const [description, setDescription] = useState(
     "23년째 다이어트 호소중인 여리여리한 소녀입니다"
   );
+
+  const [posts, setPosts] = useState([]);
+  const [page, setPage] = useState(1);
+  const observer = useRef();
+
+  useEffect(() => {
+    const newPosts = Array.from({ length: 10 }).map((_, i) => ({
+      id: (page - 1) * 10 + i + 1,
+      date: "2025. 03. 23",
+      snippet: "아 진짜 다이어트 해야하는데...",
+      image: `/img/rectangle-31${i % 4 === 0 ? "" : `-${i % 4}`}.png`,
+      showImage: i % 4 < 4,
+    }));
+    setPosts((prev) => [...prev, ...newPosts]);
+  }, [page]);
+
+  const lastPostRef = useCallback((node) => {
+    if (observer.current) observer.current.disconnect();
+    observer.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        setPage((prev) => prev + 1);
+      }
+    });
+    if (node) observer.current.observe(node);
+  }, []);
 
   return (
     <PageTransitionWrapper>
@@ -35,7 +60,7 @@ export const MyBlog = () => {
                     <SettingIcon
                       className="myblog-icon-subtract"
                       style={{ cursor: "pointer" }}
-                      onClick={() => navigate("/edituser")}
+                      onClick={() => navigate("/mypage")}
                     />
                   </div>
                 </div>
@@ -94,35 +119,42 @@ export const MyBlog = () => {
 
             <div className="myblog-post-list">
               <div className="myblog-post-grid">
-                {[...Array(14)].map((_, i) => (
-                  <div className="myblog-post-card" key={i}>
+                {posts.map((post, i) => {
+                  const isLast = i === posts.length - 1;
+                  return (
                     <div
-                      className={
-                        i < 4 ? "myblog-post-image" : "myblog-post-placeholder"
-                      }
+                      className="myblog-post-card"
+                      key={post.id}
+                      ref={isLast ? lastPostRef : null}
                     >
-                      {i < 4 && (
-                        <img
-                          className="myblog-post-image"
-                          alt="Thumbnail"
-                          src={`/img/rectangle-31${i > 0 ? `-${i}` : ""}.png`}
-                        />
-                      )}
-                    </div>
-                    <div className="myblog-post-content">
-                      <p className="myblog-post-snippet">
-                        아 진짜 다이어트 해야하는데...
-                      </p>
-                      <div className="myblog-post-meta">
-                        <div className="myblog-post-date">2025. 03. 23</div>
-                        <div className="myblog-post-comment">
-                          <CommentIcon2 className="myblog-comment-icon" />
-                          <div className="myblog-comment-count">0</div>
+                      <div
+                        className={
+                          post.showImage
+                            ? "myblog-post-image"
+                            : "myblog-post-placeholder"
+                        }
+                      >
+                        {post.showImage && (
+                          <img
+                            className="myblog-post-image"
+                            alt="Thumbnail"
+                            src={post.image}
+                          />
+                        )}
+                      </div>
+                      <div className="myblog-post-content">
+                        <p className="myblog-post-snippet">{post.snippet}</p>
+                        <div className="myblog-post-meta">
+                          <div className="myblog-post-date">{post.date}</div>
+                          <div className="myblog-post-comment">
+                            <CommentIcon2 className="myblog-comment-icon" />
+                            <div className="myblog-comment-count">0</div>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>

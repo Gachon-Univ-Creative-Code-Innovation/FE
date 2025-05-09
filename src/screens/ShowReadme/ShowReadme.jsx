@@ -52,3 +52,5 @@ export const Readme = ({ onClose, image, url }) => {
     </div>
   );
 };
+
+export default Readme;
