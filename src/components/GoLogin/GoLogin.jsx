@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import "./GoLogin.css";
 
-export const GoLogin = ({ property1, className, onClick }) => {
+export const GoLogin = ({ className, onClick }) => {
   return (
     <div className={`gologin-component ${className}`} onClick={onClick}>
       <p className="gologin-span-wrapper">
@@ -13,8 +13,7 @@ export const GoLogin = ({ property1, className, onClick }) => {
 };
 
 GoLogin.propTypes = {
-  property1: PropTypes.oneOf(["default"]),
-  onClick: PropTypes.func, // 추가
+  onClick: PropTypes.func,
 };
 
 export default GoLogin;

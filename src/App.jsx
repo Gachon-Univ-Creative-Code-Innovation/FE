@@ -15,7 +15,7 @@ import Message from "./screens/Message/Message";
 import MessageRoom from "./screens/MessageRoom/MessageRoom";
 import MyBlog from "./screens/MyBlog/MyBlog";
 import RoadMap from "./screens/RoadMap/RoadMap";
-import RoadMapBefore from "./screens/RoadMapBefore/RoadMapBefore";
+import RoadMapLoginBefore from "./screens/RoadMapLoginBefore/RoadMapLoginBefore";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -38,7 +38,7 @@ const AnimatedRoutes = () => {
         <Route path="/message-room/:id" element={<MessageRoom />} />
         <Route path="/myblog" element={<MyBlog />} />
         <Route path="/roadmap" element={<RoadMap />} />
-        <Route path="/roadmapbefore" element={<RoadMapBefore />} />
+        <Route path="/roadmapbefore" element={<RoadMapLoginBefore />} />
       </Routes>
     </AnimatePresence>
   );

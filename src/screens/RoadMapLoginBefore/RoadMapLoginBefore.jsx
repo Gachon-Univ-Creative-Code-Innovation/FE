@@ -5,7 +5,7 @@ import SeeRoadMap from "../../components/SeeRoadmap/SeeRoadmap";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import Navbar2 from "../../components/Navbar2/Navbar2";
 import GoLogin from "../../components/GoLogin/GoLogin";
-import "./RoadMapBefore.css";
+import "./RoadMapLoginBefore.css";
 
 export const RoadMapBefore = () => {
   const [selectedTab, setSelectedTab] = useState("AnalyzeResult");
