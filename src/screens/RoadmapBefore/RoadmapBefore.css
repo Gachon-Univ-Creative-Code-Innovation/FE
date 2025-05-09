@@ -1,0 +1,103 @@
+.roadmapbefore-screen {
+    background-color: #fafdff;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding-top: 80px;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: hidden;
+  }
+  
+  .roadmapbefore-container {
+    background-color: #fafdff;
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    position: relative;
+  }
+  
+  .roadmapbefore-category {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+  }
+  
+  .roadmapbefore-overlap {
+    height: 795px;
+    left: 285px;
+    position: absolute;
+    top: 120px;
+    width: 1155px;
+  }
+  
+  .roadmapbefore-ellipse {
+    position: absolute;
+    width: 571px;
+    height: 571px;
+    left: 869px;
+    top: 250px;
+    background: linear-gradient(
+      180deg,
+      rgba(215, 228, 238, 0.48) 25.64%,
+      rgba(163, 179, 191, 0.48) 77.68%
+    );
+    border-radius: 50%;
+    z-index: 0;
+  }
+  
+  .roadmapbefore-overlap-group {
+    height: 409px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 645px;
+  }
+  
+  .roadmapbefore-ellipse-2 {
+    background-color: #d7e3ed;
+    border-radius: 198px;
+    box-shadow: inset 15px -10px 4px 5px #a3b3bf59;
+    height: 396px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 396px;
+  }
+  
+  .roadmapbefore-ellipse-3 {
+    background: linear-gradient(
+      93deg,
+      rgba(255, 255, 255, 0.62) 12%,
+      rgba(215, 228, 238, 0.62) 71%
+    );
+    border-radius: 117.5px;
+    height: 235px;
+    left: 300px;
+    position: absolute;
+    top: 174px;
+    width: 235px;
+  }
+  
+  .roadmapbefore-login-text {
+    color: #000000;
+    font-family: "Inter", Helvetica;
+    font-size: 20px;
+    font-weight: 400;
+    height: 60px;
+    left: 225px;
+    letter-spacing: 0;
+    line-height: 30px;
+    position: absolute;
+    text-align: center;
+    top: 113px;
+  }
+  
+  .roadmapbefore-login-button {
+    left: 370px !important;
+    position: absolute !important;
+    top: 224px !important;
+  }
+  

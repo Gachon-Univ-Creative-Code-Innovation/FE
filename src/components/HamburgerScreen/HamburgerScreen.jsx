@@ -48,7 +48,11 @@ export const HamburgerScreen = ({ isLoggedIn, onClose, onShowPopup }) => {
         property1="default"
         onClick={() => {
           onClose();
-          navigate("/roadmap");
+          if (isLoggedIn) {
+            navigate("/roadmap");
+          } else {
+            navigate("/roadmapbefore");
+          }
         }}
       />
 
