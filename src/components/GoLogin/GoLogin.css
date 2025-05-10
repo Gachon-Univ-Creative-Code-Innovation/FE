@@ -1,0 +1,35 @@
+.gologin-component {
+  height: 30px;
+  position: relative;
+  width: 131px;
+  cursor: pointer;
+}
+
+.gologin-span-wrapper {
+  color: #1d1652;
+  font-family: "Inter", Helvetica;
+  font-size: 20px;
+  font-weight: 400;
+  left: 0;
+  letter-spacing: 0;
+  line-height: 30px;
+  position: absolute;
+  text-align: center;
+  top: -1px;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.gologin-component:hover .gologin-span-wrapper {
+  text-shadow: 0 0 0.5px #1d1652, 0 0 0.5px #1d1652;
+  transform: scale(1.1);
+}
+
+.gologin-text-wrapper {
+  color: #1d1652;
+  font-family: "Inter", Helvetica;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 30px;
+}

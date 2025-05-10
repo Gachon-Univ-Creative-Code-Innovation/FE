@@ -31,10 +31,10 @@ const Navbar2 = () => {
         <div
           className="navbar2-center"
           onClick={() => navigate("/MainPageAfter")}
-          style={{ cursor: "pointer" }}
         >
           <AlogLogo className="navbar2-logo" width={200} height={80} />
         </div>
+        <div className="navbar2-right" />
       </div>
     </div>
   );

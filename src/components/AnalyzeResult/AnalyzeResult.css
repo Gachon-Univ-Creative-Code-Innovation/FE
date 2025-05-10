@@ -1,4 +1,4 @@
-.generate-README {
+.analyzeresult-button {
   height: 50px;
   width: 150px;
   position: relative;
@@ -8,7 +8,7 @@
   justify-content: center;
 }
 
-.generate-README .frame {
+.analyzeresult-frame {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -18,7 +18,7 @@
   position: relative;
 }
 
-.generate-README .text-wrapper {
+.analyzeresult-text {
   color: #1d1652;
   font-family: "Inter", Helvetica;
   font-size: 15px;
@@ -31,8 +31,8 @@
   width: fit-content;
 }
 
-.generate-README.default .text-wrapper::after,
-.generate-README.selected .text-wrapper::after {
+.analyzeresult-button.default .analyzeresult-text::after,
+.analyzeresult-button.selected .analyzeresult-text::after {
   content: "";
   position: absolute;
   bottom: -9px;
@@ -43,6 +43,6 @@
   transition: width 0.3s ease-in-out;
 }
 
-.generate-README.selected .text-wrapper::after {
+.analyzeresult-button.selected .analyzeresult-text::after {
   width: calc(100% + 16px);
 }

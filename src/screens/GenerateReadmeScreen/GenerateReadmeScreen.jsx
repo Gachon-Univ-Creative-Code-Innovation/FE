@@ -5,7 +5,7 @@ import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTr
 import ReadmeGenerator from "../../components/ReadmeGenerator/ReadmeGenerator";
 import PaperPlaneIcon from "../../icons/PaperPlaneIcon/PaperPlaneIcon";
 import HistoryList from "../../components/HistoryList/HistoryList";
-import { Readme } from "../ShowReadme/ShowReadme";
+import Readme from "../ShowReadme/ShowReadme";
 import Navbar2 from "../../components/Navbar2/Navbar2";
 import "./GenerateReadmeScreen.css";
 
@@ -57,7 +57,7 @@ export const GenerateReadmeScreen = () => {
 
   return (
     <PageTransitionWrapper>
-      <Navbar2 /> {/* ✅ 고정 네비게이션 바 삽입 */}
+      <Navbar2 />
       <div className="generate-README-screen">
         <div className="generate-README-2">
           <div className="category">

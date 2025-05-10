@@ -1,7 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-
 import MainPageBefore from "./screens/MainPageBefore/MainPageBefore";
 import Login from "./screens/Login/Login";
 import SignUp from "./screens/SignUp/SignUp";
@@ -16,6 +15,8 @@ import Message from "./screens/Message/Message";
 import MessageRoom from "./screens/MessageRoom/MessageRoom";
 import MyBlog from "./screens/MyBlog/MyBlog";
 import SSEAlarmConnector from "./SSEAlarmConnector";
+import RoadMap from "./screens/RoadMap/RoadMap";
+import RoadMapLoginBefore from "./screens/RoadMapLoginBefore/RoadMapLoginBefore";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -37,6 +38,8 @@ const AnimatedRoutes = () => {
         <Route path="/message" element={<Message />} />
         <Route path="/message-room/:id" element={<MessageRoom />} />
         <Route path="/myblog" element={<MyBlog />} />
+        <Route path="/roadmap" element={<RoadMap />} />
+        <Route path="/roadmapbefore" element={<RoadMapLoginBefore />} />
       </Routes>
     </AnimatePresence>
   );
