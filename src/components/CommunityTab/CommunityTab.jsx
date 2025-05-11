@@ -8,11 +8,11 @@ export const CommunityTab = () => {
   const tabs = ["전체", "프로젝트", "공모전", "스터디", "기타"];
 
   return (
-    <div className="frame-wrapper">
+    <div className="communitytab-wrapper">
       {tabs.map((tab) => (
         <CommunityTabTool
           key={tab}
-          className="component-316-instance"
+          className="communitytab-instance"
           property1={selected === tab ? "active" : "default"}
           text={tab}
           onClick={() => setSelected(tab)}

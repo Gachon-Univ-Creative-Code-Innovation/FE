@@ -1,4 +1,4 @@
-.frame-wrapper {
+.communitytab-wrapper {
   align-items: center;
   align-self: stretch;
   display: flex;
@@ -10,20 +10,20 @@
   width: 100%;
 }
 
-.frame-wrapper .view {
+.communitytab-wrapper .communitytab-view {
   margin-bottom: -1.00px !important;
   margin-top: -1.00px !important;
   width: 136.83px !important;
 }
 
-.frame-wrapper .component-316 {
+.communitytab-wrapper .communitytab-internal {
   left: 50px !important;
 }
 
-.frame-wrapper .component-316-instance {
+.communitytab-wrapper .communitytab-instance {
   width: 134.83px !important;
 }
 
-.frame-wrapper .design-component-instance-node {
+.communitytab-wrapper .communitytab-design-instance {
   left: 31px !important;
 }

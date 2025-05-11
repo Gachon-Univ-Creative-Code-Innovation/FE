@@ -13,7 +13,7 @@ export const CommunityTabTool = ({
     <div
       className={`communitytab-wrapper ${property1} ${className || ""}`}
       onClick={onClick}
-      style={{ cursor: "pointer" }} // ✅ 마우스 커서
+      style={{ cursor: "pointer" }}
     >
       <div className={`communitytab-text ${divClassName || ""}`}>{text}</div>
     </div>
