@@ -1,0 +1,7 @@
+.cube {
+  background-image: url(/img/roundcube-iridescent.png);
+  background-position: 50% 50%;
+  background-size: cover;
+  height: 406px;
+  width: 410px;
+}

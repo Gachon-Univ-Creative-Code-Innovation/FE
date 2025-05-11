@@ -1,0 +1,7 @@
+.cone {
+  background-image: url(/img/cone-white-glossy.png);
+  background-position: 50% 50%;
+  background-size: cover;
+  height: 433px;
+  width: 400px;
+}

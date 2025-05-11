@@ -36,7 +36,10 @@ export const HamburgerScreen = ({ isLoggedIn, onClose, onShowPopup }) => {
       <Community
         className="hamburger-component-instance"
         property1="default"
-        onClick={() => handleProtectedRoute("/community")}
+        onClick={() => {
+          onClose(); // 닫기 동작은 유지
+          navigate("/community"); // 로그인 관계없이 이동
+        }}
       />
       <Portfolio
         className="hamburger-component-instance"
