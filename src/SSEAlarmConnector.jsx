@@ -18,7 +18,7 @@ function SSEAlarmConnector() {
 
     // 새로운 SSE 연결 생성
     const eventSource = new EventSource(
-      `http://localhost:8080/api/alarm-service/notifications/subscribe?token=${token}`
+      `http://43.201.107.237:8083/api/alarm-service/notifications/subscribe?token=${token}`
     );
 
     eventSourceRef.current = eventSource;
