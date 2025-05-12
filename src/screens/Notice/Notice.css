@@ -368,7 +368,7 @@
 }
 
 .notice-pagination-btn.active {
-  color: #3cb371;
+  color: #1d1652 !important;
   font-weight: bold;
   font-size: 22px;
 }
