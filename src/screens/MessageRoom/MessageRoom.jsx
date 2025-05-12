@@ -1,21 +1,146 @@
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import GoBackIcon from "../../icons/GoBackIcon/GoBackIcon";
 import MessageExit from "../../icons/MessageExit/MessageExit";
 import MessageInput from "../../components/MessageInputBox/MessageInputBox";
 import CommunityRule from "../CommunityRule/CommunityRule";
 import MessageRoomExit from "../MessageRoomExit/MessageRoomExit";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
+import axios from "axios";
 import "./MessageRoom.css";
+
+// 시간 포맷팅 함수
+function formatTime(isoString) {
+  if (!isoString) return "";
+  const now = new Date();
+  const date = new Date(isoString);
+
+  // 오늘 여부 판별
+  const isToday =
+    now.getFullYear() === date.getFullYear() &&
+    now.getMonth() === date.getMonth() &&
+    now.getDate() === date.getDate();
+
+  if (isToday) {
+    let hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    const isPM = hours >= 12;
+    const period = isPM ? "오후" : "오전";
+    hours = hours % 12 || 12;
+    return `${period} ${hours}:${minutes}`;
+  }
+
+  // 올해 여부 판별
+  if (now.getFullYear() === date.getFullYear()) {
+    return `${date.getMonth() + 1}월 ${date.getDate()}일`;
+  }
+
+  // 올해 이외
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+}
 
 export const MessageRoom = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const chatContainerRef = useRef(null);
+  const [messages, setMessages] = useState([]);
+  const [targetUser, setTargetUser] = useState(null);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const [showRulePopup, setShowRulePopup] = useState(false);
   const [closingRule, setClosingRule] = useState(false);
 
   const [showExitPopup, setShowExitPopup] = useState(false);
   const [closingExit, setClosingExit] = useState(false);
+
+  // 채팅 메시지 조회
+  const fetchMessages = async (pageNum) => {
+    if (loading) return; // 중복 방지
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("jwtToken");
+      const response = await axios.get(
+        `http://43.201.107.237:8082/api/message-service/with/${id}?page=${pageNum}&size=5`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const newMessages = response.data.data.content || [];
+      setMessages((prev) => {
+        const merged = [...newMessages, ...prev];
+        return merged.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      });
+      setHasMore(!response.data.data.last);
+    } catch (error) {
+      console.error("채팅 메시지 조회 실패:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // id가 바뀌면 초기화 및 첫 페이지 로드
+  useEffect(() => {
+    setMessages([]);
+    setPage(0);
+    fetchMessages(0);
+  }, [id]);
+
+  // page가 바뀔 때마다 fetchMessages(page) 호출 (id 변경 시 0페이지는 위에서 처리)
+  useEffect(() => {
+    if (page === 0) return;
+    fetchMessages(page);
+  }, [page]);
+
+  // 최초 데이터 로드 후/과거 메시지 추가 후 스크롤 위치 보정
+  useEffect(() => {
+    if (!chatContainerRef.current) return;
+    if (page === 0) {
+      // 최초 로딩: 맨 아래로
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    } else {
+      // 과거 메시지 추가: 추가된 메시지 높이만큼 올려줌
+      const prevHeight = chatContainerRef.current.scrollHeight;
+      setTimeout(() => {
+        const newHeight = chatContainerRef.current.scrollHeight;
+        chatContainerRef.current.scrollTop = newHeight - prevHeight;
+      }, 0);
+    }
+  }, [messages]);
+
+  // 스크롤 이벤트 핸들러
+  const handleScroll = () => {
+    if (!chatContainerRef.current || loading || !hasMore) return;
+    const { scrollTop } = chatContainerRef.current;
+    if (scrollTop === 0 && !loading && hasMore) {
+      setPage((prev) => prev + 1);
+    }
+  };
+
+  // 스크롤 이벤트 리스너 등록 (최초 1회만)
+  useEffect(() => {
+    const chatContainer = chatContainerRef.current;
+    if (chatContainer) {
+      chatContainer.addEventListener("scroll", handleScroll);
+      return () => chatContainer.removeEventListener("scroll", handleScroll);
+    }
+  }, []);
+
+  // 메시지 날짜 그룹화
+  const groupMessagesByDate = (messages) => {
+    const groups = {};
+    messages.forEach((message) => {
+      const date = new Date(message.createdAt);
+      const dateKey = date.toISOString().split("T")[0];
+      if (!groups[dateKey]) {
+        groups[dateKey] = [];
+      }
+      groups[dateKey].push(message);
+    });
+    return groups;
+  };
 
   const openRulePopup = () => {
     setShowRulePopup(true);
@@ -35,15 +160,21 @@ export const MessageRoom = () => {
     setTimeout(() => setShowExitPopup(false), 250);
   };
 
+  const handleGoBack = () => {
+    navigate(-1);
+  };
+
   return (
     <PageTransitionWrapper>
       <div className="messageroom-screen">
         <div className="messageroom-view">
           <div className="messageroom-header">
-            <div className="messageroom-back-wrapper">
+            <div className="messageroom-back-wrapper" onClick={handleGoBack}>
               <GoBackIcon className="messageroom-back-icon" />
             </div>
-            <div className="messageroom-username">쪼꼬 (ID: {id})</div>
+            <div className="messageroom-username">
+              {targetUser?.nickname || "사용자"} (ID: {id})
+            </div>
             <div className="messageroom-link-wrapper">
               <MessageExit
                 className="messageroom-link-icon"
@@ -68,51 +199,56 @@ export const MessageRoom = () => {
             </p>
           </div>
 
-          <div className="messageroom-chat">
-            <div className="messageroom-date">
-              <div className="messageroom-date-text">2025. 03. 07</div>
-            </div>
-
-            {[
-              { time: "15:06", sender: "쪼꼬", message: "내일 머행?" },
-              { time: "15:07", sender: "쪼꼬", message: "나랑 카페갈래?" },
-              { time: "15:10", sender: "me", message: "응!!!!!" },
-              { time: "16:07", sender: "쪼꼬", message: "나 잠와" },
-              {
-                time: "16:10",
-                sender: "me",
-                message: "언니는 왜 맨날 잠만 자",
-              },
-              {
-                time: "16:47",
-                sender: "쪼꼬",
-                message: "맛있는거 먹으러 갈래?",
-              },
-            ].map((chat, idx) =>
-              chat.sender === "me" ? (
-                <div className="messageroom-my-message" key={idx}>
-                  <div className="messageroom-time-right">{chat.time}</div>
-                  <div className="messageroom-bubble-my">{chat.message}</div>
-                </div>
-              ) : (
-                <div className="messageroom-other-message" key={idx}>
-                  <div className="messageroom-profile">
-                    <img src="/img/ellipse-12-12.png" alt="profile" />
+          <div className="messageroom-chat" ref={chatContainerRef}>
+            {Object.entries(groupMessagesByDate(messages)).map(([date, msgs]) => (
+              <React.Fragment key={date}>
+                <div className="messageroom-date">
+                  <div className="messageroom-date-text">
+                    {formatTime(date)}
                   </div>
-                  <div className="messageroom-info">
-                    <div className="messageroom-nickname">{chat.sender}</div>
-                    <div className="messageroom-bubble-other">
-                      {chat.message}
+                </div>
+                {msgs.map((chat, idx) =>
+                  chat.senderId === localStorage.getItem("userId") ? (
+                    <div className="messageroom-my-message" key={chat.id}>
+                      <div className="messageroom-time-right">
+                        {formatTime(chat.createdAt)}
+                      </div>
+                      <div className="messageroom-bubble-my">
+                        {chat.content}
+                      </div>
                     </div>
-                  </div>
-                  <div className="messageroom-time-left">{chat.time}</div>
-                </div>
-              )
-            )}
+                  ) : (
+                    <div className="messageroom-other-message" key={chat.id}>
+                      <div className="messageroom-profile">
+                        <img src="/img/basic_profile_photo.jpeg" alt="profile" />
+                      </div>
+                      <div className="messageroom-info">
+                        <div className="messageroom-nickname">
+                          {chat.senderNickname}
+                        </div>
+                        <div className="messageroom-bubble-other">
+                          {chat.content}
+                        </div>
+                      </div>
+                      <div className="messageroom-time-left">
+                        {formatTime(chat.createdAt)}
+                      </div>
+                    </div>
+                  )
+                )}
+              </React.Fragment>
+            ))}
+            {loading && <div className="messageroom-loading">로딩 중...</div>}
           </div>
 
           <div className="messageroom-input-wrapper">
-            <MessageInput className="messageroom-input-icon" />
+            <MessageInput 
+              className="messageroom-input-icon" 
+              roomId={id}
+              onMessageSent={(newMessage) => {
+                setMessages((prev) => [newMessage, ...prev]);
+              }}
+            />
           </div>
         </div>
 
