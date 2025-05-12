@@ -197,7 +197,7 @@ export const MessageRoom = () => {
   };
 
   const handleGoBack = () => {
-    navigate(-1);
+    navigate("/messages");
   };
 
   return (
