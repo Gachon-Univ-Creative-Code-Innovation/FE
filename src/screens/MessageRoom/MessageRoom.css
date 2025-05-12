@@ -2,7 +2,8 @@
     display: flex;
     justify-content: center;
     background-color: #fafdff;
-    padding-top: 50px;
+    height: 100vh;
+    padding: 50px 0;
   }
   
   .messageroom-view {
@@ -12,7 +13,7 @@
     width: 850px;
     display: flex;
     flex-direction: column;
-    overflow-y: scroll;
+    height: calc(100vh - 100px);
   }
   
   .messageroom-view::-webkit-scrollbar {
@@ -34,7 +35,7 @@
   }
   
   .messageroom-username {
-    font-size: 40px;
+    font-size: 30px;
     font-weight: bold;
     color: #1d1652;
   }
@@ -67,7 +68,8 @@
     flex-direction: column;
     gap: 20px;
     overflow-y: auto;
-    height: 500px;
+    flex: 1;
+    height: 0;
   }
   
   .messageroom-date {
@@ -99,8 +101,8 @@
   }
   
   .messageroom-profile img {
-    width: 70px;
-    height: 70px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     object-fit: cover;
   }
@@ -119,7 +121,7 @@
   .messageroom-bubble-other {
     background-color: #d7e3ed;
     border-radius: 0 15px 15px 15px;
-    padding: 5px 15px;
+    padding: 10px 15px;
     font-size: 15px;
   }
   
@@ -127,7 +129,7 @@
     background-color: #fafdff;
     border: 1px solid #a3b3bf;
     border-radius: 15px 0 15px 15px;
-    padding: 5px 15px;
+    padding: 10px 15px;
     font-size: 15px;
   }
   
@@ -141,10 +143,12 @@
     padding: 20px;
     text-align: center;
     background: #fff;
+    border-top: 1px solid #e0e0e0;
+    margin-bottom: 20px;
   }
   
   .messageroom-input-icon {
-    width: 800px;
+    width: 100%;
     height: 40px;
   }
 
@@ -223,4 +227,27 @@
     }
   }
 
+  .align-profile-height {
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+  }
+
+  .messageroom-meta-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-bottom: 2px;
+  }
+
+  .messageroom-other-message .messageroom-meta-wrapper {
+    align-items: flex-start;
+  }
+
+  .messageroom-unread {
+    color: #ff4d4f;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
   

@@ -62,13 +62,24 @@ export const MessageRoom = () => {
       setLoading(true);
       const token = localStorage.getItem("jwtToken");
       const response = await axios.get(
-        `http://43.201.107.237:8082/api/message-service/with/${id}?page=${pageNum}&size=5`,
+        `http://43.201.107.237:8082/api/message-service/with/${id}?page=${pageNum}&size=10`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
 
       const newMessages = response.data.data.content || [];
+      
+      // 첫 페이지 로드 시 상대방 정보 설정
+      if (pageNum === 0 && newMessages.length > 0) {
+        const otherUserMessage = newMessages.find(msg => msg.senderId !== localStorage.getItem("userId"));
+        if (otherUserMessage) {
+          setTargetUser({
+            nickname: otherUserMessage.senderNickname
+          });
+        }
+      }
+
       setMessages((prev) => {
         const merged = [...newMessages, ...prev];
         return merged.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
@@ -83,8 +94,33 @@ export const MessageRoom = () => {
 
   // id가 바뀌면 초기화 및 첫 페이지 로드
   useEffect(() => {
+    const fetchTargetUserInfo = async () => {
+      try {
+        const token = localStorage.getItem("jwtToken");
+        const response = await axios.get(
+          "http://43.201.107.237:8082/api/message-service/rooms",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        
+        const targetUserInfo = response.data.data.find(
+          room => room.targetUserId === parseInt(id)
+        );
+        
+        if (targetUserInfo) {
+          setTargetUser({
+            nickname: targetUserInfo.targetNickname
+          });
+        }
+      } catch (error) {
+        console.error("상대방 정보 조회 실패:", error);
+      }
+    };
+
     setMessages([]);
     setPage(0);
+    fetchTargetUserInfo();
     fetchMessages(0);
   }, [id]);
 
@@ -173,7 +209,7 @@ export const MessageRoom = () => {
               <GoBackIcon className="messageroom-back-icon" />
             </div>
             <div className="messageroom-username">
-              {targetUser?.nickname || "사용자"} (ID: {id})
+              {targetUser?.nickname}
             </div>
             <div className="messageroom-link-wrapper">
               <MessageExit
@@ -184,36 +220,21 @@ export const MessageRoom = () => {
             </div>
           </div>
 
-          <div className="messageroom-notice">
-            <p className="messageroom-notice-text">
-              서로가 존중받는 커뮤니티를 위해 이용규칙을 함께 지켜주세요.
-              <br />
-              규칙 위반 시 서비스 이용이 제한될 수 있어요.
-            </p>
-            <p
-              className="messageroom-rule-link"
-              onClick={openRulePopup}
-              style={{ cursor: "pointer" }}
-            >
-              👉 커뮤니티 이용규칙 자세히 보기
-            </p>
-          </div>
-
           <div className="messageroom-chat" ref={chatContainerRef}>
             {Object.entries(groupMessagesByDate(messages)).map(([date, msgs]) => (
               <React.Fragment key={date}>
-                <div className="messageroom-date">
-                  <div className="messageroom-date-text">
-                    {formatTime(date)}
-                  </div>
-                </div>
                 {msgs.map((chat, idx) =>
                   chat.senderId === localStorage.getItem("userId") ? (
                     <div className="messageroom-my-message" key={chat.id}>
-                      <div className="messageroom-time-right">
-                        {formatTime(chat.createdAt)}
+                      <div className="messageroom-meta-wrapper">
+                        {!chat.read && (
+                          <div className="messageroom-unread">안 읽음</div>
+                        )}
+                        <div className="messageroom-time-right">
+                          {formatTime(chat.createdAt)}
+                        </div>
                       </div>
-                      <div className="messageroom-bubble-my">
+                      <div className="messageroom-bubble-my align-profile-height">
                         {chat.content}
                       </div>
                     </div>
@@ -226,12 +247,17 @@ export const MessageRoom = () => {
                         <div className="messageroom-nickname">
                           {chat.senderNickname}
                         </div>
-                        <div className="messageroom-bubble-other">
+                        <div className="messageroom-bubble-other align-profile-height">
                           {chat.content}
                         </div>
                       </div>
-                      <div className="messageroom-time-left">
-                        {formatTime(chat.createdAt)}
+                      <div className="messageroom-meta-wrapper">
+                        {!chat.read && (
+                          <div className="messageroom-unread">안 읽음</div>
+                        )}
+                        <div className="messageroom-time-left">
+                          {formatTime(chat.createdAt)}
+                        </div>
                       </div>
                     </div>
                   )

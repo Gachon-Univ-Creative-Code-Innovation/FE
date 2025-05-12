@@ -1,10 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import SendIcon from "../../icons/SendIcon/SendIcon";
 import axios from "axios";
 import "./MessageInputBox.css";
 
 const MessageInputBox = ({ roomId, onMessageSent }) => {
   const [message, setMessage] = useState("");
+  const textareaRef = useRef(null);
+
+  const handleChange = (e) => {
+    setMessage(e.target.value);
+    // 높이 자동 조정
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto";
+      textarea.style.height = textarea.scrollHeight + "px";
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,12 +46,14 @@ const MessageInputBox = ({ roomId, onMessageSent }) => {
 
   return (
     <form className="messageinput-wrapper" onSubmit={handleSubmit}>
-      <input
-        type="text"
+      <textarea
+        ref={textareaRef}
         className="messageinput-input"
         placeholder="메시지를 입력하세요..."
         value={message}
-        onChange={(e) => setMessage(e.target.value)}
+        onChange={handleChange}
+        rows={1}
+        style={{overflowY: 'auto'}}
       />
       <button type="submit" className="messageinput-send-btn">
         <SendIcon className="messageinput-send-icon" />
