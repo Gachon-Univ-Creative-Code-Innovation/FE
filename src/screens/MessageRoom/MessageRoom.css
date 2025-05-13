@@ -138,16 +138,9 @@
   word-break: break-all;
   white-space: pre-line;
 }
-/* 
-.messageroom-time-left,
-.messageroom-time-right {
-  font-size: 15px;
-  color: #a3b3bf;
-} */
 
 .messageroom-time-left {
   min-width: 100px;
-  padding-left: 12px;
   font-size: 15px;
   color: #a3b3bf;
   text-align: left;
@@ -155,6 +148,13 @@
   white-space: pre-line;
   display: flex;
   align-items: flex-end;
+}
+
+.messageroom-time-right {
+  padding-left: 0;
+  margin-left: 0;
+  color: #bdbdbd;
+  font-size: 15px;
 }
 
 .messageroom-input-wrapper {
@@ -267,6 +267,21 @@
   font-size: 13px;
   font-weight: 600;
   min-width: 100px;
-  padding-left: 12px;
   margin-bottom: 2px;
+}
+
+.messageroom-unread-my{
+  color: #ff4d4f;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.messageroom-meta-wrapper.right-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  margin-bottom: 0;
+  padding-left: 0;
 }

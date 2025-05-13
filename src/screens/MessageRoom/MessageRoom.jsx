@@ -224,11 +224,11 @@ export const MessageRoom = () => {
             {Object.entries(groupMessagesByDate(messages)).map(([date, msgs]) => (
               <React.Fragment key={date}>
                 {msgs.map((chat, idx) =>
-                  chat.senderId === localStorage.getItem("userId") ? (
+                  chat.senderId === Number(localStorage.getItem("userId")) ? (
                     <div className="messageroom-my-message" key={chat.id}>
                       <div className="messageroom-meta-wrapper">
                         {!chat.read && (
-                          <div className="messageroom-unread">안 읽음</div>
+                          <div className="messageroom-unread-my">안 읽음</div>
                         )}
                         <div className="messageroom-time-right">
                           {formatTime(chat.createdAt)}
