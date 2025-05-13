@@ -1,16 +1,26 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 import "./MessageRoomExit.css";
 
-export const MessageRoomExit = ({ onClose, onDeleteRoom }) => {
+export const MessageRoomExit = ({ onClose }) => {
   const navigate = useNavigate();
   const { id } = useParams(); // 현재 채팅방 ID
 
-  const handleLeave = () => {
-    if (onDeleteRoom && typeof onDeleteRoom === "function") {
-      onDeleteRoom(id);
+  const handleLeave = async () => {
+    try {
+      const token = localStorage.getItem("jwtToken");
+      await axios.post(
+        `http://43.201.107.237:8082/api/message-service/room/exit/${id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      navigate("/message");
+    } catch (error) {
+      alert("채팅방 퇴장에 실패했습니다.");
     }
-    navigate("/message");
   };
 
   return (
