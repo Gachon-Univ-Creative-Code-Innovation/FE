@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import NoticeBell from "../../icons/NoticeBell/NoticeBell";
 import AlogLogo from "../../icons/AlogLogo/AlogLogo";
@@ -7,6 +7,7 @@ import MailIcon from "../../icons/MailIcon/MailIcon";
 import HamburgerIcon from "../../icons/HamburgerIcon/HamburgerIcon";
 import { HamburgerScreen } from "../HamburgerScreen/HamburgerScreen";
 import { useAlarmStore } from "../../store/useAlarmStore";
+import axios from "axios";
 import "./Navbar.css";
 
 const Navbar = ({ onShowPopup, scrolled, isLoggedIn }) => {
@@ -14,6 +15,22 @@ const Navbar = ({ onShowPopup, scrolled, isLoggedIn }) => {
   const location = useLocation();
   const [showSidebar, setShowSidebar] = useState(false);
   const hasUnread = useAlarmStore((state) => state.hasUnread);
+  const [unreadMsgCount, setUnreadMsgCount] = useState(0);
+
+  useEffect(() => {
+    const fetchUnreadMsgCount = async () => {
+      try {
+        const token = localStorage.getItem("jwtToken");
+        const res = await axios.get("http://43.201.107.237:8082/api/message-service/count/unread", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setUnreadMsgCount(res.data.data);
+      } catch (err) {
+        setUnreadMsgCount(0);
+      }
+    };
+    fetchUnreadMsgCount();
+  }, []);
 
   const toggleSidebar = () => setShowSidebar(!showSidebar);
   const closeSidebar = () => setShowSidebar(false);
@@ -59,13 +76,18 @@ const Navbar = ({ onShowPopup, scrolled, isLoggedIn }) => {
                 />
                 {hasUnread && <span className="alarm-badge"></span>}
               </div>
-              <MailIcon
-                className="navbar-mail"
-                style={{ cursor: "pointer" }}
-                onClick={() => {
-                  isLoggedIn ? navigate("/message") : onShowPopup();
-                }}
-              />
+              <div style={{ position: "relative", display: "inline-block" }}>
+                <MailIcon
+                  className="navbar-mail"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    isLoggedIn ? navigate("/message") : onShowPopup();
+                  }}
+                />
+                {unreadMsgCount > 0 && (
+                  <span className="unread-msg-badge">{unreadMsgCount}</span>
+                )}
+              </div>
               <div
                 className="navbar-edit"
                 style={{ cursor: "pointer" }}
