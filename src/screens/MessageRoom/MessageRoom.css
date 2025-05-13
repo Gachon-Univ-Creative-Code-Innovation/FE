@@ -138,18 +138,18 @@
   word-break: break-all;
   white-space: pre-line;
 }
-
+/* 
 .messageroom-time-left,
 .messageroom-time-right {
   font-size: 15px;
   color: #a3b3bf;
-}
+} */
 
 .messageroom-time-left {
   min-width: 100px;
   padding-left: 12px;
-  color: #bdbdbd;
   font-size: 15px;
+  color: #a3b3bf;
   text-align: left;
   word-break: keep-all;
   white-space: pre-line;
@@ -266,5 +266,7 @@
   color: #ff4d4f;
   font-size: 13px;
   font-weight: 600;
+  min-width: 100px;
+  padding-left: 12px;
   margin-bottom: 2px;
 }
