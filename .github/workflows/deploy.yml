@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy Frontend
 
 on:
   push:
@@ -6,10 +6,11 @@ on:
 
 jobs:
   deploy:
-    uses: Gachon-Univ-Creative-Code-Innovation/infra-configs/.github/workflows/java-deploy.yml@main
+    uses: Gachon-Univ-Creative-Code-Innovation/infra-configs/.github/workflows/frontend-deploy.yml@main
     with:
-      service: user-service
+      service: frontend-service
       tag: ${{ github.sha }} # 마지막 커밋 해쉬
     secrets:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
