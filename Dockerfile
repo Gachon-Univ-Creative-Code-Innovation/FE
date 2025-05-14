@@ -2,9 +2,9 @@
 FROM node:18-alpine AS build
 WORKDIR /app
 
-# package.json, lock 파일 먼저 복사해서 캐시 활용
+# package.json, package-lock.json 먼저 복사해서 캐시 활용
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
 # 나머지 소스 복사 후 빌드
 COPY . .
@@ -16,4 +16,6 @@ COPY --from=build /app/dist /usr/share/nginx/html
 
 # Nginx 포트
 EXPOSE 80
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 CMD ["nginx", "-g", "daemon off;"]
