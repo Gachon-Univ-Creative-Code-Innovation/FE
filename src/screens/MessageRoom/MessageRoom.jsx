@@ -1,21 +1,280 @@
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import GoBackIcon from "../../icons/GoBackIcon/GoBackIcon";
 import MessageExit from "../../icons/MessageExit/MessageExit";
 import MessageInput from "../../components/MessageInputBox/MessageInputBox";
 import CommunityRule from "../CommunityRule/CommunityRule";
 import MessageRoomExit from "../MessageRoomExit/MessageRoomExit";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
+import axios from "axios";
 import "./MessageRoom.css";
+import { useWebSocket } from "../../contexts/WebSocketContext";
+
+const WS_URL = "ws://43.201.107.237:8082/ws/chat";
+
+// 시간 포맷팅 함수
+function formatTime(isoString) {
+  if (!isoString) return "";
+  // UTC → KST(+9) 변환
+  const date = new Date(isoString);
+  // KST로 변환
+  const kstDate = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+  const now = new Date();
+  const nowKst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+
+  // 오늘 여부 판별 (KST 기준)
+  const isToday =
+    nowKst.getFullYear() === kstDate.getFullYear() &&
+    nowKst.getMonth() === kstDate.getMonth() &&
+    nowKst.getDate() === kstDate.getDate();
+
+  if (isToday) {
+    let hours = kstDate.getHours();
+    const minutes = kstDate.getMinutes().toString().padStart(2, "0");
+    const isPM = hours >= 12;
+    const period = isPM ? "오후" : "오전";
+    hours = hours % 12 || 12;
+    return `${period} ${hours}:${minutes}`;
+  }
+
+  // 올해 여부 판별 (KST 기준)
+  if (nowKst.getFullYear() === kstDate.getFullYear()) {
+    return `${kstDate.getMonth() + 1}월 ${kstDate.getDate()}일`;
+  }
+
+  // 올해 이외
+  return `${kstDate.getFullYear()}년 ${kstDate.getMonth() + 1}월 ${kstDate.getDate()}일`;
+}
 
 export const MessageRoom = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const chatContainerRef = useRef(null);
+  const { ws } = useWebSocket();
+  const [messages, setMessages] = useState([]);
+  const messagesRef = useRef([]);
+  const [targetUser, setTargetUser] = useState(null);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const [showRulePopup, setShowRulePopup] = useState(false);
   const [closingRule, setClosingRule] = useState(false);
 
   const [showExitPopup, setShowExitPopup] = useState(false);
   const [closingExit, setClosingExit] = useState(false);
+
+  const myUserId = Number(localStorage.getItem("userId"));
+  const targetUserId = Number(id);
+
+  const readSet = useRef(new Set());
+
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
+
+  // 웹소켓 연결 및 메시지 수신
+  useEffect(() => {
+    if (!ws.current) return;
+    ws.current.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      // 0. 상대방 ENTER 이벤트 수신 시 내 메시지 모두 읽음 처리
+      if (data.type === "ENTER" && String(data.userId) === String(targetUserId)) {
+        setMessages(prev =>
+          prev.map(msg =>
+            msg.senderId === myUserId && !msg.read
+              ? { ...msg, read: true }
+              : msg
+          )
+        );
+      }
+      // 1. 읽음 이벤트(type: 'READ')
+      if (data.type === "READ") {
+        readSet.current.add(String(data.messageId));
+        setMessages(prev =>
+          prev.map(msg =>
+            String(msg.receiverId) === String(data.readerId)
+              ? { ...msg, read: true }
+              : msg
+          )
+        );
+      }
+      // 2. 일반 메시지(type 없음, id/senderId/receiverId 등 있음)
+      else if (data.id && data.senderId && data.receiverId) {
+        setMessages(prev => {
+          // optimistic 메시지(임시 id, 같은 content, 같은 senderId, createdAt이 1분 이내) 찾기
+          const idx = prev.findIndex(
+            m =>
+              !m.id &&
+              m.content === data.content &&
+              m.senderId === data.senderId &&
+              Math.abs(new Date(m.createdAt) - new Date(data.createdAt)) < 60 * 1000 // 1분 이내
+          );
+          if (idx !== -1) {
+            // optimistic 메시지 교체
+            const newArr = [...prev];
+            newArr[idx] = { ...data, read: data.read };
+            return newArr.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+          } else {
+            // 그냥 추가
+            const merged = [...prev, { ...data, read: data.read }];
+            const unique = Array.from(new Map(merged.map(m => [m.id, m])).values());
+            return unique.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+          }
+        });
+        // 내가 receiver이면서 읽지 않은 메시지면 READ 요청
+        if (String(data.receiverId) === String(myUserId) && !data.read) {
+          ws.current.send(JSON.stringify({
+            type: "READ",
+            messageId: data.id,
+            roomId: id
+          }));
+          // 메시지 전송 후에도 바로 렌더링
+          setMessages(prev =>
+            prev.map(msg =>
+              String(msg.id) === String(data.id) ? { ...msg, read: true } : msg
+            )
+          );
+        }
+      }
+    };
+    return () => {
+      if (ws.current) ws.current.onmessage = null;
+    };
+  }, [id, ws]);
+
+  // 채팅방 입장/퇴장 시 ENTER/LEAVE 메시지 전송
+  useEffect(() => {
+    if (!ws.current) return;
+    ws.current.send(JSON.stringify({ type: "ENTER", roomId: id }));
+    return () => {
+      if (ws.current) ws.current.send(JSON.stringify({ type: "LEAVE", roomId: id }));
+    };
+  }, [id, ws]);
+
+  // 채팅 메시지 조회
+  const fetchMessages = async (pageNum) => {
+    if (loading) return; // 중복 방지
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("jwtToken");
+      const response = await axios.get(
+        `http://43.201.107.237:8082/api/message-service/with/${id}?page=${pageNum}&size=10`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const newMessages = response.data.data.content || [];
+      
+      // 첫 페이지 로드 시 상대방 정보 설정
+      if (pageNum === 0 && newMessages.length > 0) {
+        const otherUserMessage = newMessages.find(msg => msg.senderId !== localStorage.getItem("userId"));
+        if (otherUserMessage) {
+          setTargetUser({
+            nickname: otherUserMessage.senderNickname
+          });
+        }
+      }
+
+      setMessages((prev) => {
+        const merged = [...newMessages, ...prev];
+        const unique = Array.from(new Map(merged.map(m => [m.id || m.createdAt + m.content, m])).values());
+        return unique.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+      });
+      setHasMore(!response.data.data.last);
+    } catch (error) {
+      console.error("채팅 메시지 조회 실패:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // id가 바뀌면 초기화 및 첫 페이지 로드
+  useEffect(() => {
+    const fetchTargetUserInfo = async () => {
+      try {
+        const token = localStorage.getItem("jwtToken");
+        const response = await axios.get(
+          "http://43.201.107.237:8082/api/message-service/rooms",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        
+        const targetUserInfo = response.data.data.find(
+          room => room.targetUserId === parseInt(id)
+        );
+        
+        if (targetUserInfo) {
+          setTargetUser({
+            nickname: targetUserInfo.targetNickname
+          });
+        }
+      } catch (error) {
+        console.error("상대방 정보 조회 실패:", error);
+      }
+    };
+
+    setMessages([]);
+    setPage(0);
+    fetchTargetUserInfo();
+    fetchMessages(0);
+  }, [id]);
+
+  // page가 바뀔 때마다 fetchMessages(page) 호출 (id 변경 시 0페이지는 위에서 처리)
+  useEffect(() => {
+    if (page === 0) return;
+    fetchMessages(page);
+  }, [page]);
+
+  // 최초 데이터 로드 후/과거 메시지 추가 후 스크롤 위치 보정
+  useEffect(() => {
+    if (!chatContainerRef.current) return;
+    if (page === 0) {
+      // 최초 로딩: 맨 아래로
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    } else {
+      // 과거 메시지 추가: 추가된 메시지 높이만큼 올려줌
+      const prevHeight = chatContainerRef.current.scrollHeight;
+      setTimeout(() => {
+        const newHeight = chatContainerRef.current.scrollHeight;
+        chatContainerRef.current.scrollTop = newHeight - prevHeight;
+      }, 0);
+    }
+  }, [messages]);
+
+  // 스크롤 이벤트 핸들러
+  const handleScroll = () => {
+    if (!chatContainerRef.current || loading || !hasMore) return;
+    const { scrollTop } = chatContainerRef.current;
+    if (scrollTop === 0 && !loading && hasMore) {
+      setPage((prev) => prev + 1);
+    }
+  };
+
+  // 스크롤 이벤트 리스너 등록 (최초 1회만)
+  useEffect(() => {
+    const chatContainer = chatContainerRef.current;
+    if (chatContainer) {
+      chatContainer.addEventListener("scroll", handleScroll);
+      return () => chatContainer.removeEventListener("scroll", handleScroll);
+    }
+  }, []);
+
+  // 메시지 날짜 그룹화
+  const groupMessagesByDate = (messages) => {
+    const groups = {};
+    messages.forEach((message) => {
+      const date = new Date(message.createdAt);
+      const dateKey = date.toISOString().split("T")[0];
+      if (!groups[dateKey]) {
+        groups[dateKey] = [];
+      }
+      groups[dateKey].push(message);
+    });
+    return groups;
+  };
 
   const openRulePopup = () => {
     setShowRulePopup(true);
@@ -35,15 +294,21 @@ export const MessageRoom = () => {
     setTimeout(() => setShowExitPopup(false), 250);
   };
 
+  const handleGoBack = () => {
+    navigate("/messages");
+  };
+
   return (
     <PageTransitionWrapper>
       <div className="messageroom-screen">
         <div className="messageroom-view">
           <div className="messageroom-header">
-            <div className="messageroom-back-wrapper">
+            <div className="messageroom-back-wrapper" onClick={handleGoBack}>
               <GoBackIcon className="messageroom-back-icon" />
             </div>
-            <div className="messageroom-username">쪼꼬 (ID: {id})</div>
+            <div className="messageroom-username">
+              {targetUser?.nickname}
+            </div>
             <div className="messageroom-link-wrapper">
               <MessageExit
                 className="messageroom-link-icon"
@@ -53,66 +318,78 @@ export const MessageRoom = () => {
             </div>
           </div>
 
-          <div className="messageroom-notice">
-            <p className="messageroom-notice-text">
-              서로가 존중받는 커뮤니티를 위해 이용규칙을 함께 지켜주세요.
-              <br />
-              규칙 위반 시 서비스 이용이 제한될 수 있어요.
-            </p>
-            <p
-              className="messageroom-rule-link"
-              onClick={openRulePopup}
-              style={{ cursor: "pointer" }}
-            >
-              👉 커뮤니티 이용규칙 자세히 보기
-            </p>
-          </div>
-
-          <div className="messageroom-chat">
-            <div className="messageroom-date">
-              <div className="messageroom-date-text">2025. 03. 07</div>
-            </div>
-
-            {[
-              { time: "15:06", sender: "쪼꼬", message: "내일 머행?" },
-              { time: "15:07", sender: "쪼꼬", message: "나랑 카페갈래?" },
-              { time: "15:10", sender: "me", message: "응!!!!!" },
-              { time: "16:07", sender: "쪼꼬", message: "나 잠와" },
-              {
-                time: "16:10",
-                sender: "me",
-                message: "언니는 왜 맨날 잠만 자",
-              },
-              {
-                time: "16:47",
-                sender: "쪼꼬",
-                message: "맛있는거 먹으러 갈래?",
-              },
-            ].map((chat, idx) =>
-              chat.sender === "me" ? (
-                <div className="messageroom-my-message" key={idx}>
-                  <div className="messageroom-time-right">{chat.time}</div>
-                  <div className="messageroom-bubble-my">{chat.message}</div>
-                </div>
-              ) : (
-                <div className="messageroom-other-message" key={idx}>
-                  <div className="messageroom-profile">
-                    <img src="/img/ellipse-12-12.png" alt="profile" />
-                  </div>
-                  <div className="messageroom-info">
-                    <div className="messageroom-nickname">{chat.sender}</div>
-                    <div className="messageroom-bubble-other">
-                      {chat.message}
+          <div className="messageroom-chat" ref={chatContainerRef}>
+            {Object.entries(groupMessagesByDate(messages)).map(([date, msgs]) => (
+              <React.Fragment key={date}>
+                {msgs.map((chat, idx) =>
+                  chat.senderId === Number(localStorage.getItem("userId")) ? (
+                    <div className="messageroom-my-message" key={chat.id || chat.createdAt + chat.content}>
+                      <div className="messageroom-meta-wrapper">
+                        {!chat.read && (
+                          <div className="messageroom-unread-my">안 읽음</div>
+                        )}
+                        <div className="messageroom-time-right">
+                          {formatTime(chat.createdAt)}
+                        </div>
+                      </div>
+                      <div className="messageroom-bubble-my align-profile-height">
+                        {chat.content}
+                      </div>
                     </div>
-                  </div>
-                  <div className="messageroom-time-left">{chat.time}</div>
-                </div>
-              )
-            )}
+                  ) : (
+                    <div className="messageroom-other-message" key={chat.id || chat.createdAt + chat.content}>
+                      <div className="messageroom-profile">
+                        <img src="/img/basic_profile_photo.jpeg" alt="profile" />
+                      </div>
+                      <div className="messageroom-info">
+                        <div className="messageroom-nickname">
+                          {chat.senderNickname}
+                        </div>
+                        <div className="messageroom-bubble-other align-profile-height">
+                          {chat.content}
+                        </div>
+                      </div>
+                      <div className="messageroom-meta-wrapper">
+                        {!chat.read && (
+                          <div className="messageroom-unread">안 읽음</div>
+                        )}
+                        <div className="messageroom-time-left">
+                          {formatTime(chat.createdAt)}
+                        </div>
+                      </div>
+                    </div>
+                  )
+                )}
+              </React.Fragment>
+            ))}
+            {loading && <div className="messageroom-loading">로딩 중...</div>}
           </div>
 
           <div className="messageroom-input-wrapper">
-            <MessageInput className="messageroom-input-icon" />
+            <MessageInput 
+              className="messageroom-input-icon" 
+              roomId={id}
+              ws={ws}
+              onSend={msg => {
+                setMessages(prev => {
+                  const tempId = `temp-${Date.now()}-${Math.random()}`;
+                  const merged = [
+                    ...prev,
+                    {
+                      id: tempId,
+                      senderId: Number(localStorage.getItem("userId")),
+                      receiverId: Number(id),
+                      content: msg,
+                      createdAt: new Date(Date.now() - 9 * 60 * 60 * 1000).toISOString(), // 9시간 빼서 UTC로 맞춤
+                      read: false,
+                    }
+                  ];
+                  // id 기준으로 중복 제거 (임시 메시지는 id가 없을 수 있으므로 createdAt+content 조합도 고려 가능)
+                  const unique = Array.from(new Map(merged.map(m => [m.id || m.createdAt + m.content, m])).values());
+                  return unique.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+                });
+              }}
+            />
           </div>
         </div>
 
