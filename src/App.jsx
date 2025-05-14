@@ -17,6 +17,7 @@ import MyBlog from "./screens/MyBlog/MyBlog";
 import SSEAlarmConnector from "./SSEAlarmConnector";
 import RoadMap from "./screens/RoadMap/RoadMap";
 import RoadMapLoginBefore from "./screens/RoadMapLoginBefore/RoadMapLoginBefore";
+import { WebSocketProvider } from "./contexts/WebSocketContext";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -49,9 +50,11 @@ export const App = () => {
   return (
     <>
       <SSEAlarmConnector />
-      <BrowserRouter>
-        <AnimatedRoutes />
-      </BrowserRouter>
+      <WebSocketProvider>
+        <BrowserRouter>
+          <AnimatedRoutes />
+        </BrowserRouter>
+      </WebSocketProvider>
     </>
   );
 };

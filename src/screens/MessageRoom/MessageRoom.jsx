@@ -8,42 +8,51 @@ import MessageRoomExit from "../MessageRoomExit/MessageRoomExit";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import axios from "axios";
 import "./MessageRoom.css";
+import { useWebSocket } from "../../contexts/WebSocketContext";
+
+const WS_URL = "ws://43.201.107.237:8082/ws/chat";
 
 // 시간 포맷팅 함수
 function formatTime(isoString) {
   if (!isoString) return "";
-  const now = new Date();
+  // UTC → KST(+9) 변환
   const date = new Date(isoString);
+  // KST로 변환
+  const kstDate = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+  const now = new Date();
+  const nowKst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
 
-  // 오늘 여부 판별
+  // 오늘 여부 판별 (KST 기준)
   const isToday =
-    now.getFullYear() === date.getFullYear() &&
-    now.getMonth() === date.getMonth() &&
-    now.getDate() === date.getDate();
+    nowKst.getFullYear() === kstDate.getFullYear() &&
+    nowKst.getMonth() === kstDate.getMonth() &&
+    nowKst.getDate() === kstDate.getDate();
 
   if (isToday) {
-    let hours = date.getHours();
-    const minutes = date.getMinutes().toString().padStart(2, "0");
+    let hours = kstDate.getHours();
+    const minutes = kstDate.getMinutes().toString().padStart(2, "0");
     const isPM = hours >= 12;
     const period = isPM ? "오후" : "오전";
     hours = hours % 12 || 12;
     return `${period} ${hours}:${minutes}`;
   }
 
-  // 올해 여부 판별
-  if (now.getFullYear() === date.getFullYear()) {
-    return `${date.getMonth() + 1}월 ${date.getDate()}일`;
+  // 올해 여부 판별 (KST 기준)
+  if (nowKst.getFullYear() === kstDate.getFullYear()) {
+    return `${kstDate.getMonth() + 1}월 ${kstDate.getDate()}일`;
   }
 
   // 올해 이외
-  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+  return `${kstDate.getFullYear()}년 ${kstDate.getMonth() + 1}월 ${kstDate.getDate()}일`;
 }
 
 export const MessageRoom = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const chatContainerRef = useRef(null);
+  const { ws } = useWebSocket();
   const [messages, setMessages] = useState([]);
+  const messagesRef = useRef([]);
   const [targetUser, setTargetUser] = useState(null);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
@@ -54,6 +63,94 @@ export const MessageRoom = () => {
 
   const [showExitPopup, setShowExitPopup] = useState(false);
   const [closingExit, setClosingExit] = useState(false);
+
+  const myUserId = Number(localStorage.getItem("userId"));
+  const targetUserId = Number(id);
+
+  const readSet = useRef(new Set());
+
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
+
+  // 웹소켓 연결 및 메시지 수신
+  useEffect(() => {
+    if (!ws.current) return;
+    ws.current.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      // 0. 상대방 ENTER 이벤트 수신 시 내 메시지 모두 읽음 처리
+      if (data.type === "ENTER" && String(data.userId) === String(targetUserId)) {
+        setMessages(prev =>
+          prev.map(msg =>
+            msg.senderId === myUserId && !msg.read
+              ? { ...msg, read: true }
+              : msg
+          )
+        );
+      }
+      // 1. 읽음 이벤트(type: 'READ')
+      if (data.type === "READ") {
+        readSet.current.add(String(data.messageId));
+        setMessages(prev =>
+          prev.map(msg =>
+            String(msg.receiverId) === String(data.readerId)
+              ? { ...msg, read: true }
+              : msg
+          )
+        );
+      }
+      // 2. 일반 메시지(type 없음, id/senderId/receiverId 등 있음)
+      else if (data.id && data.senderId && data.receiverId) {
+        setMessages(prev => {
+          // optimistic 메시지(임시 id, 같은 content, 같은 senderId, createdAt이 1분 이내) 찾기
+          const idx = prev.findIndex(
+            m =>
+              !m.id &&
+              m.content === data.content &&
+              m.senderId === data.senderId &&
+              Math.abs(new Date(m.createdAt) - new Date(data.createdAt)) < 60 * 1000 // 1분 이내
+          );
+          if (idx !== -1) {
+            // optimistic 메시지 교체
+            const newArr = [...prev];
+            newArr[idx] = { ...data, read: data.read };
+            return newArr.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+          } else {
+            // 그냥 추가
+            const merged = [...prev, { ...data, read: data.read }];
+            const unique = Array.from(new Map(merged.map(m => [m.id, m])).values());
+            return unique.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+          }
+        });
+        // 내가 receiver이면서 읽지 않은 메시지면 READ 요청
+        if (String(data.receiverId) === String(myUserId) && !data.read) {
+          ws.current.send(JSON.stringify({
+            type: "READ",
+            messageId: data.id,
+            roomId: id
+          }));
+          // 메시지 전송 후에도 바로 렌더링
+          setMessages(prev =>
+            prev.map(msg =>
+              String(msg.id) === String(data.id) ? { ...msg, read: true } : msg
+            )
+          );
+        }
+      }
+    };
+    return () => {
+      if (ws.current) ws.current.onmessage = null;
+    };
+  }, [id, ws]);
+
+  // 채팅방 입장/퇴장 시 ENTER/LEAVE 메시지 전송
+  useEffect(() => {
+    if (!ws.current) return;
+    ws.current.send(JSON.stringify({ type: "ENTER", roomId: id }));
+    return () => {
+      if (ws.current) ws.current.send(JSON.stringify({ type: "LEAVE", roomId: id }));
+    };
+  }, [id, ws]);
 
   // 채팅 메시지 조회
   const fetchMessages = async (pageNum) => {
@@ -82,7 +179,8 @@ export const MessageRoom = () => {
 
       setMessages((prev) => {
         const merged = [...newMessages, ...prev];
-        return merged.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        const unique = Array.from(new Map(merged.map(m => [m.id || m.createdAt + m.content, m])).values());
+        return unique.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
       });
       setHasMore(!response.data.data.last);
     } catch (error) {
@@ -225,7 +323,7 @@ export const MessageRoom = () => {
               <React.Fragment key={date}>
                 {msgs.map((chat, idx) =>
                   chat.senderId === Number(localStorage.getItem("userId")) ? (
-                    <div className="messageroom-my-message" key={chat.id}>
+                    <div className="messageroom-my-message" key={chat.id || chat.createdAt + chat.content}>
                       <div className="messageroom-meta-wrapper">
                         {!chat.read && (
                           <div className="messageroom-unread-my">안 읽음</div>
@@ -239,7 +337,7 @@ export const MessageRoom = () => {
                       </div>
                     </div>
                   ) : (
-                    <div className="messageroom-other-message" key={chat.id}>
+                    <div className="messageroom-other-message" key={chat.id || chat.createdAt + chat.content}>
                       <div className="messageroom-profile">
                         <img src="/img/basic_profile_photo.jpeg" alt="profile" />
                       </div>
@@ -271,8 +369,25 @@ export const MessageRoom = () => {
             <MessageInput 
               className="messageroom-input-icon" 
               roomId={id}
-              onMessageSent={(newMessage) => {
-                setMessages((prev) => [newMessage, ...prev]);
+              ws={ws}
+              onSend={msg => {
+                setMessages(prev => {
+                  const tempId = `temp-${Date.now()}-${Math.random()}`;
+                  const merged = [
+                    ...prev,
+                    {
+                      id: tempId,
+                      senderId: Number(localStorage.getItem("userId")),
+                      receiverId: Number(id),
+                      content: msg,
+                      createdAt: new Date(Date.now() - 9 * 60 * 60 * 1000).toISOString(), // 9시간 빼서 UTC로 맞춤
+                      read: false,
+                    }
+                  ];
+                  // id 기준으로 중복 제거 (임시 메시지는 id가 없을 수 있으므로 createdAt+content 조합도 고려 가능)
+                  const unique = Array.from(new Map(merged.map(m => [m.id || m.createdAt + m.content, m])).values());
+                  return unique.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+                });
               }}
             />
           </div>

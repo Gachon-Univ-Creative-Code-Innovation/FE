@@ -9,28 +9,14 @@ import { HamburgerScreen } from "../HamburgerScreen/HamburgerScreen";
 import { useAlarmStore } from "../../store/useAlarmStore";
 import axios from "axios";
 import "./Navbar.css";
+import { useWebSocket } from "../../contexts/WebSocketContext";
 
 const Navbar = ({ onShowPopup, scrolled, isLoggedIn }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [showSidebar, setShowSidebar] = useState(false);
   const hasUnread = useAlarmStore((state) => state.hasUnread);
-  const [unreadMsgCount, setUnreadMsgCount] = useState(0);
-
-  useEffect(() => {
-    const fetchUnreadMsgCount = async () => {
-      try {
-        const token = localStorage.getItem("jwtToken");
-        const res = await axios.get("http://43.201.107.237:8082/api/message-service/count/unread", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setUnreadMsgCount(res.data.data);
-      } catch (err) {
-        setUnreadMsgCount(0);
-      }
-    };
-    fetchUnreadMsgCount();
-  }, []);
+  const { unreadCount } = useWebSocket();
 
   const toggleSidebar = () => setShowSidebar(!showSidebar);
   const closeSidebar = () => setShowSidebar(false);
@@ -84,8 +70,8 @@ const Navbar = ({ onShowPopup, scrolled, isLoggedIn }) => {
                     isLoggedIn ? navigate("/message") : onShowPopup();
                   }}
                 />
-                {unreadMsgCount > 0 && (
-                  <span className="unread-msg-badge">{unreadMsgCount}</span>
+                {unreadCount > 0 && (
+                  <span className="unread-msg-badge">{unreadCount}</span>
                 )}
               </div>
               <div

@@ -1,9 +1,8 @@
 import React, { useState, useRef } from "react";
 import SendIcon from "../../icons/SendIcon/SendIcon";
-import axios from "axios";
 import "./MessageInputBox.css";
 
-const MessageInputBox = ({ roomId, onMessageSent }) => {
+const MessageInputBox = ({ roomId, ws, onSend }) => {
   const [message, setMessage] = useState("");
   const textareaRef = useRef(null);
 
@@ -17,31 +16,29 @@ const MessageInputBox = ({ roomId, onMessageSent }) => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!message.trim()) return;
-
-    try {
-      const token = localStorage.getItem("jwtToken");
-      const response = await axios.post(
-        `http://43.201.107.237:8082/api/message-service/rooms/${roomId}/messages`,
-        {
+    if (ws.current && ws.current.readyState === 1) {
+      ws.current.send(
+        JSON.stringify({
+          type: "MESSAGE",
+          receiverId: Number(roomId),
           content: message,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+          messageType: "TEXT",
+        })
       );
-
-      if (response.data.success) {
-        setMessage("");
-        if (onMessageSent) {
-          onMessageSent(response.data.data);
-        }
-      }
-    } catch (error) {
-      console.error("메시지 전송 실패:", error);
+      if (onSend) onSend(message);
+      setMessage("");
     }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+    // Shift+Enter는 기본 동작(줄바꿈)
   };
 
   return (
@@ -54,6 +51,7 @@ const MessageInputBox = ({ roomId, onMessageSent }) => {
         onChange={handleChange}
         rows={1}
         style={{overflowY: 'auto'}}
+        onKeyDown={handleKeyDown}
       />
       <button type="submit" className="messageinput-send-btn">
         <SendIcon className="messageinput-send-icon" />
