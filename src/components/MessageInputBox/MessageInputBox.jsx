@@ -5,6 +5,7 @@ import "./MessageInputBox.css";
 const MessageInputBox = ({ roomId, ws, onSend }) => {
   const [message, setMessage] = useState("");
   const textareaRef = useRef(null);
+  const [isComposing, setIsComposing] = useState(false);
 
   const handleChange = (e) => {
     setMessage(e.target.value);
@@ -34,7 +35,7 @@ const MessageInputBox = ({ roomId, ws, onSend }) => {
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey && !isComposing) {
       e.preventDefault();
       handleSubmit(e);
     }
@@ -52,6 +53,8 @@ const MessageInputBox = ({ roomId, ws, onSend }) => {
         rows={1}
         style={{overflowY: 'auto'}}
         onKeyDown={handleKeyDown}
+        onCompositionStart={() => setIsComposing(true)}
+        onCompositionEnd={() => setIsComposing(false)}
       />
       <button type="submit" className="messageinput-send-btn">
         <SendIcon className="messageinput-send-icon" />
