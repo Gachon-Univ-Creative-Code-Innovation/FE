@@ -7,8 +7,8 @@ export const useWebSocket = () => useContext(WebSocketContext);
 
 export const WebSocketProvider = ({ children }) => {
   const ws = useRef(null);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [lastMessage, setLastMessage] = useState(null);
+  const [authSuccess, setAuthSuccess] = useState(false);
+  const [eventQueue, setEventQueue] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem("jwtToken");
@@ -20,16 +20,30 @@ export const WebSocketProvider = ({ children }) => {
     };
     ws.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.unreadCount !== undefined) setUnreadCount(data.unreadCount);
-      if (data.content) setLastMessage(data);
+      if (data.type === "AUTH_SUCCESS") {
+        setAuthSuccess(true);
+      }
+      setEventQueue((prev) => [...prev, data]);
     };
     return () => {
       ws.current?.close();
     };
   }, []);
 
+  // 이벤트 큐에서 원하는 타입만 꺼내는 헬퍼
+  const useWebSocketEvent = (type, handler) => {
+    useEffect(() => {
+      if (!eventQueue.length) return;
+      const filtered = eventQueue.filter(e => e.type === type || (type === undefined && !e.type));
+      if (filtered.length) {
+        filtered.forEach(handler);
+        setEventQueue(q => q.filter(e => !(e.type === type || (type === undefined && !e.type))));
+      }
+    }, [eventQueue, type, handler]);
+  };
+
   return (
-    <WebSocketContext.Provider value={{ ws, unreadCount, lastMessage }}>
+    <WebSocketContext.Provider value={{ ws, authSuccess, useWebSocketEvent }}>
       {children}
     </WebSocketContext.Provider>
   );

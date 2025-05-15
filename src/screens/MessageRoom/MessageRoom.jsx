@@ -50,7 +50,7 @@ export const MessageRoom = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const chatContainerRef = useRef(null);
-  const { ws } = useWebSocket();
+  const { ws, authSuccess, useWebSocketEvent } = useWebSocket();
   const [messages, setMessages] = useState([]);
   const messagesRef = useRef([]);
   const [targetUser, setTargetUser] = useState(null);
@@ -73,84 +73,78 @@ export const MessageRoom = () => {
     messagesRef.current = messages;
   }, [messages]);
 
-  // 웹소켓 연결 및 메시지 수신
-  useEffect(() => {
-    if (!ws.current) return;
-    ws.current.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      // 0. 상대방 ENTER 이벤트 수신 시 내 메시지 모두 읽음 처리
-      if (data.type === "ENTER" && String(data.userId) === String(targetUserId)) {
-        setMessages(prev =>
-          prev.map(msg =>
-            msg.senderId === myUserId && !msg.read
-              ? { ...msg, read: true }
-              : msg
-          )
-        );
-      }
-      // 1. 읽음 이벤트(type: 'READ')
-      if (data.type === "READ") {
-        readSet.current.add(String(data.messageId));
-        setMessages(prev =>
-          prev.map(msg =>
-            String(msg.receiverId) === String(data.readerId)
-              ? { ...msg, read: true }
-              : msg
-          )
-        );
-      }
-      // 2. 일반 메시지(type 없음, id/senderId/receiverId 등 있음)
-      else if (data.id && data.senderId && data.receiverId) {
-        setMessages(prev => {
-          // optimistic 메시지(임시 id, 같은 content, 같은 senderId, createdAt이 1분 이내) 찾기
-          const idx = prev.findIndex(
-            m =>
-              !m.id &&
-              m.content === data.content &&
-              m.senderId === data.senderId &&
-              Math.abs(new Date(m.createdAt) - new Date(data.createdAt)) < 60 * 1000 // 1분 이내
-          );
-          if (idx !== -1) {
-            // optimistic 메시지 교체
-            const newArr = [...prev];
-            newArr[idx] = { ...data, read: data.read };
-            return newArr.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-          } else {
-            // 그냥 추가
-            const merged = [...prev, { ...data, read: data.read }];
-            const unique = Array.from(new Map(merged.map(m => [m.id, m])).values());
-            return unique.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-          }
-        });
-        // 내가 receiver이면서 읽지 않은 메시지면 READ 요청
-        if (String(data.receiverId) === String(myUserId) && !data.read) {
-          ws.current.send(JSON.stringify({
-            type: "READ",
-            messageId: data.id,
-            roomId: id
-          }));
-          // 메시지 전송 후에도 바로 렌더링
-          setMessages(prev =>
-            prev.map(msg =>
-              String(msg.id) === String(data.id) ? { ...msg, read: true } : msg
-            )
-          );
-        }
-      }
-    };
-    return () => {
-      if (ws.current) ws.current.onmessage = null;
-    };
-  }, [id, ws]);
+  // AUTH_SUCCESS 이벤트를 구독해서 ENTER 전송
+  useWebSocketEvent("AUTH_SUCCESS", () => {
+    if (ws.current && ws.current.readyState === 1) {
+      ws.current.send(JSON.stringify({ type: "ENTER", roomId: id }));
+    }
+  });
 
-  // 채팅방 입장/퇴장 시 ENTER/LEAVE 메시지 전송
-  useEffect(() => {
-    if (!ws.current) return;
-    ws.current.send(JSON.stringify({ type: "ENTER", roomId: id }));
-    return () => {
-      if (ws.current) ws.current.send(JSON.stringify({ type: "LEAVE", roomId: id }));
-    };
-  }, [id, ws]);
+  // 상대방 ENTER 이벤트 수신 시 내 메시지 모두 읽음 처리
+  useWebSocketEvent("ENTER", (data) => {
+    if (String(data.userId) === String(targetUserId)) {
+      setMessages(prev =>
+        prev.map(msg =>
+          msg.senderId === myUserId && !msg.read
+            ? { ...msg, read: true }
+            : msg
+        )
+      );
+    }
+  });
+
+  // 읽음 이벤트(type: 'READ')
+  useWebSocketEvent("READ", (data) => {
+    readSet.current.add(String(data.messageId));
+    setMessages(prev =>
+      prev.map(msg =>
+        String(msg.receiverId) === String(data.readerId)
+          ? { ...msg, read: true }
+          : msg
+      )
+    );
+  });
+
+  // 일반 메시지(type 없음, id/senderId/receiverId 등 있음)
+  useWebSocketEvent(undefined, (data) => {
+    if (data.id && data.senderId && data.receiverId) {
+      setMessages(prev => {
+        // optimistic 메시지(임시 id, 같은 content, 같은 senderId, createdAt이 1분 이내) 찾기
+        const idx = prev.findIndex(
+          m =>
+            !m.id &&
+            m.content === data.content &&
+            m.senderId === data.senderId &&
+            Math.abs(new Date(m.createdAt) - new Date(data.createdAt)) < 60 * 1000 // 1분 이내
+        );
+        if (idx !== -1) {
+          // optimistic 메시지 교체
+          const newArr = [...prev];
+          newArr[idx] = { ...data, read: data.read };
+          return newArr.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        } else {
+          // 그냥 추가
+          const merged = [...prev, { ...data, read: data.read }];
+          const unique = Array.from(new Map(merged.map(m => [m.id, m])).values());
+          return unique.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        }
+      });
+      // 내가 receiver이면서 읽지 않은 메시지면 READ 요청
+      if (String(data.receiverId) === String(myUserId) && !data.read) {
+        ws.current.send(JSON.stringify({
+          type: "READ",
+          messageId: data.id,
+          roomId: id
+        }));
+        // 메시지 전송 후에도 바로 렌더링
+        setMessages(prev =>
+          prev.map(msg =>
+            String(msg.id) === String(data.id) ? { ...msg, read: true } : msg
+          )
+        );
+      }
+    }
+  });
 
   // 채팅 메시지 조회
   const fetchMessages = async (pageNum) => {
