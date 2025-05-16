@@ -50,7 +50,7 @@ export const MessageRoom = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const chatContainerRef = useRef(null);
-  const { ws, authSuccess, useWebSocketEvent } = useWebSocket();
+  const { ws, authSuccess, useWebSocketEvent, setUnreadTotalCount } = useWebSocket();
   const [messages, setMessages] = useState([]);
   const messagesRef = useRef([]);
   const [targetUser, setTargetUser] = useState(null);
@@ -184,15 +184,13 @@ export const MessageRoom = () => {
     }
   };
 
-   // 채팅방 입장/퇴장 시 ENTER/LEAVE 메시지 전송
-   useEffect(() => {
-    if (!ws.current) return;
-    ws.current.send(JSON.stringify({ type: "ENTER", roomId: id }));
-    return () => {
-      if (ws.current) ws.current.send(JSON.stringify({ type: "LEAVE", roomId: id }));
-    };
+  // 입장(마운트) 시 ENTER 전송
+  useEffect(() => {
+    if (ws.current && ws.current.readyState === 1) {
+      ws.current.send(JSON.stringify({ type: "ENTER", roomId: id }));
+    }
   }, [id, ws]);
-  
+
   // id가 바뀌면 초기화 및 첫 페이지 로드
   useEffect(() => {
     const fetchTargetUserInfo = async () => {
@@ -300,6 +298,28 @@ export const MessageRoom = () => {
   const handleGoBack = () => {
     navigate("/messages");
   };
+
+  // 퇴장(언마운트) 시 LEAVE + REST 동기화
+  useEffect(() => {
+    return () => {
+      if (ws.current && ws.current.readyState === 1) {
+        ws.current.send(JSON.stringify({ type: "LEAVE", roomId: id }));
+      }
+      // REST 동기화
+      const token = localStorage.getItem("jwtToken");
+      axios.get("http://43.201.107.237:8082/api/message-service/count/unread", {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(res => {
+        if (typeof res.data === "number") {
+          setUnreadTotalCount(res.data);
+        } else if (res.data.data !== undefined) {
+          setUnreadTotalCount(res.data.data);
+        }
+      })
+      .catch(() => setUnreadTotalCount(0));
+    };
+  }, [id, ws, setUnreadTotalCount]);
 
   return (
     <PageTransitionWrapper>
