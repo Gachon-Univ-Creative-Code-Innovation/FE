@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import NoticeBell from "../../icons/NoticeBell/NoticeBell";
 import AlogLogo from "../../icons/AlogLogo/AlogLogo";
@@ -7,13 +7,16 @@ import MailIcon from "../../icons/MailIcon/MailIcon";
 import HamburgerIcon from "../../icons/HamburgerIcon/HamburgerIcon";
 import { HamburgerScreen } from "../HamburgerScreen/HamburgerScreen";
 import { useAlarmStore } from "../../store/useAlarmStore";
+import axios from "axios";
 import "./Navbar.css";
+import { useWebSocket } from "../../contexts/WebSocketContext";
 
 const Navbar = ({ onShowPopup, scrolled, isLoggedIn }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [showSidebar, setShowSidebar] = useState(false);
   const hasUnread = useAlarmStore((state) => state.hasUnread);
+  const { unreadCount } = useWebSocket();
 
   const toggleSidebar = () => setShowSidebar(!showSidebar);
   const closeSidebar = () => setShowSidebar(false);
@@ -59,13 +62,18 @@ const Navbar = ({ onShowPopup, scrolled, isLoggedIn }) => {
                 />
                 {hasUnread && <span className="alarm-badge"></span>}
               </div>
-              <MailIcon
-                className="navbar-mail"
-                style={{ cursor: "pointer" }}
-                onClick={() => {
-                  isLoggedIn ? navigate("/message") : onShowPopup();
-                }}
-              />
+              <div style={{ position: "relative", display: "inline-block" }}>
+                <MailIcon
+                  className="navbar-mail"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    isLoggedIn ? navigate("/message") : onShowPopup();
+                  }}
+                />
+                {unreadCount > 0 && (
+                  <span className="unread-msg-badge">{unreadCount}</span>
+                )}
+              </div>
               <div
                 className="navbar-edit"
                 style={{ cursor: "pointer" }}

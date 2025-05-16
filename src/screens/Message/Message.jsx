@@ -2,7 +2,38 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar2 from "../../components/Navbar2/Navbar2";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
+import axios from "axios";
 import "./Message.css";
+
+// 시간 포맷팅 함수
+function formatTime(isoString) {
+  if (!isoString) return "";
+  const now = new Date();
+  const date = new Date(isoString);
+
+  // 오늘 여부 판별
+  const isToday =
+    now.getFullYear() === date.getFullYear() &&
+    now.getMonth() === date.getMonth() &&
+    now.getDate() === date.getDate();
+
+  if (isToday) {
+    let hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    const isPM = hours >= 12;
+    const period = isPM ? "오후" : "오전";
+    hours = hours % 12 || 12;
+    return `${period} ${hours}:${minutes}`;
+  }
+
+  // 올해 여부 판별
+  if (now.getFullYear() === date.getFullYear()) {
+    return `${date.getMonth() + 1}월 ${date.getDate()}일`;
+  }
+
+  // 올해 이외
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+}
 
 export const Message = () => {
   const navigate = useNavigate();
@@ -14,14 +45,19 @@ export const Message = () => {
   const observer = useRef(null);
 
   useEffect(() => {
-    const dummy = Array.from({ length: 50 }).map((_, i) => ({
-      id: i + 1,
-      nickname: `쪼꼬`,
-      message: `내일 뭐해?`,
-      date: "2025.05.05",
-      img: "/img/ellipse-12-12.png",
-    }));
-    setAllData(dummy);
+    const fetchRooms = async () => {
+      try {
+        const token = localStorage.getItem("jwtToken");
+        const res = await axios.get("http://43.201.107.237:8082/api/message-service/rooms", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setAllData(res.data.data || []);
+      } catch (err) {
+        setAllData([]);
+        console.error("채팅방 리스트 불러오기 실패:", err);
+      }
+    };
+    fetchRooms();
   }, []);
 
   useEffect(() => {
@@ -63,24 +99,27 @@ export const Message = () => {
             {dummyList.map((item, idx) => (
               <div
                 className="message-item"
-                key={item.id}
+                key={item.targetUserId}
                 ref={idx === dummyList.length - 1 ? lastItemRef : null}
-                onClick={() => navigate(`/message-room/${item.id}`)}
+                onClick={() => navigate(`/message-room/${item.targetUserId}`)}
                 style={{ cursor: "pointer" }}
               >
                 <div className="message-profile">
                   <img
                     className="message-avatar"
                     alt="profile"
-                    src={item.img}
+                    src={"/img/ellipse-12-12.png"}
                   />
                 </div>
                 <div className="message-content">
-                  <div className="message-nickname">{item.nickname}</div>
-                  <div className="message-text">{item.message}</div>
+                  <div className="message-nickname">{item.targetNickname}</div>
+                  <div className="message-text">{item.lastMessage}</div>
                 </div>
                 <div className="message-date-wrapper">
-                  <div className="message-date">{item.date}</div>
+                  <div className="message-date">{formatTime(item.lastMessageTime)}</div>
+                  {item.unreadCount > 0 && (
+                    <div className="message-unread-badge">{item.unreadCount}</div>
+                  )}
                 </div>
               </div>
             ))}
