@@ -68,6 +68,8 @@ export const MessageRoom = () => {
   const targetUserId = Number(id);
 
   const readSet = useRef(new Set());
+  const prevHeightRef = useRef(0);
+  const prevScrollTopRef = useRef(0);
 
   useEffect(() => {
     messagesRef.current = messages;
@@ -229,21 +231,40 @@ export const MessageRoom = () => {
     fetchMessages(page);
   }, [page]);
 
-  // 최초 데이터 로드 후/과거 메시지 추가 후 스크롤 위치 보정
+  // 1. 과거 메시지 추가 전 prevHeight, prevScrollTop 저장 (page가 바뀔 때만)
   useEffect(() => {
     if (!chatContainerRef.current) return;
-    if (page === 0) {
-      // 최초 로딩: 맨 아래로
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-    } else {
-      // 과거 메시지 추가: 추가된 메시지 높이만큼 올려줌
-      const prevHeight = chatContainerRef.current.scrollHeight;
+    if (page > 0) {
+      prevHeightRef.current = chatContainerRef.current.scrollHeight;
+      prevScrollTopRef.current = chatContainerRef.current.scrollTop;
+    }
+  }, [page]);
+
+  // 2. 과거 메시지 추가 후(즉, page가 바뀐 직후)만 스크롤 위치 보정
+  useEffect(() => {
+    if (!chatContainerRef.current) return;
+    if (page > 0) {
+      const prevHeight = prevHeightRef.current;
+      const prevScrollTop = prevScrollTopRef.current;
       setTimeout(() => {
         const newHeight = chatContainerRef.current.scrollHeight;
-        chatContainerRef.current.scrollTop = newHeight - prevHeight;
+        chatContainerRef.current.scrollTop = prevScrollTop + (newHeight - prevHeight);
       }, 0);
+    } else if (page === 0 && messages.length > 0) {
+      // 최초 로딩: 맨 아래로
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [page, messages]);
+
+  // 3. 내가 메시지 보낼 때는 항상 맨 아래로 스크롤 (page가 0일 때만)
+  useEffect(() => {
+    if (!chatContainerRef.current) return;
+    if (page !== 0) return; // 과거 메시지 추가 중에는 실행하지 않음
+    const lastMsg = messages[messages.length - 1];
+    if (lastMsg && lastMsg.senderId === myUserId) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [messages, myUserId, page]);
 
   // 스크롤 이벤트 핸들러
   const handleScroll = () => {
