@@ -1,0 +1,29 @@
+.communitytab-wrapper {
+  align-items: center;
+  align-self: stretch;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: center;
+  padding: 0px 20px;
+  position: relative;
+  width: 100%;
+}
+
+.communitytab-wrapper .communitytab-view {
+  margin-bottom: -1.00px !important;
+  margin-top: -1.00px !important;
+  width: 136.83px !important;
+}
+
+.communitytab-wrapper .communitytab-internal {
+  left: 50px !important;
+}
+
+.communitytab-wrapper .communitytab-instance {
+  width: 134.83px !important;
+}
+
+.communitytab-wrapper .communitytab-design-instance {
+  left: 31px !important;
+}

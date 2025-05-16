@@ -17,6 +17,7 @@ import MyBlog from "./screens/MyBlog/MyBlog";
 import SSEAlarmConnector from "./SSEAlarmConnector";
 import RoadMap from "./screens/RoadMap/RoadMap";
 import RoadMapLoginBefore from "./screens/RoadMapLoginBefore/RoadMapLoginBefore";
+import Community from "./screens/Community/Community";
 import { WebSocketProvider } from "./contexts/WebSocketContext";
 
 const AnimatedRoutes = () => {
@@ -41,6 +42,7 @@ const AnimatedRoutes = () => {
         <Route path="/myblog" element={<MyBlog />} />
         <Route path="/roadmap" element={<RoadMap />} />
         <Route path="/roadmapbefore" element={<RoadMapLoginBefore />} />
+        <Route path="/community" element={<Community />} />
       </Routes>
     </AnimatePresence>
   );
