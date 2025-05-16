@@ -4,6 +4,7 @@ import Navbar2 from "../../components/Navbar2/Navbar2";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import axios from "axios";
 import "./Message.css";
+import { useWebSocket } from "../../contexts/WebSocketContext";
 
 // 시간 포맷팅 함수
 function formatTime(isoString) {
@@ -43,6 +44,7 @@ export const Message = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const observer = useRef(null);
+  const { useWebSocketEvent } = useWebSocket();
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -73,6 +75,38 @@ export const Message = () => {
 
     setDummyList((prev) => [...prev, ...newData]);
   }, [page, allData]);
+
+  // 실시간 메시지 도착 시 리스트 갱신 및 맨 앞으로 이동
+  useWebSocketEvent(undefined, (data) => {
+    if (data.id && data.senderId && data.receiverId) {
+      setAllData(prev => {
+        const idx = prev.findIndex(room =>
+          room.targetUserId === data.senderId || room.targetUserId === data.receiverId
+        );
+        if (idx === -1) return prev;
+        const updatedRoom = {
+          ...prev[idx],
+          lastMessage: data.content,
+          lastMessageTime: data.createdAt,
+          unreadCount: data.unreadCount !== undefined ? data.unreadCount : prev[idx].unreadCount + 1,
+        };
+        return [updatedRoom, ...prev.filter((_, i) => i !== idx)];
+      });
+      setDummyList(prev => {
+        const idx = prev.findIndex(room =>
+          room.targetUserId === data.senderId || room.targetUserId === data.receiverId
+        );
+        if (idx === -1) return prev;
+        const updatedRoom = {
+          ...prev[idx],
+          lastMessage: data.content,
+          lastMessageTime: data.createdAt,
+          unreadCount: data.unreadCount !== undefined ? data.unreadCount : prev[idx].unreadCount + 1,
+        };
+        return [updatedRoom, ...prev.filter((_, i) => i !== idx)];
+      });
+    }
+  });
 
   const lastItemRef = useCallback(
     (node) => {

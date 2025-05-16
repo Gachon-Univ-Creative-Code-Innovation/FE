@@ -184,6 +184,15 @@ export const MessageRoom = () => {
     }
   };
 
+   // 채팅방 입장/퇴장 시 ENTER/LEAVE 메시지 전송
+   useEffect(() => {
+    if (!ws.current) return;
+    ws.current.send(JSON.stringify({ type: "ENTER", roomId: id }));
+    return () => {
+      if (ws.current) ws.current.send(JSON.stringify({ type: "LEAVE", roomId: id }));
+    };
+  }, [id, ws]);
+  
   // id가 바뀌면 초기화 및 첫 페이지 로드
   useEffect(() => {
     const fetchTargetUserInfo = async () => {
