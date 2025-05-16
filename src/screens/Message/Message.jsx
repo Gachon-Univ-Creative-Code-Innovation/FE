@@ -4,35 +4,39 @@ import Navbar2 from "../../components/Navbar2/Navbar2";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import axios from "axios";
 import "./Message.css";
+import { useWebSocket } from "../../contexts/WebSocketContext";
 
 // 시간 포맷팅 함수
 function formatTime(isoString) {
   if (!isoString) return "";
-  const now = new Date();
   const date = new Date(isoString);
+  // KST로 변환
+  const kstDate = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+  const now = new Date();
+  const nowKst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
 
-  // 오늘 여부 판별
+  // 오늘 여부 판별 (KST 기준)
   const isToday =
-    now.getFullYear() === date.getFullYear() &&
-    now.getMonth() === date.getMonth() &&
-    now.getDate() === date.getDate();
+    nowKst.getFullYear() === kstDate.getFullYear() &&
+    nowKst.getMonth() === kstDate.getMonth() &&
+    nowKst.getDate() === kstDate.getDate();
 
   if (isToday) {
-    let hours = date.getHours();
-    const minutes = date.getMinutes().toString().padStart(2, "0");
+    let hours = kstDate.getHours();
+    const minutes = kstDate.getMinutes().toString().padStart(2, "0");
     const isPM = hours >= 12;
     const period = isPM ? "오후" : "오전";
     hours = hours % 12 || 12;
     return `${period} ${hours}:${minutes}`;
   }
 
-  // 올해 여부 판별
-  if (now.getFullYear() === date.getFullYear()) {
-    return `${date.getMonth() + 1}월 ${date.getDate()}일`;
+  // 올해 여부 판별 (KST 기준)
+  if (nowKst.getFullYear() === kstDate.getFullYear()) {
+    return `${kstDate.getMonth() + 1}월 ${kstDate.getDate()}일`;
   }
 
   // 올해 이외
-  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+  return `${kstDate.getFullYear()}년 ${kstDate.getMonth() + 1}월 ${kstDate.getDate()}일`;
 }
 
 export const Message = () => {
@@ -43,6 +47,7 @@ export const Message = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const observer = useRef(null);
+  const { useWebSocketEvent } = useWebSocket();
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -73,6 +78,38 @@ export const Message = () => {
 
     setDummyList((prev) => [...prev, ...newData]);
   }, [page, allData]);
+
+  // 실시간 메시지 도착 시 리스트 갱신 및 맨 앞으로 이동
+  useWebSocketEvent(undefined, (data) => {
+    if (data.id && data.senderId && data.receiverId) {
+      setAllData(prev => {
+        const idx = prev.findIndex(room =>
+          room.targetUserId === data.senderId || room.targetUserId === data.receiverId
+        );
+        if (idx === -1) return prev;
+        const updatedRoom = {
+          ...prev[idx],
+          lastMessage: data.content,
+          lastMessageTime: data.createdAt,
+          unreadCount: data.unreadCount !== undefined ? data.unreadCount : prev[idx].unreadCount + 1,
+        };
+        return [updatedRoom, ...prev.filter((_, i) => i !== idx)];
+      });
+      setDummyList(prev => {
+        const idx = prev.findIndex(room =>
+          room.targetUserId === data.senderId || room.targetUserId === data.receiverId
+        );
+        if (idx === -1) return prev;
+        const updatedRoom = {
+          ...prev[idx],
+          lastMessage: data.content,
+          lastMessageTime: data.createdAt,
+          unreadCount: data.unreadCount !== undefined ? data.unreadCount : prev[idx].unreadCount + 1,
+        };
+        return [updatedRoom, ...prev.filter((_, i) => i !== idx)];
+      });
+    }
+  });
 
   const lastItemRef = useCallback(
     (node) => {

@@ -16,7 +16,7 @@ const Navbar = ({ onShowPopup, scrolled, isLoggedIn }) => {
   const location = useLocation();
   const [showSidebar, setShowSidebar] = useState(false);
   const hasUnread = useAlarmStore((state) => state.hasUnread);
-  const { unreadCount } = useWebSocket();
+  const { unreadTotalCount } = useWebSocket();
 
   const toggleSidebar = () => setShowSidebar(!showSidebar);
   const closeSidebar = () => setShowSidebar(false);
@@ -70,8 +70,8 @@ const Navbar = ({ onShowPopup, scrolled, isLoggedIn }) => {
                     isLoggedIn ? navigate("/message") : onShowPopup();
                   }}
                 />
-                {unreadCount > 0 && (
-                  <span className="unread-msg-badge">{unreadCount}</span>
+                {unreadTotalCount > 0 && (
+                  <span className="unread-msg-badge">{unreadTotalCount}</span>
                 )}
               </div>
               <div
