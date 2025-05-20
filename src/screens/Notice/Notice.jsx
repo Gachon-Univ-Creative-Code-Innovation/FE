@@ -9,7 +9,7 @@ import "./Notice.css";
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://43.201.107.237:8083/api/alarm-service",
+  baseURL: "https://a-log.site/api/alarm-service",
 });
 
 function NotificationItem({

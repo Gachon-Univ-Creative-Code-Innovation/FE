@@ -11,7 +11,7 @@ export const MessageRoomExit = ({ onClose }) => {
     try {
       const token = localStorage.getItem("jwtToken");
       await axios.post(
-        `http://43.201.107.237:8082/api/message-service/room/exit/${id}`,
+        `https://a-log.site/api/message-service/room/exit/${id}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },

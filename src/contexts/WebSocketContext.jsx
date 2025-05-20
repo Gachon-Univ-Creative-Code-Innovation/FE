@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
 
-const WS_URL = "ws://43.201.107.237:8082/ws/chat";
+const WS_URL = "wss://a-log.site/ws/chat";
 const WebSocketContext = createContext();
 
 export const useWebSocket = () => useContext(WebSocketContext);
@@ -39,7 +39,7 @@ export const WebSocketProvider = ({ children }) => {
   useEffect(() => {
     if (authSuccess) {
       const token = localStorage.getItem("jwtToken");
-      axios.get("http://43.201.107.237:8082/api/message-service/count/unread", {
+      axios.get("https://a-log.site/api/message-service/count/unread", {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(res => {
