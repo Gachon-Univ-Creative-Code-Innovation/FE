@@ -6,7 +6,7 @@ import MessageInput from "../../components/MessageInputBox/MessageInputBox";
 import CommunityRule from "../CommunityRule/CommunityRule";
 import MessageRoomExit from "../MessageRoomExit/MessageRoomExit";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
-import axios from "axios";
+import api from "../../api/instance";
 import "./MessageRoom.css";
 import { useWebSocket } from "../../contexts/WebSocketContext";
 
@@ -154,8 +154,8 @@ export const MessageRoom = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("jwtToken");
-      const response = await axios.get(
-        `https://a-log.site/api/message-service/with/${id}?page=${pageNum}&size=10`,
+      const response = await api.get(
+        `/message-service/with/${id}?page=${pageNum}&size=10`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -198,8 +198,8 @@ export const MessageRoom = () => {
     const fetchTargetUserInfo = async () => {
       try {
         const token = localStorage.getItem("jwtToken");
-        const response = await axios.get(
-          "https://a-log.site/api/message-service/rooms",
+        const response = await api.get(
+          "/message-service/rooms",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -328,7 +328,7 @@ export const MessageRoom = () => {
       }
       // REST 동기화
       const token = localStorage.getItem("jwtToken");
-      axios.get("https://a-log.site/api/message-service/count/unread", {
+      api.get("/message-service/count/unread", {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(res => {

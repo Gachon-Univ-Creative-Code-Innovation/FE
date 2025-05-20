@@ -6,11 +6,7 @@ import SelectModeScreen from "../SelectModeScreen/SelectModeScreen";
 import ScrollUp from "../../icons/ScrollUp/ScrollUp";
 import Navbar2 from "../../components/Navbar2/Navbar2";
 import "./Notice.css";
-import axios from "axios";
-
-const api = axios.create({
-  baseURL: "https://a-log.site/api/alarm-service",
-});
+import api from "../../api/instance";
 
 function NotificationItem({
   notice,

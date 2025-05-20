@@ -9,7 +9,7 @@ import AlogLogo from "../../icons/AlogLogo/AlogLogo";
 import "./Login.css";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import { AnimatePresence } from "framer-motion";
-import axios from "axios";
+import api from "../../api/instance";
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ export const Login = () => {
   const handleLogin = async () => {
     setErrorMessage(""); // 에러 초기화
     try {
-      const response = await axios.post("https://a-log.site/api/user-service/signin", {
+      const response = await api.post("/user-service/signin", {
         email: id,
         password: password,
       });

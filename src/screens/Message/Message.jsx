@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar2 from "../../components/Navbar2/Navbar2";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
-import axios from "axios";
+import api from "../../api/instance";
 import "./Message.css";
 import { useWebSocket } from "../../contexts/WebSocketContext";
 
@@ -53,7 +53,7 @@ export const Message = () => {
     const fetchRooms = async () => {
       try {
         const token = localStorage.getItem("jwtToken");
-        const res = await axios.get("https://a-log.site/api/message-service/rooms", {
+        const res = await api.get("/message-service/rooms", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setAllData(res.data.data || []);
