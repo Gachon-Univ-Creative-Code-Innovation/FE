@@ -10,7 +10,7 @@ import axios from "axios";
 import "./MessageRoom.css";
 import { useWebSocket } from "../../contexts/WebSocketContext";
 
-const WS_URL = "ws://43.201.107.237:8082/ws/chat";
+const WS_URL = "ws://a-log.site:8082/ws/chat";
 
 // 시간 포맷팅 함수
 function formatTime(isoString) {
@@ -155,7 +155,7 @@ export const MessageRoom = () => {
       setLoading(true);
       const token = localStorage.getItem("jwtToken");
       const response = await axios.get(
-        `http://43.201.107.237:8082/api/message-service/with/${id}?page=${pageNum}&size=10`,
+        `http://a-log.site:8082/api/message-service/with/${id}?page=${pageNum}&size=10`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -199,7 +199,7 @@ export const MessageRoom = () => {
       try {
         const token = localStorage.getItem("jwtToken");
         const response = await axios.get(
-          "http://43.201.107.237:8082/api/message-service/rooms",
+          "http://a-log.site:8082/api/message-service/rooms",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -328,7 +328,7 @@ export const MessageRoom = () => {
       }
       // REST 동기화
       const token = localStorage.getItem("jwtToken");
-      axios.get("http://43.201.107.237:8082/api/message-service/count/unread", {
+      axios.get("http://a-log.site:8082/api/message-service/count/unread", {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(res => {
