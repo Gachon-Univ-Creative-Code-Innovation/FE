@@ -10,6 +10,7 @@ import UserUserCardId from "../../icons/UserUserCardId/UserUserCardId";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import AlogLogo from "../../icons/AlogLogo/AlogLogo";
 import "./SignUp.css";
+import api from "../../api/instance";
 
 export const SignUp = () => {
   const [nickname, setNickname] = useState("");
@@ -22,14 +23,20 @@ export const SignUp = () => {
   const [passwordMessage, setPasswordMessage] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmMessage, setConfirmMessage] = useState("");
+  const [name, setName] = useState("");
 
-  const handleConfirmCode = () => {
-    if (verificationCode === realCode) {
+  const handleConfirmCode = async () => {
+    if (!email || !verificationCode) {
+      alert("이메일과 인증번호를 모두 입력해주세요.");
+      return;
+    }
+    try {
+      await api.post("/user-service/verify/check", { email, code: verificationCode });
       setIsCodeValid(true);
       alert("인증에 성공했습니다.");
-    } else {
+    } catch (error) {
       setIsCodeValid(false);
-      alert("인증 코드가 일치하지 않습니다.");
+      alert(error.response?.data?.message || "인증에 실패했습니다.");
     }
   };
 
@@ -61,12 +68,41 @@ export const SignUp = () => {
     }
   };
 
-  const handleSendEmail = () => {
+  const handleSendEmail = async () => {
     if (!email) {
       setEmailMessage("이메일을 입력해주세요.");
       return;
     }
-    setEmailMessage("인증번호가 발송되었습니다.");
+    try {
+      await api.post("/user-service/verify/send", { email });
+      setEmailMessage("인증번호가 발송되었습니다.");
+    } catch (error) {
+      setEmailMessage(error.response?.data?.message || "인증번호 발송에 실패했습니다.");
+    }
+  };
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      setConfirmMessage("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+    // 회원가입 API 요청
+    try {
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("name", name);
+      formData.append("password", password);
+      formData.append("nickname", nickname);
+      formData.append("role", "USER"); // 기본값 USER, 필요시 선택값으로 변경
+      // githubUsername, profileImage 등 추가 가능
+
+      await api.post("/user-service/signup", formData);
+      alert("회원가입이 완료되었습니다. 로그인 해주세요.");
+      window.location.href = "/login";
+    } catch (error) {
+      alert(error.response?.data?.message || "회원가입에 실패했습니다.");
+    }
   };
 
   return (
@@ -81,6 +117,8 @@ export const SignUp = () => {
                 type="text"
                 placeholder="Enter your name"
                 className="text-input"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
 
@@ -171,11 +209,9 @@ export const SignUp = () => {
               />
             </div>
 
-            <Link to="/login">
-              <button className="login-button">
-                <div className="LOGIN">Sign up</div>
-              </button>
-            </Link>
+            <button className="login-button" onClick={handleSignUp}>
+              <div className="LOGIN">Sign up</div>
+            </button>
           </div>
 
           <Link to="/">
