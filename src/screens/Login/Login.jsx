@@ -9,6 +9,7 @@ import AlogLogo from "../../icons/AlogLogo/AlogLogo";
 import "./Login.css";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import { AnimatePresence } from "framer-motion";
+import axios from "axios";
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -17,19 +18,29 @@ export const Login = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const dummyUser = {
-    id: "test",
-    password: "1234",
-  };
-
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
 
-  const handleLogin = () => {
-    if (id === dummyUser.id && password === dummyUser.password) {
+  const handleLogin = async () => {
+    setErrorMessage(""); // 에러 초기화
+    try {
+      const response = await axios.post("https://a-log.site/api/user-service/signin", {
+        email: id,
+        password: password,
+      });
+
+      // 성공 응답 구조: { status, message, data: { accessToken, refreshToken, ... } }
+      const { accessToken, refreshToken } = response.data.data;
+
+      localStorage.setItem("jwtToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+
       navigate("/MainPageAfter");
-    } else {
-      setErrorMessage("아이디 또는 비밀번호가 올바르지 않습니다.");
+    } catch (error) {
+      // 에러 응답 구조: { status, message, data }
+      const message =
+        error.response?.data?.message || "로그인에 실패했습니다.";
+      setErrorMessage(message);
     }
   };
 
