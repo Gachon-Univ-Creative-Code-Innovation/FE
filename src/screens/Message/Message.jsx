@@ -53,7 +53,7 @@ export const Message = () => {
     const fetchRooms = async () => {
       try {
         const token = localStorage.getItem("jwtToken");
-        const res = await axios.get("http://43.201.107.237:8082/api/message-service/rooms", {
+        const res = await axios.get("http://a-log.site:8082/api/message-service/rooms", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setAllData(res.data.data || []);
