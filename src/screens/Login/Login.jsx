@@ -29,13 +29,16 @@ export const Login = () => {
         password: password,
       });
 
-      // 성공 응답 구조: { status, message, data: { accessToken, refreshToken, ... } }
-      const { accessToken, refreshToken } = response.data.data;
+      // 성공 응답 구조: { status, message, data: { accessToken, refreshToken, userId, ... } }
+      const { accessToken, refreshToken, userId } = response.data.data;
 
       localStorage.setItem("jwtToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
+      if (userId) {
+        localStorage.setItem("userId", userId);
+      }
 
-      navigate("/MainPageAfter");
+      window.location.href = "/MainPageAfter";
     } catch (error) {
       // 에러 응답 구조: { status, message, data }
       const message =
