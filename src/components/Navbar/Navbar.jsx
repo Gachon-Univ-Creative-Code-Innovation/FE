@@ -7,7 +7,7 @@ import MailIcon from "../../icons/MailIcon/MailIcon";
 import HamburgerIcon from "../../icons/HamburgerIcon/HamburgerIcon";
 import { HamburgerScreen } from "../HamburgerScreen/HamburgerScreen";
 import { useAlarmStore } from "../../store/useAlarmStore";
-import axios from "axios";
+import api from "../../api/instance";
 import "./Navbar.css";
 import { useWebSocket } from "../../contexts/WebSocketContext";
 

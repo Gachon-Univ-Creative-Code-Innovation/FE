@@ -7,12 +7,12 @@ export const LogoutComponent = ({ className, divClassName }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    //예시: localStorage의 로그인 정보 제거
-    //localStorage.removeItem("isLoggedIn");
-    //localStorage.removeItem("user");
-
-    // ✅ 메인 페이지로 이동
-    navigate("/MainPageBefore");
+    // 인증 정보 삭제
+    localStorage.removeItem("jwtToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("userId");
+    // 메인 페이지로 이동
+    window.location.href = "/MainPageBefore";
   };
 
   return (

@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
+import api from "../../api/instance";
 import "./MessageRoomExit.css";
 
 export const MessageRoomExit = ({ onClose }) => {
@@ -10,8 +10,8 @@ export const MessageRoomExit = ({ onClose }) => {
   const handleLeave = async () => {
     try {
       const token = localStorage.getItem("jwtToken");
-      await axios.post(
-        `https://a-log.site/api/message-service/room/exit/${id}`,
+      await api.post(
+        `/message-service/room/exit/${id}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
