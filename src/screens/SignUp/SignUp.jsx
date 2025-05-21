@@ -24,6 +24,7 @@ export const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmMessage, setConfirmMessage] = useState("");
   const [name, setName] = useState("");
+  const [nicknameMessage, setNicknameMessage] = useState("");
 
   const handleConfirmCode = async () => {
     if (!email || !verificationCode) {
@@ -105,6 +106,24 @@ export const SignUp = () => {
     }
   };
 
+  // 닉네임 중복 확인 함수
+  const handleCheckNickname = async () => {
+    if (!nickname) {
+      setNicknameMessage("닉네임을 입력해주세요.");
+      return;
+    }
+    try {
+      const res = await api.get(`/user-service/check-nickname/${nickname}`);
+      if (res.data.data === true) {
+        setNicknameMessage("이미 사용 중인 닉네임입니다.");
+      } else {
+        setNicknameMessage("사용 가능한 닉네임입니다.");
+      }
+    } catch (error) {
+      setNicknameMessage(error.response?.data?.message || "닉네임 중복 확인에 실패했습니다.");
+    }
+  };
+
   return (
     <PageTransitionWrapper>
       <Component18 className="component-18" />
@@ -131,10 +150,17 @@ export const SignUp = () => {
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
               />
-              <div className={`frame-2 ${nickname ? "active" : ""}`}>
-                <div className="text-wrapper-19">Check availability</div>
+              <div
+                className={`frame-2 ${nickname ? "active" : ""}`}
+                onClick={handleCheckNickname}
+                style={{ cursor: "pointer" }}
+              >
+                <div className="text-wrapper-19">중복 확인</div>
               </div>
             </div>
+            {nicknameMessage && (
+              <div className="text-wrapper-21">{nicknameMessage}</div>
+            )}
 
             <div className="password-2">
               <CommunicationMail className="user-user-card-ID" />
