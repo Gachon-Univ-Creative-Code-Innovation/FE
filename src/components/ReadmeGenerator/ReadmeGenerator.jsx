@@ -24,7 +24,7 @@ const ReadmeGenerator = ({ active, onDone }) => {
   return (
     <div className="readme-generator__overlay">
       <div className="readme-generator__spinner-wrapper">
-        <p className="readme-generator__text">README 생성 중...</p>
+        <p className="readme-generator__text">README가 생성되면 알려드릴게요</p>
         <Oval
           height={40}
           width={40}
