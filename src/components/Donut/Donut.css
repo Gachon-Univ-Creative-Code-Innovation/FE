@@ -1,10 +1,7 @@
 .supertoroid {
-  position: absolute;
-  z-index: 9999; /* 필요시 숫자 높이기 */
-  display: block;
-  background-image: url("/img/supertoroid-purple-glossy.png");
-  background-position: center;
+  background-image: url(/img/supertoroid-purple-glossy.png);
+  background-position: 50% 50%;
   background-size: cover;
-  width: 340px;
   height: 340px;
+  width: 340px;
 }

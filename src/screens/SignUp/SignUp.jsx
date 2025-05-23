@@ -17,7 +17,6 @@ export const SignUp = () => {
   const [email, setEmail] = useState("");
   const [emailMessage, setEmailMessage] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
-  const [realCode] = useState("123456");
   const [isCodeValid, setIsCodeValid] = useState(false);
   const [password, setPassword] = useState("");
   const [passwordMessage, setPasswordMessage] = useState("");
@@ -32,7 +31,10 @@ export const SignUp = () => {
       return;
     }
     try {
-      await api.post("/user-service/verify/check", { email, code: verificationCode });
+      await api.post("/user-service/verify/check", {
+        email,
+        code: verificationCode,
+      });
       setIsCodeValid(true);
       alert("인증에 성공했습니다.");
     } catch (error) {
@@ -78,7 +80,9 @@ export const SignUp = () => {
       await api.post("/user-service/verify/send", { email });
       setEmailMessage("인증번호가 발송되었습니다.");
     } catch (error) {
-      setEmailMessage(error.response?.data?.message || "인증번호 발송에 실패했습니다.");
+      setEmailMessage(
+        error.response?.data?.message || "인증번호 발송에 실패했습니다."
+      );
     }
   };
 
@@ -120,13 +124,15 @@ export const SignUp = () => {
         setNicknameMessage("사용 가능한 닉네임입니다.");
       }
     } catch (error) {
-      setNicknameMessage(error.response?.data?.message || "닉네임 중복 확인에 실패했습니다.");
+      setNicknameMessage(
+        error.response?.data?.message || "닉네임 중복 확인에 실패했습니다."
+      );
     }
   };
 
   return (
     <PageTransitionWrapper>
-      <Component18 className="component-18" />
+      <Component18 className="sign-up-screen component-18" />
       <div className="sign-up-screen">
         <div className="sign-up-2">
           <div className="frame">

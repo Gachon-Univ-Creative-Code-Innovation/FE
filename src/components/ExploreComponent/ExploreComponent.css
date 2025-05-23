@@ -1,0 +1,23 @@
+.explorecomponent-wrapper {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-color: #1d1652;
+  height: 52px;
+  position: relative;
+  width: 137px;
+}
+
+.explorecomponent-text {
+  color: #1d1652;
+  font-family: "Inter", Helvetica;
+  font-size: 20px;
+  font-weight: 600;
+  height: 14px;
+  left: 31px;
+  letter-spacing: 0;
+  line-height: 14px;
+  position: absolute;
+  text-align: center;
+  top: 17px;
+  white-space: nowrap;
+}

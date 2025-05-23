@@ -1,0 +1,20 @@
+.div-wrapper {
+  height: 50px;
+  position: relative;
+  width: 135px;
+}
+
+.div-wrapper .text-wrapper-10 {
+  color: #a0a0a0;
+  font-family: "Inter", Helvetica;
+  font-size: 20px;
+  font-weight: 400;
+  height: 14px;
+  left: 28px;
+  letter-spacing: 0;
+  line-height: 14px;
+  position: absolute;
+  text-align: center;
+  top: 18px;
+  white-space: nowrap;
+}

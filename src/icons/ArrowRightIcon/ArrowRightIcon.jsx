@@ -1,6 +1,10 @@
 import React from "react";
 
-const ArrowRightIcon = ({ className = "", style = {} }) => {
+const ArrowRightIcon = ({
+  className = "",
+  style = {},
+  stroke = "#A3B3BF", // ✅ 기본값 지정
+}) => {
   return (
     <svg
       width="12"
@@ -13,7 +17,7 @@ const ArrowRightIcon = ({ className = "", style = {} }) => {
     >
       <path
         d="M1.5 1.5L10.5 8L1.5 14.5"
-        stroke="#A3B3BF"
+        stroke={stroke}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
