@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import GoBackIcon from "../../icons/GoBackIcon/GoBackIcon";
 import MessageExit from "../../icons/MessageExit/MessageExit";
+import SearchIcon from "../../icons/SearchIcon/SearchIcon";
 import MessageInput from "../../components/MessageInputBox/MessageInputBox";
 import CommunityRule from "../CommunityRule/CommunityRule";
 import MessageRoomExit from "../MessageRoomExit/MessageRoomExit";
@@ -9,40 +10,33 @@ import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTr
 import api from "../../api/instance";
 import "./MessageRoom.css";
 import { useWebSocket } from "../../contexts/WebSocketContext";
+import ChatImageMessage from "../../components/ChatImageMessage";
 
 const WS_URL = "wss://a-log.site/ws/chat";
 
-// 시간 포맷팅 함수
-function formatTime(isoString) {
+// 시간 포맷팅 함수 (채팅방 내부: 오전/오후 시:분)
+function formatChatTime(isoString) {
   if (!isoString) return "";
-  // UTC → KST(+9) 변환
   const date = new Date(isoString);
-  // KST로 변환
+  const kstDate = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+  let hours = kstDate.getHours();
+  const minutes = kstDate.getMinutes().toString().padStart(2, "0");
+  const isPM = hours >= 12;
+  const period = isPM ? "오후" : "오전";
+  hours = hours % 12 || 12;
+  return `${period} ${hours}:${minutes}`;
+}
+
+// 날짜 구분 박스 포맷 (올해면 MM월 DD일, 아니면 YYYY년 MM월 DD일)
+function formatChatDateBox(isoString) {
+  if (!isoString) return "";
+  const date = new Date(isoString);
   const kstDate = new Date(date.getTime() + 9 * 60 * 60 * 1000);
   const now = new Date();
   const nowKst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
-
-  // 오늘 여부 판별 (KST 기준)
-  const isToday =
-    nowKst.getFullYear() === kstDate.getFullYear() &&
-    nowKst.getMonth() === kstDate.getMonth() &&
-    nowKst.getDate() === kstDate.getDate();
-
-  if (isToday) {
-    let hours = kstDate.getHours();
-    const minutes = kstDate.getMinutes().toString().padStart(2, "0");
-    const isPM = hours >= 12;
-    const period = isPM ? "오후" : "오전";
-    hours = hours % 12 || 12;
-    return `${period} ${hours}:${minutes}`;
-  }
-
-  // 올해 여부 판별 (KST 기준)
   if (nowKst.getFullYear() === kstDate.getFullYear()) {
     return `${kstDate.getMonth() + 1}월 ${kstDate.getDate()}일`;
   }
-
-  // 올해 이외
   return `${kstDate.getFullYear()}년 ${kstDate.getMonth() + 1}월 ${kstDate.getDate()}일`;
 }
 
@@ -64,12 +58,22 @@ export const MessageRoom = () => {
   const [showExitPopup, setShowExitPopup] = useState(false);
   const [closingExit, setClosingExit] = useState(false);
 
+  const [showSearch, setShowSearch] = useState(false);
+
   const myUserId = Number(localStorage.getItem("userId"));
   const targetUserId = Number(id);
 
   const readSet = useRef(new Set());
   const prevHeightRef = useRef(0);
   const prevScrollTopRef = useRef(0);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchIndexes, setSearchIndexes] = useState([]);
+  const [currentSearchIdx, setCurrentSearchIdx] = useState(0);
+  const messageRefs = useRef([]);
+
+  const [allMessages, setAllMessages] = useState([]);
+  const [allLoaded, setAllLoaded] = useState(false);
 
   useEffect(() => {
     messagesRef.current = messages;
@@ -110,40 +114,47 @@ export const MessageRoom = () => {
   // 일반 메시지(type 없음, id/senderId/receiverId 등 있음)
   useWebSocketEvent(undefined, (data) => {
     if (data.id && data.senderId && data.receiverId) {
-      setMessages(prev => {
-        // optimistic 메시지(임시 id, 같은 content, 같은 senderId, createdAt이 1분 이내) 찾기
-        const idx = prev.findIndex(
-          m =>
-            !m.id &&
-            m.content === data.content &&
-            m.senderId === data.senderId &&
-            Math.abs(new Date(m.createdAt) - new Date(data.createdAt)) < 60 * 1000 // 1분 이내
-        );
-        if (idx !== -1) {
-          // optimistic 메시지 교체
-          const newArr = [...prev];
-          newArr[idx] = { ...data, read: data.read };
-          return newArr.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-        } else {
-          // 그냥 추가
-          const merged = [...prev, { ...data, read: data.read }];
-          const unique = Array.from(new Map(merged.map(m => [m.id, m])).values());
-          return unique.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      // 현재 채팅방의 유저와 관련된 메시지만 처리
+      const isCurrentRoomMessage = 
+        (String(data.senderId) === String(myUserId) && String(data.receiverId) === String(targetUserId)) ||
+        (String(data.senderId) === String(targetUserId) && String(data.receiverId) === String(myUserId));
+
+      if (isCurrentRoomMessage) {
+        setMessages(prev => {
+          // optimistic 메시지(임시 id, 같은 content, 같은 senderId, createdAt이 1분 이내) 찾기
+          const idx = prev.findIndex(
+            m =>
+              !m.id &&
+              m.content === data.content &&
+              m.senderId === data.senderId &&
+              Math.abs(new Date(m.createdAt) - new Date(data.createdAt)) < 60 * 1000 // 1분 이내
+          );
+          if (idx !== -1) {
+            // optimistic 메시지 교체
+            const newArr = [...prev];
+            newArr[idx] = { ...data, read: data.read };
+            return newArr.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+          } else {
+            // 그냥 추가
+            const merged = [...prev, { ...data, read: data.read }];
+            const unique = Array.from(new Map(merged.map(m => [m.id, m])).values());
+            return unique.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+          }
+        });
+        // 내가 receiver이면서 읽지 않은 메시지면 READ 요청
+        if (String(data.receiverId) === String(myUserId) && !data.read) {
+          ws.current.send(JSON.stringify({
+            type: "READ",
+            messageId: data.id,
+            roomId: id
+          }));
+          // 메시지 전송 후에도 바로 렌더링
+          setMessages(prev =>
+            prev.map(msg =>
+              String(msg.id) === String(data.id) ? { ...msg, read: true } : msg
+            )
+          );
         }
-      });
-      // 내가 receiver이면서 읽지 않은 메시지면 READ 요청
-      if (String(data.receiverId) === String(myUserId) && !data.read) {
-        ws.current.send(JSON.stringify({
-          type: "READ",
-          messageId: data.id,
-          roomId: id
-        }));
-        // 메시지 전송 후에도 바로 렌더링
-        setMessages(prev =>
-          prev.map(msg =>
-            String(msg.id) === String(data.id) ? { ...msg, read: true } : msg
-          )
-        );
       }
     }
   });
@@ -284,12 +295,14 @@ export const MessageRoom = () => {
     }
   }, []);
 
-  // 메시지 날짜 그룹화
+  // 메시지 날짜 그룹화 (KST 기준)
   const groupMessagesByDate = (messages) => {
     const groups = {};
     messages.forEach((message) => {
       const date = new Date(message.createdAt);
-      const dateKey = date.toISOString().split("T")[0];
+      // KST로 변환
+      const kstDate = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+      const dateKey = kstDate.toISOString().split("T")[0]; // YYYY-MM-DD
       if (!groups[dateKey]) {
         groups[dateKey] = [];
       }
@@ -342,6 +355,56 @@ export const MessageRoom = () => {
     };
   }, [id, ws, setUnreadTotalCount]);
 
+  // 전체 메시지 모두 불러오기 (입장 시)
+  useEffect(() => {
+    let ignore = false;
+    const fetchAllMessages = async () => {
+      let page = 0, hasMore = true, all = [];
+      while (hasMore) {
+        const res = await api.get(`/message-service/with/${id}?page=${page}&size=1000`);
+        const msgs = res.data.data.content || [];
+        all = [...msgs, ...all];
+        hasMore = !res.data.data.last;
+        page++;
+      }
+      if (!ignore) {
+        setAllMessages(all);
+        setAllLoaded(true);
+      }
+    };
+    fetchAllMessages();
+    return () => { ignore = true; };
+  }, [id]);
+
+  // 검색 인덱스 추출 (allMessages 기준)
+  useEffect(() => {
+    if (searchTerm) {
+      const indexes = allMessages
+        .map((msg, idx) =>
+          msg.content && msg.content.toLowerCase().includes(searchTerm.toLowerCase()) ? idx : -1
+        )
+        .filter(idx => idx !== -1);
+      setSearchIndexes(indexes);
+      setCurrentSearchIdx(0);
+    } else {
+      setSearchIndexes([]);
+      setCurrentSearchIdx(0);
+    }
+  }, [searchTerm, allMessages]);
+
+  // 검색 결과 이동 (allMessages 기준)
+  useEffect(() => {
+    if (
+      searchIndexes.length > 0 &&
+      messageRefs.current[searchIndexes[currentSearchIdx]]
+    ) {
+      messageRefs.current[searchIndexes[currentSearchIdx]].scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    }
+  }, [currentSearchIdx, searchIndexes]);
+
   return (
     <PageTransitionWrapper>
       <div className="messageroom-screen">
@@ -353,7 +416,12 @@ export const MessageRoom = () => {
             <div className="messageroom-username">
               {targetUser?.nickname}
             </div>
-            <div className="messageroom-link-wrapper">
+            <div className="messageroom-link-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <SearchIcon
+                className="messageroom-search-icon"
+                style={{ cursor: 'pointer' }}
+                onClick={() => setShowSearch(v => !v)}
+              />
               <MessageExit
                 className="messageroom-link-icon"
                 onClick={openExitPopup}
@@ -362,26 +430,88 @@ export const MessageRoom = () => {
             </div>
           </div>
 
+          {/* 검색 바 (돋보기 클릭 시에만 노출) */}
+          {showSearch && (
+            <div className="messageroom-search-bar">
+              <input
+                type="text"
+                placeholder="메시지 검색"
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+                className="messageroom-search-input"
+                autoFocus
+              />
+              {searchIndexes.length > 0 && (
+                <div className="messageroom-search-nav">
+                  <button
+                    className="messageroom-search-btn"
+                    onClick={() =>
+                      setCurrentSearchIdx(
+                        (currentSearchIdx - 1 + searchIndexes.length) % searchIndexes.length
+                      )
+                    }
+                  >
+                    이전
+                  </button>
+                  <span className="messageroom-search-count">
+                    {currentSearchIdx + 1} / {searchIndexes.length}
+                  </span>
+                  <button
+                    className="messageroom-search-btn"
+                    onClick={() =>
+                      setCurrentSearchIdx((currentSearchIdx + 1) % searchIndexes.length)
+                    }
+                  >
+                    다음
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="messageroom-chat" ref={chatContainerRef}>
-            {Object.entries(groupMessagesByDate(messages)).map(([date, msgs]) => (
-              <React.Fragment key={date}>
-                {msgs.map((chat, idx) =>
-                  chat.senderId === Number(localStorage.getItem("userId")) ? (
-                    <div className="messageroom-my-message" key={chat.id || chat.createdAt + chat.content}>
+            {showSearch && searchTerm
+              ? allMessages.map((chat, idx) => {
+                  // 하이라이트, ref, 기타 기존 코드 동일하게 적용
+                  const highlight = (text, keyword) => {
+                    if (!keyword) return text;
+                    const parts = text.split(new RegExp(`(${keyword})`, "gi"));
+                    return parts.map((part, i) =>
+                      part.toLowerCase() === keyword.toLowerCase() ? (
+                        <mark key={i}>{part}</mark>
+                      ) : (
+                        part
+                      )
+                    );
+                  };
+                  return chat.senderId === Number(localStorage.getItem("userId")) ? (
+                    <div
+                      className="messageroom-my-message"
+                      key={chat.id || chat.createdAt + chat.content}
+                      ref={el => (messageRefs.current[idx] = el)}
+                    >
                       <div className="messageroom-meta-wrapper">
                         {!chat.read && (
                           <div className="messageroom-unread-my">안 읽음</div>
                         )}
                         <div className="messageroom-time-right">
-                          {formatTime(chat.createdAt)}
+                          {formatChatTime(chat.createdAt)}
                         </div>
                       </div>
                       <div className="messageroom-bubble-my align-profile-height">
-                        {chat.content}
+                        {chat.messageType === "IMAGE" ? (
+                          <ChatImageMessage objectUrl={chat.content} />
+                        ) : (
+                          highlight(chat.content, searchTerm)
+                        )}
                       </div>
                     </div>
                   ) : (
-                    <div className="messageroom-other-message" key={chat.id || chat.createdAt + chat.content}>
+                    <div
+                      className="messageroom-other-message"
+                      key={chat.id || chat.createdAt + chat.content}
+                      ref={el => (messageRefs.current[idx] = el)}
+                    >
                       <div className="messageroom-profile">
                         <img src="/img/basic_profile_photo.jpeg" alt="profile" />
                       </div>
@@ -390,7 +520,11 @@ export const MessageRoom = () => {
                           {chat.senderNickname}
                         </div>
                         <div className="messageroom-bubble-other align-profile-height">
-                          {chat.content}
+                          {chat.messageType === "IMAGE" ? (
+                            <ChatImageMessage objectUrl={chat.content} />
+                          ) : (
+                            highlight(chat.content, searchTerm)
+                          )}
                         </div>
                       </div>
                       <div className="messageroom-meta-wrapper">
@@ -398,14 +532,86 @@ export const MessageRoom = () => {
                           <div className="messageroom-unread">안 읽음</div>
                         )}
                         <div className="messageroom-time-left">
-                          {formatTime(chat.createdAt)}
+                          {formatChatTime(chat.createdAt)}
                         </div>
                       </div>
                     </div>
-                  )
-                )}
-              </React.Fragment>
-            ))}
+                  );
+                })
+              : Object.entries(groupMessagesByDate(messages)).map(([date, msgs]) => (
+                  <React.Fragment key={date}>
+                    <div className="messageroom-date">
+                      <span className="messageroom-date-text">{formatChatDateBox(date)}</span>
+                    </div>
+                    {msgs.map((chat, idx) => {
+                      const flatIdx = messages.findIndex(m => m.id === chat.id);
+                      const highlight = (text, keyword) => {
+                        if (!keyword) return text;
+                        const parts = text.split(new RegExp(`(${keyword})`, "gi"));
+                        return parts.map((part, i) =>
+                          part.toLowerCase() === keyword.toLowerCase() ? (
+                            <mark key={i}>{part}</mark>
+                          ) : (
+                            part
+                          )
+                        );
+                      };
+                      return chat.senderId === Number(localStorage.getItem("userId")) ? (
+                        <div
+                          className="messageroom-my-message"
+                          key={chat.id || chat.createdAt + chat.content}
+                          ref={el => (messageRefs.current[flatIdx] = el)}
+                        >
+                          <div className="messageroom-meta-wrapper">
+                            {!chat.read && (
+                              <div className="messageroom-unread-my">안 읽음</div>
+                            )}
+                            <div className="messageroom-time-right">
+                              {formatChatTime(chat.createdAt)}
+                            </div>
+                          </div>
+                          <div className="messageroom-bubble-my align-profile-height">
+                            {chat.messageType === "IMAGE" ? (
+                              <ChatImageMessage objectUrl={chat.content} />
+                            ) : (
+                              highlight(chat.content, searchTerm)
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        <div
+                          className="messageroom-other-message"
+                          key={chat.id || chat.createdAt + chat.content}
+                          ref={el => (messageRefs.current[flatIdx] = el)}
+                        >
+                          <div className="messageroom-profile">
+                            <img src="/img/basic_profile_photo.jpeg" alt="profile" />
+                          </div>
+                          <div className="messageroom-info">
+                            <div className="messageroom-nickname">
+                              {chat.senderNickname}
+                            </div>
+                            <div className="messageroom-bubble-other align-profile-height">
+                              {chat.messageType === "IMAGE" ? (
+                                <ChatImageMessage objectUrl={chat.content} />
+                              ) : (
+                                highlight(chat.content, searchTerm)
+                              )}
+                            </div>
+                          </div>
+                          <div className="messageroom-meta-wrapper">
+                            {!chat.read && (
+                              <div className="messageroom-unread">안 읽음</div>
+                            )}
+                            <div className="messageroom-time-left">
+                              {formatChatTime(chat.createdAt)}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </React.Fragment>
+                ))}
             {loading && <div className="messageroom-loading">로딩 중...</div>}
           </div>
 

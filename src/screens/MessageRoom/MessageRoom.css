@@ -285,3 +285,69 @@
   margin-bottom: 0;
   padding-left: 0;
 }
+
+.messageroom-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 30px 16px 30px;
+  background: transparent;
+  border-bottom: 1.5px solid #e0e4ea;
+  margin-bottom: 0;
+}
+
+.messageroom-search-input {
+  flex: 1;
+  border: 1.5px solid #a3b3bf;
+  border-radius: 20px;
+  padding: 12px 18px;
+  font-size: 16px;
+  background: #fafdff;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.messageroom-search-input:focus {
+  border: 1.5px solid #1d1652;
+}
+
+.messageroom-search-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.messageroom-search-btn {
+  border: none;
+  background: #d7e3ed;
+  color: #1d1652;
+  border-radius: 12px;
+  padding: 7px 16px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.messageroom-search-btn:hover {
+  background: #b3c6db;
+}
+
+.messageroom-search-count {
+  font-size: 15px;
+  color: #888;
+  min-width: 48px;
+  text-align: center;
+}
+
+.messageroom-image {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 8px;
+  cursor: pointer;
+  object-fit: contain;
+}
+
+.messageroom-image:hover {
+  opacity: 0.9;
+}

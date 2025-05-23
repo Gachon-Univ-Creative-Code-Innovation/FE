@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 
-export const SearchIcon = ({ color = "#1d1652", className = "" }) => {
+export const SearchIcon = ({ color = "#1d1652", className = "", style = {}, onClick }) => {
   return (
     <svg
       className={`search-icon ${className}`}
@@ -10,6 +10,8 @@ export const SearchIcon = ({ color = "#1d1652", className = "" }) => {
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      style={style}
+      onClick={onClick}
     >
       <circle
         cx="11"
@@ -37,6 +39,8 @@ export const SearchIcon = ({ color = "#1d1652", className = "" }) => {
 SearchIcon.propTypes = {
   color: PropTypes.string,
   className: PropTypes.string,
+  style: PropTypes.object,
+  onClick: PropTypes.func,
 };
 
 export default SearchIcon;

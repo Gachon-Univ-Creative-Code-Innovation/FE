@@ -7,13 +7,14 @@
     box-sizing: border-box;
     padding: 16px 0;
     gap: 8px;
+    position: relative;
   }
   
   
   .messageinput-input {
     min-height: 39px;
     max-height: 120px;
-    width: calc(100% - 48px); /* 버튼 크기만큼 여유 */
+    width: calc(100% - 96px); /* 버튼 2개 크기만큼 여유 */
     padding: 10px 15px;
     font-size: 16px;
     border: 1px solid #a3b3bf;
@@ -25,10 +26,10 @@
     transition: height 0.1s;
   }
   
-  .messageinput-send-btn {
+  .messageinput-send-btn,
+  .messageinput-image-btn {
     background: none;
     border: none;
-    margin-left: 0;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -38,8 +39,47 @@
     justify-content: center;
   }
   
-  .messageinput-send-icon {
+  .messageinput-send-icon,
+  .messageinput-image-icon {
     width: 20px;
     height: 20px;
+  }
+  
+  .messageinput-image-preview {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    background: white;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .messageinput-image-preview img {
+    max-width: 200px;
+    max-height: 200px;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+  
+  .messageinput-remove-image {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0;
   }
   
