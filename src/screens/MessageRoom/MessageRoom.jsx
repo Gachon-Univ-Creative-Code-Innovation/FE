@@ -14,37 +14,29 @@ import ChatImageMessage from "../../components/ChatImageMessage";
 
 const WS_URL = "wss://a-log.site/ws/chat";
 
-// 시간 포맷팅 함수
-function formatTime(isoString) {
+// 시간 포맷팅 함수 (채팅방 내부: 오전/오후 시:분)
+function formatChatTime(isoString) {
   if (!isoString) return "";
-  // UTC → KST(+9) 변환
   const date = new Date(isoString);
-  // KST로 변환
+  const kstDate = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+  let hours = kstDate.getHours();
+  const minutes = kstDate.getMinutes().toString().padStart(2, "0");
+  const isPM = hours >= 12;
+  const period = isPM ? "오후" : "오전";
+  hours = hours % 12 || 12;
+  return `${period} ${hours}:${minutes}`;
+}
+
+// 날짜 구분 박스 포맷 (올해면 MM월 DD일, 아니면 YYYY년 MM월 DD일)
+function formatChatDateBox(isoString) {
+  if (!isoString) return "";
+  const date = new Date(isoString);
   const kstDate = new Date(date.getTime() + 9 * 60 * 60 * 1000);
   const now = new Date();
   const nowKst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
-
-  // 오늘 여부 판별 (KST 기준)
-  const isToday =
-    nowKst.getFullYear() === kstDate.getFullYear() &&
-    nowKst.getMonth() === kstDate.getMonth() &&
-    nowKst.getDate() === kstDate.getDate();
-
-  if (isToday) {
-    let hours = kstDate.getHours();
-    const minutes = kstDate.getMinutes().toString().padStart(2, "0");
-    const isPM = hours >= 12;
-    const period = isPM ? "오후" : "오전";
-    hours = hours % 12 || 12;
-    return `${period} ${hours}:${minutes}`;
-  }
-
-  // 올해 여부 판별 (KST 기준)
   if (nowKst.getFullYear() === kstDate.getFullYear()) {
     return `${kstDate.getMonth() + 1}월 ${kstDate.getDate()}일`;
   }
-
-  // 올해 이외
   return `${kstDate.getFullYear()}년 ${kstDate.getMonth() + 1}월 ${kstDate.getDate()}일`;
 }
 
@@ -303,12 +295,14 @@ export const MessageRoom = () => {
     }
   }, []);
 
-  // 메시지 날짜 그룹화
+  // 메시지 날짜 그룹화 (KST 기준)
   const groupMessagesByDate = (messages) => {
     const groups = {};
     messages.forEach((message) => {
       const date = new Date(message.createdAt);
-      const dateKey = date.toISOString().split("T")[0];
+      // KST로 변환
+      const kstDate = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+      const dateKey = kstDate.toISOString().split("T")[0]; // YYYY-MM-DD
       if (!groups[dateKey]) {
         groups[dateKey] = [];
       }
@@ -501,7 +495,7 @@ export const MessageRoom = () => {
                           <div className="messageroom-unread-my">안 읽음</div>
                         )}
                         <div className="messageroom-time-right">
-                          {formatTime(chat.createdAt)}
+                          {formatChatTime(chat.createdAt)}
                         </div>
                       </div>
                       <div className="messageroom-bubble-my align-profile-height">
@@ -538,7 +532,7 @@ export const MessageRoom = () => {
                           <div className="messageroom-unread">안 읽음</div>
                         )}
                         <div className="messageroom-time-left">
-                          {formatTime(chat.createdAt)}
+                          {formatChatTime(chat.createdAt)}
                         </div>
                       </div>
                     </div>
@@ -546,6 +540,9 @@ export const MessageRoom = () => {
                 })
               : Object.entries(groupMessagesByDate(messages)).map(([date, msgs]) => (
                   <React.Fragment key={date}>
+                    <div className="messageroom-date">
+                      <span className="messageroom-date-text">{formatChatDateBox(date)}</span>
+                    </div>
                     {msgs.map((chat, idx) => {
                       const flatIdx = messages.findIndex(m => m.id === chat.id);
                       const highlight = (text, keyword) => {
@@ -570,7 +567,7 @@ export const MessageRoom = () => {
                               <div className="messageroom-unread-my">안 읽음</div>
                             )}
                             <div className="messageroom-time-right">
-                              {formatTime(chat.createdAt)}
+                              {formatChatTime(chat.createdAt)}
                             </div>
                           </div>
                           <div className="messageroom-bubble-my align-profile-height">
@@ -607,7 +604,7 @@ export const MessageRoom = () => {
                               <div className="messageroom-unread">안 읽음</div>
                             )}
                             <div className="messageroom-time-left">
-                              {formatTime(chat.createdAt)}
+                              {formatChatTime(chat.createdAt)}
                             </div>
                           </div>
                         </div>
