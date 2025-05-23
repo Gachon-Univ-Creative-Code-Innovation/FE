@@ -79,6 +79,9 @@ export const MessageRoom = () => {
   const [currentSearchIdx, setCurrentSearchIdx] = useState(0);
   const messageRefs = useRef([]);
 
+  const [allMessages, setAllMessages] = useState([]);
+  const [allLoaded, setAllLoaded] = useState(false);
+
   useEffect(() => {
     messagesRef.current = messages;
   }, [messages]);
@@ -350,11 +353,31 @@ export const MessageRoom = () => {
     };
   }, [id, ws, setUnreadTotalCount]);
 
-  // 검색 인덱스 추출
+  // 전체 메시지 모두 불러오기 (입장 시)
+  useEffect(() => {
+    let ignore = false;
+    const fetchAllMessages = async () => {
+      let page = 0, hasMore = true, all = [];
+      while (hasMore) {
+        const res = await api.get(`/message-service/with/${id}?page=${page}&size=1000`);
+        const msgs = res.data.data.content || [];
+        all = [...msgs, ...all];
+        hasMore = !res.data.data.last;
+        page++;
+      }
+      if (!ignore) {
+        setAllMessages(all);
+        setAllLoaded(true);
+      }
+    };
+    fetchAllMessages();
+    return () => { ignore = true; };
+  }, [id]);
+
+  // 검색 인덱스 추출 (allMessages 기준)
   useEffect(() => {
     if (searchTerm) {
-      const flatMessages = messages;
-      const indexes = flatMessages
+      const indexes = allMessages
         .map((msg, idx) =>
           msg.content && msg.content.toLowerCase().includes(searchTerm.toLowerCase()) ? idx : -1
         )
@@ -365,9 +388,9 @@ export const MessageRoom = () => {
       setSearchIndexes([]);
       setCurrentSearchIdx(0);
     }
-  }, [searchTerm, messages]);
+  }, [searchTerm, allMessages]);
 
-  // 검색 결과 이동
+  // 검색 결과 이동 (allMessages 기준)
   useEffect(() => {
     if (
       searchIndexes.length > 0 &&
@@ -445,12 +468,9 @@ export const MessageRoom = () => {
           )}
 
           <div className="messageroom-chat" ref={chatContainerRef}>
-            {Object.entries(groupMessagesByDate(messages)).map(([date, msgs]) => (
-              <React.Fragment key={date}>
-                {msgs.map((chat, idx) => {
-                  // 전체 messages에서의 인덱스 계산
-                  const flatIdx = messages.findIndex(m => m.id === chat.id);
-                  // 하이라이트 함수
+            {showSearch && searchTerm
+              ? allMessages.map((chat, idx) => {
+                  // 하이라이트, ref, 기타 기존 코드 동일하게 적용
                   const highlight = (text, keyword) => {
                     if (!keyword) return text;
                     const parts = text.split(new RegExp(`(${keyword})`, "gi"));
@@ -466,7 +486,7 @@ export const MessageRoom = () => {
                     <div
                       className="messageroom-my-message"
                       key={chat.id || chat.createdAt + chat.content}
-                      ref={el => (messageRefs.current[flatIdx] = el)}
+                      ref={el => (messageRefs.current[idx] = el)}
                     >
                       <div className="messageroom-meta-wrapper">
                         {!chat.read && (
@@ -484,7 +504,7 @@ export const MessageRoom = () => {
                     <div
                       className="messageroom-other-message"
                       key={chat.id || chat.createdAt + chat.content}
-                      ref={el => (messageRefs.current[flatIdx] = el)}
+                      ref={el => (messageRefs.current[idx] = el)}
                     >
                       <div className="messageroom-profile">
                         <img src="/img/basic_profile_photo.jpeg" alt="profile" />
@@ -507,9 +527,70 @@ export const MessageRoom = () => {
                       </div>
                     </div>
                   );
-                })}
-              </React.Fragment>
-            ))}
+                })
+              : Object.entries(groupMessagesByDate(messages)).map(([date, msgs]) => (
+                  <React.Fragment key={date}>
+                    {msgs.map((chat, idx) => {
+                      const flatIdx = messages.findIndex(m => m.id === chat.id);
+                      const highlight = (text, keyword) => {
+                        if (!keyword) return text;
+                        const parts = text.split(new RegExp(`(${keyword})`, "gi"));
+                        return parts.map((part, i) =>
+                          part.toLowerCase() === keyword.toLowerCase() ? (
+                            <mark key={i}>{part}</mark>
+                          ) : (
+                            part
+                          )
+                        );
+                      };
+                      return chat.senderId === Number(localStorage.getItem("userId")) ? (
+                        <div
+                          className="messageroom-my-message"
+                          key={chat.id || chat.createdAt + chat.content}
+                          ref={el => (messageRefs.current[flatIdx] = el)}
+                        >
+                          <div className="messageroom-meta-wrapper">
+                            {!chat.read && (
+                              <div className="messageroom-unread-my">안 읽음</div>
+                            )}
+                            <div className="messageroom-time-right">
+                              {formatTime(chat.createdAt)}
+                            </div>
+                          </div>
+                          <div className="messageroom-bubble-my align-profile-height">
+                            {highlight(chat.content, searchTerm)}
+                          </div>
+                        </div>
+                      ) : (
+                        <div
+                          className="messageroom-other-message"
+                          key={chat.id || chat.createdAt + chat.content}
+                          ref={el => (messageRefs.current[flatIdx] = el)}
+                        >
+                          <div className="messageroom-profile">
+                            <img src="/img/basic_profile_photo.jpeg" alt="profile" />
+                          </div>
+                          <div className="messageroom-info">
+                            <div className="messageroom-nickname">
+                              {chat.senderNickname}
+                            </div>
+                            <div className="messageroom-bubble-other align-profile-height">
+                              {highlight(chat.content, searchTerm)}
+                            </div>
+                          </div>
+                          <div className="messageroom-meta-wrapper">
+                            {!chat.read && (
+                              <div className="messageroom-unread">안 읽음</div>
+                            )}
+                            <div className="messageroom-time-left">
+                              {formatTime(chat.createdAt)}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </React.Fragment>
+                ))}
             {loading && <div className="messageroom-loading">로딩 중...</div>}
           </div>
 
