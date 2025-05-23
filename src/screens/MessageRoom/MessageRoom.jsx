@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import GoBackIcon from "../../icons/GoBackIcon/GoBackIcon";
 import MessageExit from "../../icons/MessageExit/MessageExit";
+import SearchIcon from "../../icons/SearchIcon/SearchIcon";
 import MessageInput from "../../components/MessageInputBox/MessageInputBox";
 import CommunityRule from "../CommunityRule/CommunityRule";
 import MessageRoomExit from "../MessageRoomExit/MessageRoomExit";
@@ -64,12 +65,19 @@ export const MessageRoom = () => {
   const [showExitPopup, setShowExitPopup] = useState(false);
   const [closingExit, setClosingExit] = useState(false);
 
+  const [showSearch, setShowSearch] = useState(false);
+
   const myUserId = Number(localStorage.getItem("userId"));
   const targetUserId = Number(id);
 
   const readSet = useRef(new Set());
   const prevHeightRef = useRef(0);
   const prevScrollTopRef = useRef(0);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchIndexes, setSearchIndexes] = useState([]);
+  const [currentSearchIdx, setCurrentSearchIdx] = useState(0);
+  const messageRefs = useRef([]);
 
   useEffect(() => {
     messagesRef.current = messages;
@@ -342,6 +350,36 @@ export const MessageRoom = () => {
     };
   }, [id, ws, setUnreadTotalCount]);
 
+  // 검색 인덱스 추출
+  useEffect(() => {
+    if (searchTerm) {
+      const flatMessages = messages;
+      const indexes = flatMessages
+        .map((msg, idx) =>
+          msg.content && msg.content.toLowerCase().includes(searchTerm.toLowerCase()) ? idx : -1
+        )
+        .filter(idx => idx !== -1);
+      setSearchIndexes(indexes);
+      setCurrentSearchIdx(0);
+    } else {
+      setSearchIndexes([]);
+      setCurrentSearchIdx(0);
+    }
+  }, [searchTerm, messages]);
+
+  // 검색 결과 이동
+  useEffect(() => {
+    if (
+      searchIndexes.length > 0 &&
+      messageRefs.current[searchIndexes[currentSearchIdx]]
+    ) {
+      messageRefs.current[searchIndexes[currentSearchIdx]].scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    }
+  }, [currentSearchIdx, searchIndexes]);
+
   return (
     <PageTransitionWrapper>
       <div className="messageroom-screen">
@@ -353,7 +391,12 @@ export const MessageRoom = () => {
             <div className="messageroom-username">
               {targetUser?.nickname}
             </div>
-            <div className="messageroom-link-wrapper">
+            <div className="messageroom-link-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <SearchIcon
+                className="messageroom-search-icon"
+                style={{ cursor: 'pointer' }}
+                onClick={() => setShowSearch(v => !v)}
+              />
               <MessageExit
                 className="messageroom-link-icon"
                 onClick={openExitPopup}
@@ -362,12 +405,69 @@ export const MessageRoom = () => {
             </div>
           </div>
 
+          {/* 검색 바 (돋보기 클릭 시에만 노출) */}
+          {showSearch && (
+            <div className="messageroom-search-bar">
+              <input
+                type="text"
+                placeholder="메시지 검색"
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+                className="messageroom-search-input"
+                autoFocus
+              />
+              {searchIndexes.length > 0 && (
+                <div className="messageroom-search-nav">
+                  <button
+                    className="messageroom-search-btn"
+                    onClick={() =>
+                      setCurrentSearchIdx(
+                        (currentSearchIdx - 1 + searchIndexes.length) % searchIndexes.length
+                      )
+                    }
+                  >
+                    이전
+                  </button>
+                  <span className="messageroom-search-count">
+                    {currentSearchIdx + 1} / {searchIndexes.length}
+                  </span>
+                  <button
+                    className="messageroom-search-btn"
+                    onClick={() =>
+                      setCurrentSearchIdx((currentSearchIdx + 1) % searchIndexes.length)
+                    }
+                  >
+                    다음
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="messageroom-chat" ref={chatContainerRef}>
             {Object.entries(groupMessagesByDate(messages)).map(([date, msgs]) => (
               <React.Fragment key={date}>
-                {msgs.map((chat, idx) =>
-                  chat.senderId === Number(localStorage.getItem("userId")) ? (
-                    <div className="messageroom-my-message" key={chat.id || chat.createdAt + chat.content}>
+                {msgs.map((chat, idx) => {
+                  // 전체 messages에서의 인덱스 계산
+                  const flatIdx = messages.findIndex(m => m.id === chat.id);
+                  // 하이라이트 함수
+                  const highlight = (text, keyword) => {
+                    if (!keyword) return text;
+                    const parts = text.split(new RegExp(`(${keyword})`, "gi"));
+                    return parts.map((part, i) =>
+                      part.toLowerCase() === keyword.toLowerCase() ? (
+                        <mark key={i}>{part}</mark>
+                      ) : (
+                        part
+                      )
+                    );
+                  };
+                  return chat.senderId === Number(localStorage.getItem("userId")) ? (
+                    <div
+                      className="messageroom-my-message"
+                      key={chat.id || chat.createdAt + chat.content}
+                      ref={el => (messageRefs.current[flatIdx] = el)}
+                    >
                       <div className="messageroom-meta-wrapper">
                         {!chat.read && (
                           <div className="messageroom-unread-my">안 읽음</div>
@@ -377,11 +477,15 @@ export const MessageRoom = () => {
                         </div>
                       </div>
                       <div className="messageroom-bubble-my align-profile-height">
-                        {chat.content}
+                        {highlight(chat.content, searchTerm)}
                       </div>
                     </div>
                   ) : (
-                    <div className="messageroom-other-message" key={chat.id || chat.createdAt + chat.content}>
+                    <div
+                      className="messageroom-other-message"
+                      key={chat.id || chat.createdAt + chat.content}
+                      ref={el => (messageRefs.current[flatIdx] = el)}
+                    >
                       <div className="messageroom-profile">
                         <img src="/img/basic_profile_photo.jpeg" alt="profile" />
                       </div>
@@ -390,7 +494,7 @@ export const MessageRoom = () => {
                           {chat.senderNickname}
                         </div>
                         <div className="messageroom-bubble-other align-profile-height">
-                          {chat.content}
+                          {highlight(chat.content, searchTerm)}
                         </div>
                       </div>
                       <div className="messageroom-meta-wrapper">
@@ -402,8 +506,8 @@ export const MessageRoom = () => {
                         </div>
                       </div>
                     </div>
-                  )
-                )}
+                  );
+                })}
               </React.Fragment>
             ))}
             {loading && <div className="messageroom-loading">로딩 중...</div>}
