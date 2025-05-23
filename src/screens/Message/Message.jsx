@@ -150,7 +150,7 @@ export const Message = () => {
                 </div>
                 <div className="message-content">
                   <div className="message-nickname">{item.targetNickname}</div>
-                  <div className="message-text">{item.lastMessage}</div>
+                  <div className="message-text">{item.lastMessageType === "IMAGE" ? "사진" : item.lastMessage}</div>
                 </div>
                 <div className="message-date-wrapper">
                   <div className="message-date">{formatTime(item.lastMessageTime)}</div>

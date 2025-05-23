@@ -10,6 +10,7 @@ import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTr
 import api from "../../api/instance";
 import "./MessageRoom.css";
 import { useWebSocket } from "../../contexts/WebSocketContext";
+import ChatImageMessage from "../../components/ChatImageMessage";
 
 const WS_URL = "wss://a-log.site/ws/chat";
 
@@ -121,40 +122,47 @@ export const MessageRoom = () => {
   // 일반 메시지(type 없음, id/senderId/receiverId 등 있음)
   useWebSocketEvent(undefined, (data) => {
     if (data.id && data.senderId && data.receiverId) {
-      setMessages(prev => {
-        // optimistic 메시지(임시 id, 같은 content, 같은 senderId, createdAt이 1분 이내) 찾기
-        const idx = prev.findIndex(
-          m =>
-            !m.id &&
-            m.content === data.content &&
-            m.senderId === data.senderId &&
-            Math.abs(new Date(m.createdAt) - new Date(data.createdAt)) < 60 * 1000 // 1분 이내
-        );
-        if (idx !== -1) {
-          // optimistic 메시지 교체
-          const newArr = [...prev];
-          newArr[idx] = { ...data, read: data.read };
-          return newArr.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-        } else {
-          // 그냥 추가
-          const merged = [...prev, { ...data, read: data.read }];
-          const unique = Array.from(new Map(merged.map(m => [m.id, m])).values());
-          return unique.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      // 현재 채팅방의 유저와 관련된 메시지만 처리
+      const isCurrentRoomMessage = 
+        (String(data.senderId) === String(myUserId) && String(data.receiverId) === String(targetUserId)) ||
+        (String(data.senderId) === String(targetUserId) && String(data.receiverId) === String(myUserId));
+
+      if (isCurrentRoomMessage) {
+        setMessages(prev => {
+          // optimistic 메시지(임시 id, 같은 content, 같은 senderId, createdAt이 1분 이내) 찾기
+          const idx = prev.findIndex(
+            m =>
+              !m.id &&
+              m.content === data.content &&
+              m.senderId === data.senderId &&
+              Math.abs(new Date(m.createdAt) - new Date(data.createdAt)) < 60 * 1000 // 1분 이내
+          );
+          if (idx !== -1) {
+            // optimistic 메시지 교체
+            const newArr = [...prev];
+            newArr[idx] = { ...data, read: data.read };
+            return newArr.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+          } else {
+            // 그냥 추가
+            const merged = [...prev, { ...data, read: data.read }];
+            const unique = Array.from(new Map(merged.map(m => [m.id, m])).values());
+            return unique.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+          }
+        });
+        // 내가 receiver이면서 읽지 않은 메시지면 READ 요청
+        if (String(data.receiverId) === String(myUserId) && !data.read) {
+          ws.current.send(JSON.stringify({
+            type: "READ",
+            messageId: data.id,
+            roomId: id
+          }));
+          // 메시지 전송 후에도 바로 렌더링
+          setMessages(prev =>
+            prev.map(msg =>
+              String(msg.id) === String(data.id) ? { ...msg, read: true } : msg
+            )
+          );
         }
-      });
-      // 내가 receiver이면서 읽지 않은 메시지면 READ 요청
-      if (String(data.receiverId) === String(myUserId) && !data.read) {
-        ws.current.send(JSON.stringify({
-          type: "READ",
-          messageId: data.id,
-          roomId: id
-        }));
-        // 메시지 전송 후에도 바로 렌더링
-        setMessages(prev =>
-          prev.map(msg =>
-            String(msg.id) === String(data.id) ? { ...msg, read: true } : msg
-          )
-        );
       }
     }
   });
@@ -497,7 +505,11 @@ export const MessageRoom = () => {
                         </div>
                       </div>
                       <div className="messageroom-bubble-my align-profile-height">
-                        {highlight(chat.content, searchTerm)}
+                        {chat.messageType === "IMAGE" ? (
+                          <ChatImageMessage objectUrl={chat.content} />
+                        ) : (
+                          highlight(chat.content, searchTerm)
+                        )}
                       </div>
                     </div>
                   ) : (
@@ -514,7 +526,11 @@ export const MessageRoom = () => {
                           {chat.senderNickname}
                         </div>
                         <div className="messageroom-bubble-other align-profile-height">
-                          {highlight(chat.content, searchTerm)}
+                          {chat.messageType === "IMAGE" ? (
+                            <ChatImageMessage objectUrl={chat.content} />
+                          ) : (
+                            highlight(chat.content, searchTerm)
+                          )}
                         </div>
                       </div>
                       <div className="messageroom-meta-wrapper">
@@ -558,7 +574,11 @@ export const MessageRoom = () => {
                             </div>
                           </div>
                           <div className="messageroom-bubble-my align-profile-height">
-                            {highlight(chat.content, searchTerm)}
+                            {chat.messageType === "IMAGE" ? (
+                              <ChatImageMessage objectUrl={chat.content} />
+                            ) : (
+                              highlight(chat.content, searchTerm)
+                            )}
                           </div>
                         </div>
                       ) : (
@@ -575,7 +595,11 @@ export const MessageRoom = () => {
                               {chat.senderNickname}
                             </div>
                             <div className="messageroom-bubble-other align-profile-height">
-                              {highlight(chat.content, searchTerm)}
+                              {chat.messageType === "IMAGE" ? (
+                                <ChatImageMessage objectUrl={chat.content} />
+                              ) : (
+                                highlight(chat.content, searchTerm)
+                              )}
                             </div>
                           </div>
                           <div className="messageroom-meta-wrapper">

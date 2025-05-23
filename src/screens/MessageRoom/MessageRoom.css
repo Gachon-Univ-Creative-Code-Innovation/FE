@@ -339,3 +339,15 @@
   min-width: 48px;
   text-align: center;
 }
+
+.messageroom-image {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 8px;
+  cursor: pointer;
+  object-fit: contain;
+}
+
+.messageroom-image:hover {
+  opacity: 0.9;
+}
