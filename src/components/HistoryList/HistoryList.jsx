@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useCallback } from "react";
+import ReactMarkdown from "react-markdown";
 import ZoomInIcon from "../../icons/ZoomInIcon/ZoomInIcon";
 import "./HistoryList.css";
 
@@ -45,20 +46,29 @@ const HistoryListItem = ({ url, blocks, onPreview }) => {
       </div>
       <div className="historylist-scroll-wrapper" ref={scrollRef}>
         <div className="historylist-scroll">
-          {blocks.map((block, i) => (
-            <div
-              key={i}
-              className="historylist-readme-block"
-              onClick={() => onPreview?.(url, block.image)}
-            >
-              <img
-                src={block.image}
-                alt={`readme-preview-${i}`}
-                className="historylist-preview-image"
-              />
-              <ZoomInIcon className="zoom-icon" />
-            </div>
-          ))}
+          {[...blocks]
+            .sort((a, b) => b.version - a.version)
+            .map((block, i) => (
+              <div
+                key={i}
+                className="historylist-readme-block"
+                onClick={() => onPreview?.(url, block.download_url)}
+              >
+                <div className="historylist-readme-preview-markdown">
+                  <div className="readmepopup-markdown-viewer historylist-markdown-mini">
+                    <ReactMarkdown>
+                      {block.markdown
+                        ? block.markdown
+                            .split("\n")
+                            .slice(0, 5)
+                            .join("\n")
+                        : "### 예시: Project Title\n설명 또는 주요 내용..."}
+                    </ReactMarkdown>
+                  </div>
+                </div>
+                <ZoomInIcon className="zoom-icon" />
+              </div>
+            ))}
         </div>
       </div>
     </div>

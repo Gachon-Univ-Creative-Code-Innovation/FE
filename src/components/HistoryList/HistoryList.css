@@ -120,3 +120,103 @@
   object-fit: cover;
   display: block;
 }
+
+.historylist-readme-preview-text {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  min-height: 36px;
+  max-height: 48px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 12px;
+  font-family: "Inter", Helvetica, Arial, sans-serif;
+  padding: 8px 7px 4px 7px;
+  border-radius: 6px 6px 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: pre-line;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.historylist-readme-preview-markdown {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  display: flex;
+  align-items: flex-start;   /* 세로 위 정렬 */
+  justify-content: flex-start; /* 가로 왼쪽 정렬 */
+  overflow: hidden;
+}
+
+.readmepopup-markdown-viewer.historylist-markdown-mini {
+  text-align: left;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  align-self: stretch;
+  justify-self: stretch;
+  display: block;
+  box-sizing: border-box;
+  padding: 8px 8px 6px 8px; /* 상하좌우에 적당한 패딩 추가 */
+}
+
+.historylist-markdown-mini {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  font-size: 12px !important; /* 기존 8px에서 1.5배로 증가 */
+  line-height: 1.2 !important;
+  padding: 4px 5px 2px 5px;
+  background: #181818;
+  color: #fff;
+  border-radius: 6px;
+  border: 1px solid #232323;
+  overflow: hidden !important;
+  box-sizing: border-box;
+  opacity: 0.93;
+  white-space: pre-line;
+  text-overflow: ellipsis;
+  scrollbar-width: none;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.historylist-markdown-mini h1,
+.historylist-markdown-mini h2,
+.historylist-markdown-mini h3 {
+  margin-top: 0.2em !important;
+  margin-bottom: 0.2em !important;
+  font-size: 1em !important;
+  line-height: 1.1 !important;
+  text-align: left !important;
+}
+
+.historylist-markdown-mini p {
+  margin: 0.1em 0 !important;
+  line-height: 1.2 !important;
+  font-size: 1em !important;
+  text-align: left !important;
+}
+
+.historylist-markdown-mini ul,
+.historylist-markdown-mini ol {
+  margin: 0.1em 0 0.1em 1em !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+
+.historylist-markdown-mini::-webkit-scrollbar {
+  display: none !important;
+}
