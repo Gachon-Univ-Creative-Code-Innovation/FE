@@ -49,6 +49,7 @@ export const MessageRoom = () => {
   const messagesRef = useRef([]);
   const [targetUser, setTargetUser] = useState(null);
   const [page, setPage] = useState(0);
+  const lastLoadedPageRef = useRef(0);  // 마지막으로 로드된 페이지를 저장할 ref
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
 
@@ -239,6 +240,7 @@ export const MessageRoom = () => {
   // page가 바뀔 때마다 fetchMessages(page) 호출 (id 변경 시 0페이지는 위에서 처리)
   useEffect(() => {
     if (page === 0) return;
+    lastLoadedPageRef.current = page;  // 페이지 로드 시 ref 업데이트
     fetchMessages(page);
   }, [page]);
 
@@ -282,7 +284,7 @@ export const MessageRoom = () => {
     if (!chatContainerRef.current || loading || !hasMore) return;
     const { scrollTop } = chatContainerRef.current;
     if (scrollTop === 0 && !loading && hasMore) {
-      setPage((prev) => prev + 1);
+      setPage(lastLoadedPageRef.current + 1);  // 마지막으로 로드된 페이지의 다음 페이지 요청
     }
   };
 
@@ -630,14 +632,14 @@ export const MessageRoom = () => {
                       senderId: Number(localStorage.getItem("userId")),
                       receiverId: Number(id),
                       content: msg,
-                      createdAt: new Date(Date.now() - 9 * 60 * 60 * 1000).toISOString(), // 9시간 빼서 UTC로 맞춤
+                      createdAt: new Date(Date.now() - 9 * 60 * 60 * 1000).toISOString(),
                       read: false,
                     }
                   ];
-                  // id 기준으로 중복 제거 (임시 메시지는 id가 없을 수 있으므로 createdAt+content 조합도 고려 가능)
                   const unique = Array.from(new Map(merged.map(m => [m.id || m.createdAt + m.content, m])).values());
                   return unique.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
                 });
+                setPage(0); // 메시지 추가 후 페이지 0으로 리셋 (스크롤 위치 조정용)
               }}
             />
           </div>
@@ -671,6 +673,6 @@ export const MessageRoom = () => {
       </div>
     </PageTransitionWrapper>
   );
-};
+};export default MessageRoom;
 
-export default MessageRoom;
+
