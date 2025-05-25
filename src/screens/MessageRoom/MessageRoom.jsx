@@ -60,6 +60,7 @@ export const MessageRoom = () => {
   const [closingExit, setClosingExit] = useState(false);
 
   const [showSearch, setShowSearch] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const myUserId = Number(localStorage.getItem("userId"));
   const targetUserId = Number(id);
@@ -68,7 +69,6 @@ export const MessageRoom = () => {
   const prevHeightRef = useRef(0);
   const prevScrollTopRef = useRef(0);
 
-  const [searchTerm, setSearchTerm] = useState("");
   const [searchIndexes, setSearchIndexes] = useState([]);
   const [currentSearchIdx, setCurrentSearchIdx] = useState(0);
   const messageRefs = useRef([]);
@@ -76,6 +76,7 @@ export const MessageRoom = () => {
   const [allMessages, setAllMessages] = useState([]);
   const [allLoaded, setAllLoaded] = useState(false);
 
+  const showSearchRef = useRef(showSearch);
   useEffect(() => {
     messagesRef.current = messages;
   }, [messages]);
@@ -288,14 +289,19 @@ export const MessageRoom = () => {
     }
   };
 
-  // 스크롤 이벤트 리스너 등록 (최초 1회만)
+  // 스크롤 이벤트 리스너 등록 (검색 중에는 제거)
   useEffect(() => {
     const chatContainer = chatContainerRef.current;
-    if (chatContainer) {
-      chatContainer.addEventListener("scroll", handleScroll);
-      return () => chatContainer.removeEventListener("scroll", handleScroll);
+    if (!chatContainer) return;
+
+    if (showSearch && searchTerm) {
+      chatContainer.removeEventListener("scroll", handleScroll);
+      return;
     }
-  }, []);
+
+    chatContainer.addEventListener("scroll", handleScroll);
+    return () => chatContainer.removeEventListener("scroll", handleScroll);
+  }, [showSearch, searchTerm, loading, hasMore]);
 
   // 메시지 날짜 그룹화 (KST 기준)
   const groupMessagesByDate = (messages) => {
@@ -370,7 +376,9 @@ export const MessageRoom = () => {
         page++;
       }
       if (!ignore) {
-        setAllMessages(all);
+        // 시간순 정렬 (최신 순)
+        const sorted = all.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        setAllMessages(sorted);
         setAllLoaded(true);
       }
     };
@@ -396,16 +404,24 @@ export const MessageRoom = () => {
 
   // 검색 결과 이동 (allMessages 기준)
   useEffect(() => {
-    if (
-      searchIndexes.length > 0 &&
-      messageRefs.current[searchIndexes[currentSearchIdx]]
-    ) {
-      messageRefs.current[searchIndexes[currentSearchIdx]].scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-      });
+    if (searchIndexes.length > 0 && messageRefs.current.length > 0) {
+      // reverse된 배열 기준으로 인덱스 변환
+      const reversedIdx = allMessages.length - 1 - searchIndexes[currentSearchIdx];
+      const el = messageRefs.current[reversedIdx];
+      if (el) {
+        el.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+      }
     }
-  }, [currentSearchIdx, searchIndexes]);
+  }, [currentSearchIdx, searchIndexes, allMessages.length]);
+
+  useEffect(() => {
+    if (!showSearch) {
+      setSearchTerm("");
+    }
+  }, [showSearch]);
 
   return (
     <PageTransitionWrapper>
@@ -473,7 +489,7 @@ export const MessageRoom = () => {
 
           <div className="messageroom-chat" ref={chatContainerRef}>
             {showSearch && searchTerm
-              ? allMessages.map((chat, idx) => {
+              ? [...allMessages].reverse().map((chat, idx) => {
                   // 하이라이트, ref, 기타 기존 코드 동일하게 적용
                   const highlight = (text, keyword) => {
                     if (!keyword) return text;
