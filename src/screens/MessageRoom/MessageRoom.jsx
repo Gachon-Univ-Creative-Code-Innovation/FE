@@ -49,6 +49,7 @@ export const MessageRoom = () => {
   const messagesRef = useRef([]);
   const [targetUser, setTargetUser] = useState(null);
   const [page, setPage] = useState(0);
+  const lastLoadedPageRef = useRef(0);  // 마지막으로 로드된 페이지를 저장할 ref
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
 
@@ -59,6 +60,7 @@ export const MessageRoom = () => {
   const [closingExit, setClosingExit] = useState(false);
 
   const [showSearch, setShowSearch] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const myUserId = Number(localStorage.getItem("userId"));
   const targetUserId = Number(id);
@@ -67,7 +69,6 @@ export const MessageRoom = () => {
   const prevHeightRef = useRef(0);
   const prevScrollTopRef = useRef(0);
 
-  const [searchTerm, setSearchTerm] = useState("");
   const [searchIndexes, setSearchIndexes] = useState([]);
   const [currentSearchIdx, setCurrentSearchIdx] = useState(0);
   const messageRefs = useRef([]);
@@ -75,6 +76,7 @@ export const MessageRoom = () => {
   const [allMessages, setAllMessages] = useState([]);
   const [allLoaded, setAllLoaded] = useState(false);
 
+  const showSearchRef = useRef(showSearch);
   useEffect(() => {
     messagesRef.current = messages;
   }, [messages]);
@@ -174,16 +176,6 @@ export const MessageRoom = () => {
 
       const newMessages = response.data.data.content || [];
       
-      // 첫 페이지 로드 시 상대방 정보 설정
-      if (pageNum === 0 && newMessages.length > 0) {
-        const otherUserMessage = newMessages.find(msg => msg.senderId !== localStorage.getItem("userId"));
-        if (otherUserMessage) {
-          setTargetUser({
-            nickname: otherUserMessage.senderNickname
-          });
-        }
-      }
-
       setMessages((prev) => {
         const merged = [...newMessages, ...prev];
         const unique = Array.from(new Map(merged.map(m => [m.id || m.createdAt + m.content, m])).values());
@@ -215,18 +207,18 @@ export const MessageRoom = () => {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        
         const targetUserInfo = response.data.data.find(
           room => room.targetUserId === parseInt(id)
         );
-        
         if (targetUserInfo) {
           setTargetUser({
             nickname: targetUserInfo.targetNickname
           });
+        } else {
+          setTargetUser({ nickname: "" });
         }
       } catch (error) {
-        console.error("상대방 정보 조회 실패:", error);
+        setTargetUser({ nickname: "" });
       }
     };
 
@@ -239,6 +231,7 @@ export const MessageRoom = () => {
   // page가 바뀔 때마다 fetchMessages(page) 호출 (id 변경 시 0페이지는 위에서 처리)
   useEffect(() => {
     if (page === 0) return;
+    lastLoadedPageRef.current = page;  // 페이지 로드 시 ref 업데이트
     fetchMessages(page);
   }, [page]);
 
@@ -282,18 +275,23 @@ export const MessageRoom = () => {
     if (!chatContainerRef.current || loading || !hasMore) return;
     const { scrollTop } = chatContainerRef.current;
     if (scrollTop === 0 && !loading && hasMore) {
-      setPage((prev) => prev + 1);
+      setPage(lastLoadedPageRef.current + 1);  // 마지막으로 로드된 페이지의 다음 페이지 요청
     }
   };
 
-  // 스크롤 이벤트 리스너 등록 (최초 1회만)
+  // 스크롤 이벤트 리스너 등록 (검색 중에는 제거)
   useEffect(() => {
     const chatContainer = chatContainerRef.current;
-    if (chatContainer) {
-      chatContainer.addEventListener("scroll", handleScroll);
-      return () => chatContainer.removeEventListener("scroll", handleScroll);
+    if (!chatContainer) return;
+
+    if (showSearch && searchTerm) {
+      chatContainer.removeEventListener("scroll", handleScroll);
+      return;
     }
-  }, []);
+
+    chatContainer.addEventListener("scroll", handleScroll);
+    return () => chatContainer.removeEventListener("scroll", handleScroll);
+  }, [showSearch, searchTerm, loading, hasMore]);
 
   // 메시지 날짜 그룹화 (KST 기준)
   const groupMessagesByDate = (messages) => {
@@ -330,7 +328,7 @@ export const MessageRoom = () => {
   };
 
   const handleGoBack = () => {
-    navigate("/messages");
+    navigate("/message");
   };
 
   // 퇴장(언마운트) 시 LEAVE + REST 동기화
@@ -368,7 +366,9 @@ export const MessageRoom = () => {
         page++;
       }
       if (!ignore) {
-        setAllMessages(all);
+        // 시간순 정렬 (최신 순)
+        const sorted = all.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        setAllMessages(sorted);
         setAllLoaded(true);
       }
     };
@@ -394,16 +394,24 @@ export const MessageRoom = () => {
 
   // 검색 결과 이동 (allMessages 기준)
   useEffect(() => {
-    if (
-      searchIndexes.length > 0 &&
-      messageRefs.current[searchIndexes[currentSearchIdx]]
-    ) {
-      messageRefs.current[searchIndexes[currentSearchIdx]].scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-      });
+    if (searchIndexes.length > 0 && messageRefs.current.length > 0) {
+      // reverse된 배열 기준으로 인덱스 변환
+      const reversedIdx = allMessages.length - 1 - searchIndexes[currentSearchIdx];
+      const el = messageRefs.current[reversedIdx];
+      if (el) {
+        el.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+      }
     }
-  }, [currentSearchIdx, searchIndexes]);
+  }, [currentSearchIdx, searchIndexes, allMessages.length]);
+
+  useEffect(() => {
+    if (!showSearch) {
+      setSearchTerm("");
+    }
+  }, [showSearch]);
 
   return (
     <PageTransitionWrapper>
@@ -414,7 +422,7 @@ export const MessageRoom = () => {
               <GoBackIcon className="messageroom-back-icon" />
             </div>
             <div className="messageroom-username">
-              {targetUser?.nickname}
+              {targetUser?.nickname || ""}
             </div>
             <div className="messageroom-link-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
               <SearchIcon
@@ -471,7 +479,7 @@ export const MessageRoom = () => {
 
           <div className="messageroom-chat" ref={chatContainerRef}>
             {showSearch && searchTerm
-              ? allMessages.map((chat, idx) => {
+              ? [...allMessages].reverse().map((chat, idx) => {
                   // 하이라이트, ref, 기타 기존 코드 동일하게 적용
                   const highlight = (text, keyword) => {
                     if (!keyword) return text;
@@ -623,6 +631,7 @@ export const MessageRoom = () => {
               onSend={msg => {
                 setMessages(prev => {
                   const tempId = `temp-${Date.now()}-${Math.random()}`;
+                  const isImage = msg.startsWith('message/');  // 임시 URL로 시작하는지 확인
                   const merged = [
                     ...prev,
                     {
@@ -630,14 +639,15 @@ export const MessageRoom = () => {
                       senderId: Number(localStorage.getItem("userId")),
                       receiverId: Number(id),
                       content: msg,
-                      createdAt: new Date(Date.now() - 9 * 60 * 60 * 1000).toISOString(), // 9시간 빼서 UTC로 맞춤
+                      messageType: isImage ? "IMAGE" : undefined,  // 이미지인 경우 messageType 설정
+                      createdAt: new Date(Date.now() - 9 * 60 * 60 * 1000).toISOString(),
                       read: false,
                     }
                   ];
-                  // id 기준으로 중복 제거 (임시 메시지는 id가 없을 수 있으므로 createdAt+content 조합도 고려 가능)
                   const unique = Array.from(new Map(merged.map(m => [m.id || m.createdAt + m.content, m])).values());
                   return unique.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
                 });
+                setPage(0); // 메시지 추가 후 페이지 0으로 리셋 (스크롤 위치 조정용)
               }}
             />
           </div>
@@ -671,6 +681,6 @@ export const MessageRoom = () => {
       </div>
     </PageTransitionWrapper>
   );
-};
+};export default MessageRoom;
 
-export default MessageRoom;
+
