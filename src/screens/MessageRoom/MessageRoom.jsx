@@ -176,16 +176,6 @@ export const MessageRoom = () => {
 
       const newMessages = response.data.data.content || [];
       
-      // 첫 페이지 로드 시 상대방 정보 설정
-      if (pageNum === 0 && newMessages.length > 0) {
-        const otherUserMessage = newMessages.find(msg => msg.senderId !== localStorage.getItem("userId"));
-        if (otherUserMessage) {
-          setTargetUser({
-            nickname: otherUserMessage.senderNickname
-          });
-        }
-      }
-
       setMessages((prev) => {
         const merged = [...newMessages, ...prev];
         const unique = Array.from(new Map(merged.map(m => [m.id || m.createdAt + m.content, m])).values());
@@ -217,18 +207,18 @@ export const MessageRoom = () => {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        
         const targetUserInfo = response.data.data.find(
           room => room.targetUserId === parseInt(id)
         );
-        
         if (targetUserInfo) {
           setTargetUser({
             nickname: targetUserInfo.targetNickname
           });
+        } else {
+          setTargetUser({ nickname: "" });
         }
       } catch (error) {
-        console.error("상대방 정보 조회 실패:", error);
+        setTargetUser({ nickname: "" });
       }
     };
 
@@ -338,7 +328,7 @@ export const MessageRoom = () => {
   };
 
   const handleGoBack = () => {
-    navigate("/messages");
+    navigate("/message");
   };
 
   // 퇴장(언마운트) 시 LEAVE + REST 동기화
@@ -432,7 +422,7 @@ export const MessageRoom = () => {
               <GoBackIcon className="messageroom-back-icon" />
             </div>
             <div className="messageroom-username">
-              {targetUser?.nickname}
+              {targetUser?.nickname || ""}
             </div>
             <div className="messageroom-link-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
               <SearchIcon
