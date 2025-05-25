@@ -625,6 +625,7 @@ export const MessageRoom = () => {
               onSend={msg => {
                 setMessages(prev => {
                   const tempId = `temp-${Date.now()}-${Math.random()}`;
+                  const isImage = msg.startsWith('message/');  // 임시 URL로 시작하는지 확인
                   const merged = [
                     ...prev,
                     {
@@ -632,6 +633,7 @@ export const MessageRoom = () => {
                       senderId: Number(localStorage.getItem("userId")),
                       receiverId: Number(id),
                       content: msg,
+                      messageType: isImage ? "IMAGE" : undefined,  // 이미지인 경우 messageType 설정
                       createdAt: new Date(Date.now() - 9 * 60 * 60 * 1000).toISOString(),
                       read: false,
                     }
