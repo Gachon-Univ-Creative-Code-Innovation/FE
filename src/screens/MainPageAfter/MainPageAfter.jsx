@@ -8,7 +8,7 @@ import CategoryComponent from "../../components/CategoryComponent/CategoryCompon
 import FeedComponent from "../../components/FeedComponent/FeedComponent";
 import RecommendComponent from "../../components/RecommendComponent/RecommendComponent";
 import AllComponent from "../../components/AllComponent/AllComponent";
-import PropertyHoverWrapper from "../../components/PropertyHoverWrapper/PropertyHoverWrapper";
+import MakePortfolioCard from "../../components/MakePortfolioCard/MakePortfolioCard";
 import ScrollUp from "../../icons/ScrollUp/ScrollUp";
 import CommentIcon from "../../icons/CommentIcon/CommentIcon";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
@@ -112,6 +112,10 @@ export const MainPageAfter = () => {
     navigate("/generate-readme");
   };
 
+  const handlePortfolioClick = () => {
+    navigate("/portfolio");
+  };
+
   return (
     <PageTransitionWrapper>
       <div className="main-page-after">
@@ -127,9 +131,10 @@ export const MainPageAfter = () => {
             <MyPost />
           </div>
 
-          <PropertyHoverWrapper
+          <MakePortfolioCard
             className="component-15"
             property1="front-real"
+            onClick={handlePortfolioClick}
           />
 
           <div className="post-list-hot">

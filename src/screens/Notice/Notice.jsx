@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import TabsGroup from "../../components/AlarmTabs/TabsGroup";
 import InterfaceTrashFull from "../../icons/InterfaceTrashFull/InterfaceTrashFull";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
-import SelectModeScreen from "../SelectModeScreen/SelectModeScreen";
+import DeleteNotice from "../DeleteNotice/DeleteNotice";
 import ScrollUp from "../../icons/ScrollUp/ScrollUp";
 import Navbar2 from "../../components/Navbar2/Navbar2";
 import "./Notice.css";
@@ -249,10 +249,7 @@ export const Notice = () => {
       </div>
       {showModal && (
         <div className="select-mode-screen__overlay">
-          <SelectModeScreen
-            onCancel={handleCancel}
-            onDeleteAll={handleDeleteAll}
-          />
+          <DeleteNotice onCancel={handleCancel} onDeleteAll={handleDeleteAll} />
         </div>
       )}
       <div className="notice-overlap-wrapper">

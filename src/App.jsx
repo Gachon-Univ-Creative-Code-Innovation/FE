@@ -1,6 +1,8 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
+
+// 화면 컴포넌트들
 import MainPageBefore from "./screens/MainPageBefore/MainPageBefore";
 import Login from "./screens/Login/Login";
 import SignUp from "./screens/SignUp/SignUp";
@@ -14,10 +16,13 @@ import EditUser from "./screens/EditUser/EditUser";
 import Message from "./screens/Message/Message";
 import MessageRoom from "./screens/MessageRoom/MessageRoom";
 import MyBlog from "./screens/MyBlog/MyBlog";
-import SSEAlarmConnector from "./SSEAlarmConnector";
 import RoadMap from "./screens/RoadMap/RoadMap";
 import RoadMapLoginBefore from "./screens/RoadMapLoginBefore/RoadMapLoginBefore";
 import Community from "./screens/Community/Community";
+import PortfolioScreen from "./screens/Portfolio/PortfolioScreen";
+
+// 컨텍스트 및 SSE
+import SSEAlarmConnector from "./SSEAlarmConnector";
 import { WebSocketProvider } from "./contexts/WebSocketContext";
 
 const AnimatedRoutes = () => {
@@ -43,6 +48,7 @@ const AnimatedRoutes = () => {
         <Route path="/roadmap" element={<RoadMap />} />
         <Route path="/roadmapbefore" element={<RoadMapLoginBefore />} />
         <Route path="/community" element={<Community />} />
+        <Route path="/portfolio" element={<PortfolioScreen />} />
       </Routes>
     </AnimatePresence>
   );

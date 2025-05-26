@@ -1,0 +1,49 @@
+.filtercomponent-btn {
+  all: unset;
+  align-items: center;
+  border: 1px solid #a3b3bf;
+  border-radius: 10px;
+  box-sizing: border-box;
+  display: inline-flex;
+  gap: 10px;
+  justify-content: center;
+  padding: 5px 30px;
+  position: relative;
+  cursor: pointer;
+  transition: border-color 0.3s, color 0.3s;
+  min-width: 90px;
+}
+
+.filtercomponent-text {
+  color: #a3b3bf;
+  font-family: "Inter", Helvetica;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 30px;
+  text-align: center;
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+
+.filtercomponent-icon {
+  height: 17.88px;
+  width: 17.5px;
+  margin-right: -0.75px;
+  transition: stroke 0.3s ease;
+}
+
+/* active 상태 */
+.filtercomponent-btn.active,
+.filtercomponent-btn-active .filtercomponent-btn {
+  border-color: #1d1652;
+}
+
+.filtercomponent-btn.active .filtercomponent-text,
+.filtercomponent-btn-active .filtercomponent-text {
+  color: #1d1652;
+}
+
+.filtercomponent-btn.active .filtercomponent-icon,
+.filtercomponent-btn-active .filtercomponent-icon {
+  stroke: #1d1652;
+}
