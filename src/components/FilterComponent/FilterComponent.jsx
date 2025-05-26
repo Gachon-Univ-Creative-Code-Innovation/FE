@@ -10,18 +10,20 @@ export const FilterComponent = ({
   inactiveColor = "#A3B3BF",
 }) => {
   const color = isActive ? activeColor : inactiveColor;
+  const borderColor = isActive ? activeColor : inactiveColor;
 
   return (
     <button
       className={`filtercomponent-btn ${className}`}
       style={{
-        border: isActive ? `1px solid ${activeColor}` : "1px solid transparent",
+        border: `1px solid ${borderColor}`, // ✅ 항상 보더 표시
         borderRadius: "8px",
         padding: "4px 8px",
         transition: "border-color 0.3s, color 0.3s",
         background: "transparent",
         display: "inline-flex",
         alignItems: "center",
+        justifyContent: "center", // ✅ 가운데 정렬
         gap: "10px",
         cursor: "pointer",
         boxSizing: "border-box",
@@ -32,6 +34,9 @@ export const FilterComponent = ({
         className="filtercomponent-text"
         style={{
           color,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center", // ✅ 글씨 중앙 정렬
           fontFamily: "Inter, Helvetica",
           fontSize: "15px",
           fontWeight: 400,

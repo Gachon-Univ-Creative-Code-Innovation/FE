@@ -2,16 +2,21 @@ import PropTypes from "prop-types";
 import React from "react";
 import "./MyWorkSpace.css";
 
-export const MyWorkSpace = ({ property1, className }) => {
+export const MyWorkSpace = ({ isActive, className, onClick }) => {
   return (
-    <div className={`div-wrapper ${className}`}>
-      <div className="text-wrapper-10">내 작업실</div>
+    <div
+      className={`myworkspace-wrapper ${isActive ? "active" : ""} ${className}`}
+      onClick={onClick}
+    >
+      <div className="myworkspace-text">내 작업실</div>
     </div>
   );
 };
 
 MyWorkSpace.propTypes = {
-  property1: PropTypes.oneOf(["default"]),
+  isActive: PropTypes.bool,
+  className: PropTypes.string,
+  onClick: PropTypes.func,
 };
 
 export default MyWorkSpace;

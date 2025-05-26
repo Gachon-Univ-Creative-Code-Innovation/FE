@@ -7,7 +7,7 @@ import CategoryComponent from "../../components/CategoryComponent/CategoryCompon
 import FeedComponent from "../../components/FeedComponent/FeedComponent";
 import RecommendComponent from "../../components/RecommendComponent/RecommendComponent";
 import AllComponent from "../../components/AllComponent/AllComponent";
-import PropertyHoverWrapper from "../../components/PropertyHoverWrapper/PropertyHoverWrapper";
+import MakePortfolioCard from "../../components/MakePortfolioCard/MakePortfolioCard";
 import Scrollup from "../../icons/ScrollUp/ScrollUp";
 import CommentIcon from "../../icons/CommentIcon/CommentIcon";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
@@ -135,10 +135,7 @@ export const MainPageBefore = () => {
             <LoginComponent className="component-1" property1="default" />
           </div>
 
-          <PropertyHoverWrapper
-            className="component-10"
-            property1="front-real"
-          />
+          <MakePortfolioCard className="component-10" property1="front-real" />
 
           <div className="post-list-hot">
             <div className="category">

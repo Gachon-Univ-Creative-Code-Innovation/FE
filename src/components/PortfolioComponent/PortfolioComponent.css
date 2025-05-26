@@ -2,11 +2,12 @@
   align-items: center;
   display: inline-flex;
   gap: 10px;
-  justify-content: center;
+  height: 30px;
   position: relative;
+  cursor: pointer;
 }
 
-.portfolio .text-wrapper-3 {
+.portfolio-text {
   color: #1d1652;
   font-family: "Inter", Helvetica;
   font-size: 15px;
