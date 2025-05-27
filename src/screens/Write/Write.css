@@ -1,7 +1,6 @@
 .write-editor {
   background: #FAFDFF;
   min-height: 100vh;
-  font-family: sans-serif;
   color: #222;
 }
 
@@ -78,12 +77,8 @@
 /* 에디터 영역 */
 .editor-area {
   min-height: 550px;
-  margin-bottom: 24px;
-}
-
-.reactquill-editor {
-  height: 500px;
-  background: #FFF;
+  height: fit-content;
+  border: none;
 }
 
 /* 액션 버튼 영역 */
@@ -92,6 +87,7 @@
   justify-content: space-between;
   align-items: center;
   padding-bottom: 40px;
+  margin-top: 20px;
 }
 
 .editor-button-group {
@@ -196,4 +192,185 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%); 
+}
+
+
+/* --- 에디터 내부 폰트 스타일 설정 --- */
+.ql-editor {
+  min-height: 550px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border: 1px solid #FAFDFF;
+  padding: 12px 15px;
+  line-height: 1.5;
+  font-size: 16px;
+}
+
+/* 툴바 스타일 */
+#toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0px;
+  background-color: #FAFDFF;
+  border-bottom: 2px solid #FAFDFF;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 8px;
+}
+
+/* 폰트 스타일 */
+.ql-editor .ql-font-roboto {
+  font-family: 'Roboto', sans-serif !important;
+}
+
+.ql-editor .ql-font-open-sans {
+  font-family: 'Open Sans', sans-serif !important;
+}
+
+.ql-editor .ql-font-lora {
+  font-family: 'Lora', serif !important;
+}
+
+.ql-editor .ql-font-merriweather {
+  font-family: 'Merriweather', serif !important;
+}
+
+.ql-editor .ql-font-inter {
+  font-family: 'Inter', sans-serif !important;
+}
+
+.ql-editor .ql-font-montserrat {
+  font-family: 'Montserrat', sans-serif !important;
+}
+
+.ql-editor .ql-font-noto-sans {
+  font-family: 'Noto Sans', sans-serif !important;
+}
+
+.ql-editor .ql-font-playfair-display {
+  font-family: 'Playfair Display', serif !important;
+}
+
+.ql-editor .ql-font-source-sans-pro {
+  font-family: 'Source Sans 3', sans-serif !important;
+}
+
+.ql-editor .ql-font-georgia {
+  font-family: 'Georgia', serif !important;
+}
+
+/* 폰트 선택 드롭다운 스타일 */
+.ql-picker.ql-font {
+  width: 150px;
+}
+
+/* 드롭다운 메뉴 아이템 스타일 */
+.ql-picker-label[data-value="roboto"]::before,
+.ql-picker-item[data-value="roboto"]::before {
+  content: "Roboto";
+  font-family: "Roboto", sans-serif;
+}
+
+.ql-picker-label[data-value="open-sans"]::before,
+.ql-picker-item[data-value="open-sans"]::before {
+  content: "Open Sans";
+  font-family: "Open Sans", sans-serif;
+}
+
+.ql-picker-label[data-value="lora"]::before,
+.ql-picker-item[data-value="lora"]::before {
+  content: "Lora";
+  font-family: "Lora", serif;
+}
+
+.ql-picker-label[data-value="merriweather"]::before,
+.ql-picker-item[data-value="merriweather"]::before {
+  content: "Merriweather";
+  font-family: "Merriweather", serif;
+}
+
+.ql-picker-label[data-value="inter"]::before,
+.ql-picker-item[data-value="inter"]::before {
+  content: "Inter";
+  font-family: "Inter", sans-serif;
+}
+
+.ql-picker-label[data-value="montserrat"]::before,
+.ql-picker-item[data-value="montserrat"]::before {
+  content: "Montserrat";
+  font-family: "Montserrat", sans-serif;
+}
+
+.ql-picker-label[data-value="noto-sans"]::before,
+.ql-picker-item[data-value="noto-sans"]::before {
+  content: "Noto Sans";
+  font-family: "Noto Sans", sans-serif;
+}
+
+.ql-picker-label[data-value="playfair-display"]::before,
+.ql-picker-item[data-value="playfair-display"]::before {
+  content: "Playfair Display";
+  font-family: "Playfair Display", serif;
+}
+
+.ql-picker-label[data-value="source-sans-pro"]::before,
+.ql-picker-item[data-value="source-sans-pro"]::before {
+  content: "Source Sans Pro";
+  font-family: "Source Sans 3", sans-serif;
+}
+
+.ql-picker-label[data-value="georgia"]::before,
+.ql-picker-item[data-value="georgia"]::before {
+  content: "Georgia";
+  font-family: "Georgia", serif;
+}
+
+/* ReactQuill 기본 스타일 덮어쓰기 */
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value]:not([data-value=""])::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value]:not([data-value=""])::before {
+  content: attr(data-value);
+}
+
+/* 폰트 적용을 위한 추가 스타일 */
+.ql-container .ql-editor .ql-font-roboto { font-family: 'Roboto', sans-serif !important; }
+.ql-container .ql-editor .ql-font-open-sans { font-family: 'Open Sans', sans-serif !important; }
+.ql-container .ql-editor .ql-font-lora { font-family: 'Lora', serif !important; }
+.ql-container .ql-editor .ql-font-merriweather { font-family: 'Merriweather', serif !important; }
+.ql-container .ql-editor .ql-font-inter { font-family: 'Inter', sans-serif !important; }
+.ql-container .ql-editor .ql-font-montserrat { font-family: 'Montserrat', sans-serif !important; }
+.ql-container .ql-editor .ql-font-noto-sans { font-family: 'Noto Sans', sans-serif !important; }
+.ql-container .ql-editor .ql-font-playfair-display { font-family: 'Playfair Display', serif !important; }
+.ql-container .ql-editor .ql-font-source-sans-pro { font-family: 'Source Sans 3', sans-serif !important; }
+.ql-container .ql-editor .ql-font-georgia { font-family: 'Georgia', serif !important; }
+
+/* 툴바 버튼 스타일 */
+.ql-formats {
+  display: flex;
+  align-items: center;
+  gap: 0px;
+}
+
+.ql-formats button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s ease-in-out;
+  padding: 2px 4px;
+}
+
+.ql-formats button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.ql-formats button:active {
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+/* 드롭다운 폰트 크기 */
+.ql-picker-label {
+  height: 24px !important;
+  min-width: 140px;
+  width: fit-content;
+  font-size: 14px;
 }

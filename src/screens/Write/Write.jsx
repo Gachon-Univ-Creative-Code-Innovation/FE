@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import MDEditor from "@uiw/react-md-editor";
 import ReactQuill from "react-quill";
+import CustomToolbar from "./CustomToolbar";
 import Component18 from "../../icons/GoBackIcon/GoBackIcon";
-import "react-quill/dist/quill.snow.css";
 import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import "./Write.css";
@@ -11,6 +11,23 @@ import { SpellCheckComponent } from "../../components/SpellCheckComponent/SpellC
 import { SaveDraftComponent } from "../../components/SaveDraftComponent/SaveDraftComponent";
 import { PostComponent } from "../../components/PostComponent/PostComponent";
 import { PublishComponent } from "../../components/PublishComponent/PublishComponent";
+import Quill from "quill";
+
+// 커스텀 폰트 등록
+const Font = Quill.import("formats/font");
+Font.whitelist = [
+  "roboto",
+  "open-sans",
+  "lora",
+  "merriweather",
+  "inter",
+  "montserrat",
+  "noto-sans",
+  "playfair-display",
+  "source-sans-pro",
+  "georgia"
+];
+Quill.register(Font, true);
 
 const MODES = [
   { key: "basic", label: "기본모드" },
@@ -38,14 +55,38 @@ const formats = [
   "italic",
   "underline",
   "strike",
+  "blockquote",
   "list",
   "bullet",
   "link",
   "image",
-  "align",
-  "color",
-  "background",
+  "video",
+  "clean"
 ];
+
+const customFonts = [
+  "roboto", 
+  "open-sans", 
+  "lora", 
+  "merriweather", 
+  "inter", 
+  "montserrat", 
+  "noto-sans", 
+  "playfair-display", 
+  "source-sans-pro", 
+  "georgia"
+];
+
+const modules = {
+  toolbar: {
+    container: "#toolbar",
+    font: customFonts,
+    formats: formats
+  },
+  clipboard: {
+    matchVisual: false,
+  }
+};
 
 export default function Write() {
   const [mode, setMode] = useState("basic");
@@ -194,25 +235,15 @@ export default function Write() {
 
         {/* 에디터 영역 */}
         <div className="editor-area">
+          <CustomToolbar /> 
           {mode === "basic" ? (
-            <ReactQuill
-              theme="snow"
-              value={basicValue}
-              onChange={setBasicValue}
-              placeholder="내용을 입력하세요"
-              modules={{
-                toolbar: [
-                  [{ font: ["arial", "times-new-roman", "comic-sans"] }],
-                  [{ header: [1, 2, 3, 4, 5, 6, false] }],
-                  ["bold", "italic", "underline", "strike"],
-                  [{ list: "ordered" }, { list: "bullet" }],
-                  ["link", "image"],
-                  [{ align: [] }],
-                  [{ color: [] }, { background: [] }],
-                ],
-              }}
+            <ReactQuill 
+              value={basicValue} 
+              onChange={setBasicValue} 
+              modules={modules} 
               formats={formats}
-              className="reactquill-editor"
+              theme="snow"
+              preserveWhitespace={true}
             />
           ) : (
             <MDEditor
