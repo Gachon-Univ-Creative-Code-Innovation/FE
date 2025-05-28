@@ -123,7 +123,7 @@ export const MainPageAfter = () => {
             <div className="frame-9">
               <img className="icon" alt="Icon" src="/img/icon.svg" />
               <NoticeBell className="img" onClick={() => navigate("/notice")} />
-              <div className="mode-edit">
+              <div className="mode-edit" onClick={() => navigate("/write")}>
                 <div className="group">
                   <div className="overlap-group-wrapper">
                     <div className="overlap-group">
