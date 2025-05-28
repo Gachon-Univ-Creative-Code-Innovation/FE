@@ -1,0 +1,118 @@
+.roadmap-screen {
+    background-color: #fafdff;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    overflow-x: hidden;
+    padding-top: 80px;
+    min-height: 100vh; /* ✅ 높이 부족 방지 */
+  }
+  
+  .roadmap-container {
+    background-color: #fafdff;
+    max-width: 1440px;
+    margin: 0 auto;
+    min-height: 100%;
+    position: relative;
+  }
+  
+  .roadmap-category {
+    position: relative;
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .roadmap-cube-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 60px;
+  }
+  
+  .roadmap-loading-text {
+    margin-top: 12px;
+    font-family: 'GmarketSans', sans-serif;
+    color: #3f2b96;
+    font-size: 18px;
+    font-weight: 500;
+  }
+  
+  .roadmap-loading-text::after {
+    content: "";
+    display: inline-block;
+    animation: dots 1.4s steps(4, end) infinite;
+    width: 1em;
+    text-align: left;
+  }
+  
+  @keyframes dots {
+    0% { content: ""; }
+    25% { content: "."; }
+    50% { content: ".."; }
+    75% { content: "..."; }
+    100% { content: ""; }
+  }
+  
+  .roadmap-result-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    background-color: #fafdff;
+    margin-top: 30px;
+  }
+  
+  .roadmap-result-container {
+    background-color: #fafdff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    max-width: 1080px;
+    margin-left: 20px;
+    margin-right: auto;
+  }
+  
+  .roadmap-result-text {
+    font-family: "Inter", Helvetica;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 30px;
+    color: #000;
+    margin: 0 0 30px;
+  }
+  
+  .roadmap-result-text .highlight {
+    color: #1d1652;
+    font-weight: 900;
+  }
+  
+  .roadmap-result-image {
+    width: 100%;
+    max-width: 1080px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+  }
+  
+  .readme-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    padding: 40px;
+    box-sizing: border-box;
+  }
+  

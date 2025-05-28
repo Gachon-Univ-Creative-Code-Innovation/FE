@@ -21,7 +21,7 @@
 
 .main-page-before .my-post {
   align-items: center;
-  background-color: #ffffffcc;
+  background-color: #f9fcff;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -132,30 +132,29 @@
   width: unset !important;
 }
 
-.main-page-before .component-2 {
-  left: 80px !important;
+.main-page-before .hotcomponent-text {
+  left: 0 !important;
   top: 17px !important;
 }
 
-.main-page-before .component-3-instance {
+.main-page-before .allcomponent-text {
+  left: 0 !important;
+  top: 0px !important;
+}
+
+.main-page-before .categorycomponent-text {
   left: 56px !important;
-  top: 17px !important;
+  top: 0px !important;
 }
 
-.main-page-before .component-4-instance {
+.main-page-before .feedcomponent-text {
   left: 72px !important;
   top: 17px !important;
 }
 
-.main-page-before .component-5-instance {
-  border-color: unset !important;
-  flex: 1 !important;
-  flex-grow: 1 !important;
-  height: 53.0px !important;
-  margin-bottom: -1.50px !important;
-  margin-right: -1.50px !important;
-  margin-top: -1.50px !important;
-  width: unset !important;
+.main-page-before .recommendcomponent-text {
+  left: 45px !important;
+  top: 17px !important;
 }
 
 .main-page-before .design-component-instance-node {
@@ -384,7 +383,6 @@
   left: 0;
   right: 0;
   box-sizing: border-box;
-  box-shadow: 0 0px 1px rgba(0, 0, 0, 0.1);
 }
 
 .main-page-before .alog-logo {
@@ -532,7 +530,11 @@
   height: 80px;
   z-index: 1600;
   background-color: #F9FCFF; 
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar--scrolled {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.05s ease-in-out;
 }
 
 .end-message {

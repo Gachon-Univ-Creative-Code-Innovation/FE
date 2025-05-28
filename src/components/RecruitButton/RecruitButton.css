@@ -1,0 +1,28 @@
+.btn {
+  all: unset;
+  align-items: center;
+  background-color: #1d1652;
+  border: 1px solid;
+  border-color: #1d1652;
+  box-sizing: border-box;
+  display: inline-flex;
+  gap: 10px;
+  justify-content: center;
+  padding: 15px;
+  position: relative;
+  cursor: pointer;
+}
+
+.btn .text-wrapper-9 {
+  color: #ffffff;
+  font-family: "Inter", Helvetica;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 14px;
+  margin-top: -0.50px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}

@@ -1,42 +1,50 @@
-.component-3 {
-  border-color: #1d1652;
-  border-left-style: solid;
-  border-left-width: 1px;
-  border-right-style: solid;
-  border-right-width: 1px;
-  border-top-style: solid;
-  border-top-width: 1px;
-  height: 52px;
+.categorycomponent {
   position: relative;
   width: 137px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease-in-out;
+  cursor: pointer;
+  overflow: hidden;
 }
 
-.component-3 .text-wrapper-2 {
+/* 전체 너비 밑줄 애니메이션 */
+.categorycomponent::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background-color: #1d1652;
+  transform: scaleX(0);
+  transform-origin: left; /* 왼쪽에서 시작! */
+  transition: transform 0.3s ease-in-out;
+}
+
+.categorycomponent.categorycomponent-hover::after {
+  transform: scaleX(1);
+}
+
+.categorycomponent-text {
   font-family: "Inter", Helvetica;
-  font-size: 15px;
-  font-weight: 400;
-  height: 14px;
-  left: 35px;
+  font-size: 20px;
   letter-spacing: 0;
   line-height: 14px;
-  position: absolute;
-  text-align: center;
-  top: 18px;
   white-space: nowrap;
+  font-weight: 400;
+  color: #a0a0a0;
+  transition: all 0.25s ease-in-out;
 }
 
-.component-3.property-1-2-hover {
-  background-color: #ffffff;
-}
-
-.component-3.property-1-2-default {
-  background-color: #1d1652;
-}
-
-.component-3.property-1-2-hover .text-wrapper-2 {
+.categorycomponent.categorycomponent-hover .categorycomponent-text {
   color: #1d1652;
+  font-weight: 600;
 }
 
-.component-3.property-1-2-default .text-wrapper-2 {
-  color: #ffffff;
+.categorycomponent.categorycomponent-default .categorycomponent-text {
+  color: #a0a0a0;
+  font-weight: 400;
 }

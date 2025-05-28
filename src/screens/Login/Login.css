@@ -4,16 +4,17 @@
   flex-direction: row;
   justify-content: center;
   width: 100%;
+  overflow: hidden;
 }
 
-.login .div-2 {
+.login-div-2 {
   background-color: #ffffff;
   height: 1024px;
   position: relative;
   width: 1440px;
 }
 
-.login .login-button {
+.login-button {
   all: unset;
   align-items: center;
   background-color: #1d1652;
@@ -33,7 +34,7 @@
   cursor: pointer;
 }
 
-.login .LOGIN {
+.login-LOGIN {
   color: #ffffff;
   font-family: "Inter", Helvetica;
   font-size: 20px;
@@ -46,7 +47,7 @@
   width: fit-content;
 }
 
-.login .menu {
+.login-menu {
   height: 40px;
   left: 345px;
   position: absolute;
@@ -54,26 +55,26 @@
   width: 750px;
 }
 
-.login .overlap-group {
+.login-overlap-group {
   height: 42px;
   position: relative;
   top: -1px;
 }
 
-.login .sign-up-wrapper {
+.login-sign-up-wrapper {
   align-items: center;
   display: flex;
   flex-direction: column;
   gap: 10px;
   height: 40px;
   justify-content: center;
-  left: 0; 
+  left: 0;
   position: absolute;
   top: 1px;
-  width: 375px; 
+  width: 375px;
 }
 
-.login .forgot-password-wrapper {
+.login-forgot-password-wrapper {
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -83,13 +84,13 @@
   gap: 10px;
   height: 40px;
   justify-content: center;
-  left: 375px; 
+  left: 375px;
   position: absolute;
   top: 1px;
   width: 375px;
 }
 
-.login .id {
+.login-id {
   align-items: flex-start;
   border: 1px solid;
   border-color: #1d1652;
@@ -105,20 +106,7 @@
   width: 752px;
 }
 
-.login .text-wrapper-3 {
-  color: #d9d9d9;
-  font-family: "Inter", Helvetica;
-  font-size: 20px;
-  font-weight: 400;
-  letter-spacing: 0;
-  line-height: 10px;
-  position: relative;
-  text-align: center;
-  white-space: nowrap;
-  width: fit-content;
-}
-
-.login .password {
+.login-password {
   align-items: flex-start;
   border: 1px solid;
   border-color: #1d1652;
@@ -134,7 +122,39 @@
   width: 752px;
 }
 
-.login .group {
+.login-text-input {
+  color: black;
+  font-family: "Inter", Helvetica;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 10px;
+
+  width: 100%;
+  padding: 8px 12px;
+
+  background-color: transparent;
+  border-radius: 6px;
+
+  outline: none !important;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.login-text-input,
+.login-text-input:focus,
+.login-text-input:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.login-text-input::placeholder {
+  font-size: 16px;
+  text-transform: uppercase;
+}
+
+.login-group {
   height: 20px;
   left: 345px;
   position: absolute;
@@ -142,7 +162,7 @@
   width: 212px;
 }
 
-.login .text-wrapper-4 {
+.login-text-wrapper-4 {
   color: #000000;
   font-family: "Inter", Helvetica;
   font-size: 20px;
@@ -156,7 +176,7 @@
   white-space: nowrap;
 }
 
-.login .property-1-unchecked {
+.login-property-1-unchecked {
   height: 21px !important;
   left: 0 !important;
   position: absolute !important;
@@ -164,15 +184,15 @@
   width: 21px !important;
 }
 
-.login .component-18 {
-  height: 34px !important;
-  left: 50px !important;
-  position: absolute !important;
-  top: 38px !important;
-  width: 24px !important;
+.login-component-18 {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  z-index: 9999;
+  cursor: pointer;
 }
 
-.login .alog-logo {
+.login-alog-logo {
   height: 80px;
   left: 620px;
   object-fit: cover;
@@ -181,7 +201,7 @@
   width: 200px;
 }
 
-.login .frame {
+.login-frame {
   align-items: center;
   display: flex;
   gap: 200px;
@@ -192,14 +212,14 @@
   width: 769px;
 }
 
-.login .element-kakaotalk-logo {
+.login-element-kakaotalk-logo {
   height: 68.3px;
   object-fit: cover;
   position: relative;
   width: 68.3px;
 }
 
-.login .web-light-rd-na {
+.login-web-light-rd-na {
   align-items: center;
   display: flex;
   gap: 10px;
@@ -209,7 +229,7 @@
   width: 68.3px;
 }
 
-.login .google-round {
+.login-google-round {
   height: 67.3px;
   margin-bottom: -0.50px;
   margin-left: -0.50px;
@@ -219,33 +239,10 @@
   width: 67.3px;
 }
 
-.login .clip-path-group {
+.login-clip-path-group {
   height: 34px;
   left: 17px;
   position: absolute;
   top: 17px;
   width: 34px;
-}
-
-.text-input {
-  color: #d9d9d9;
-  font-family: "Inter", Helvetica;
-  font-size: 20px;
-  font-weight: 400;
-  letter-spacing: 0;
-  line-height: 10px;
-
-  width: 100%;
-  padding: 8px 12px;
-
-  background-color: transparent;
-  border-radius: 6px;
-
-  outline: none;
-  text-align: left;
-  white-space: nowrap;
-}
-
-.text-input::placeholder {
-  font-size: 20px;
 }

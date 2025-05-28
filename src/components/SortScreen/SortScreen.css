@@ -1,0 +1,22 @@
+/* SortScreen.css */.sortscreen-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 0;
+  background-color: #ffffff;
+}
+
+.sortscreen-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-family: "Inter", Helvetica;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #a3b3bf;
+  transition: color 0.2s ease;
+}
+
+.sortscreen-item.active {
+  color: #1d1652;
+}

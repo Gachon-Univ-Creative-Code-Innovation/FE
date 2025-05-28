@@ -1,14 +1,13 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Component22 from "../../components/SelectUserComponent/SelectUserComponent";
-import Component23 from "../../components/SelectHeadhunterComponent/SelectHeadhunterComponent";
+import Component22 from "../../components/SelectOKComponent/SelectOKComponent";
 import "./SelectMode.css";
 
 const MotionDiv = motion.div;
 
 const SelectMode = ({ isOpen, onClose }) => {
   const handleOverlayClick = (e) => {
-    if (e.target.classList.contains("modal-overlay")) {
+    if (e.target.classList.contains("selectmode-overlay")) {
       onClose();
     }
   };
@@ -16,54 +15,35 @@ const SelectMode = ({ isOpen, onClose }) => {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="modal-overlay" onClick={handleOverlayClick}>
+        <div className="selectmode-overlay" onClick={handleOverlayClick}>
           <MotionDiv
-            className="modal-content"
+            className="selectmode-content"
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -30 }}
             transition={{ duration: 0.3 }}
           >
-            <button className="modal-close" onClick={onClose}>
+            <button className="selectmode-close" onClick={onClose}>
               ✖
             </button>
 
             <div className="select-mode-wrapper">
               <div className="div-6">
-                <p className="choose-your-role">
-                  <span className="span">
-                    Choose your role.
-                    <br />
-                  </span>
-                  <span className="text-wrapper-62">
-                    <br />
-                  </span>
-                  <span className="span">
-                    User
-                    <br />
-                  </span>
-                  <span className="text-wrapper-62">
-                    Read, write, and follow posts from other users.
-                    <br />
-                    <br />
-                  </span>
-                  <span className="span">
-                    Headhunter
-                    <br />
-                  </span>
-                  <span className="text-wrapper-62">
-                    Discover talented individuals and explore their work.
-                  </span>
+                <p className="selectmode-role-text">
+                  <span className="selectmode-bold">Sign up for Alog</span>
+                  <br />
+                  <br />
+                  <br />
+                  <br />
+                  Create your account using a verified email.
+                  <br />
+                  By signing up, you agree to the collection and use of your
+                  personal information.
                 </p>
 
-                <div className="frame-47">
+                <div className="selectmode-button-wrapper">
                   <Component22
-                    className="component-22-instance"
-                    property1="frame-38"
-                    to="/signup"
-                  />
-                  <Component23
-                    className="component-23-instance"
+                    className="selectmode-button"
                     property1="frame-38"
                     to="/signup"
                   />

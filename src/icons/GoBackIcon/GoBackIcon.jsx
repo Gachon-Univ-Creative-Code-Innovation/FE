@@ -1,6 +1,5 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import "./GoBackIcon.css";
 
 export const GoBackIcon = ({ className }) => {
   const navigate = useNavigate();

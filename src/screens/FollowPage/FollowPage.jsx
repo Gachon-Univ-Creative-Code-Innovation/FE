@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import FollowTab from "../../components/FollowTab/FollowTab";
 import FollowDelete from "../../components/FollowDelete/FollowDelete";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
-import GoBackIcon from "../../icons/GoBackIcon/GoBackIcon";
+import ScrollUp from "../../icons/ScrollUp/ScrollUp";
+import Navbar2 from "../../components/Navbar2/Navbar2";
 import "./FollowPage.css";
 
 export const FollowPage = () => {
@@ -14,7 +14,6 @@ export const FollowPage = () => {
   const [selectedTab, setSelectedTab] = useState("follow");
 
   const observer = useRef(null);
-  const navigate = useNavigate();
 
   const USERS_PER_PAGE = 10;
   const MAX_USERS = 50;
@@ -31,11 +30,7 @@ export const FollowPage = () => {
   const visibleUsers = filteredUsers.slice(0, page * USERS_PER_PAGE);
 
   useEffect(() => {
-    if (visibleUsers.length < filteredUsers.length) {
-      setHasMore(true);
-    } else {
-      setHasMore(false);
-    }
+    setHasMore(visibleUsers.length < filteredUsers.length);
   }, [visibleUsers.length, filteredUsers.length]);
 
   const lastUserRef = useCallback(
@@ -61,21 +56,10 @@ export const FollowPage = () => {
 
   return (
     <PageTransitionWrapper>
-      <GoBackIcon className="followpage-component-18" />
-      <div className="followpage-wrapper">
-        <div className="followpage-container">
-          <div className="followpage-header">
-            <div className="followpage-header-left" />
-            <img
-              className="followpage-logo"
-              alt="Alog logo"
-              src="/img/alog-logo.png"
-              onClick={() => navigate("/MainPageAfter")}
-              style={{ cursor: "pointer" }}
-            />
-            <div className="followpage-header-right" />
-          </div>
+      <Navbar2 />
 
+      <div className="followpage-wrapper">
+        <div className="followpage-container" style={{ marginTop: "100px" }}>
           <div className="followpage-category">
             <FollowTab
               type="follow"
@@ -108,6 +92,12 @@ export const FollowPage = () => {
               </div>
             ))}
           </div>
+        </div>
+      </div>
+
+      <div className="followpage-scrollup-wrapper">
+        <div className="followpage-scrollup-inner">
+          <ScrollUp className="followpage-scrollup-icon" />
         </div>
       </div>
     </PageTransitionWrapper>

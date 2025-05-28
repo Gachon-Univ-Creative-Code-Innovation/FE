@@ -3,11 +3,13 @@ import { useNavigate } from "react-router-dom";
 import ForgotPassword from "../../components/ForgotPassword/ForgotPassword";
 import SignUp from "../../components/SignUp/SignUp";
 import SelectMode from "../../screens/SelectMode/SelectMode";
-import Component18 from "../../icons/GoBackIcon/GoBackIcon";
+import GoBackIcon from "../../icons/GoBackIcon/GoBackIcon";
 import Property1Unchecked from "../../icons/PropertyUnchecked/PropertyUnchecked";
+import AlogLogo from "../../icons/AlogLogo/AlogLogo";
 import "./Login.css";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import { AnimatePresence } from "framer-motion";
+import api from "../../api/instance";
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -16,19 +18,32 @@ export const Login = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const dummyUser = {
-    id: "test",
-    password: "1234",
-  };
-
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
 
-  const handleLogin = () => {
-    if (id === dummyUser.id && password === dummyUser.password) {
-      navigate("/MainPageAfter");
-    } else {
-      setErrorMessage("아이디 또는 비밀번호가 올바르지 않습니다.");
+  const handleLogin = async () => {
+    setErrorMessage(""); // 에러 초기화
+    try {
+      const response = await api.post("/user-service/signin", {
+        email: id,
+        password: password,
+      });
+
+      // 성공 응답 구조: { status, message, data: { accessToken, refreshToken, userId, ... } }
+      const { accessToken, refreshToken, userId } = response.data.data;
+
+      localStorage.setItem("jwtToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      if (userId) {
+        localStorage.setItem("userId", userId);
+      }
+
+      window.location.href = "/MainPageAfter";
+    } catch (error) {
+      // 에러 응답 구조: { status, message, data }
+      const message =
+        error.response?.data?.message || "로그인에 실패했습니다.";
+      setErrorMessage(message);
     }
   };
 
@@ -40,15 +55,15 @@ export const Login = () => {
 
   return (
     <PageTransitionWrapper>
-      <Component18 className="component-18" />
+      <GoBackIcon className="login-component-18" />
       <div className="login">
-        <div className="div-2">
+        <div className="login-div-2">
           <form autoComplete="off" onSubmit={(e) => e.preventDefault()}>
-            <div className="id">
+            <div className="login-id">
               <input
                 type="text"
-                className="text-input"
-                placeholder="Id"
+                className="login-text-input"
+                placeholder="ID"
                 autoComplete="off"
                 value={id}
                 onChange={(e) => setId(e.target.value)}
@@ -56,11 +71,11 @@ export const Login = () => {
               />
             </div>
 
-            <div className="password">
+            <div className="login-password">
               <input
                 type="password"
-                className="text-input"
-                placeholder="password"
+                className="login-text-input"
+                placeholder="PASSWORD"
                 autoComplete="new-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -73,7 +88,7 @@ export const Login = () => {
               className="login-button"
               onClick={handleLogin}
             >
-              <div className="LOGIN">LOGIN</div>
+              <div className="login-LOGIN">LOGIN</div>
             </button>
           </form>
 
@@ -83,52 +98,54 @@ export const Login = () => {
             </div>
           )}
 
-          <div className="menu">
-            <div className="overlap-group">
-              <div className="sign-up-wrapper">
+          <div className="login-menu">
+            <div className="login-overlap-group">
+              <div className="login-sign-up-wrapper">
                 <div onClick={openModal}>
                   <SignUp property1="default" />
                 </div>
               </div>
 
-              <div className="forgot-username-wrapper"></div>
-
-              <div className="forgot-password-wrapper">
-                <ForgotPassword property1="default" />
+              <div className="login-forgot-password-wrapper">
+                <div
+                  onClick={() => navigate("/forgotpassword")}
+                  style={{ cursor: "pointer" }}
+                >
+                  <ForgotPassword property1="default" />
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="group">
-            <div className="text-wrapper-4">Keep me logged in</div>
+          <div className="login-group">
+            <div className="login-text-wrapper-4">Keep me logged in</div>
             <Property1Unchecked
-              className="property-1-unchecked"
+              className="login-property-1-unchecked"
               color="#D9D9D9"
             />
           </div>
 
-          <img
-            className="alog-logo"
-            alt="Alog logo"
-            src="/img/alog-logo.png"
+          <div
             onClick={() => navigate("/MainPageBefore")}
             style={{ cursor: "pointer" }}
-          />
+          >
+            <AlogLogo className="login-alog-logo" width={200} height={80} />
+          </div>
 
-          <div className="frame">
+          <div className="login-frame">
             <img
-              className="element-kakaotalk-logo"
+              className="login-element-kakaotalk-logo"
               alt="Element kakaotalk logo"
               src="/img/kakaotalk-logo.png"
             />
-            <div className="web-light-rd-na">
+            <div className="login-web-light-rd-na">
               <img
-                className="google-round"
+                className="login-google-round"
                 alt="google-round"
                 src="/img/google-round.svg"
               />
               <img
-                className="clip-path-group"
+                className="login-clip-path-group"
                 alt="Clip path group"
                 src="/img/google-logo.png"
               />

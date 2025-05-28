@@ -1,0 +1,50 @@
+.hotcomponent {
+  position: relative;
+  width: 137px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease-in-out;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+/* 전체 너비 밑줄 애니메이션 */
+.hotcomponent::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background-color: #1d1652;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease-in-out;
+}
+
+.hotcomponent.hotcomponent-hover::after {
+  transform: scaleX(1);
+}
+
+.hotcomponent-text {
+  font-family: "Inter", Helvetica;
+  font-size: 20px;
+  letter-spacing: 0;
+  line-height: 14px;
+  white-space: nowrap;
+  font-weight: 400;
+  color: #a0a0a0;
+  transition: all 0.25s ease-in-out;
+}
+
+.hotcomponent.hotcomponent-hover .hotcomponent-text {
+  color: #1d1652;
+  font-weight: 600;
+}
+
+.hotcomponent.hotcomponent-default .hotcomponent-text {
+  color: #a0a0a0;
+  font-weight: 400;
+}

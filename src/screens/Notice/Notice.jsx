@@ -1,173 +1,309 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
 import TabsGroup from "../../components/AlarmTabs/TabsGroup";
-import Component18 from "../../icons/GoBackIcon/GoBackIcon";
 import InterfaceTrashFull from "../../icons/InterfaceTrashFull/InterfaceTrashFull";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
-import SelectModeScreen from "../SelectModeScreen/SelectModeScreen";
+import DeleteNotice from "../DeleteNotice/DeleteNotice";
 import ScrollUp from "../../icons/ScrollUp/ScrollUp";
+import Navbar2 from "../../components/Navbar2/Navbar2";
 import "./Notice.css";
+import api from "../../api/instance";
 
-export const Notice = () => {
-  const [selectedTab, setSelectedTab] = useState("All");
-  const [notifications, setNotifications] = useState([]);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-  const observer = useRef(null);
-  const navigate = useNavigate();
-
-  const tabs = ["All", "Unread", "Read"];
-  const ITEMS_PER_PAGE = 10;
+function NotificationItem({
+  notice,
+  onClick,
+  onMenuOpen,
+  menuOpen,
+  onMarkAsRead,
+  onDelete,
+}) {
+  const popoverRef = useRef(null);
 
   useEffect(() => {
-    const dummy = Array.from({ length: 50 }).map((_, i) => ({
-      id: i + 1,
-      content: `Notice ${i + 1}`,
-      date: "2025.03.23",
-      isRead: false,
-    }));
-    setNotifications(dummy);
-  }, []);
+    if (menuOpen !== notice.id) return;
+    function handleClickOutside(e) {
+      if (popoverRef.current && !popoverRef.current.contains(e.target)) {
+        onMenuOpen(null);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [menuOpen, notice.id, onMenuOpen]);
 
-  const markAsRead = (id) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
-    );
-  };
-
-  const filteredNotifications = notifications.filter((n) => {
-    if (selectedTab === "Unread") return !n.isRead;
-    if (selectedTab === "Read") return n.isRead;
-    return true;
-  });
-
-  const displayedNotifications = filteredNotifications.slice(
-    0,
-    page * ITEMS_PER_PAGE
+  return (
+    <div
+      className="notice-frame-65"
+      style={{
+        position: "relative",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+      }}
+      key={notice.id}
+    >
+      <div
+        onClick={() => onClick(notice)}
+        style={{ flex: 1, cursor: "pointer" }}
+      >
+        <div
+          className={
+            notice.read ? "notice-text-wrapper-77" : "notice-text-wrapper-75"
+          }
+        >
+          {notice.content}
+        </div>
+        <div
+          className={
+            notice.read ? "notice-text-wrapper-78" : "notice-text-wrapper-76"
+          }
+        >
+          {notice.date}
+        </div>
+      </div>
+      <div style={{ position: "relative" }}>
+        <button
+          className="notice-more-btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            onMenuOpen(menuOpen === notice.id ? null : notice.id);
+          }}
+        >
+          ⋯
+        </button>
+        {menuOpen === notice.id && (
+          <div className="notice-popover-menu" ref={popoverRef}>
+            <button
+              className="notice-popover-item"
+              onClick={async (e) => {
+                e.stopPropagation();
+                await onMarkAsRead(notice.id);
+                onMenuOpen(null);
+              }}
+            >
+              읽음 처리
+            </button>
+            <button
+              className="notice-popover-item danger"
+              onClick={async (e) => {
+                e.stopPropagation();
+                await onDelete(notice.id);
+                onMenuOpen(null);
+              }}
+            >
+              삭제
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
   );
+}
 
-  const lastItemRef = useCallback(
-    (node) => {
-      if (!hasMore) return;
-      if (observer.current) observer.current.disconnect();
-      observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting) {
-          setPage((prev) => {
-            const nextStart = (prev + 1) * ITEMS_PER_PAGE;
-            if (nextStart >= filteredNotifications.length) {
-              setHasMore(false);
-              return prev;
-            }
-            return prev + 1;
-          });
+export const Notice = () => {
+  const [selectedTab, setSelectedTab] = useState("전체");
+  const [notifications, setNotifications] = useState([]);
+  const [page, setPage] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+  const [menuOpenId, setMenuOpenId] = useState(null);
+  const [totalPages, setTotalPages] = useState(1);
+  const ITEMS_PER_PAGE = 10;
+
+  const [pageGroup, setPageGroup] = useState(0);
+  const PAGE_GROUP_SIZE = 10;
+
+  const fetchNotifications = async (tab = "전체", pageNum = 0) => {
+    const token = localStorage.getItem("jwtToken");
+    let url = "/notifications";
+    if (tab === "안읽음") url += "/unread";
+    else if (tab === "읽음") url += "/read";
+    try {
+      const res = await api.get(
+        `${url}?page=${pageNum}&size=${ITEMS_PER_PAGE}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
         }
+      );
+      setNotifications(res.data.data.content);
+      setTotalPages(res.data.data.totalPages || 1);
+    } catch (err) {
+      setNotifications([]);
+      setTotalPages(1);
+      console.error("알림 불러오기 실패:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications(selectedTab, page);
+  }, [selectedTab, page]);
+
+  useEffect(() => {
+    setPageGroup(0);
+    setPage(0);
+  }, [selectedTab]);
+
+  const markAsRead = async (id) => {
+    const token = localStorage.getItem("jwtToken");
+    try {
+      await api.patch(
+        `/notifications/${id}/read`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      fetchNotifications(selectedTab, page);
+    } catch (err) {
+      console.error("알림 읽음 처리 실패:", err);
+    }
+  };
+
+  const handleDeleteOne = async (id) => {
+    const token = localStorage.getItem("jwtToken");
+    try {
+      await api.delete(`/notifications/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      if (node) observer.current.observe(node);
-    },
-    [hasMore, filteredNotifications.length]
-  );
-
-  const handleDeleteClick = () => {
-    setShowModal(true);
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+    } catch (err) {
+      console.error("특정 알림 삭제 실패:", err);
+    }
   };
 
-  const handleCancel = () => {
-    setShowModal(false);
+  const handleDeleteClick = () => setShowModal(true);
+  const handleCancel = () => setShowModal(false);
+
+  const handleDeleteAll = async () => {
+    const token = localStorage.getItem("jwtToken");
+    try {
+      await api.delete("/notifications", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setNotifications([]);
+      setShowModal(false);
+    } catch (err) {
+      console.error("전체 알림 삭제 실패:", err);
+    }
   };
 
-  const handleDeleteAll = () => {
-    setNotifications([]);
-    setShowModal(false);
+  const handleMarkAllRead = async () => {
+    const token = localStorage.getItem("jwtToken");
+    try {
+      await api.patch(
+        "/notifications/read/all",
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    } catch (err) {
+      console.error("전체 알림 읽음 처리 실패:", err);
+    }
   };
+
+  const startPage = pageGroup * PAGE_GROUP_SIZE;
+  const endPage = Math.min(startPage + PAGE_GROUP_SIZE, totalPages);
+  const canPrevGroup = pageGroup > 0;
+  const canNextGroup = endPage < totalPages;
 
   return (
     <PageTransitionWrapper>
-      <Component18 className="component-18" />
-
+      <Navbar2 />
       <div className="notice">
-        <div className="div-6">
-          <div className="post-list-4">
-            <div className="frame-63">
-              <div className="frame-64">
+        <div className="notice-div-6">
+          <div className="notice-post-list-4">
+            <div className="notice-frame-63">
+              <div className="notice-frame-64">
                 <TabsGroup
-                  tabs={tabs}
+                  tabs={["전체", "안읽음", "읽음"]}
                   selected={selectedTab}
-                  onSelect={(tab) => {
-                    setSelectedTab(tab);
-                    setPage(1);
-                    setHasMore(true);
-                  }}
+                  onSelect={(tab) => setSelectedTab(tab)}
                 />
               </div>
-              <div onClick={handleDeleteClick}>
-                <InterfaceTrashFull className="interface-trash-full" />
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                {/* ✅ 이미지 대신 텍스트 버튼 */}
+                <button
+                  className="notice-shark-btn"
+                  onClick={handleMarkAllRead}
+                >
+                  전체 읽음
+                </button>
+                <div onClick={handleDeleteClick}>
+                  <InterfaceTrashFull className="notice-interface-trash-full" />
+                </div>
               </div>
             </div>
-
-            <div className="post-list-5">
-              {displayedNotifications.map((notice, idx) => (
-                <div
-                  className="frame-65"
+            <div className="notice-post-list-5">
+              {notifications.map((notice) => (
+                <NotificationItem
                   key={notice.id}
-                  ref={
-                    idx === displayedNotifications.length - 1
-                      ? lastItemRef
-                      : null
-                  }
-                  onClick={() => markAsRead(notice.id)}
-                  style={{ cursor: "pointer" }}
-                >
-                  <div className="comment-9">
-                    <div
-                      className={
-                        notice.isRead ? "text-wrapper-77" : "text-wrapper-75"
-                      }
-                    >
-                      {notice.content}
-                    </div>
-                  </div>
-                  <div
-                    className={
-                      notice.isRead ? "text-wrapper-78" : "text-wrapper-76"
-                    }
-                  >
-                    {notice.date}
-                  </div>
-                </div>
+                  notice={notice}
+                  onMenuOpen={setMenuOpenId}
+                  menuOpen={menuOpenId}
+                  onMarkAsRead={markAsRead}
+                  onDelete={handleDeleteOne}
+                />
               ))}
             </div>
           </div>
-
-          <div className="frame-66">
-            <div className="component-wrapper"></div>
-            <img
-              className="alog-logo-6"
-              alt="Alog logo"
-              src="/img/alog-logo.png"
-              onClick={() => navigate("/MainPageAfter")}
-              style={{ cursor: "pointer" }}
-            />
-            <div className="frame-67"></div>
-          </div>
         </div>
       </div>
-
       {showModal && (
         <div className="select-mode-screen__overlay">
-          <SelectModeScreen
-            onCancel={handleCancel}
-            onDeleteAll={handleDeleteAll}
-          />
+          <DeleteNotice onCancel={handleCancel} onDeleteAll={handleDeleteAll} />
         </div>
       )}
-
-      {/* Scroll control top button */}
-      <div className="overlap-wrapper">
-        <div className="overlap">
-          <div className="text">{""}</div>
-          <ScrollUp className="component-19" />
+      <div className="notice-overlap-wrapper">
+        <div className="notice-overlap">
+          <ScrollUp className="notice-component-19" />
         </div>
+      </div>
+      <div className="notice-pagination">
+        <button
+          className="notice-pagination-arrow"
+          disabled={page === 0}
+          onClick={() => {
+            if (page === startPage) {
+              if (canPrevGroup) {
+                setPageGroup(pageGroup - 1);
+                setPage(
+                  (pageGroup - 1) * PAGE_GROUP_SIZE + PAGE_GROUP_SIZE - 1
+                );
+              }
+            } else {
+              setPage(page - 1);
+            }
+          }}
+        >
+          &#60;
+        </button>
+        {Array.from({ length: endPage - startPage }).map((_, idx) => (
+          <button
+            key={startPage + idx}
+            className={`notice-pagination-btn${
+              page === startPage + idx ? " active" : ""
+            }`}
+            onClick={() => setPage(startPage + idx)}
+            disabled={page === startPage + idx}
+          >
+            {startPage + idx + 1}
+          </button>
+        ))}
+        <button
+          className="notice-pagination-arrow"
+          disabled={page === totalPages - 1}
+          onClick={() => {
+            if (page === endPage - 1) {
+              if (canNextGroup) {
+                setPageGroup(pageGroup + 1);
+                setPage((pageGroup + 1) * PAGE_GROUP_SIZE);
+              }
+            } else {
+              setPage(page + 1);
+            }
+          }}
+        >
+          &#62;
+        </button>
       </div>
     </PageTransitionWrapper>
   );

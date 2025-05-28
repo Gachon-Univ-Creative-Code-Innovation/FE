@@ -1,0 +1,49 @@
+.sortcomponent-btn {
+  all: unset;
+  align-items: center;
+  border: 1px solid #a3b3bf;
+  border-radius: 10px;
+  box-sizing: border-box;
+  display: inline-flex;
+  gap: 10px;
+  justify-content: center;
+  padding: 5px 30px;
+  position: relative;
+  cursor: pointer;
+  transition: border-color 0.3s, color 0.3s;
+  min-width: 90px;
+}
+
+.sortcomponent-text {
+  color: #a3b3bf;
+  font-family: "Inter", Helvetica;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 30px;
+  text-align: center;
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+
+.sortcomponent-icon {
+  height: 17.88px;
+  width: 17.5px;
+  margin-right: -0.75px;
+  transition: stroke 0.3s ease;
+}
+
+/* active state */
+.sortcomponent-btn.active,
+.sortcomponent-btn-active .sortcomponent-btn {
+  border-color: #1d1652;
+}
+
+.sortcomponent-btn.active .sortcomponent-text,
+.sortcomponent-btn-active .sortcomponent-text {
+  color: #1d1652;
+}
+
+.sortcomponent-btn.active .sortcomponent-icon,
+.sortcomponent-btn-active .sortcomponent-icon {
+  stroke: #1d1652;
+}

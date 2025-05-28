@@ -384,7 +384,6 @@
   left: 0;
   right: 0;
   box-sizing: border-box;
-  box-shadow: 0 0px 1px rgba(0, 0, 0, 0.1);
 }
 
 .main-page-after .alog-logo {
@@ -519,8 +518,8 @@
 
 .main-page-after .component-19 {
   position: relative !important;
-  top: -20px !important;
-  left: -17px !important;
+  top: -21px !important;
+  left: -17.5px !important;
   height: 11px !important;
   width: 15px !important;
 }
@@ -532,7 +531,6 @@
   height: 80px;
   z-index: 1600;
   background-color: #F9FCFF; 
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .end-message {

@@ -1,34 +1,21 @@
-.component-8 {
+.portfolio {
   align-items: center;
-  display: flex;
+  display: inline-flex;
   gap: 10px;
-  justify-content: center;
+  height: 30px;
   position: relative;
-  width: 111px;
+  cursor: pointer;
 }
 
-.component-8 .text-wrapper-7 {
-  color: #000000;
-  flex: 1;
+.portfolio-text {
+  color: #1d1652;
   font-family: "Inter", Helvetica;
   font-size: 15px;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 30px;
-  position: relative;
-  text-align: center;
-}
-
-.component-8.hover {
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-color: #1d1652;
-}
-
-.component-8.hover .text-wrapper-7 {
-  margin-top: -2.00px;
-}
-
-.component-8.default .text-wrapper-7 {
   margin-top: -1.00px;
+  position: relative;
+  white-space: nowrap;
+  width: fit-content;
 }

@@ -1,0 +1,26 @@
+.hamburger-screen {
+  align-items: flex-start;
+  background-color: #fafdff;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  height: 944px;
+  padding: 50px 40px;
+  position: relative;
+}
+
+.hamburger-myblog-instance {
+  justify-content: center !important;
+}
+
+.hamburger-component-instance {
+  flex: 0 0 auto !important;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.hamburger-screen .logout-component .text-wrapper {
+  color: #1d1652 !important;
+}
