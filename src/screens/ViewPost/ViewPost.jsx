@@ -178,6 +178,7 @@ const ViewPost = () => {
     title: "Title",
     author: "Author",
     date: "2025.03.26",
+    category: "일상",
     tag: "#React",
     content: `집에 들어서자마자 은은하게 퍼지는 포근한 향기, 침대에 누울 때마다 느껴지는 산뜻한 상쾌함. 혹시 이런 감각을 경험해 보셨나요? 오늘은 일상의 작은 행복을 주는 숨겨진 아이템 '리넨워터(Linen Water)'를 소개하려 합니다.
 
@@ -218,7 +219,10 @@ const ViewPost = () => {
             </div>
             <FollowButton />
           </div>
-          <div className="view-post-tags">{post.tag}</div>
+          <div className="view-post-tags-line">
+            <span className="view-post-category">{post.category}</span>
+            <span className="view-post-tags">{post.tag}</span>
+          </div>
         </div>
 
         {/* 본문 카드 */}

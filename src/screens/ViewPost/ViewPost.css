@@ -20,7 +20,7 @@
 
 /* 내용 외 정보 */
 .view-post-header {
-  padding: 0 20px;
+  padding: 0 60px;
 }
 
 .view-post-title {
@@ -45,10 +45,22 @@
   gap: 16px;
 }
 
-.view-post-tags {
-  color: #2d2d5a;
-  font-size: 1.3rem;
+.view-post-tags-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   margin-bottom: 28px;
+}
+
+.view-post-category {
+  color: #000000;
+  font-size: 1.3rem;
+  font-weight: 500;
+}
+
+.view-post-tags {
+  color: #1D1652;
+  font-size: 1.3rem;
 }
 
 /* 본문 카드 */
