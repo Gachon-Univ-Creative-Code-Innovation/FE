@@ -305,6 +305,7 @@ export const Notice = () => {
           &#62;
         </button>
       </div>
+
     </PageTransitionWrapper>
   );
 };

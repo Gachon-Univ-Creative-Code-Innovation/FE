@@ -68,9 +68,10 @@ export const MyPost = () => {
                 <div className="text-wrapper-42">2025.03.23</div>
 
                 <div className="comment-3">
-                  <CommentIcon2
+                  <img
                     className="comment-icon-2"
-                    style={{ fill: "#A3B3BF" }}
+                    alt="Comment icon"
+                    src="/img/comment-icon2.svg"
                   />
                   <div className="text-wrapper-43">0</div>
                 </div>

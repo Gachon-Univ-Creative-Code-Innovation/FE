@@ -1,19 +1,27 @@
+/* src/screens/Write/Write.css */
+
 .write-editor {
   background: #FAFDFF;
   min-height: 100vh;
-  font-family: sans-serif;
   color: #222;
 }
 
-/* 상단 바 */
 .editor-top-bar {
-  padding: 18px 40px 10px 40px;
+  padding: 18px 40px 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-/* 본문 영역 */
+.editor-mode-select {
+  font-size: 16px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: #FAFDFF;
+  cursor: pointer;
+}
+
 .editor-content {
   max-width: 1240px;
   width: 90%;
@@ -21,7 +29,6 @@
   padding: 0 24px;
 }
 
-/* 제목 및 모드 선택 영역 */
 .editor-title-category {
   display: flex;
   align-items: center;
@@ -39,17 +46,6 @@
   color: #444;
 }
 
-.editor-mode-select {
-  width: 150px;
-  font-size: 16px;
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-  background: #FAFDFF;
-  cursor: pointer;
-}
-
-/* 태그 및 카테고리 선택 영역 */
 .editor-tag-category {
   display: flex;
   justify-content: space-between;
@@ -57,7 +53,9 @@
   margin-bottom: 16px;
 }
 
-.editor-category-select {
+.editor-category-select,
+.editor-tag-input,
+.editor-mode-select {
   font-size: 16px;
   padding: 6px 12px;
   border-radius: 6px;
@@ -68,30 +66,144 @@
 
 .editor-tag-input {
   flex: 1;
-  padding: 8px 12px;
-  font-size: 16px;
-  border: none;
   margin-right: 12px;
-  background: #FAFDFF;
+  border: none;
 }
 
-/* 에디터 영역 */
 .editor-area {
   min-height: 550px;
-  margin-bottom: 24px;
 }
 
-.reactquill-editor {
-  height: 500px;
-  background: #FFF;
+/* ReactQuill 툴바 스타일 수정 */
+.ql-toolbar {
+  border: 1px solid #ccc !important;
+  border-bottom: none !important;
+  background: #fff !important;
 }
 
-/* 액션 버튼 영역 */
+.ql-toolbar .ql-formats {
+  margin-right: 15px;
+}
+
+/* 툴바 버튼 스타일 */
+.ql-toolbar button {
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  padding: 5px !important;
+  margin: 2px !important;
+  border-radius: 3px !important;
+  color: #444 !important;
+  cursor: pointer !important;
+}
+
+.ql-toolbar button:hover {
+  background: #e6e6e6 !important;
+  color: #000 !important;
+}
+
+.ql-toolbar button.ql-active {
+  background: #ccc !important;
+  color: #000 !important;
+}
+
+/* 볼드, 이탤릭 등 아이콘 스타일 */
+.ql-toolbar .ql-bold,
+.ql-toolbar .ql-italic,
+.ql-toolbar .ql-underline,
+.ql-toolbar .ql-strike {
+  width: 28px !important;
+  height: 28px !important;
+}
+
+.ql-toolbar .ql-bold::before,
+.ql-toolbar .ql-italic::before,
+.ql-toolbar .ql-underline::before,
+.ql-toolbar .ql-strike::before {
+  font-size: 14px !important;
+  line-height: 28px !important;
+}
+
+/* 에디터 본문 스타일 */
+.ql-container {
+  border: 1px solid #ccc !important;
+  border-top: none !important;
+  font-family: inherit !important;
+}
+
+.ql-editor {
+  min-height: 550px;
+  background: #fff;
+  padding: 12px;
+  line-height: 1.6;
+  font-size: 16px;
+  color: #333;
+}
+
+/* 에디터 내 텍스트 포맷팅이 제대로 표시되도록 */
+.ql-editor strong {
+  font-weight: bold !important;
+}
+
+.ql-editor em {
+  font-style: italic !important;
+}
+
+.ql-editor u {
+  text-decoration: underline !important;
+}
+
+.ql-editor s {
+  text-decoration: line-through !important;
+}
+
+/* 인용구 스타일 */
+.ql-editor blockquote {
+  border-left: 4px solid #ccc !important;
+  margin: 16px 0 !important;
+  padding: 8px 16px !important;
+  background-color: #f9f9f9 !important;
+  font-style: italic !important;
+  color: #666 !important;
+}
+
+/* 코드 블록 스타일 */
+.ql-editor pre {
+  background-color: #f4f4f4 !important;
+  border: 1px solid #ddd !important;
+  border-radius: 4px !important;
+  padding: 12px !important;
+  margin: 16px 0 !important;
+  overflow-x: auto !important;
+  font-family: 'Courier New', Consolas, monospace !important;
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+  color: #333 !important;
+}
+
+/* 인라인 코드 스타일 */
+.ql-editor code {
+  background-color: #f4f4f4 !important;
+  border: 1px solid #ddd !important;
+  border-radius: 3px !important;
+  padding: 2px 4px !important;
+  font-family: 'Courier New', Consolas, monospace !important;
+  font-size: 14px !important;
+  color: #d14 !important;
+}
+
+/* 플레이스홀더 스타일 */
+.ql-editor.ql-blank::before {
+  color: #aaa;
+  font-style: normal;
+}
+
 .editor-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-bottom: 40px;
+  margin-top: 20px;
 }
 
 .editor-button-group {
@@ -99,14 +211,10 @@
   gap: 12px;
 }
 
-/* 팝업(모달) 오버레이 */
 .summary-popup-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0,0,0,0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -129,19 +237,14 @@
   padding: 20px;
   font-size: 16px;
   resize: none;
-  margin: 10px 0;
-  max-height: 450px; 
-  overflow-y: auto; /* 넘치면 스크롤 표시 */
+  max-height: 450px;
+  overflow-y: auto;
 }
 
 .summary-textarea:focus {
-  outline: none; /* 기본 파란색 테두리 제거 */
+  outline: none;
 }
 
-
-
-
-/* 팝업 버튼 */
 .popup-buttons {
   display: flex;
   justify-content: center;
@@ -157,36 +260,19 @@
   cursor: pointer;
 }
 
-.publish-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px; /* 맞춤법 검사 버튼과 동일한 간격 */
-  background: #1d1652;
-  color: #fff;
-  border: none;
-  border-radius: 24px;
-  padding: 12px 24px; /* 동일한 크기 설정 */
-  font-size: 14px; /* 동일한 텍스트 크기 */
-  cursor: pointer;
-}
-
-
 .popup-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
-  position: relative; /* X 버튼 위치 조정 */
+  position: relative;
 }
 
 .popup-title {
   font-size: 20px;
   font-weight: bold;
-  color: #222;
-  text-align: center; /* 문구를 중앙 정렬 */
-  flex: 1; /* 제목이 가운데 위치하도록 설정 */
-  font-family: "Arial", sans-serif;
+  flex: 1;
+  text-align: center;
 }
 
 .close-icon {
@@ -195,5 +281,5 @@
   height: 24px;
   position: absolute;
   top: 50%;
-  transform: translateY(-50%); 
+  transform: translateY(-50%);
 }
