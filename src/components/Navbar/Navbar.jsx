@@ -77,7 +77,9 @@ const Navbar = ({ onShowPopup, scrolled, isLoggedIn }) => {
               <div
                 className="navbar-edit"
                 style={{ cursor: "pointer" }}
-                onClick={() => navigate("/write")}
+                onClick={() => {
+                  isLoggedIn ? navigate("/write") : onShowPopup();
+                }}
               >
                 <PencilIcon width={24} height={24} />
               </div>
