@@ -224,6 +224,7 @@
 }
 
 .notice-group-19 {
+
   height: 18px;
   left: 3px;
   position: absolute;
@@ -335,18 +336,17 @@
 }
 
 .notice-shark-btn {
-  background: none;
-  border: none;
-  padding: 0;
+  padding: 4px 8px;
+  font-size: 12px;
+  background-color: transparent;
+  border: 1px solid #ccc;
+  border-radius: 4px;
   cursor: pointer;
+  font-family: 'GmarketSans', sans-serif;
+  font-weight: 500;  
   display: flex;
   align-items: center;
-}
-
-.notice-shark-btn img {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
+  justify-content: center;
 }
 
 .notice-pagination {
@@ -369,7 +369,7 @@
 }
 
 .notice-pagination-btn.active {
-  color: #3cb371;
+  color: #1d1652 !important;
   font-weight: bold;
   font-size: 22px;
 }

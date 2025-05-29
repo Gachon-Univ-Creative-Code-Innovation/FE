@@ -8,7 +8,6 @@ export const AllComponent = ({
   divClassName,
   onClick,
 }) => {
-  // allcomponent-text가 빠지지 않도록 자동 보정
   const finalTextClass = divClassName?.includes("allcomponent-text")
     ? divClassName
     : `allcomponent-text ${divClassName || ""}`;

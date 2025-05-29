@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import NoticeBell from "../../icons/NoticeBell/NoticeBell";
 import AlogLogo from "../../icons/AlogLogo/AlogLogo";
@@ -6,12 +6,17 @@ import PencilIcon from "../../icons/PencilIcon/PencilIcon";
 import MailIcon from "../../icons/MailIcon/MailIcon";
 import HamburgerIcon from "../../icons/HamburgerIcon/HamburgerIcon";
 import { HamburgerScreen } from "../HamburgerScreen/HamburgerScreen";
+import { useAlarmStore } from "../../store/useAlarmStore";
+import api from "../../api/instance";
 import "./Navbar.css";
+import { useWebSocket } from "../../contexts/WebSocketContext";
 
 const Navbar = ({ onShowPopup, scrolled, isLoggedIn }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [showSidebar, setShowSidebar] = useState(false);
+  const hasUnread = useAlarmStore((state) => state.hasUnread);
+  const { unreadTotalCount } = useWebSocket();
 
   const toggleSidebar = () => setShowSidebar(!showSidebar);
   const closeSidebar = () => setShowSidebar(false);
@@ -47,24 +52,34 @@ const Navbar = ({ onShowPopup, scrolled, isLoggedIn }) => {
           <div className="navbar-right">
             <div className="navbar-icons">
               <img className="navbar-icon" alt="Icon" src="/img/icon.svg" />
-              <NoticeBell
-                className="navbar-bell"
-                style={{ cursor: "pointer" }}
-                onClick={() => {
-                  isLoggedIn ? navigate("/notice") : onShowPopup();
-                }}
-              />
-              <MailIcon
-                className="navbar-mail"
-                style={{ cursor: "pointer" }}
-                onClick={() => {
-                  isLoggedIn ? navigate("/message") : onShowPopup();
-                }}
-              />
+              <div style={{ position: "relative", display: "inline-block" }}>
+                <NoticeBell
+                  className="navbar-bell"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    isLoggedIn ? navigate("/notice") : onShowPopup();
+                  }}
+                />
+                {hasUnread && <span className="alarm-badge"></span>}
+              </div>
+              <div style={{ position: "relative", display: "inline-block" }}>
+                <MailIcon
+                  className="navbar-mail"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    isLoggedIn ? navigate("/message") : onShowPopup();
+                  }}
+                />
+                {unreadTotalCount > 0 && (
+                  <span className="unread-msg-badge">{unreadTotalCount}</span>
+                )}
+              </div>
               <div
                 className="navbar-edit"
                 style={{ cursor: "pointer" }}
-                onClick={onShowPopup}
+                onClick={() => {
+                  isLoggedIn ? navigate("/write") : onShowPopup();
+                }}
               >
                 <PencilIcon width={24} height={24} />
               </div>

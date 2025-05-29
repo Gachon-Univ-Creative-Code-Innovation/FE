@@ -1,0 +1,46 @@
+.myworkspace-wrapper {
+  height: 52px;
+  width: 137px;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden; /* ✅ ::after 가 넘치지 않도록 */
+}
+
+.myworkspace-wrapper::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background-color: #1d1652;
+  transform: scaleX(0);
+  transform-origin: left bottom;
+  transition: transform 0.3s ease-in-out;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.myworkspace-wrapper.active::after {
+  transform: scaleX(1);
+}
+
+.myworkspace-text {
+  color: #a0a0a0;
+  font-family: 'GmarketSans', sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  position: absolute;
+  top: 18px;
+  left: 28px;
+  white-space: nowrap;
+  text-align: center;
+  height: 14px;
+  line-height: 14px;
+  transition: color 0.3s ease, font-weight 0.2s ease-in-out;
+}
+
+.myworkspace-wrapper.active .myworkspace-text {
+  color: #1d1652;
+  font-weight: 600;
+}

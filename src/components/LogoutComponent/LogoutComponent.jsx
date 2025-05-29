@@ -8,10 +8,10 @@ export const LogoutComponent = ({ property1 = "default", text = "LOGOUT" }) => {
 
   const handleClick = () => {
     if (text === "LOGOUT") {
-      // 로그인 정보 삭제
-      localStorage.removeItem("isLoggedIn");
-      localStorage.removeItem("user");
-
+      // 인증 정보 삭제
+      localStorage.removeItem("jwtToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("userId");
       // 로그아웃 후 메인 페이지 이동
       navigate("/MainPageBefore");
     } else if (text === "LOGIN") {
