@@ -9,6 +9,8 @@ import SignUp from "./screens/SignUp/SignUp";
 import Notice from "./screens/Notice/Notice";
 import MainPageAfter from "./screens/MainPageAfter/MainPageAfter";
 import FollowPage from "./screens/FollowPage/FollowPage";
+import Write from "./screens/Write/Write";
+import "./App.css";
 import GenerateReadmeScreen from "./screens/GenerateReadmeScreen/GenerateReadmeScreen";
 import ForgotPassword from "./screens/ForgotPassword/ForgotPassword";
 import MyPage from "./screens/MyPage/MyPage";
@@ -37,6 +39,7 @@ const AnimatedRoutes = () => {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/notice" element={<Notice />} />
         <Route path="/MainPageAfter" element={<MainPageAfter />} />
+        <Route path="/write" element={<Write />} />
         <Route path="/follow" element={<FollowPage />} />
         <Route path="/generatereadme" element={<GenerateReadmeScreen />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
