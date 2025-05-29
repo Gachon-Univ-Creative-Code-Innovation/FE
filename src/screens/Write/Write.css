@@ -219,6 +219,13 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  opacity: 1;
+  transition: opacity 0.3s;
+}
+
+.summary-popup-overlay.fade-out {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .summary-popup-content {
@@ -228,6 +235,14 @@
   text-align: center;
   max-width: 1000px;
   width: 90%;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.summary-popup-overlay.fade-out .summary-popup-content {
+  opacity: 0;
+  transform: translateY(-40px);
 }
 
 .summary-textarea {
@@ -282,4 +297,63 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
+}
+
+/* 깃허브에서 태그 추출 버튼 고정 크기 및 스타일 */
+.editor-github-tag-btn {
+  background: #1d1652;
+  color: #fff;
+  border: 1px solid #1d1652;
+  border-radius: 50px;
+  padding: 0 20px;
+  height: 38px;
+  min-width: 120px;
+  font-family: 'Inter-Medium', Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 30px;
+  text-align: center;
+  white-space: nowrap;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-sizing: border-box;
+  transition: background 0.2s, color 0.2s;
+}
+
+.editor-github-tag-btn:active {
+  background: #1d1652;
+  color: #fff;
+}
+
+/* 깃허브에서 태그 추출 URL 입력 애니메이션 */
+@keyframes github-url-fade-in {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.7) translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleY(1) translateY(0);
+  }
+}
+
+.editor-github-url-input-animated {
+  animation: github-url-fade-in 0.35s cubic-bezier(0.4, 0.2, 0.2, 1) forwards;
+  transform-origin: top left;
+}
+
+.editor-github-url-input {
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  padding: 8px;
+  font-size: 14px;
+  margin-right: 8px;
+  background: #fff;
+  box-sizing: border-box;
+  min-width: 0;
 }
