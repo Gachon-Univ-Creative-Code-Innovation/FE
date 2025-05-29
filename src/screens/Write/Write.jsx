@@ -85,6 +85,11 @@ export default function Write() {
   const [tags, setTags] = useState("");
   const [isSummaryPopupOpen, setIsSummaryPopupOpen] = useState(false);
   const [summaryText, setSummaryText] = useState("자동으로 요약한 내용을 불러오고, 수정도 가능하도록 했어용가리");
+  const [showGithubUrlInput, setShowGithubUrlInput] = useState(false);
+  const [githubUrl, setGithubUrl] = useState("");
+  const [url, setUrl] = useState(""); // 엔터로 저장할 url 상태 추가
+  const [fadeOut, setFadeOut] = useState(false); // fadeOut 상태 추가
+  const tagInputRef = useRef(null); // 태그 입력창 포커스용 ref
 
   const textAreaRef = useRef(null);
   const popupRef = useRef(null);
@@ -102,6 +107,11 @@ export default function Write() {
     if (isSummaryPopupOpen) document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isSummaryPopupOpen, summaryText]);
+
+  // 팝업이 열릴 때 fadeOut 초기화
+  useEffect(() => {
+    if (isSummaryPopupOpen) setFadeOut(false);
+  }, [isSummaryPopupOpen]);
 
   const getMissingFields = () => {
     const miss = [];
@@ -126,6 +136,43 @@ export default function Write() {
     const miss = getMissingFields();
     if (miss.length) return alert(`${miss.join(", ")}을(를) 입력해 주세요!`);
     alert("게시되었습니다!");
+  };
+
+  // 닫기 버튼 핸들러
+  const handleCloseSummaryPopup = () => {
+    setFadeOut(true);
+    setTimeout(() => {
+      setIsSummaryPopupOpen(false);
+    }, 300); // CSS 트랜지션 시간과 맞춤
+  };
+
+  // 깃허브 URL 엔터 시 태그 추출 API 호출 및 태그 입력창에 append
+  const handleGithubUrlKeyDown = async (e) => {
+    if (e.key === "Enter") {
+      const gitUrl = githubUrl;
+      setUrl(gitUrl);
+      setGithubUrl("");
+      setShowGithubUrlInput(false);
+      setTimeout(() => {
+        if (tagInputRef.current) tagInputRef.current.focus();
+      }, 0);
+      try {
+        const response = await fetch("http://localhost:8000/api/career/tag", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ git_url: gitUrl })
+        });
+        const result = await response.json();
+        // 서버 응답이 { status, message, data } 형태일 때 data만 추출
+        const tagArr = Array.isArray(result.data) ? result.data : [];
+        if (tagArr.length > 0) {
+          const tagString = tagArr.map(tag => `#${tag}`).join(", ");
+          setTags(prev => prev ? prev + ", " + tagString : tagString);
+        }
+      } catch (err) {
+        alert("깃허브 태그 추출에 실패했습니다.");
+      }
+    }
   };
 
   return (
@@ -165,13 +212,34 @@ export default function Write() {
               </option>
             ))}
           </select>
-          <input
-            type="text"
-            placeholder="#태그를 입력하세요 (예: #JavaScript, #React)"
-            value={tags}
-            onChange={e => setTags(e.target.value)}
-            className="editor-tag-input"
-          />
+          <div style={{ display: 'flex', alignItems: 'center', width: '100%', gap: '8px' }}>
+            {showGithubUrlInput ? (
+              <input
+                type="text"
+                placeholder="깃허브 저장소 URL을 입력하세요"
+                value={githubUrl}
+                onChange={e => setGithubUrl(e.target.value)}
+                onKeyDown={handleGithubUrlKeyDown}
+                className="editor-github-url-input editor-github-url-input-animated"
+              />
+            ) : (
+              <input
+                type="text"
+                placeholder="#태그를 입력하세요 (예: #JavaScript, #React)"
+                value={tags}
+                onChange={e => setTags(e.target.value)}
+                className="editor-tag-input"
+                ref={tagInputRef}
+              />
+            )}
+            <button
+              type="button"
+              className="editor-github-tag-btn"
+              onClick={() => setShowGithubUrlInput(v => !v)}
+            >
+              {showGithubUrlInput ? '돌아가기' : '깃허브에서 태그 추출'}
+            </button>
+          </div>
         </div>
 
         <div className="editor-area">
@@ -203,11 +271,11 @@ export default function Write() {
       </div>
 
       {isSummaryPopupOpen && (
-        <div className="summary-popup-overlay">
+        <div className={`summary-popup-overlay${fadeOut ? ' fade-out' : ''}`}>
           <div ref={popupRef} className="summary-popup-content">
             <div className="popup-header">
               <div className="popup-title">🫧 AlOG가 글을 요약했어요! 🫧</div>
-              <CloseIcon onClick={() => setIsSummaryPopupOpen(false)} className="close-icon" />
+              <CloseIcon onClick={handleCloseSummaryPopup} className="close-icon" />
             </div>
             <textarea
               ref={textAreaRef}
