@@ -21,6 +21,7 @@ import MyBlog from "./screens/MyBlog/MyBlog";
 import RoadMap from "./screens/RoadMap/RoadMap";
 import RoadMapLoginBefore from "./screens/RoadMapLoginBefore/RoadMapLoginBefore";
 import Community from "./screens/Community/Community";
+import CommunityWrite from "./screens/CommunityWrite/CommunityWrite";
 import PortfolioScreen from "./screens/Portfolio/PortfolioScreen";
 
 // 컨텍스트 및 SSE
@@ -51,6 +52,7 @@ const AnimatedRoutes = () => {
         <Route path="/roadmap" element={<RoadMap />} />
         <Route path="/roadmapbefore" element={<RoadMapLoginBefore />} />
         <Route path="/community" element={<Community />} />
+        <Route path="/community/write" element={<CommunityWrite />} />
         <Route path="/portfolio" element={<PortfolioScreen />} />
       </Routes>
     </AnimatePresence>
