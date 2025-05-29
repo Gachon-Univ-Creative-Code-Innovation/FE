@@ -153,11 +153,7 @@
 }
 
 .sign-up-screen .text-wrapper-21 {
-<<<<<<< HEAD
   /* align-self: stretch;
-=======
-  align-self: stretch;
->>>>>>> c8fc698bfd14feff153f3f7fc33437c56c75a988
   color: #d9d9d9;
   flex: 1;
   font-family: "Inter", Helvetica;
@@ -166,7 +162,6 @@
   letter-spacing: 0;
   line-height: 10px;
   margin-top: -0.50px;
-<<<<<<< HEAD
   position: relative; */
   color: #000000;
   font-family: "Inter", Helvetica;
@@ -179,9 +174,6 @@
   text-align: center;
   top: 188px;
   white-space: nowrap;
-=======
-  position: relative;
->>>>>>> c8fc698bfd14feff153f3f7fc33437c56c75a988
 }
 
 .sign-up-screen .text-wrapper-22 {
@@ -371,11 +363,7 @@
   width: 203px;
 }
 
-<<<<<<< HEAD
 .component-18 {
-=======
-.sign-up-screen .component-18 {
->>>>>>> c8fc698bfd14feff153f3f7fc33437c56c75a988
   height: 34px !important;
   left: 30px !important;
   position: absolute !important;
