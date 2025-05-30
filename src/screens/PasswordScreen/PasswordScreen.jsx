@@ -13,14 +13,14 @@ export const PasswordScreen = ({ onClose, onSave }) => {
     let valid = true;
 
     if (password.length < 8) {
-      setMessage1("Your password must be at least 8 characters long.");
+      setMessage1("비밀번호는 최소 8자리 이상이어야합니다.");
       valid = false;
     } else {
       setMessage1("");
     }
 
     if (password !== confirm) {
-      setMessage2("The passwords you entered do not match.");
+      setMessage2("비밀번호가 일치하지 않습니다.");
       valid = false;
     } else {
       setMessage2("");

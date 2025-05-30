@@ -1,4 +1,4 @@
-.my-post-2 {
+.mypost-wrapper {
   align-items: flex-start;
   background-color: #fafdffcc;
   border-radius: 10px;
@@ -9,10 +9,8 @@
   width: 272px;
 }
 
-.my-post-2 .header {
+.mypost-header {
   align-items: center;
-  background-color: transparent;
-  border-radius: 10px;
   display: flex;
   gap: 10px;
   justify-content: center;
@@ -20,191 +18,195 @@
   width: 100%;
 }
 
-.my-post-2 .profile-img {
+.mypost-profile-img {
   background-color: #d9d9d9;
   height: 60px;
   width: 48px;
 }
 
-.my-post-2 .frame-16 {
-  align-items: flex-start;
+.mypost-profile-img-tag {
+  width: 48px;
+  height: 60px;
+  object-fit: cover;
+}
+
+.mypost-profile-placeholder {
+  background-color: #ccc;
+  width: 48px;
+  height: 60px;
+}
+
+.mypost-userinfo {
   display: flex;
   flex-direction: column;
   gap: 20px;
   flex-grow: 1;
 }
 
-.my-post-2 .frame-17 {
-  align-items: center;
+.mypost-top {
   display: flex;
+  align-items: center;
   gap: 25px;
   width: 100%;
 }
 
-.my-post-2 .frame-18 {
-  align-items: center;
+.mypost-name-wrapper {
   display: inline-flex;
+  align-items: center;
   gap: 2px;
 }
 
-.my-post-2 .text-wrapper-38 {
-  color: #000;
-  font-family: "Inter", Helvetica;
-  font-size: 15px;
+.mypost-nickname {
+  margin-top: 1px;
+  font-size: 16px;
   font-weight: 500;
+  font-family: "Inter", Helvetica;
   line-height: 10px;
+  color: #000;
   white-space: nowrap;
 }
 
-.my-post-2 .subtract {
-  height: 12px;
-  width: 12px;
+.mypost-subtract {
+  margin-left: 5px;
+  height: 13px;
+  width: 13px;
 }
 
-.my-post-2 .component-16-instance {
-  flex: 0 0 auto !important;
-  margin-bottom: -1.00px !important;
-  margin-top: -1.00px !important;
-  padding: 0 !important;
+.mypost-logout {
+  margin-left: 37px;
   height: 23px !important;
   width: 60px !important;
   display: flex !important;
   align-items: center !important;
-  justify-content: center !important; /* 가로 중앙 정렬 */
+  justify-content: center !important;
+  padding: 0 !important;
 }
-
-.my-post-2 .component-20 {
-  font-size: 10px !important;
+.mypost-logout-text {
+  font-size: 11px !important;
   line-height: 1 !important;
-  height: auto !important;
-  width: 100% !important;            
-  text-align: center !important;      /* 텍스트 중앙 정렬 */
+  width: 100% !important;
+  text-align: center !important;
   padding: 0 !important;
 }
 
-
-
-.my-post-2 .follow {
-  align-items: center;
+.mypost-follow {
   display: flex;
+  align-items: center;
   width: 100%;
 }
 
-.my-post-2 .text-wrapper-39,
-.my-post-2 .text-wrapper-40 {
+.mypost-label,
+.mypost-count {
   font-family: "Inter", Helvetica;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 400;
   line-height: 14px;
   white-space: nowrap;
 }
 
-.my-post-2 .text-wrapper-39 {
+.mypost-label {
   flex: 1;
+  cursor: pointer;
 }
 
-.my-post-2 .text-wrapper-40 {
+.mypost-count {
   width: 31px;
 }
 
-.my-post-2 .body {
-  align-items: center;
+.mypost-body {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 15px;
   height: 498px;
   padding: 10px;
   width: 100%;
 }
 
-.my-post-2 .post,
-.my-post-2 .post-2 {
-  align-items: center;
-  border-bottom: 1px solid #a3b3bf;
+.mypost-post,
+.mypost-post-2 {
   display: flex;
+  align-items: center;
   gap: 10px;
+  border-bottom: 1px solid #a3b3bf;
   height: 67px;
   padding: 10px 10px 20px;
   width: 100%;
 }
 
-.my-post-2 .frame-19 {
-  align-items: flex-start;
+.mypost-post-info {
   display: flex;
-  flex: 1;
   flex-direction: column;
-  flex-grow: 1;
+  align-items: flex-start;
   gap: 15px;
-  height: 50px;
-  justify-content: center;
-  margin-bottom: -5.50px;
-  margin-top: -7.50px;
-  position: relative;
+  flex: 1;
+  margin-top: -7.5px;
+  margin-bottom: -5.5px;
 }
 
-.my-post-2 .text-wrapper-41 {
+.mypost-title {
   color: #000;
   font-size: 12px;
   font-weight: 500;
 }
 
-.my-post-2 .frame-21 {
+.mypost-meta {
   display: inline-flex;
   gap: 10px;
   height: 14px;
 }
 
-.my-post-2 .text-wrapper-42,
-.my-post-2 .text-wrapper-43,
-.my-post-2 .text-wrapper-44 {
-  font-family: "Inter", Helvetica;
+.mypost-date,
+.mypost-comment-count,
+.mypost-views-count {
   font-size: 10px;
+  font-family: "Inter", Helvetica;
   font-weight: 400;
   color: #a3b3bf;
   text-align: center;
 }
 
-.my-post-2 .comment-3,
-.my-post-2 .comment-4 {
+.mypost-comment,
+.mypost-views {
   display: flex;
   align-items: center;
   gap: 2px;
   padding: 2px;
 }
 
-.my-post-2 .comment-icon-2 {
+.mypost-comment-icon {
   width: 10px;
   height: 10px;
 }
 
-.my-post-2 .rectangle-4 {
+.mypost-thumbnail {
   background-color: #d9d9d9;
   width: 45px;
   height: 45px;
 }
 
-.my-post-2 .foot {
+.mypost-footer {
   display: flex;
   justify-content: space-between;
   padding: 6px 12px 10px;
   width: 100%;
 }
 
-.my-post-2 .component-17-instance {
+.mypost-seeall {
   margin-top: -2px;
   margin-bottom: -2px;
 }
 
-.my-post-2 .frame-22 {
+.mypost-pagination {
   display: flex;
   gap: 20px;
 }
 
-.my-post-2 .component-18-2 {
+.mypost-pageicon {
   width: 11px !important;
   height: 15px !important;
 }
 
-.my-post-2 .page-button {
+.mypost-pagebutton {
   height: 16px !important;
 }

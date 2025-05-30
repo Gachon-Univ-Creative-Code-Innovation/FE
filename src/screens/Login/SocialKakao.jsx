@@ -26,11 +26,10 @@ const SocialKakao = () => {
       }}
     >
       <img
-        src="/img/kakaotalk-logo.png"
+        src="/img/kakao_login.png"
         alt="카카오 로그인"
-        style={{ height: 24, width: 24 }}
+        style={{ height: 60, width: 260, borderRadius: 7 }}
       />
-      <span>카카오 로그인</span>
     </button>
   );
 };
