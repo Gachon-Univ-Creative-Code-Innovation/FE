@@ -1,6 +1,11 @@
-// src/App.jsx
 import React from "react";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 
 // 화면 컴포넌트들
@@ -33,18 +38,32 @@ import { WebSocketProvider } from "./contexts/WebSocketContext";
 const AnimatedRoutes = () => {
   const location = useLocation();
 
+  const token = localStorage.getItem("jwtToken");
+  const refresh = localStorage.getItem("refreshToken");
+
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        {/* 카카오 인가 코드 콜백 처리 */}
-        <Route path="/oauth/kakao/redirect" element={<AuthCallBack />} />
+        {/* ✅ 첫 진입 시 토큰 존재하면 /MainPageAfter로 리디렉션 */}
+        <Route
+          path="/"
+          element={
+            token && refresh ? (
+              <Navigate to="/MainPageAfter" replace />
+            ) : (
+              <MainPageBefore />
+            )
+          }
+        />
 
         {/* 공개 라우트 */}
-        <Route path="/" element={<MainPageBefore />} />
         <Route path="/MainPageBefore" element={<MainPageBefore />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
+
+        {/* 카카오 인가 코드 콜백 */}
+        <Route path="/oauth/kakao/redirect" element={<AuthCallBack />} />
 
         {/* 로그인 후 라우트 */}
         <Route path="/MainPageAfter" element={<MainPageAfter />} />
