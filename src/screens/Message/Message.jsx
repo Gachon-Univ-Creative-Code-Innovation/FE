@@ -144,8 +144,9 @@ export const Message = () => {
                 <div className="message-profile">
                   <img
                     className="message-avatar"
+                    src={item.targetProfileUrl ? item.targetProfileUrl : "/img/basic_profile_photo.png"}
                     alt="profile"
-                    src={"/img/ellipse-12-12.png"}
+                    onError={e => { e.target.src = "/img/basic_profile_photo.png"; }}
                   />
                 </div>
                 <div className="message-content">
