@@ -68,6 +68,7 @@ export default function CommunityWrite() {
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState(null);
+  const [tags, setTags] = useState("");
 
   const getMissingFields = () => {
     const miss = [];
@@ -96,7 +97,7 @@ export default function CommunityWrite() {
       </div>
 
       <div className="community-editor-content">
-        <div className="community-editor-title-category">
+        <div className="community-editor-title-row">
           <select
             value={category ?? ""}
             onChange={e => setCategory(e.target.value || null)}
@@ -129,6 +130,13 @@ export default function CommunityWrite() {
         </div>
 
         <div className="community-editor-actions">
+          <input
+            type="text"
+            placeholder="#태그를 입력하세요 (#JavaScript #React ...)"
+            value={tags}
+            onChange={e => setTags(e.target.value)}
+            className="community-editor-tags-input"
+          />
           <div className="community-editor-button-group">
             <SaveDraftComponent onClick={handleSaveDraft} />
             <PostComponent onClick={handlePost} />
