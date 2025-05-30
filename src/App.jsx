@@ -18,9 +18,11 @@ import EditUser from "./screens/EditUser/EditUser";
 import Message from "./screens/Message/Message";
 import MessageRoom from "./screens/MessageRoom/MessageRoom";
 import MyBlog from "./screens/MyBlog/MyBlog";
-import RoadMap from "./screens/RoadMap/RoadMap";
+import ViewPost from "./screens/ViewPost/ViewPost";
 import RoadMapLoginBefore from "./screens/RoadMapLoginBefore/RoadMapLoginBefore";
+import RoadMap from "./screens/RoadMap/RoadMap";
 import Community from "./screens/Community/Community";
+import CommunityWrite from "./screens/CommunityWrite/CommunityWrite";
 import PortfolioScreen from "./screens/Portfolio/PortfolioScreen";
 import AuthCallBack from "./screens/Login/AuthCallBack";
 
@@ -55,9 +57,11 @@ const AnimatedRoutes = () => {
         <Route path="/message" element={<Message />} />
         <Route path="/message-room/:id" element={<MessageRoom />} />
         <Route path="/myblog" element={<MyBlog />} />
+        <Route path="/viewpost" element={<ViewPost />} />
         <Route path="/roadmapbefore" element={<RoadMapLoginBefore />} />
         <Route path="/roadmap" element={<RoadMap />} />
         <Route path="/community" element={<Community />} />
+        <Route path="/community/write" element={<CommunityWrite />} />
         <Route path="/portfolio" element={<PortfolioScreen />} />
       </Routes>
     </AnimatePresence>

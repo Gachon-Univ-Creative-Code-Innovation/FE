@@ -1,0 +1,251 @@
+/* src/screens/CommunityWrite/CommunityWrite.css */
+
+.community-write-editor {
+  background: #FAFDFF;
+  min-height: 100vh;
+  color: #222;
+}
+
+.community-editor-top-bar {
+  padding: 18px 40px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.community-editor-mode-select {
+  font-size: 16px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: #FAFDFF;
+  cursor: pointer;
+}
+
+.community-editor-content {
+  max-width: 1240px;
+  width: 90%;
+  margin: 20px auto 0;
+  padding: 0 24px;
+}
+
+.community-editor-title-category {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.community-editor-category-select {
+  font-size: 1rem;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  background: #fff;
+  cursor: pointer;
+  min-width: 150px;
+  flex-shrink: 0;
+  color: #222;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  transition: all 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 40px;
+}
+
+.community-editor-category-select:hover {
+  border-color: #ddd;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.community-editor-category-select:focus {
+  outline: none;
+  border-color: #ccc;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.community-editor-category-select option {
+  padding: 8px;
+  font-size: 1rem;
+  color: #222;
+  background: #fff;
+}
+
+.community-editor-category-select option:first-child {
+  color: #888;
+}
+
+.community-editor-title-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 32px;
+  font-weight: 500;
+  background: #FAFDFF;
+  color: #444;
+}
+
+.community-editor-tag-category {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.community-editor-area {
+  min-height: 550px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  margin-bottom: 48px;
+  overflow: hidden;
+}
+
+/* ReactQuill 툴바 스타일 수정 */
+.ql-toolbar {
+  border: none !important;
+  border-bottom: 1px solid #eee !important;
+  background: #fff !important;
+  padding: 12px 24px !important;
+  border-top-left-radius: 16px !important;
+  border-top-right-radius: 16px !important;
+}
+
+.ql-toolbar .ql-formats {
+  margin-right: 15px;
+}
+
+/* 툴바 버튼 스타일 */
+.ql-toolbar button {
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  padding: 5px !important;
+  margin: 2px !important;
+  border-radius: 3px !important;
+  color: #444 !important;
+  cursor: pointer !important;
+}
+
+.ql-toolbar button:hover {
+  background: #f5f5f5 !important;
+  color: #000 !important;
+}
+
+.ql-toolbar button.ql-active {
+  background: #f0f0f0 !important;
+  color: #000 !important;
+}
+
+/* 볼드, 이탤릭 등 아이콘 스타일 */
+.ql-toolbar .ql-bold,
+.ql-toolbar .ql-italic,
+.ql-toolbar .ql-underline,
+.ql-toolbar .ql-strike {
+  width: 28px !important;
+  height: 28px !important;
+}
+
+.ql-toolbar .ql-bold::before,
+.ql-toolbar .ql-italic::before,
+.ql-toolbar .ql-underline::before,
+.ql-toolbar .ql-strike::before {
+  font-size: 14px !important;
+  line-height: 28px !important;
+}
+
+/* 에디터 본문 스타일 */
+.ql-container {
+  border: none !important;
+  font-family: inherit !important;
+  border-bottom-left-radius: 16px !important;
+  border-bottom-right-radius: 16px !important;
+  overflow: hidden;
+}
+
+.ql-editor {
+  min-height: 550px;
+  background: #fff;
+  padding: 32px 60px;
+  line-height: 1.6;
+  font-size: 1.25rem;
+  color: #222;
+  border-bottom-left-radius: 16px !important;
+  border-bottom-right-radius: 16px !important;
+}
+
+/* 에디터 내 텍스트 포맷팅이 제대로 표시되도록 */
+.ql-editor strong {
+  font-weight: bold !important;
+}
+
+.ql-editor em {
+  font-style: italic !important;
+}
+
+.ql-editor u {
+  text-decoration: underline !important;
+}
+
+.ql-editor s {
+  text-decoration: line-through !important;
+}
+
+/* 인용구 스타일 */
+.ql-editor blockquote {
+  border-left: 4px solid #eee !important;
+  margin: 24px 0 !important;
+  padding: 12px 24px !important;
+  background-color: #fafafa !important;
+  font-style: italic !important;
+  color: #666 !important;
+}
+
+/* 코드 블록 스타일 */
+.ql-editor pre {
+  background-color: #f8f8f8 !important;
+  border: 1px solid #eee !important;
+  border-radius: 8px !important;
+  padding: 16px !important;
+  margin: 24px 0 !important;
+  overflow-x: auto !important;
+  font-family: 'Courier New', Consolas, monospace !important;
+  font-size: 0.95rem !important;
+  line-height: 1.5 !important;
+  color: #333 !important;
+}
+
+/* 인라인 코드 스타일 */
+.ql-editor code {
+  background-color: #f8f8f8 !important;
+  border: 1px solid #eee !important;
+  border-radius: 4px !important;
+  padding: 2px 6px !important;
+  font-family: 'Courier New', Consolas, monospace !important;
+  font-size: 0.95rem !important;
+  color: #d14 !important;
+}
+
+/* 플레이스홀더 스타일 */
+.ql-editor.ql-blank::before {
+  color: #aaa;
+  font-style: normal;
+  font-size: 1.25rem;
+  left: 60px;
+}
+
+.community-editor-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-bottom: 40px;
+  margin-top: 20px;
+}
+
+.community-editor-button-group {
+  display: flex;
+  gap: 12px;
+}

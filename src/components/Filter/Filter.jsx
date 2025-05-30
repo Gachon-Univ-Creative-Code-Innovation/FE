@@ -6,13 +6,12 @@ import FilterScreen from "../FilterScreen/FilterScreen";
 import SortScreen from "../SortScreen/SortScreen";
 import "./Filter.css";
 
-export const Filter = () => {
+export const Filter = ({ selectedSort, onSortChange }) => {
   const [showFilterPopup, setShowFilterPopup] = useState(false);
   const [filterClosing, setFilterClosing] = useState(false);
   const [filterVisibleClass, setFilterVisibleClass] = useState("");
   const [selectedFilters, setSelectedFilters] = useState({});
 
-  const [selectedSort, setSelectedSort] = useState("");
   const [showSortPopup, setShowSortPopup] = useState(false);
   const sortBtnRef = useRef(null);
 
@@ -87,7 +86,7 @@ export const Filter = () => {
               <SortScreen
                 selected={selectedSort}
                 onSelectSort={(opt) => {
-                  setSelectedSort(opt);
+                  onSortChange(opt);
                   setShowSortPopup(false);
                 }}
               />
