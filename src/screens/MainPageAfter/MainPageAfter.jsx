@@ -168,7 +168,6 @@ export const MainPageAfter = () => {
                 divClassName="recommendcomponent-text"
                 property1={selectedTab === "Recommend" ? "hover" : "default"}
                 onClick={() => setSelectedTab("Recommend")}
-
               />
             </div>
 
