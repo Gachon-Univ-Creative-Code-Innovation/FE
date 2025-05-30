@@ -22,6 +22,7 @@ import ViewPost from "./screens/ViewPost/ViewPost";
 import RoadMapLoginBefore from "./screens/RoadMapLoginBefore/RoadMapLoginBefore";
 import RoadMap from "./screens/RoadMap/RoadMap";
 import Community from "./screens/Community/Community";
+import CommunityWrite from "./screens/CommunityWrite/CommunityWrite";
 import PortfolioScreen from "./screens/Portfolio/PortfolioScreen";
 import AuthCallBack from "./screens/Login/AuthCallBack";
 
@@ -60,6 +61,7 @@ const AnimatedRoutes = () => {
         <Route path="/roadmapbefore" element={<RoadMapLoginBefore />} />
         <Route path="/roadmap" element={<RoadMap />} />
         <Route path="/community" element={<Community />} />
+        <Route path="/community/write" element={<CommunityWrite />} />
         <Route path="/portfolio" element={<PortfolioScreen />} />
       </Routes>
     </AnimatePresence>
