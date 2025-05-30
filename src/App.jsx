@@ -1,3 +1,4 @@
+// src/App.jsx
 import React from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
@@ -10,7 +11,6 @@ import Notice from "./screens/Notice/Notice";
 import MainPageAfter from "./screens/MainPageAfter/MainPageAfter";
 import FollowPage from "./screens/FollowPage/FollowPage";
 import Write from "./screens/Write/Write";
-import "./App.css";
 import GenerateReadmeScreen from "./screens/GenerateReadmeScreen/GenerateReadmeScreen";
 import ForgotPassword from "./screens/ForgotPassword/ForgotPassword";
 import MyPage from "./screens/MyPage/MyPage";
@@ -22,6 +22,7 @@ import RoadMap from "./screens/RoadMap/RoadMap";
 import RoadMapLoginBefore from "./screens/RoadMapLoginBefore/RoadMapLoginBefore";
 import Community from "./screens/Community/Community";
 import PortfolioScreen from "./screens/Portfolio/PortfolioScreen";
+import AuthCallBack from "./screens/Login/AuthCallBack";
 
 // 컨텍스트 및 SSE
 import SSEAlarmConnector from "./SSEAlarmConnector";
@@ -33,23 +34,29 @@ const AnimatedRoutes = () => {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
+        {/* 카카오 인가 코드 콜백 처리 */}
+        <Route path="/oauth/kakao/redirect" element={<AuthCallBack />} />
+
+        {/* 공개 라우트 */}
         <Route path="/" element={<MainPageBefore />} />
         <Route path="/MainPageBefore" element={<MainPageBefore />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/notice" element={<Notice />} />
+        <Route path="/forgotpassword" element={<ForgotPassword />} />
+
+        {/* 로그인 후 라우트 */}
         <Route path="/MainPageAfter" element={<MainPageAfter />} />
+        <Route path="/notice" element={<Notice />} />
         <Route path="/write" element={<Write />} />
         <Route path="/follow" element={<FollowPage />} />
         <Route path="/generatereadme" element={<GenerateReadmeScreen />} />
-        <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/mypage" element={<MyPage />} />
         <Route path="/edituser" element={<EditUser />} />
         <Route path="/message" element={<Message />} />
         <Route path="/message-room/:id" element={<MessageRoom />} />
         <Route path="/myblog" element={<MyBlog />} />
-        <Route path="/roadmap" element={<RoadMap />} />
         <Route path="/roadmapbefore" element={<RoadMapLoginBefore />} />
+        <Route path="/roadmap" element={<RoadMap />} />
         <Route path="/community" element={<Community />} />
         <Route path="/portfolio" element={<PortfolioScreen />} />
       </Routes>
@@ -57,17 +64,15 @@ const AnimatedRoutes = () => {
   );
 };
 
-export const App = () => {
-  return (
-    <>
-      <SSEAlarmConnector />
-      <WebSocketProvider>
-        <BrowserRouter>
-          <AnimatedRoutes />
-        </BrowserRouter>
-      </WebSocketProvider>
-    </>
-  );
-};
+export const App = () => (
+  <>
+    <SSEAlarmConnector />
+    <WebSocketProvider>
+      <BrowserRouter>
+        <AnimatedRoutes />
+      </BrowserRouter>
+    </WebSocketProvider>
+  </>
+);
 
 export default App;
