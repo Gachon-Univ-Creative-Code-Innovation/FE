@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "./CommunityWrite.css";
 import Component18 from "../../icons/GoBackIcon/GoBackIcon";
 import { SaveDraftComponent } from "../../components/SaveDraftComponent/SaveDraftComponent";
 import { PostComponent } from "../../components/PostComponent/PostComponent";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const CommunityCategories = [
   { key: null, label: "카테고리 선택" },
@@ -32,18 +33,14 @@ const modules = {
   ],
   keyboard: {
     bindings: {
-      // Shift + Enter로 같은 포맷 유지하며 줄바꿈
       "shift enter": {
         key: "Enter",
         shiftKey: true,
         handler(range) {
-          // 커서 바로 앞 한 글자의 모든 포맷 가져오기 (폰트 포함)
           const currentFormat = this.quill.getFormat(range.index, 1);
-          // 줄바꿈 삽입
           this.quill.insertText(range.index, "\n", currentFormat);
-          // 커서를 다음 줄 맨 앞에 위치
           this.quill.setSelection(range.index + 1, 0);
-          return false; // 기본 Enter 동작 방지
+          return false;
         }
       }
     }
@@ -53,7 +50,6 @@ const modules = {
   }
 };
 
-// ReactQuill 포맷 설정
 const formats = [
   "header", "font",
   "bold", "italic", "underline", "strike",
@@ -65,10 +61,27 @@ const formats = [
 ];
 
 export default function CommunityWrite() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  // 수정 모드 여부와 기존 데이터 확인
+  const isEditMode = location.state?.editMode || false;
+  const postData = location.state?.postData || null;
+
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState(null);
   const [tags, setTags] = useState("");
+
+  // 컴포넌트가 마운트될 때 기존 데이터로 초기화
+  useEffect(() => {
+    if (isEditMode && postData) {
+      setTitle(postData.title || "");
+      setCategory(postData.category || null);
+      setContent(postData.content || "");
+      setTags(postData.tags || "");
+    }
+  }, [isEditMode, postData]);
 
   const getMissingFields = () => {
     const miss = [];
@@ -81,19 +94,135 @@ export default function CommunityWrite() {
   const handleSaveDraft = () => {
     const miss = getMissingFields();
     if (miss.length) return alert(`${miss.join(", ")}을(를) 입력해 주세요!`);
-    alert("임시 저장되었습니다!");
+    
+    // 임시 저장 로직 (localStorage 또는 서버 API 호출)
+    const draftData = {
+      title,
+      category,
+      content,
+      tags,
+      savedAt: new Date().toISOString(),
+      isEditMode,
+      originalId: postData?.id
+    };
+    
+    // localStorage에 임시 저장 (실제로는 서버 API 사용 권장)
+    localStorage.setItem('communityDraft', JSON.stringify(draftData));
+    
+    if (isEditMode) {
+      alert("수정 내용이 임시 저장되었습니다!");
+    } else {
+      alert("임시 저장되었습니다!");
+    }
   };
 
-  const handlePost = () => {
+  const handlePost = async () => {
     const miss = getMissingFields();
     if (miss.length) return alert(`${miss.join(", ")}을(를) 입력해 주세요!`);
-    alert("게시되었습니다!");
+    
+    if (isEditMode) {
+      // 수정 모드인 경우
+      const updatedPostData = {
+        id: postData?.id,
+        title,
+        category,
+        content,
+        tags,
+        updatedAt: new Date().toISOString()
+      };
+      
+      try {
+        // 실제 서비스에서는 여기서 API 호출
+        // await updatePost(updatedPostData);
+        
+        console.log("글 수정 완료:", updatedPostData);
+        alert("글이 수정되었습니다!");
+        
+        // 임시 저장된 초안 삭제
+        localStorage.removeItem('communityDraft');
+        
+        // 수정된 데이터를 ViewPost에 전달하면서 이동
+        // 동적 라우팅을 위해 postId 사용
+        navigate(`/community/viewpost/id:${postData?.id || 1}`, {
+          state: {
+            updatedPost: updatedPostData,
+            isUpdated: true // 업데이트 플래그 추가
+          }
+        });
+      } catch (error) {
+        console.error("글 수정 실패:", error);
+        alert("글 수정에 실패했습니다. 다시 시도해주세요.");
+      }
+    } else {
+      // 새 글 작성인 경우
+      const newPostData = {
+        id: Date.now(), // 실제로는 서버에서 생성된 ID 사용
+        title,
+        category,
+        content,
+        tags,
+        author: "배고픈 송희", // 실제로는 로그인한 사용자 정보
+        createdAt: new Date().toISOString()
+      };
+      
+      try {
+        // 실제 서비스에서는 여기서 API 호출
+        // const response = await createPost(newPostData);
+        
+        console.log("새 글 작성 완료:", newPostData);
+        alert("게시되었습니다!");
+        
+        // 임시 저장된 초안 삭제
+        localStorage.removeItem('communityDraft');
+        
+        // 새로 작성된 글로 이동
+        navigate(`/community/viewpost`, {
+          state: {
+            newPost: newPostData,
+            isNew: true
+          }
+        });
+      } catch (error) {
+        console.error("글 작성 실패:", error);
+        alert("글 작성에 실패했습니다. 다시 시도해주세요.");
+      }
+    }
   };
+
+  // 임시 저장된 초안 불러오기
+  const loadDraft = () => {
+    const savedDraft = localStorage.getItem('communityDraft');
+    if (savedDraft && !isEditMode) { // 새 글 작성 시에만 초안 불러오기 제안
+      const draftData = JSON.parse(savedDraft);
+      if (window.confirm("임시 저장된 초안이 있습니다. 불러오시겠습니까?")) {
+        setTitle(draftData.title || "");
+        setCategory(draftData.category || null);
+        setContent(draftData.content || "");
+        setTags(draftData.tags || "");
+      }
+    }
+  };
+
+  // 컴포넌트 마운트 시 초안 확인
+  useEffect(() => {
+    loadDraft();
+  }, []);
 
   return (
     <div className="community-write-editor">
       <div className="community-editor-top-bar">
         <Component18 />
+        {/* 수정 모드임을 표시 */}
+        {isEditMode && (
+          <div style={{ 
+            marginLeft: '20px', 
+            color: '#667eea', 
+            fontWeight: '600',
+            fontSize: '1.1rem'
+          }}>
+            글 수정하기
+          </div>
+        )}
       </div>
 
       <div className="community-editor-content">
@@ -139,7 +268,10 @@ export default function CommunityWrite() {
           />
           <div className="community-editor-button-group">
             <SaveDraftComponent onClick={handleSaveDraft} />
-            <PostComponent onClick={handlePost} />
+            <PostComponent 
+              onClick={handlePost}
+              text={isEditMode ? "수정하기" : "게시하기"} // 버튼 텍스트 동적 변경
+            />
           </div>
         </div>
       </div>

@@ -25,6 +25,7 @@ import Community from "./screens/Community/Community";
 import CommunityWrite from "./screens/CommunityWrite/CommunityWrite";
 import PortfolioScreen from "./screens/Portfolio/PortfolioScreen";
 import AuthCallBack from "./screens/Login/AuthCallBack";
+import CommunityViewPost from "./screens/CommunityViewPost/CommunityViewPost";
 
 // 컨텍스트 및 SSE
 import SSEAlarmConnector from "./SSEAlarmConnector";
@@ -63,6 +64,9 @@ const AnimatedRoutes = () => {
         <Route path="/community" element={<Community />} />
         <Route path="/community/write" element={<CommunityWrite />} />
         <Route path="/portfolio" element={<PortfolioScreen />} />
+        <Route path="/community/viewpost/:id" element={<CommunityViewPost />} />
+
+        {/* 마이페이지 관련 라우트 */}
       </Routes>
     </AnimatePresence>
   );
