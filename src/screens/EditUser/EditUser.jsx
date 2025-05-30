@@ -7,9 +7,8 @@ import UserIcon from "../../icons/UserIcon/UserIcon";
 import UserUserCardId from "../../icons/UserUserCardId/UserUserCardId";
 import Navbar2 from "../../components/Navbar2/Navbar2";
 import UserEditIcon from "../../icons/UserEditIcon/UserEditIcon";
-import { NicknameScreen } from "../NicknameScreen/NicknameScreen";
-import { EmailScreen } from "../EmailScreen/EmailScreen";
-import { PasswordScreen } from "../PasswordScreen/PasswordScreen";
+import NicknameScreen from "../NicknameScreen/NicknameScreen";
+import PasswordScreen from "../PasswordScreen/PasswordScreen";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import api from "../../api/instance";
 import "./EditUser.css";
@@ -30,7 +29,6 @@ export const EditUser = () => {
   const [githubLinkError, setGithubLinkError] = useState("");
 
   const [isNicknamePopupOpen, setIsNicknamePopupOpen] = useState(false);
-  const [isEmailPopupOpen, setIsEmailPopupOpen] = useState(false);
   const [isPasswordPopupOpen, setIsPasswordPopupOpen] = useState(false);
   const [isFadingOut, setIsFadingOut] = useState(false);
 
@@ -85,22 +83,6 @@ export const EditUser = () => {
     closeNicknamePopup();
   };
 
-  const openEmailPopup = () => {
-    setIsEmailPopupOpen(true);
-    setIsFadingOut(false);
-  };
-  const closeEmailPopup = () => {
-    setIsFadingOut(true);
-    setTimeout(() => {
-      setIsEmailPopupOpen(false);
-      setIsFadingOut(false);
-    }, 250);
-  };
-  const handleEmailSave = (newEmail) => {
-    setEmail(newEmail);
-    closeEmailPopup();
-  };
-
   const openPasswordPopup = () => {
     setIsPasswordPopupOpen(true);
     setIsFadingOut(false);
@@ -130,6 +112,7 @@ export const EditUser = () => {
     }
   };
 
+  // --------- PATCH as multipart/form-data ---------
   const handleFinalSave = async () => {
     try {
       const token = localStorage.getItem("jwtToken");
@@ -143,14 +126,12 @@ export const EditUser = () => {
       await api.patch("/user-service/user", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
         },
       });
 
       navigate("/mypage");
     } catch (err) {
       console.error("회원 정보 수정 실패:", err);
-      // 필요한 경우 에러 메시지 UI로 보여주기
     }
   };
 
@@ -231,18 +212,13 @@ export const EditUser = () => {
                 <CommunicationMail className="edituser-communication-mail" />
                 <div className="edituser-frame-2">
                   <div className="edituser-text-wrapper-3">{email}</div>
-                  <div onClick={openEmailPopup} style={{ cursor: "pointer" }}>
-                    <UserEditIcon />
-                  </div>
                 </div>
               </div>
 
               <div className="edituser-password">
                 <LockLight1 className="edituser-lock-light" />
                 <div className="edituser-frame-2">
-                  <div className="edituser-text-wrapper-2">
-                    {savedPassword ? "********" : "비밀번호 미설정"}
-                  </div>
+                  <div className="edituser-text-wrapper-2">*************</div>
                 </div>
                 <div onClick={openPasswordPopup} style={{ cursor: "pointer" }}>
                   <UserEditIcon />
@@ -305,18 +281,6 @@ export const EditUser = () => {
                 onClose={closeNicknamePopup}
                 onSave={handleNicknameSave}
               />
-            </div>
-          </div>
-        )}
-
-        {isEmailPopupOpen && (
-          <div
-            className={`nickname-popup-overlay ${
-              isFadingOut ? "fade-out" : "fade-in"
-            }`}
-          >
-            <div className="nickname-popup-content animated-popup">
-              <EmailScreen onClose={closeEmailPopup} onSave={handleEmailSave} />
             </div>
           </div>
         )}

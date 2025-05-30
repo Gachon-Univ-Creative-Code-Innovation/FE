@@ -29,7 +29,8 @@ import RoadMap from "./screens/RoadMap/RoadMap";
 import Community from "./screens/Community/Community";
 import CommunityWrite from "./screens/CommunityWrite/CommunityWrite";
 import PortfolioScreen from "./screens/Portfolio/PortfolioScreen";
-import AuthCallBack from "./screens/Login/AuthCallBack";
+import KakaoCallBack from "./screens/Login/KakaoCallBack";
+import GoogleCallback from "./screens/Login/GoogleCallBack";
 
 // 컨텍스트 및 SSE
 import SSEAlarmConnector from "./SSEAlarmConnector";
@@ -63,7 +64,8 @@ const AnimatedRoutes = () => {
         <Route path="/forgotpassword" element={<ForgotPassword />} />
 
         {/* 카카오 인가 코드 콜백 */}
-        <Route path="/oauth/kakao/redirect" element={<AuthCallBack />} />
+        <Route path="/oauth/kakao/redirect" element={<KakaoCallBack />} />
+        <Route path="/oauth/google/redirect" element={<GoogleCallback />} />
 
         {/* 로그인 후 라우트 */}
         <Route path="/MainPageAfter" element={<MainPageAfter />} />
