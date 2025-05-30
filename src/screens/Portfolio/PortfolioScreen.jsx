@@ -7,47 +7,78 @@ import Navbar2 from "../../components/Navbar2/Navbar2";
 import PortfolioCardList from "../../components/PortfolioCardList/PortfolioCardList";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import "./PortfolioScreen.css";
+import api from "../../api/instance";
 
 const ITEMS_PER_PAGE = 12;
 const PAGE_GROUP_SIZE = 5;
-
-const dummyExploreData = [
-  { name: "김송희" },
-  { name: "이경준" },
-  { name: "강현승" },
-  { name: "문승주" },
-  { name: "조선현" },
-  { name: "전준배" },
-  { name: "이재모" },
-  { name: "김현지" },
-  { name: "로이킴" },
-  { name: "초코송이" },
-  { name: "전준바이" },
-  { name: "준페이" },
-  { name: "응우옌" },
-  { name: "레전드맛집" },
-  { name: "전준봬" },
-  { name: "전중배" },
-];
-
-const dummyMyPortfolio = [
-  { name: "내 포트폴리오 A" },
-  { name: "내 포트폴리오 B" },
-  { name: "내 포트폴리오 C" },
-];
 
 export const PortfolioScreen = () => {
   const [exploreData, setExploreData] = useState([]);
   const [myData, setMyData] = useState([]);
   const [selectedTab, setSelectedTab] = useState("explore");
-
+  const [selectedSort, setSelectedSort] = useState("최신순");
   const [page, setPage] = useState(0);
   const [pageGroup, setPageGroup] = useState(0);
 
+  const getSortParams = () => {
+    if (selectedSort === "최신순") return { isDesc: true };
+    if (selectedSort === "오래된 순") return { isDesc: false };
+    if (selectedSort === "추천순") return { sort: "recommend" };
+    return { isDesc: true };
+  };
+
+  // 정렬 옵션이 바뀔 때마다 데이터 다시 불러오기
   useEffect(() => {
-    setExploreData(dummyExploreData);
-    setMyData(dummyMyPortfolio);
-  }, []);
+    const params = getSortParams();
+      
+    const fetchExplorePortfolio = async () => {
+      try {
+        const url = new URL("http://localhost:8080/api/portfolio/all");
+        Object.entries(params).forEach(([k, v]) => url.searchParams.append(k, v));
+        const res = await api.get(url.toString(), {
+          headers: { Accept: "application/json" }
+        });
+        if (res.data && res.data.status === 200 && Array.isArray(res.data.data)) {
+          // 이미지가 빈 문자열이면 기본 이미지로 대체
+          const replaced = res.data.data.map(item => ({
+            ...item,
+            image: item.image === "" ? "https://marketplace.canva.com/EAFxweoG8ww/1/0/1131w/canva-black-and-white-simple-geometric-content-creator-student-portfolio-KydeMOdt6B0.jpg" : item.image
+          }));
+          setExploreData(replaced);
+        } else {
+          setExploreData([]);
+        }
+      } catch (err) {
+        setExploreData([]);
+        console.error("포트폴리오 전체 리스트 불러오기 실패:", err);
+      }
+    };
+    fetchExplorePortfolio();
+
+    const fetchMyPortfolio = async () => {
+      try {
+        const url = new URL("http://localhost:8080/api/portfolio/list");
+        Object.entries(params).forEach(([k, v]) => url.searchParams.append(k, v));
+        const res = await api.get(url.toString(), {
+          headers: { Accept: "application/json" }
+        });
+        if (res.data && res.data.status === 200 && Array.isArray(res.data.data)) {
+          // 이미지가 빈 문자열이면 기본 이미지로 대체
+          const replaced = res.data.data.map(item => ({
+            ...item,
+            image: item.image === "" ? "https://marketplace.canva.com/EAFxweoG8ww/1/0/1131w/canva-black-and-white-simple-geometric-content-creator-student-portfolio-KydeMOdt6B0.jpg" : item.image
+          }));
+          setMyData(replaced);
+        } else {
+          setMyData([]);
+        }
+      } catch (err) {
+        setMyData([]);
+        console.error("포트폴리오 리스트 불러오기 실패:", err);
+      }
+    };
+    fetchMyPortfolio();
+  }, [selectedSort]);
 
   const currentData = selectedTab === "workspace" ? myData : exploreData;
 
@@ -70,10 +101,8 @@ export const PortfolioScreen = () => {
         <div className="portfolio-screen-view-top">
           <div className="portfolio-screen-frame-spacer" />
         </div>
-
         <div className="portfolio-screen-view-bottom">
           <MakePortfolio />
-
           <div className="portfolio-screen-category">
             <MyWorkSpace
               className="portfolio-screen-component-1"
@@ -86,15 +115,12 @@ export const PortfolioScreen = () => {
               onClick={() => handleTabChange("explore")}
             />
           </div>
-
-          <Filter />
-
+          <Filter selectedSort={selectedSort} onSortChange={setSelectedSort} />
           <PortfolioCardList
             data={currentData}
             page={page}
             itemsPerPage={ITEMS_PER_PAGE}
           />
-
           <div className="portfolio-pagination">
             <button
               className="portfolio-pagination-arrow"
