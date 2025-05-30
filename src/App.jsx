@@ -19,8 +19,8 @@ import Message from "./screens/Message/Message";
 import MessageRoom from "./screens/MessageRoom/MessageRoom";
 import MyBlog from "./screens/MyBlog/MyBlog";
 import ViewPost from "./screens/ViewPost/ViewPost";
-import RoadMap from "./screens/RoadMap/RoadMap";
 import RoadMapLoginBefore from "./screens/RoadMapLoginBefore/RoadMapLoginBefore";
+import RoadMap from "./screens/RoadMap/RoadMap";
 import Community from "./screens/Community/Community";
 import PortfolioScreen from "./screens/Portfolio/PortfolioScreen";
 import AuthCallBack from "./screens/Login/AuthCallBack";
@@ -56,12 +56,7 @@ const AnimatedRoutes = () => {
         <Route path="/message" element={<Message />} />
         <Route path="/message-room/:id" element={<MessageRoom />} />
         <Route path="/myblog" element={<MyBlog />} />
-<<<<<<< HEAD
         <Route path="/viewpost" element={<ViewPost />} />
-        {/* Add more routes as needed */}
-        <Route path="/roadmap" element={<RoadMap />} />
-=======
->>>>>>> 03268f8 (feat: 카카오 소셜 로그인 테스트)
         <Route path="/roadmapbefore" element={<RoadMapLoginBefore />} />
         <Route path="/roadmap" element={<RoadMap />} />
         <Route path="/community" element={<Community />} />
