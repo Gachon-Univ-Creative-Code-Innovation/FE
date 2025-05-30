@@ -4,7 +4,7 @@ WORKDIR /app
 
 
 # 환경변수 파일 복사 (빌드 타임에 사용됨)
-COPY .env.frontend .env
+COPY .env .env
 
 # package.json, package-lock.json 먼저 복사해서 캐시 활용
 COPY package*.json ./
