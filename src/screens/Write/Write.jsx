@@ -225,7 +225,7 @@ export default function Write() {
             ) : (
               <input
                 type="text"
-                placeholder="#태그를 입력하세요 (예: #JavaScript, #React)"
+                placeholder="#태그를 입력하세요 (#JavaScript #React ...)"
                 value={tags}
                 onChange={e => setTags(e.target.value)}
                 className="editor-tag-input"

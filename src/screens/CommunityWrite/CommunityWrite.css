@@ -29,11 +29,21 @@
   padding: 0 24px;
 }
 
-.community-editor-title-category {
+.community-editor-title-row {
   display: flex;
   align-items: center;
   gap: 16px;
   margin-bottom: 24px;
+}
+
+.community-editor-title-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 32px;
+  font-weight: 500;
+  background: #FAFDFF;
+  color: #444;
 }
 
 .community-editor-category-select {
@@ -47,7 +57,7 @@
   flex-shrink: 0;
   color: #222;
   box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   appearance: none;
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
@@ -57,14 +67,15 @@
 }
 
 .community-editor-category-select:hover {
-  border-color: #ddd;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  border-color: #1D1652;
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.15);
+  transform: translateY(-1px);
 }
 
 .community-editor-category-select:focus {
   outline: none;
-  border-color: #ccc;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border-color: #1D1652;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 4px 16px rgba(59, 130, 246, 0.15);
 }
 
 .community-editor-category-select option {
@@ -76,23 +87,6 @@
 
 .community-editor-category-select option:first-child {
   color: #888;
-}
-
-.community-editor-title-input {
-  flex: 1;
-  border: none;
-  outline: none;
-  font-size: 32px;
-  font-weight: 500;
-  background: #FAFDFF;
-  color: #444;
-}
-
-.community-editor-tag-category {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  margin-bottom: 16px;
 }
 
 .community-editor-area {
@@ -239,10 +233,21 @@
 
 .community-editor-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   padding-bottom: 40px;
   margin-top: 20px;
+}
+
+.community-editor-tags-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  padding: 0;
+  background: #FAFDFF;
+  color: #666;
+  margin-right: 16px;
 }
 
 .community-editor-button-group {
