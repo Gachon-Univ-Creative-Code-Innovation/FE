@@ -29,7 +29,6 @@ export const Login = () => {
         password: password,
       });
 
-      // 성공 응답 구조: { status, message, data: { accessToken, refreshToken, userId, ... } }
       const { accessToken, refreshToken, userId } = response.data.data;
 
       localStorage.setItem("jwtToken", accessToken);
@@ -40,9 +39,7 @@ export const Login = () => {
 
       window.location.href = "/MainPageAfter";
     } catch (error) {
-      // 에러 응답 구조: { status, message, data }
-      const message =
-        error.response?.data?.message || "로그인에 실패했습니다.";
+      const message = error.response?.data?.message || "로그인에 실패했습니다.";
       setErrorMessage(message);
     }
   };
@@ -83,6 +80,10 @@ export const Login = () => {
               />
             </div>
 
+            {errorMessage && (
+              <div className="login-error-message">{errorMessage}</div>
+            )}
+
             <button
               type="button"
               className="login-button"
@@ -91,12 +92,6 @@ export const Login = () => {
               <div className="login-LOGIN">LOGIN</div>
             </button>
           </form>
-
-          {errorMessage && (
-            <div style={{ color: "red", marginTop: "10px" }}>
-              {errorMessage}
-            </div>
-          )}
 
           <div className="login-menu">
             <div className="login-overlap-group">
