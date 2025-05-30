@@ -11,17 +11,17 @@ const AuthCallback = () => {
   useEffect(() => {
     // 1) URL에서 인가 코드(code) 추출
     const code = new URL(window.location.href).searchParams.get("code");
-    console.log("🔗 인가 코드:", code);
     if (!code) {
       navigate("/login");
       return;
     }
-
+    
     // 2) 백엔드 카카오 로그인 API 호출
     api
       .post("/user-service/kakao/login", { code })
       .then(({ data }) => {
         // 3) 응답에서 토큰 저장
+        localStorage.setItem("userId", data.data.userId);
         localStorage.setItem("jwtToken", data.data.accessToken);
         localStorage.setItem("refreshToken", data.data.refreshToken);
         // 4) 로그인 완료 후 메인 페이지로 이동
