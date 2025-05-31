@@ -147,7 +147,7 @@ export default function PortfolioWrite() {
         <div className="tags-section">
           <input
             type="text"
-            placeholder="#태그를 입력하세요 (#JavaScript #React ...)"
+            placeholder="#태그를 입력하세요 (#FE #React ...)"
             value={tags}
             onChange={e => setTags(e.target.value)}
             className="tags-input"
