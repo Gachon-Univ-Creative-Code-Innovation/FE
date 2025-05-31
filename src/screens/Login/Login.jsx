@@ -1,4 +1,3 @@
-// src/screens/login/Login.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ForgotPassword from "../../components/ForgotPassword/ForgotPassword";
@@ -8,6 +7,7 @@ import GoBackIcon from "../../icons/GoBackIcon/GoBackIcon";
 import Property1Unchecked from "../../icons/PropertyUnchecked/PropertyUnchecked";
 import AlogLogo from "../../icons/AlogLogo/AlogLogo";
 import SocialKakao from "./SocialKakao";
+import SocialGoogle from "./SocialGoogle";
 import "./Login.css";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import { AnimatePresence } from "framer-motion";
@@ -130,19 +130,8 @@ export const Login = () => {
             {/* 카카오 소셜 로그인 버튼 */}
             <SocialKakao />
 
-            {/* 기존 구글 로그인 버튼 */}
-            <div className="login-web-light-rd-na">
-              <img
-                className="login-google-round"
-                alt="google-round"
-                src="/img/google-round.svg"
-              />
-              <img
-                className="login-clip-path-group"
-                alt="Clip path group"
-                src="/img/google-logo.png"
-              />
-            </div>
+            {/* 구글 로그인 버튼 */}
+            <SocialGoogle />
           </div>
 
           <AnimatePresence>

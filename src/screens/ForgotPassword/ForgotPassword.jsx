@@ -98,7 +98,7 @@ export const ForgotPassword = () => {
               onClick={handleSubmit}
               style={{ cursor: "pointer" }}
             >
-              <div className="forgotpassword-submit-text">Forgot Password</div>
+              <div className="forgotpassword-submit-text">Reset Password</div>
             </div>
           </div>
           <div

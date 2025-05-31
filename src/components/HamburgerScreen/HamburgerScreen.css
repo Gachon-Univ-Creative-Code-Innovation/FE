@@ -9,10 +9,6 @@
   position: relative;
 }
 
-.hamburger-myblog-instance {
-  justify-content: center !important;
-}
-
 .hamburger-component-instance {
   flex: 0 0 auto !important;
   display: flex;

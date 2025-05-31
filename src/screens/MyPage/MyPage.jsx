@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ArrowRightIcon from "../../icons/ArrowRightIcon/ArrowRightIcon";
 import MypageUserIcon from "../../icons/MypageUserIcon/MypageUserIcon";
@@ -9,12 +9,37 @@ import MypageWithdrawIcon from "../../icons/MypageWithdrawIcon/MypageWithdrawIco
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import Navbar2 from "../../components/Navbar2/Navbar2";
 import DeleteUser from "../DeleteUserScreen/DeleteUserScreen";
+import api from "../../api/instance";
 import "./MyPage.css";
 
 export const MyPage = () => {
   const navigate = useNavigate();
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [closingDelete, setClosingDelete] = useState(false);
+  const [userInfo, setUserInfo] = useState({
+    nickname: "",
+    profileUrl: "",
+  });
+
+  // ✅ 사용자 정보 불러오기
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const token = localStorage.getItem("jwtToken");
+        const res = await api.get("/user-service/user/patch", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const { nickname, profileUrl } = res.data.data;
+        setUserInfo({ nickname, profileUrl });
+      } catch (err) {
+        console.error("사용자 정보 불러오기 실패:", err);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
 
   const goToEditUser = () => navigate("/edituser");
 
@@ -37,11 +62,13 @@ export const MyPage = () => {
           <header className="mypage-header">
             <img
               className="mypage-profile-img"
-              alt="Profile img"
-              src="/img/profile-img.png"
+              alt="프로필"
+              src={userInfo.profileUrl || "/img/profile-img.png"}
             />
             <div className="mypage-name-wrapper">
-              <div className="mypage-name">Songhui</div>
+              <div className="mypage-name">
+                {userInfo.nickname || "닉네임 없음"}
+              </div>
             </div>
           </header>
         </div>

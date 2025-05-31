@@ -23,8 +23,9 @@
 .messageroom-header {
   background: #d7e3ed;
   display: flex;
-  justify-content: space-between;
+  justify-content: center; /* 중앙 정렬 */
   align-items: center;
+  position: relative;      /* 아이콘 배치용 기준 */
   padding: 10px 30px;
   border-radius: 50px 50px 0 0;
 }
