@@ -30,6 +30,7 @@ export const Login = () => {
         email: id,
         password: password,
       });
+
       const { accessToken, refreshToken, userId } = response.data.data;
       localStorage.setItem("jwtToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
@@ -78,6 +79,10 @@ export const Login = () => {
               />
             </div>
 
+            {errorMessage && (
+              <div className="login-error-message">{errorMessage}</div>
+            )}
+
             <button
               type="button"
               className="login-button"
@@ -86,12 +91,6 @@ export const Login = () => {
               <div className="login-LOGIN">LOGIN</div>
             </button>
           </form>
-
-          {errorMessage && (
-            <div style={{ color: "red", marginTop: "10px" }}>
-              {errorMessage}
-            </div>
-          )}
 
           <div className="login-menu">
             <div className="login-overlap-group">

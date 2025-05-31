@@ -247,6 +247,20 @@
   width: 34px;
 }
 
+.login-error-message {
+  color: #1d1652;
+  font-weight: 500;
+  font-size: 16px;
+  text-align: center;
+  position: absolute;
+  top: 420px;
+  left: 348px;
+  width: 752px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
 .text-input {
   color: #d9d9d9;
   font-family: "Inter", Helvetica;
