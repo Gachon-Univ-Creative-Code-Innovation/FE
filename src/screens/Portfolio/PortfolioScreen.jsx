@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import MyWorkSpace from "../../components/MyWorkSpace/MyWorkSpace";
 import ExploreComponent from "../../components/ExploreComponent/ExploreComponent";
 import Filter from "../../components/Filter/Filter";
@@ -13,6 +14,7 @@ const ITEMS_PER_PAGE = 12;
 const PAGE_GROUP_SIZE = 5;
 
 export const PortfolioScreen = () => {
+  const navigate = useNavigate();
   const [exploreData, setExploreData] = useState([]);
   const [myData, setMyData] = useState([]);
   const [selectedTab, setSelectedTab] = useState("explore");
@@ -94,6 +96,10 @@ export const PortfolioScreen = () => {
     setPageGroup(0);
   };
 
+  const handleMakePortfolioClick = () => {
+    navigate("/portfolio/write");
+  };
+
   return (
     <PageTransitionWrapper>
       <Navbar2 />
@@ -102,7 +108,7 @@ export const PortfolioScreen = () => {
           <div className="portfolio-screen-frame-spacer" />
         </div>
         <div className="portfolio-screen-view-bottom">
-          <MakePortfolio />
+          <MakePortfolio onClick={handleMakePortfolioClick} />
           <div className="portfolio-screen-category">
             <MyWorkSpace
               className="portfolio-screen-component-1"
