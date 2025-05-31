@@ -357,3 +357,16 @@
   box-sizing: border-box;
   min-width: 0;
 }
+
+/* 로딩 중 텍스트 가운데 정렬용 */
+.summary-textarea {
+  transition: opacity 0.2s ease;
+}
+
+/* (선택) fade-out 효과가 끝나면 display:none; */
+.fade-out {
+  animation: fadeOut 0.3s forwards;
+}
+@keyframes fadeOut {
+  to { opacity: 0; }
+}

@@ -85,6 +85,7 @@ export default function Write() {
   const [tags, setTags] = useState("");
   const [isSummaryPopupOpen, setIsSummaryPopupOpen] = useState(false);
   const [summaryText, setSummaryText] = useState("자동으로 요약한 내용을 불러오고, 수정도 가능하도록 했어용가리");
+  const [loadingSummary, setLoadingSummary] = useState(false);   // 요약 로딩 표시용
   const [showGithubUrlInput, setShowGithubUrlInput] = useState(false);
   const [githubUrl, setGithubUrl] = useState("");
   const [url, setUrl] = useState(""); // 엔터로 저장할 url 상태 추가
@@ -95,7 +96,8 @@ export default function Write() {
   const popupRef = useRef(null);
 
   useEffect(() => {
-    if (isSummaryPopupOpen && textAreaRef.current) {
+    // 로딩이 끝난 뒤에만 textarea에 포커스
+    if (isSummaryPopupOpen && !loadingSummary && textAreaRef.current) {
       textAreaRef.current.focus();
       textAreaRef.current.setSelectionRange(summaryText.length, summaryText.length);
     }
@@ -106,7 +108,7 @@ export default function Write() {
     }
     if (isSummaryPopupOpen) document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isSummaryPopupOpen, summaryText]);
+  }, [isSummaryPopupOpen, ,loadingSummary, summaryText]);
 
   // 팝업이 열릴 때 fadeOut 초기화
   useEffect(() => {
@@ -122,16 +124,46 @@ export default function Write() {
     return miss;
   };
 
+  const fetchSummary = async (content) => {
+    const res = await fetch("http://localhost:8500/api/summarize-service/summarize", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ post_id: 0, context: content })
+    });
+    const json = await res.json();        // { status, message, data }
+    if (json.status !== 200) {         // ✔️ status 검사
+      throw new Error(json.message);   //   실패면 일부러 예외 발생
+    }
+    return json.data;                  //   성공이면 요약문 반환
+  };
+
   const handleSaveDraft = () => {
     const miss = getMissingFields();
     if (miss.length) return alert(`${miss.join(", ")}을(를) 입력해 주세요!`);
     alert("임시 저장되었습니다!");
   };
-  const handlePost = () => {
-    const miss = getMissingFields();
+  
+  const handlePost = async () => {
+   const miss = getMissingFields();
     if (miss.length) return alert(`${miss.join(", ")}을(를) 입력해 주세요!`);
+
+    const content = mode === "basic" ? basicValue : markdownValue;
+
+    /* ① 팝업 먼저 띄우고 “요약 중…” 출력 */
+    setSummaryText("수동으로 요약하거나, 게시를 다시 시도해주세요!");
     setIsSummaryPopupOpen(true);
+    setLoadingSummary(true);
+
+    try {
+      const summary = await fetchSummary(content); //실제 API 호출
+      setSummaryText(summary); //결과로 교체
+    } catch (err) {
+      alert("요약 생성에 실패했습니다. 요약을 수동 입력해주세요!");
+    } finally {
+      setLoadingSummary(false);//로딩 플래그 해제
+    }
   };
+
   const handlePublish = () => {
     const miss = getMissingFields();
     if (miss.length) return alert(`${miss.join(", ")}을(를) 입력해 주세요!`);
@@ -225,7 +257,7 @@ export default function Write() {
             ) : (
               <input
                 type="text"
-                placeholder="#태그를 입력하세요 (#JavaScript #React ...)"
+                placeholder="#태그를 입력하세요 (예: #JavaScript, #React)"
                 value={tags}
                 onChange={e => setTags(e.target.value)}
                 className="editor-tag-input"
@@ -277,19 +309,32 @@ export default function Write() {
               <div className="popup-title">🫧 AlOG가 글을 요약했어요! 🫧</div>
               <CloseIcon onClick={handleCloseSummaryPopup} className="close-icon" />
             </div>
-            <textarea
-              ref={textAreaRef}
-              value={summaryText}
-              onChange={e => setSummaryText(e.target.value)}
-              className="summary-textarea"
-              style={{
-                height: Math.min(80 + summaryText.split("\n").length * 20, 450) + "px",
-                overflowY: summaryText.split("\n").length > 10 ? "auto" : "hidden"
-              }}
-            />
-            <div className="popup-buttons">
-              <PublishComponent onClick={handlePublish} />
-            </div>
+            {loadingSummary ? (
+              /* 로딩 화면 (스피너 대신 텍스트만) */
+              <div style={{ padding: "40px 0", textAlign: "center" }}>
+                <p style={{ fontSize: "1.1rem" }}>요약 중… 잠시만 기다려 주세요</p>
+              </div>
+            ):(
+              /* 요약 완료 후 편집 가능 textarea */
+              <textarea
+                ref={textAreaRef}
+                value={summaryText}
+                onChange={e => setSummaryText(e.target.value)}
+                className="summary-textarea"
+                style={{
+                  height: Math.min(
+                    80 + summaryText.split("\n").length * 20,
+                    450
+                  ) + "px",
+                  overflowY: summaryText.split("\n").length > 10 ? "auto" : "hidden"
+                }}
+              />
+            )}
+            {!loadingSummary && (
+              <div className="popup-buttons">
+                <PublishComponent onClick={handlePublish} />
+              </div>
+            )}
           </div>
         </div>
       )}
