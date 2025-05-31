@@ -1,0 +1,454 @@
+/* src/screens/PortfolioWrite/PortfolioWrite.css */
+
+.portfolio-write-container {
+  background: #FAFDFF;
+  min-height: 100vh;
+  color: #222;
+}
+
+.header-bar {
+  padding: 18px 40px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.main-content {
+  max-width: 1240px;
+  width: 90%;
+  margin: 20px auto 0;
+  padding: 0 24px;
+}
+
+.title-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.title-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 32px;
+  font-weight: 500;
+  background: #FAFDFF;
+  color: #444;
+}
+
+.tags-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.tags-input {
+  flex: 1;
+  font-size: 16px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  background: #FAFDFF;
+  cursor: text;
+}
+
+.quill-editor-container {
+  min-height: 550px;
+}
+
+/* ReactQuill 툴바 스타일 수정 */
+.ql-toolbar {
+  border: 1px solid #ccc !important;
+  border-bottom: none !important;
+  background: #fff !important;
+}
+
+.ql-toolbar .ql-formats {
+  margin-right: 15px;
+}
+
+/* 툴바 버튼 스타일 */
+.ql-toolbar button {
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  padding: 5px !important;
+  margin: 2px !important;
+  border-radius: 3px !important;
+  color: #444 !important;
+  cursor: pointer !important;
+}
+
+.ql-toolbar button:hover {
+  background: #e6e6e6 !important;
+  color: #000 !important;
+}
+
+.ql-toolbar button.ql-active {
+  background: #ccc !important;
+  color: #000 !important;
+}
+
+/* 볼드, 이탤릭 등 아이콘 스타일 */
+.ql-toolbar .ql-bold,
+.ql-toolbar .ql-italic,
+.ql-toolbar .ql-underline,
+.ql-toolbar .ql-strike {
+  width: 28px !important;
+  height: 28px !important;
+}
+
+.ql-toolbar .ql-bold::before,
+.ql-toolbar .ql-italic::before,
+.ql-toolbar .ql-underline::before,
+.ql-toolbar .ql-strike::before {
+  font-size: 14px !important;
+  line-height: 28px !important;
+}
+
+/* 에디터 본문 스타일 */
+.ql-container {
+  border: 1px solid #ccc !important;
+  border-top: none !important;
+  font-family: inherit !important;
+}
+
+.ql-editor {
+  min-height: 550px;
+  background: #fff;
+  padding: 12px;
+  line-height: 1.6;
+  font-size: 16px;
+  color: #333;
+}
+
+/* 에디터 내 텍스트 포맷팅이 제대로 표시되도록 */
+.ql-editor strong {
+  font-weight: bold !important;
+}
+
+.ql-editor em {
+  font-style: italic !important;
+}
+
+.ql-editor u {
+  text-decoration: underline !important;
+}
+
+.ql-editor s {
+  text-decoration: line-through !important;
+}
+
+/* 인용구 스타일 */
+.ql-editor blockquote {
+  border-left: 4px solid #ccc !important;
+  margin: 16px 0 !important;
+  padding: 8px 16px !important;
+  background-color: #f9f9f9 !important;
+  font-style: italic !important;
+  color: #666 !important;
+}
+
+/* 코드 블록 스타일 */
+.ql-editor pre {
+  background-color: #f4f4f4 !important;
+  border: 1px solid #ddd !important;
+  border-radius: 4px !important;
+  padding: 12px !important;
+  margin: 16px 0 !important;
+  overflow-x: auto !important;
+  font-family: 'Courier New', Consolas, monospace !important;
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+  color: #333 !important;
+}
+
+/* 인라인 코드 스타일 */
+.ql-editor code {
+  background-color: #f4f4f4 !important;
+  border: 1px solid #ddd !important;
+  border-radius: 3px !important;
+  padding: 2px 4px !important;
+  font-family: 'Courier New', Consolas, monospace !important;
+  font-size: 14px !important;
+  color: #d14 !important;
+}
+
+/* 플레이스홀더 스타일 */
+.ql-editor.ql-blank::before {
+  color: #aaa;
+  font-style: normal;
+}
+
+.actions-section {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding-bottom: 40px;
+  margin-top: 20px;
+}
+
+.actions-button-group {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+
+/* AI 도우미 버튼 스타일 - #1D1652 계열로 업데이트 */
+.ai-helper-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 24px;
+  background: linear-gradient(135deg, #1D1652 0%, #2A1F6B 50%, #4A3B8C 100%);
+  color: white;
+  border: none;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 6px 20px rgba(29, 22, 82, 0.4),
+    0 0 0 0 rgba(29, 22, 82, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+  min-width: 140px;
+  height: 44px;
+  animation: bounce-sparkle 2.5s ease-in-out infinite;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes bounce-sparkle {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  15% {
+    transform: translateY(-4px) scale(1.05);
+  }
+  30% {
+    transform: translateY(-2px) scale(1.02);
+  }
+  50% {
+    transform: translateY(0) scale(1);
+  }
+  70% {
+    transform: translateY(-1px) scale(1.01);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+.ai-helper-button::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.8) 2px, transparent 2px),
+    radial-gradient(circle at 80% 40%, rgba(255, 255, 255, 0.6) 1px, transparent 1px),
+    radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.9) 1.5px, transparent 1.5px),
+    radial-gradient(circle at 60% 10%, rgba(255, 255, 255, 0.7) 1px, transparent 1px);
+  animation: sparkle 3s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes sparkle {
+  0% {
+    transform: rotate(0deg) scale(1);
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  50% {
+    transform: rotate(180deg) scale(1.1);
+    opacity: 0.8;
+  }
+  75% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+    opacity: 0;
+  }
+}
+
+.ai-helper-button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: shine 2.5s ease-in-out infinite;
+}
+
+@keyframes shine {
+  0% {
+    left: -100%;
+  }
+  50% {
+    left: -100%;
+  }
+  75% {
+    left: 100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.ai-helper-button:hover {
+  transform: translateY(-3px) scale(1.08);
+  background: linear-gradient(135deg, #2c2376 0%, #5a4eb4 50%, #9789fb 100%);
+  animation: bounce-sparkle 2.5s ease-in-out infinite;
+}
+
+.ai-helper-button:hover::before {
+  animation-duration: 1s;
+}
+
+.ai-helper-button:hover::after {
+  animation-duration: 0.8s;
+}
+
+.ai-helper-button:active {
+  transform: translateY(-1px) scale(1.03);
+  box-shadow: 
+    0 8px 20px rgba(29, 22, 82, 0.5),
+    0 0 0 6px rgba(29, 22, 82, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.ai-helper-button svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.3s ease;
+  margin-right: 8px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+.ai-helper-button:hover svg {
+  transform: scale(1.2) rotate(10deg);
+  animation: wiggle 0.5s ease-in-out;
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: scale(1.2) rotate(10deg); }
+  25% { transform: scale(1.2) rotate(-5deg); }
+  75% { transform: scale(1.2) rotate(15deg); }
+}
+
+/* 임시저장과 게시 버튼을 감싸는 컨테이너 */
+.action-buttons-group {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.repo-popup-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 1;
+  transition: opacity 0.3s;
+}
+
+.repo-popup-overlay.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.repo-popup-content {
+  background: #FAFDFF;
+  padding: 40px;
+  border-radius: 16px;
+  text-align: center;
+  max-width: 700px;
+  width: 90%;
+  height: 200px;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.repo-popup-overlay.fade-out .repo-popup-content {
+  opacity: 0;
+  transform: translateY(-40px);
+}
+
+.repo-popup-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.repo-popup-title {
+  font-size: 20px;
+  font-weight: bold;
+  flex: 1;
+  text-align: center;
+}
+
+.repo-popup-close {
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  top: -20px;
+  right: -20px;
+}
+
+.repo-input-container {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+
+.repo-input {
+  flex: 1;
+  border: 1px solid #ccc;
+  border-radius: 12px 0 0 12px;
+  padding: 12px 16px;
+  font-size: 16px;
+  background: #fff;
+  box-sizing: border-box;
+  height: 44px;
+}
+
+.repo-input:focus {
+  outline: none;
+  border-color: #1d1652;
+}
+
+.repo-create-button {
+  padding: 12px 16px;
+  background: #1d1652;
+  color: white;
+  border: none;
+  border-radius: 0 12px 12px 0;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+  height: 44px;
+}
+
+.repo-create-button:hover {
+  background: #252169;
+}

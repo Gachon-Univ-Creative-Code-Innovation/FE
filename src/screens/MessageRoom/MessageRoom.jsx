@@ -212,13 +212,14 @@ export const MessageRoom = () => {
         );
         if (targetUserInfo) {
           setTargetUser({
-            nickname: targetUserInfo.targetNickname
+            nickname: targetUserInfo.targetNickname,
+            profile_url: targetUserInfo.targetProfileUrl
           });
         } else {
-          setTargetUser({ nickname: "" });
+          setTargetUser({ nickname: "" , profile_url: ""});
         }
       } catch (error) {
-        setTargetUser({ nickname: "" });
+        setTargetUser({ nickname: "" , profile_url: ""});
       }
     };
 
@@ -521,7 +522,10 @@ export const MessageRoom = () => {
                       ref={el => (messageRefs.current[idx] = el)}
                     >
                       <div className="messageroom-profile">
-                        <img src="/img/basic_profile_photo.jpeg" alt="profile" />
+                      <img src={targetUser?.profile_url ? targetUser.profile_url : "/img/basic_profile_photo.png"}
+                            alt="profile"
+                            onError={e => { e.target.src = "/img/basic_profile_photo.png"; }}
+                            />
                       </div>
                       <div className="messageroom-info">
                         <div className="messageroom-nickname">
@@ -593,7 +597,10 @@ export const MessageRoom = () => {
                           ref={el => (messageRefs.current[flatIdx] = el)}
                         >
                           <div className="messageroom-profile">
-                            <img src="/img/basic_profile_photo.jpeg" alt="profile" />
+                            <img src={targetUser?.profile_url ? targetUser.profile_url : "/img/basic_profile_photo.png"}
+                            alt="profile"
+                            onError={e => { e.target.src = "/img/basic_profile_photo.png"; }}
+                            />
                           </div>
                           <div className="messageroom-info">
                             <div className="messageroom-nickname">
