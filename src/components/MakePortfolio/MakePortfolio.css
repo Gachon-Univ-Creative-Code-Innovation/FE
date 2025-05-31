@@ -71,6 +71,12 @@
   justify-content: center;
   padding: 10px 20px;
   position: relative;
+  cursor: pointer;
+}
+
+.makeportfolio-button:hover {
+  opacity: 0.9;
+  transition: opacity 0.2s ease;
 }
 
 .makeportfolio-button-text {

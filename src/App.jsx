@@ -24,6 +24,7 @@ import RoadMap from "./screens/RoadMap/RoadMap";
 import Community from "./screens/Community/Community";
 import CommunityWrite from "./screens/CommunityWrite/CommunityWrite";
 import PortfolioScreen from "./screens/Portfolio/PortfolioScreen";
+import PortfolioWrite from "./screens/PortfolioWrite/PortfolioWrite";
 import AuthCallBack from "./screens/Login/AuthCallBack";
 import CommunityViewPost from "./screens/CommunityViewPost/CommunityViewPost";
 
@@ -65,6 +66,7 @@ const AnimatedRoutes = () => {
         <Route path="/community/write" element={<CommunityWrite />} />
         <Route path="/portfolio" element={<PortfolioScreen />} />
         <Route path="/community/viewpost/:id" element={<CommunityViewPost />} />
+        <Route path="/portfolio/write" element={<PortfolioWrite />} />
 
         {/* 마이페이지 관련 라우트 */}
       </Routes>

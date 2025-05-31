@@ -2,7 +2,7 @@ import React from "react";
 import ArrowRightIcon from "../../icons/ArrowRightIcon/ArrowRightIcon"; // 경로 확인
 import "./MakePortfolio.css";
 
-export const MakePortfolio = () => {
+export const MakePortfolio = ({ onClick }) => {
   return (
     <div className="makeportfolio-frame">
       <div className="makeportfolio-left">
@@ -24,7 +24,7 @@ export const MakePortfolio = () => {
         </p>
       </div>
 
-      <div className="makeportfolio-button">
+      <div className="makeportfolio-button" onClick={onClick}>
         <div className="makeportfolio-button-text">포트폴리오 만들기</div>
         <ArrowRightIcon className="makeportfolio-vector" stroke="#1d1652" />
       </div>
