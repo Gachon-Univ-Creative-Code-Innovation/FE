@@ -531,6 +531,7 @@
   height: 80px;
   z-index: 1600;
   background-color: #F9FCFF; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .end-message {

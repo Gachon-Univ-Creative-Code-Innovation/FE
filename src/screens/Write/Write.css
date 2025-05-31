@@ -1,0 +1,359 @@
+/* src/screens/Write/Write.css */
+
+.write-editor {
+  background: #FAFDFF;
+  min-height: 100vh;
+  color: #222;
+}
+
+.editor-top-bar {
+  padding: 18px 40px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.editor-mode-select {
+  font-size: 16px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: #FAFDFF;
+  cursor: pointer;
+}
+
+.editor-content {
+  max-width: 1240px;
+  width: 90%;
+  margin: 20px auto 0;
+  padding: 0 24px;
+}
+
+.editor-title-category {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.editor-title-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 32px;
+  font-weight: 500;
+  background: #FAFDFF;
+  color: #444;
+}
+
+.editor-tag-category {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.editor-category-select,
+.editor-tag-input,
+.editor-mode-select {
+  font-size: 16px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #FAFDFF;
+  cursor: pointer;
+}
+
+.editor-tag-input {
+  flex: 1;
+  margin-right: 12px;
+  border: none;
+}
+
+.editor-area {
+  min-height: 550px;
+}
+
+/* ReactQuill 툴바 스타일 수정 */
+.ql-toolbar {
+  border: 1px solid #ccc !important;
+  border-bottom: none !important;
+  background: #fff !important;
+}
+
+.ql-toolbar .ql-formats {
+  margin-right: 15px;
+}
+
+/* 툴바 버튼 스타일 */
+.ql-toolbar button {
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  padding: 5px !important;
+  margin: 2px !important;
+  border-radius: 3px !important;
+  color: #444 !important;
+  cursor: pointer !important;
+}
+
+.ql-toolbar button:hover {
+  background: #e6e6e6 !important;
+  color: #000 !important;
+}
+
+.ql-toolbar button.ql-active {
+  background: #ccc !important;
+  color: #000 !important;
+}
+
+/* 볼드, 이탤릭 등 아이콘 스타일 */
+.ql-toolbar .ql-bold,
+.ql-toolbar .ql-italic,
+.ql-toolbar .ql-underline,
+.ql-toolbar .ql-strike {
+  width: 28px !important;
+  height: 28px !important;
+}
+
+.ql-toolbar .ql-bold::before,
+.ql-toolbar .ql-italic::before,
+.ql-toolbar .ql-underline::before,
+.ql-toolbar .ql-strike::before {
+  font-size: 14px !important;
+  line-height: 28px !important;
+}
+
+/* 에디터 본문 스타일 */
+.ql-container {
+  border: 1px solid #ccc !important;
+  border-top: none !important;
+  font-family: inherit !important;
+}
+
+.ql-editor {
+  min-height: 550px;
+  background: #fff;
+  padding: 12px;
+  line-height: 1.6;
+  font-size: 16px;
+  color: #333;
+}
+
+/* 에디터 내 텍스트 포맷팅이 제대로 표시되도록 */
+.ql-editor strong {
+  font-weight: bold !important;
+}
+
+.ql-editor em {
+  font-style: italic !important;
+}
+
+.ql-editor u {
+  text-decoration: underline !important;
+}
+
+.ql-editor s {
+  text-decoration: line-through !important;
+}
+
+/* 인용구 스타일 */
+.ql-editor blockquote {
+  border-left: 4px solid #ccc !important;
+  margin: 16px 0 !important;
+  padding: 8px 16px !important;
+  background-color: #f9f9f9 !important;
+  font-style: italic !important;
+  color: #666 !important;
+}
+
+/* 코드 블록 스타일 */
+.ql-editor pre {
+  background-color: #f4f4f4 !important;
+  border: 1px solid #ddd !important;
+  border-radius: 4px !important;
+  padding: 12px !important;
+  margin: 16px 0 !important;
+  overflow-x: auto !important;
+  font-family: 'Courier New', Consolas, monospace !important;
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+  color: #333 !important;
+}
+
+/* 인라인 코드 스타일 */
+.ql-editor code {
+  background-color: #f4f4f4 !important;
+  border: 1px solid #ddd !important;
+  border-radius: 3px !important;
+  padding: 2px 4px !important;
+  font-family: 'Courier New', Consolas, monospace !important;
+  font-size: 14px !important;
+  color: #d14 !important;
+}
+
+/* 플레이스홀더 스타일 */
+.ql-editor.ql-blank::before {
+  color: #aaa;
+  font-style: normal;
+}
+
+.editor-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 40px;
+  margin-top: 20px;
+}
+
+.editor-button-group {
+  display: flex;
+  gap: 12px;
+}
+
+.summary-popup-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 1;
+  transition: opacity 0.3s;
+}
+
+.summary-popup-overlay.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.summary-popup-content {
+  background: #FAFDFF;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 1000px;
+  width: 90%;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.summary-popup-overlay.fade-out .summary-popup-content {
+  opacity: 0;
+  transform: translateY(-40px);
+}
+
+.summary-textarea {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 20px;
+  font-size: 16px;
+  resize: none;
+  max-height: 450px;
+  overflow-y: auto;
+}
+
+.summary-textarea:focus {
+  outline: none;
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.popup-buttons button {
+  padding: 8px 16px;
+  border: none;
+  background: #1d1652;
+  color: #fff;
+  border-radius: 24px;
+  cursor: pointer;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.popup-title {
+  font-size: 20px;
+  font-weight: bold;
+  flex: 1;
+  text-align: center;
+}
+
+.close-icon {
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* 깃허브에서 태그 추출 버튼 고정 크기 및 스타일 */
+.editor-github-tag-btn {
+  background: #1d1652;
+  color: #fff;
+  border: 1px solid #1d1652;
+  border-radius: 50px;
+  padding: 0 20px;
+  height: 38px;
+  min-width: 120px;
+  font-family: 'Inter-Medium', Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 30px;
+  text-align: center;
+  white-space: nowrap;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-sizing: border-box;
+  transition: background 0.2s, color 0.2s;
+}
+
+.editor-github-tag-btn:active {
+  background: #1d1652;
+  color: #fff;
+}
+
+/* 깃허브에서 태그 추출 URL 입력 애니메이션 */
+@keyframes github-url-fade-in {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.7) translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleY(1) translateY(0);
+  }
+}
+
+.editor-github-url-input-animated {
+  animation: github-url-fade-in 0.35s cubic-bezier(0.4, 0.2, 0.2, 1) forwards;
+  transform-origin: top left;
+}
+
+.editor-github-url-input {
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  padding: 8px;
+  font-size: 14px;
+  margin-right: 8px;
+  background: #fff;
+  box-sizing: border-box;
+  min-width: 0;
+}

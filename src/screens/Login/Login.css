@@ -68,7 +68,7 @@
   gap: 10px;
   height: 40px;
   justify-content: center;
-  left: 0;
+  left: 0; 
   position: absolute;
   top: 1px;
   width: 375px;
@@ -194,7 +194,7 @@
 
 .login-alog-logo {
   height: 80px;
-  left: 620px;
+  left: 615px;
   object-fit: cover;
   position: absolute;
   top: 55px;
@@ -202,13 +202,13 @@
 }
 
 .login-frame {
-  align-items: center;
-  display: flex;
-  gap: 200px;
-  justify-content: center;
-  left: 326px;
   position: absolute;
   top: 646px;
+  left: 50.65%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
   width: 769px;
 }
 
@@ -260,4 +260,26 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  
+.text-input {
+  color: #d9d9d9;
+  font-family: "Inter", Helvetica;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 10px;
+
+  width: 100%;
+  padding: 8px 12px;
+
+  background-color: transparent;
+  border-radius: 6px;
+
+  outline: none;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.text-input::placeholder {
+  font-size: 20px;
 }

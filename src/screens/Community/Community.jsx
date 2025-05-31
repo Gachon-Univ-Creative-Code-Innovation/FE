@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import RecruitButton from "../../components/RecruitButton/RecruitButton";
 import Navbar2 from "../../components/Navbar2/Navbar2";
 import CommunityText from "../../components/CommunityText/CommunityText";
@@ -8,6 +9,12 @@ import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTr
 import "./Community.css";
 
 export const Community = () => {
+  const navigate = useNavigate();
+
+  const handleRecruitClick = () => {
+    navigate("/community/write");
+  };
+
   return (
     <PageTransitionWrapper>
       <div className="community-wrapper">
@@ -30,6 +37,7 @@ export const Community = () => {
               className="community-btn-instance"
               divClassName="community-btn-inner"
               property1="default"
+              onClick={handleRecruitClick}
             />
           </div>
 

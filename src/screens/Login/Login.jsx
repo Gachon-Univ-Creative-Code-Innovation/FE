@@ -6,6 +6,8 @@ import SelectMode from "../../screens/SelectMode/SelectMode";
 import GoBackIcon from "../../icons/GoBackIcon/GoBackIcon";
 import Property1Unchecked from "../../icons/PropertyUnchecked/PropertyUnchecked";
 import AlogLogo from "../../icons/AlogLogo/AlogLogo";
+import SocialKakao from "./SocialKakao";
+import SocialGoogle from "./SocialGoogle";
 import "./Login.css";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import { AnimatePresence } from "framer-motion";
@@ -22,7 +24,7 @@ export const Login = () => {
   const closeModal = () => setShowModal(false);
 
   const handleLogin = async () => {
-    setErrorMessage(""); // 에러 초기화
+    setErrorMessage("");
     try {
       const response = await api.post("/user-service/signin", {
         email: id,
@@ -30,13 +32,9 @@ export const Login = () => {
       });
 
       const { accessToken, refreshToken, userId } = response.data.data;
-
       localStorage.setItem("jwtToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
-      if (userId) {
-        localStorage.setItem("userId", userId);
-      }
-
+      if (userId) localStorage.setItem("userId", userId);
       window.location.href = "/MainPageAfter";
     } catch (error) {
       const message = error.response?.data?.message || "로그인에 실패했습니다.";
@@ -53,6 +51,7 @@ export const Login = () => {
   return (
     <PageTransitionWrapper>
       <GoBackIcon className="login-component-18" />
+
       <div className="login">
         <div className="login-div-2">
           <form autoComplete="off" onSubmit={(e) => e.preventDefault()}>
@@ -100,7 +99,6 @@ export const Login = () => {
                   <SignUp property1="default" />
                 </div>
               </div>
-
               <div className="login-forgot-password-wrapper">
                 <div
                   onClick={() => navigate("/forgotpassword")}
@@ -128,23 +126,11 @@ export const Login = () => {
           </div>
 
           <div className="login-frame">
-            <img
-              className="login-element-kakaotalk-logo"
-              alt="Element kakaotalk logo"
-              src="/img/kakaotalk-logo.png"
-            />
-            <div className="login-web-light-rd-na">
-              <img
-                className="login-google-round"
-                alt="google-round"
-                src="/img/google-round.svg"
-              />
-              <img
-                className="login-clip-path-group"
-                alt="Clip path group"
-                src="/img/google-logo.png"
-              />
-            </div>
+            {/* 카카오 소셜 로그인 버튼 */}
+            <SocialKakao />
+
+            {/* 구글 로그인 버튼 */}
+            <SocialGoogle />
           </div>
 
           <AnimatePresence>

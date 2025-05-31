@@ -20,7 +20,7 @@ export const PortfolioComponent = ({
 PortfolioComponent.propTypes = {
   property1: PropTypes.oneOf(["default", "hover"]),
   className: PropTypes.string,
-  onClick: PropTypes.func,
+  onClick: PropTypes.func
 };
 
 export default PortfolioComponent;

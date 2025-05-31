@@ -186,7 +186,6 @@ export const MainPageBefore = () => {
             </div>
           </div>
         </div>
-
         <AnimatePresence>
           {showPopup && (
             <LoginRequiredPopup onClose={() => setShowPopup(false)} />
