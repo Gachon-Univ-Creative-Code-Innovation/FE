@@ -6,19 +6,21 @@ const ReadmeGenerator = ({ active, onDone }) => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    // active가 true가 되면 visible = true, 3초 후에 visible = false & onDone()
     if (active) {
       setVisible(true);
-
-      // 3초 후 종료
       const timer = setTimeout(() => {
         setVisible(false);
         onDone?.();
       }, 3000);
-
       return () => clearTimeout(timer);
     }
+
+    // (“active가 false로 바뀔 때” 혹은 컴포넌트 언마운트 시) 즉시 visible을 false 처리
+    setVisible(false);
   }, [active, onDone]);
 
+  // visible이 false면 아무것도 렌더링하지 않음
   if (!visible) return null;
 
   return (
