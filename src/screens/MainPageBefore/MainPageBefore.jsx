@@ -14,21 +14,25 @@ import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTr
 import LoginRequiredPopup from "../../components/LoginRequiredPopup/LoginRequiredPopup";
 import Navbar from "../../components/Navbar/Navbar";
 import "./MainPageBefore.css";
+import api from "../../api/instance";
+import { head, header } from "framer-motion/client";
+import axios from "axios";
 
-const generatePosts = (startId, count) =>
-  Array.from({ length: count }).map((_, i) => ({
-    id: startId + i,
-    author: "Songhui",
-    title: "[GitHub] 깃허브로 협업하기",
-    content: "Github".repeat(3),
-    date: "2025.03.23",
-    comments: 0,
-    views: 0,
-  }));
+// todo : 지우기
+// const generatePosts = (startId, count) =>
+//   Array.from({ length: count }).map((_, i) => ({
+//     id: startId + i,
+//     author: "Songhui",
+//     title: "[GitHub] 깃허브로 협업하기",
+//     content: "Github".repeat(3),
+//     date: "2025.03.23",
+//     comments: 0,
+//     views: 0,
+//   }));
 
 export const MainPageBefore = () => {
   const [posts, setPosts] = useState([]);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
   const [selectedTab, setSelectedTab] = useState("Hot");
@@ -39,17 +43,63 @@ export const MainPageBefore = () => {
   const POSTS_PER_PAGE = 10;
   const MAX_PAGES = 5;
 
-  const fetchPosts = (pageNum) => {
-    if (pageNum > MAX_PAGES) {
+  // todo : 지우기
+  // const fetchPosts = (pageNum) => {
+  //   if (pageNum > MAX_PAGES) {
+  //     setHasMore(false);
+  //     return;
+  //   }
+  //   const newPosts = generatePosts(
+  //     (pageNum - 1) * POSTS_PER_PAGE,
+  //     POSTS_PER_PAGE
+  //   );
+  //   setPosts((prev) => [...prev, ...newPosts]);
+  // };
+
+  const fetchPosts = async (pageNum) => {
+    try {
+      const token = localStorage.getItem("jwtToken");
+      const postType = "POST"; 
+      const response = await api.get("/blog-service/posts/trending", {
+        headers: { Authorization: `Bearer ${token}`},
+        params: { postType, page: pageNum }
+      });
+
+
+      const getPostList = response.data.data;
+      const rawPosts = getPostList.postList; 
+      const isLastPage = getPostList.isLast; 
+
+      const newPosts = rawPosts.map((p) => {
+        // createdAt: "2025-05-28T02:28:34.515139"
+        const datePart = p.createdAt.split("T")[0];        // "2025-05-28"
+        const formattedDate = datePart.replace(/-/g, ".");  // "2025.05.28"
+
+        return {
+          id: p.postId,
+          author: p.authorNickname,
+          title: p.title,
+          content: p.summary,
+          date: formattedDate,
+          comments: 0,
+          views: p.view,
+        };
+      });
+
+      // (1) 새로운 게시글을 기존 배열 뒤에 붙입니다.
+      setPosts((prev) => [...prev, ...newPosts]);
+
+      // (2) 더 불러올 페이지가 없으면 hasMore=false
+      //     isLastPage === true 이면 더 로드하지 않습니다.
+      if (isLastPage || newPosts.length < POSTS_PER_PAGE) {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error("게시글 로딩 실패:", error);
+      // 에러 발생 시 추가 로딩 중단
       setHasMore(false);
-      return;
     }
-    const newPosts = generatePosts(
-      (pageNum - 1) * POSTS_PER_PAGE,
-      POSTS_PER_PAGE
-    );
-    setPosts((prev) => [...prev, ...newPosts]);
-  };
+  }; 
 
   useEffect(() => {
     fetchPosts(page);
