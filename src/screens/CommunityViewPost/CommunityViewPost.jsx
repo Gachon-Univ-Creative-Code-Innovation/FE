@@ -3,6 +3,7 @@ import "./CommunityViewPost.css";
 import Navbar2 from "../../components/Navbar2/Navbar2";
 import FollowButton from "../../components/FollowButton/FollowButton";
 import SendIcon from "../../icons/SendIcon/SendIcon";
+import MatchingModal from "../../components/MatchingModal/MatchingModal";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const CommunityViewPost = () => {
@@ -29,6 +30,7 @@ const CommunityViewPost = () => {
   const menuRef = useRef(null);
   const editCommentInputRef = useRef(null);
   const editReplyInputRef = useRef(null);
+  const [isMatchingModalOpen, setIsMatchingModalOpen] = useState(false);
 
   const myName = "배고픈 송희";
 
@@ -266,6 +268,11 @@ const CommunityViewPost = () => {
     }
   };
 
+  const handleMatchingClick = () => {
+  setIsMatchingModalOpen(true);
+  };
+
+
   const isMyPost = post.author === myName;
 
   return (
@@ -329,7 +336,7 @@ const CommunityViewPost = () => {
             {/* 본인 글인 경우 매칭하기 버튼 */}
             {isMyPost && (
               <div className="matching-button-wrapper">
-                <button className="matching-button">
+                <button className="matching-button" onClick={handleMatchingClick}>
                   🔗 USER 매칭 ✨
                 </button>
               </div>
@@ -501,6 +508,12 @@ const CommunityViewPost = () => {
           </div>
         </div>
       </div>
+      {isMatchingModalOpen && (
+        <MatchingModal 
+          isOpen={isMatchingModalOpen} 
+          onClose={() => setIsMatchingModalOpen(false)} 
+        />
+      )}
     </div>
   );
 };
