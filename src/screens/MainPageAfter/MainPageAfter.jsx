@@ -35,6 +35,7 @@ export const MainPageAfter = () => {
       const token = localStorage.getItem("jwtToken");
       let url = "";
       let params = { page: pageNum};
+      console.log("Fetching posts for tab:", tab, "Page:", pageNum);
 
       switch (tab) {
         case "Hot":
@@ -83,6 +84,7 @@ export const MainPageAfter = () => {
           author: p.authorNickname,
           title: p.title,
           content: p.summary,
+          imageUrl: p.thumbnail || null, // 이미지가 없을 경우 null 처리
           date: formattedDate,
           comments: 0,    // DTO에 댓글 개수 필드가 없다면 0으로 두거나, 실제 필드명으로 수정
           views: p.view,
@@ -108,7 +110,7 @@ export const MainPageAfter = () => {
     setPosts([]);
     setPage(0);
     setHasMore(true);
-    fetchPosts(page, selectedTab);
+    fetchPosts(0, selectedTab);
   }, [selectedTab]);
 
   // 2) page가 변경될 때마다(탭 변경 시 첫 페이지 로드는 위 useEffect에서, 
@@ -171,7 +173,11 @@ export const MainPageAfter = () => {
             </div>
           </div>
         </div>
-        <div className="rectangle" />
+        <div className="post-img-wrapper">
+        {post.imageUrl && (
+            <img src={post.imageUrl} alt="post" className="post-img" />
+          )}
+        </div>
       </div>
     </div>
   );

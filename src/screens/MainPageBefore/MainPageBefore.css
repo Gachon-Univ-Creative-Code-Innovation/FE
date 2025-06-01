@@ -361,7 +361,7 @@
   width: 10px;
 }
 
-.main-page-before .rectangle {
+.main-page-before .post-img-wrapper {
   align-self: stretch;
   background-color: transparent;
   overflow: hidden;/* 컨테이너 범위 벗어나면 숨김 */

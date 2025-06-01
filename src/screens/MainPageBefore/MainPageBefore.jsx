@@ -37,6 +37,8 @@ export const MainPageBefore = () => {
       const token = localStorage.getItem("jwtToken");
       let url = "";
       let params = { page: pageNum};
+      console.log("Fetching posts for tab:", tab, "Page:", pageNum);
+
 
       switch (tab) {
         case "Hot":
@@ -84,7 +86,7 @@ export const MainPageBefore = () => {
         };
       });
 
-      // 페이지 1은 완전히 초기 상태이므로 덮어쓰기
+      // 페이지 0은 완전히 초기 상태이므로 덮어쓰기
       // 그 외 페이지는 기존 포스트 뒤에 붙이기
       setPosts((prev) => (pageNum === 0 ? newPosts : [...prev, ...newPosts]));
 
@@ -103,11 +105,11 @@ export const MainPageBefore = () => {
     setPosts([]);
     setPage(0);
     setHasMore(true);
-    fetchPosts(page, selectedTab);
+    fetchPosts(0, selectedTab);
   }, [selectedTab]);
 
   useEffect(() => {
-      if (page !== 0 && hasMore) {
+      if (page!==0 && hasMore) {
         fetchPosts(page, selectedTab);
       }
     }, [page]);
@@ -151,7 +153,6 @@ export const MainPageBefore = () => {
               <div className="text-wrapper-11">{post.title}</div>
             </div>
             <div className="text-wrapper-12">{post.content}</div>
-            
           </div>
           <div className="frame-6">
             <div className="text-wrapper-13">{post.date}</div>
@@ -165,7 +166,7 @@ export const MainPageBefore = () => {
             </div>
           </div>
         </div>
-          <div className="rectangle">
+          <div className="post-img-wrapper">
           {post.imageUrl && (
             <img src={post.imageUrl} alt="post" className="post-img" />
           )}
