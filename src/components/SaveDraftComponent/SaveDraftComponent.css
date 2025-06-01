@@ -3,6 +3,7 @@
     align-items: center;
     border-radius: 50px;
     box-sizing: border-box;
+    cursor: pointer;
     display: inline-flex;
     gap: 10px;
     height: 38px;
@@ -35,4 +36,3 @@
     background-color: #1d165259;
     box-shadow: inset 0px 4px 10px #00000040;
   }
-  
