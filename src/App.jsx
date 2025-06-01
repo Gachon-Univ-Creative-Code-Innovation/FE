@@ -47,7 +47,7 @@ const AnimatedRoutes = () => {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        {/* ✅ 첫 진입 시 토큰 존재하면 /MainPageAfter로 리디렉션 */}
+        {/*  첫 진입 시 토큰 존재하면 /MainPageAfter로 리디렉션 */}
         <Route
           path="/"
           element={
