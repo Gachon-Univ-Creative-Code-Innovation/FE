@@ -340,9 +340,24 @@ export default function Write() {
 
     try {
       const token = localStorage.getItem("jwtToken");
-      const response = await api.post("/blog-service/posts", payload, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      let response;
+
+      if (postId) {
+        // 수정 모드: PATCH API 호출
+        response = await api.patch(
+          `/blog-service/posts/${postId}`,
+          payload,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      } else {
+        // 새 글 작성 모드: POST API 호출
+        response = await api.post(
+          `/blog-service/posts`,
+          payload,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      }
+
       const msg = response.data?.message;
       alert(msg);
       navigate("/MainPageAfter");
