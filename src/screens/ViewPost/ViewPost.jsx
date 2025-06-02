@@ -244,6 +244,22 @@ const ViewPost = () => {
   const formattedDate = datePart;
 
 
+  // 게시글 삭제 API 호출 함수
+  const handleDeletePost = async () => {
+    try {
+      const token = localStorage.getItem("jwtToken");
+      await api.delete(`/blog-service/posts/${postId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      alert("글이 정상적으로 삭제되었습니다.");
+      navigate("/MainPageAfter");
+    } catch (err) {
+      console.error("삭제 실패:", err);
+      const msg = err.response?.data?.message;
+      alert(msg || "삭제 중 오류가 발생했습니다.");
+    }
+  };
+
   return (
     <div className="view-post-bg">
       <Navbar2 />
@@ -294,7 +310,13 @@ const ViewPost = () => {
                     </button>
                     <button 
                       className="view-post-menu-item"
-                      // onClick={() => handleDeleteReply(comment.id, reply.id)}
+                      onClick={() => {
+                        // ① 사용자 확인 대화상자 표시
+                        if (window.confirm("정말 이 글을 삭제하시겠습니까?")) {
+                          // ② 확인했다면 실제 삭제 API 호출
+                          handleDeletePost();
+                        }
+                      }}
                     >
                       삭제하기
                     </button>
