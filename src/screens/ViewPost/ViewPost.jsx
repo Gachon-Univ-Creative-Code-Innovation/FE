@@ -91,19 +91,49 @@ const ViewPost = () => {
   }, [editReplyId]);
 
   // 댓글 등록
-  const handleAddComment = () => {
-    if (!commentValue.trim()) return;
-    setComments([
-      ...comments,
-      {
-        id: Date.now(),
-        author: myName,
-        text: commentValue,
-        date: new Date().toISOString().slice(0, 10).replace(/-/g, '.'),
-        replies: [],
-      },
-    ]);
-    setCommentValue("");
+  const handleAddComment = async() => {
+    try {
+      const token = localStorage.getItem("jwtToken");
+      const payload = {
+        postId: Number(postId),       // 현재 보고 있는 글의 ID
+        parentCommentId: null,        // 루트 댓글이므로 null
+        content: commentValue.trim(), // 입력된 댓글 내용
+      };
+  
+      // 댓글 생성 API 호출
+      const response = await api.post(
+        "/blog-service/comments",
+        payload,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+  
+      // 성공 시, 로컬 상태에 새 댓글을 추가합니다.
+      // 서버에서 생성된 commentId를 문자열로 리턴하므로, 숫자만 추출해 사용합니다.
+      const returnedMsg = response.data.data; 
+      // 예: "123 댓글이 정상적으로 생성되었습니다"
+      const createdId = Number(returnedMsg.split(" ")[0]);
+  
+      // 현재 날짜(YYYY.MM.DD) 포맷
+      const today = new Date().toISOString().slice(0, 10).replace(/-/g, ".");
+  
+      setComments([
+        ...comments,
+        {
+          id: createdId,
+          author: myName,
+          profileUrl: "",
+          text: commentValue.trim(),
+          date: today,
+          replies: [],
+        },
+      ]);
+  
+      setCommentValue("");
+    } catch (err) {
+      console.error("댓글 생성 실패:", err);
+      const errMsg = err.response?.data?.message || "댓글 생성 중 오류가 발생했습니다.";
+      alert(errMsg);
+    }
   };
 
   // 답글 등록
