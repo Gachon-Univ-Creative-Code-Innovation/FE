@@ -17,8 +17,7 @@ const ViewPost = () => {
   const { postId } = useParams();
   const navigate = useNavigate();
   
-  // 스크립트를 활용하여 javascript와 HTML로 악성 코드를 웹 브라우저에 심어,
-  // 사용자 접속시 그 악성코드가 실행되는 것을 XSS, 보안을 위해 sanitize 추가
+  // 스크립트를 활용하여 javascript와 HTML로 악성 코드를 웹 브라우저에 심어, 사용자 접속시 그 악성코드가 실행되는 것을 XSS, 보안을 위해 sanitize 추가
   const sanitizer = dompurify.sanitize;
 
   // --- 게시글 상세 데이터를 담을 상태 ---
@@ -49,7 +48,9 @@ const ViewPost = () => {
 
   // 예시: 본인 닉네임(실제 서비스에서는 로그인 유저 정보 사용)
   const myName = "배고픈 송희";
+  const myUserId = localStorage.getItem("userId");
 
+  
   // 바깥 클릭 시 메뉴 닫기
   useEffect(() => {
     function handleClickOutside(e) {
@@ -269,6 +270,38 @@ const ViewPost = () => {
                 {postData.tagNameList.map((tag) => `#${tag}`).join(", ")}
               </span>
             )}
+          
+            {/* 답글 메뉴 (본인이 작성한 답글인 경우만) */}
+            {postData.authorId == myUserId && (
+              <div className="view-post-menu-wrapper">
+                <div
+                  className="view-post-menu"
+                  onClick={() => setOpenMenuId(openMenuId === `reply-${postData.postId}` ? null : `reply-${postData.postId}`)}
+                >
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <circle cx="3" cy="8" r="1.5"/>
+                    <circle cx="8" cy="8" r="1.5"/>
+                    <circle cx="13" cy="8" r="1.5"/>
+                  </svg>
+                </div>
+                {openMenuId === `reply-${postData.postId}` && (
+                  <div className="view-post-menu-popup" ref={menuRef}>
+                    <button 
+                      className="view-post-menu-item"
+                      // onClick={() => handleEditReply(comment.id, reply.id)}
+                    >
+                      수정하기
+                    </button>
+                    <button 
+                      className="view-post-menu-item"
+                      // onClick={() => handleDeleteReply(comment.id, reply.id)}
+                    >
+                      삭제하기
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -278,7 +311,6 @@ const ViewPost = () => {
             <div 
               className="view-post-body"
               dangerouslySetInnerHTML={{ __html: sanitizer(String(postData.content)) }}
-              
             />
           </div>
 
