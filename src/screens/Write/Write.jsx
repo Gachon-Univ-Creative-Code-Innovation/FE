@@ -12,6 +12,8 @@ import { SpellCheckComponent } from "../../components/SpellCheckComponent/SpellC
 import { SaveDraftComponent } from "../../components/SaveDraftComponent/SaveDraftComponent";
 import { PostComponent } from "../../components/PostComponent/PostComponent";
 import { PublishComponent } from "../../components/PublishComponent/PublishComponent";
+import api from "../../api/local-instance";
+import { summary } from "framer-motion/client";
 
 const Categories = [
   { key: null, label: "카테고리 선택" },
@@ -148,6 +150,7 @@ export default function Write() {
     if (miss.length) return alert(`${miss.join(", ")}을(를) 입력해 주세요!`);
 
     const content = mode === "basic" ? basicValue : markdownValue;
+    console.log("게시할 내용:", content);
 
     /* ① 팝업 먼저 띄우고 “요약 중…” 출력 */
     setSummaryText("수동으로 요약하거나, 게시를 다시 시도해주세요!");
@@ -164,11 +167,64 @@ export default function Write() {
     }
   };
 
-  const handlePublish = () => {
+  const handlePublish = async () => {
     const miss = getMissingFields();
     if (miss.length) return alert(`${miss.join(", ")}을(를) 입력해 주세요!`);
-    alert("게시되었습니다!");
+
+     // content 결정
+    const content = mode === "basic" ? basicValue : markdownValue;
+
+    // 태그 문자열을 배열로 변환 (예: "#React, #JavaScript" → ["React", "JavaScript"])
+    const tagNameList = tags
+      .split(",")
+      .map((tag) => tag.trim().replace(/^#/, ""))
+      .filter((tag) => tag.length > 0);
+
+    // payload 구성 (CreatePost DTO와 동일한 필드)
+    const payload = {
+      parentPostId: null,      // 필요 시 상태값으로 바꿔서 설정
+      draftPostId: null,       // 필요 시 상태값으로 바꿔서 설정
+      title: title.trim(),
+      content: content.trim(),
+      summary: summaryText.trim(),
+      tagNameList,
+      categoryCode: category ? Number(category) : null,
+      postType: "POST",        // 또는 mode 값에 따라 "POST"/"MATCHING"
+    };
+
+    try {
+      // JWT 토큰 가져오기 (localStorage에 저장되어 있다고 가정)
+      const token = localStorage.getItem("jwtToken");
+      const response = await api.post(
+        "/blog-service/posts",
+        payload,
+        {headers: { Authorization: `Bearer ${token}`},}
+      );
+      // 성공 메시지 보여주기
+      const msg =
+        response.data?.message ||
+        `${response.data?.data || ""} 글이 생성되었습니다.`;
+      alert(msg);
+      alert("게시되었습니다!");
+
+      // 생성 후 입력 필드 초기화
+      setTitle("");
+      setCategory(null);
+      setBasicValue("");
+      setMarkdownValue("");
+      setTags("");
+      setMode("basic");
+    } catch (err) {
+      console.error(err);
+      if (err.response?.data?.message) {
+        alert(err.response.data.message);
+      } else {
+        alert("게시글 생성 중 오류가 발생했습니다.");
+      }
+    }
   };
+
+
 
   // 닫기 버튼 핸들러
   const handleCloseSummaryPopup = () => {
@@ -340,4 +396,5 @@ export default function Write() {
       )}
     </div>
   );
+
 }
