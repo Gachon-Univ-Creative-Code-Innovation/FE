@@ -112,7 +112,7 @@ export const Notice = () => {
 
   const fetchNotifications = async (tab = "전체", pageNum = 0) => {
     const token = localStorage.getItem("jwtToken");
-    let url = "/notifications";
+    let url = "alarm-service/notifications";
     if (tab === "안읽음") url += "/unread";
     else if (tab === "읽음") url += "/read";
     try {
@@ -144,7 +144,7 @@ export const Notice = () => {
     const token = localStorage.getItem("jwtToken");
     try {
       await api.patch(
-        `/notifications/${id}/read`,
+        `alarm-service/notifications/${id}/read`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -159,7 +159,7 @@ export const Notice = () => {
   const handleDeleteOne = async (id) => {
     const token = localStorage.getItem("jwtToken");
     try {
-      await api.delete(`/notifications/${id}`, {
+      await api.delete(`alarm-service/notifications/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setNotifications((prev) => prev.filter((n) => n.id !== id));
@@ -174,7 +174,7 @@ export const Notice = () => {
   const handleDeleteAll = async () => {
     const token = localStorage.getItem("jwtToken");
     try {
-      await api.delete("/notifications", {
+      await api.delete("alarm-service/notifications", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setNotifications([]);
@@ -188,7 +188,7 @@ export const Notice = () => {
     const token = localStorage.getItem("jwtToken");
     try {
       await api.patch(
-        "/notifications/read/all",
+        "alarm-service/notifications/read/all",
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
