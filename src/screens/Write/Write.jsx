@@ -6,7 +6,7 @@ import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import "./Write.css";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import Component18 from "../../icons/GoBackIcon/GoBackIcon";
 import CloseIcon from "../../icons/CloseIcon/CloseIcon";
@@ -19,7 +19,8 @@ import api from "../../api/local-instance";
 
 
 export default function Write() {
-  // 상태 정의
+  // 상태 정의  
+  const { postId } = useParams();    // URL에 :postId가 없으면 undefined
   const navigate = useNavigate();
   const [mode, setMode] = useState("basic");
   const [basicValue, setBasicValue] = useState("");
@@ -42,6 +43,40 @@ export default function Write() {
   const fileInputRef = useRef(null);
   const textAreaRef = useRef(null);
   const popupRef = useRef(null);
+
+  // postId가 있으면 수정 모드
+  useEffect(() => {
+    if (postId) {
+      const fetchPostForEdit = async () => {
+        try {
+          const token = localStorage.getItem("jwtToken");
+          const res = await api.get(`/blog-service/posts/${postId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const data = res.data.data;
+
+          // 가져온 post 데이터를 폼 필드에 채우기
+          setTitle(data.title);
+          setCategory(data.categoryCode);
+          setTags(
+            data.tagNameList
+              .map((tag) => `#${tag}`)
+              .join(" ")                
+          );
+          setBasicValue(data.content);
+          setSummaryText(data.summary);
+
+
+        } catch (err) {
+          console.error("수정할 게시글 로딩 실패:", err);
+          alert("게시글을 불러오는 중 오류가 발생했습니다.");
+          navigate(-1); // 뒤로 가기
+        }
+      };
+      fetchPostForEdit();
+    }
+  }, [postId, navigate]);
+
 
   // =============================================================================
   // 1) Quill 이미지 업로드 핸들러 함수들 (modules 선언보다 위에 위치)

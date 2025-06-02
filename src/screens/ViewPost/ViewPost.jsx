@@ -304,8 +304,10 @@ const ViewPost = () => {
                   <div className="view-post-menu-popup" ref={menuRef}>
                     <button 
                       className="view-post-menu-item"
-                      // onClick={() => handleEditReply(comment.id, reply.id)}
-                    >
+                      onClick={() => {
+                        navigate(`/write/${postId}`);
+                      }}                    
+                      >
                       수정하기
                     </button>
                     <button 
