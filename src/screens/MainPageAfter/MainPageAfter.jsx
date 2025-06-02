@@ -72,6 +72,7 @@ export const MainPageAfter = () => {
       });
 
       const getPostList = response.data.data;
+      console.log("Fetched posts:", getPostList);
       const rawPosts = getPostList.postList;
 
       const newPosts = rawPosts.map((p) => {
