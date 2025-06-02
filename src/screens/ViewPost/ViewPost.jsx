@@ -242,7 +242,6 @@ const ViewPost = () => {
   const datePart = postData.createdAt.split("T")[0].replace(/-/g, ".");
   const formattedDate = datePart;
 
-  console.log("포스트 데이터:", postData.authorNickname);
 
   return (
     <div className="view-post-bg">
@@ -251,10 +250,15 @@ const ViewPost = () => {
         {/* 내용 외 정보 */}
       <div className="view-post-header">
         <h1 className="view-post-title">{postData.title}</h1>
-        <div className="view-post-meta-line">
+          <div className="view-post-meta-line">
             <div className="view-post-meta">
-              <span>{postData.authorNickname}</span>
-              <span>{formattedDate}</span>
+              <div className="post-profile-wrapper">
+                {postData.profileUrl && (
+                  <img src={postData.profileUrl} alt="post" className="post-prfile-img" />
+                )}
+              </div>
+              <div className="view-post-meta-text">{postData.authorNickname}</div>
+              <div className="view-post-meta-text">{formattedDate}</div>
             </div>
             <FollowButton />
           </div>
