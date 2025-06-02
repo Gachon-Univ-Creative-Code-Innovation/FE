@@ -1,35 +1,55 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./PortfolioView.css";
 import Navbar2 from "../../components/Navbar2/Navbar2";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 
 const PortfolioView = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { id } = useParams(); // URL의 :id 값 사용 가능
   
   const [openMenuId, setOpenMenuId] = useState(null);
   const menuRef = useRef(null);
 
   const myName = "김송희";
 
-  // 포트폴리오 데이터를 상태로 관리
+  // 포트폴리오 데이터를 상태로 관리 (초기값 최소화)
   const [portfolio, setPortfolio] = useState({
-    id: 1,
-    title: "모바일 앱 UX/UI 디자인 프로젝트",
-    author: "김송희",
-    date: "2025.03.26",
-    tag: "#UX/UI #모바일앱 #프로토타입",
-    content: `<p>이 프로젝트는 모바일 앱의 UX/UI 디자인을 개선하기 위한 것입니다. 사용자 경험을 최적화하고, 직관적인 인터페이스를 제공하기 위해 다양한 프로토타입을 제작했습니다.</p>
-    <p>프로젝트의 주요 목표는 사용자 피드백을 반영하여 앱의 사용성을 향상시키는 것이었습니다. 이를 위해 사용자 테스트를 진행하고, 그 결과를 바탕으로 디자인을 반복적으로 개선했습니다.</p>
-    <p>프로젝트 결과물은 다음과 같습니다:</p>
-    <ul>
-      <li>사용자 인터뷰 및 설문조사 결과 분석</li>
-      <li>프로토타입 디자인 및 사용자 테스트</li>
-      <li>최종 디자인 시안 및 개발팀과의 협업</li>
-    </ul>
-    <p>이 프로젝트를 통해 사용자 중심의 디자인 프로세스를 경험하고, 실제 앱 개발에 기여할 수 있었습니다. 앞으로도 이러한 경험을 바탕으로 더 나은 UX/UI 디자인을 위해 노력할 것입니다.</p>
-    <img src="https://i.pinimg.com/736x/c7/74/09/c77409011332c7359ec194cb21ea57ea.jpg" alt="프로젝트 이미지" style="max-width: 100%; height: auto; margin-top: 20px;" />`  
-  });   
+    id: '',
+    title: '',
+    author: '',
+    date: '',
+    content: ''
+  });
+  const [likeCount, setLikeCount] = useState(0);
+  const [liked, setLiked] = useState(false);
+
+  // 포트폴리오 상세 데이터 가져오기
+  useEffect(() => {
+    if (!id) return;
+    // id가 ":1"처럼 들어오면 앞의 콜론(:)을 제거
+    const cleanId = id.startsWith(":") ? id.slice(1) : id;
+    const fetchPortfolioDetail = async () => {
+      try {
+        const url = `http://localhost:8080/api/portfolio/detail?portfolioID=${cleanId}`;
+        const res = await fetch(url, { headers: { Accept: "application/json" } });
+        const data = await res.json();
+        if (data && data.status === 200 && data.data) {
+          setPortfolio({
+            id: cleanId,
+            title: data.data.title || '',
+            author: data.data.author || '',
+            date: data.data.date || '',
+            content: data.data.content || ''
+          });
+          setLikeCount(data.data.like_count ?? 0);
+        }
+      } catch (err) {
+        // 에러 처리 (필요시)
+      }
+    };
+    fetchPortfolioDetail();
+  }, [id]);
 
   // HTML 컨텐츠를 안전하게 렌더링하는 함수 (이미지 포함)
   const renderContent = (content) => {
@@ -57,7 +77,6 @@ const PortfolioView = () => {
         ...prevPortfolio,
         title: updatedPortfolio.title || prevPortfolio.title,
         content: updatedPortfolio.content || prevPortfolio.content,
-        tag: updatedPortfolio.tags || prevPortfolio.tag,
         id: updatedPortfolio.id || prevPortfolio.id
       }));
       // state 정리
@@ -70,7 +89,6 @@ const PortfolioView = () => {
         title: newPortfolio.title,
         author: newPortfolio.author,
         date: new Date(newPortfolio.createdAt).toISOString().slice(0, 10).replace(/-/g, '.'),
-        tag: newPortfolio.tags,
         content: newPortfolio.content
       });
       window.history.replaceState({}, document.title);
@@ -98,7 +116,6 @@ const PortfolioView = () => {
         portfolioData: {
           title: portfolio.title,
           content: portfolio.content,
-          tags: portfolio.tag,
           id: portfolio.id
         }
       }
@@ -117,6 +134,29 @@ const PortfolioView = () => {
 
   const isMyPortfolio = portfolio.author === myName;
 
+  const handleLike = async () => {
+    // id가 ":1"처럼 들어오면 앞의 콜론(:)을 제거
+    const cleanId = id && id.startsWith(":") ? id.slice(1) : id;
+    try {
+      const res = await fetch(`http://localhost:8080/api/portfolio/like?portfolioID=${cleanId}`, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: ''
+      });
+      // 서버 응답에 따라 likeCount, liked 상태 변경
+      if (res.ok) {
+        if (liked) {
+          setLikeCount(likeCount - 1);
+        } else {
+          setLikeCount(likeCount + 1);
+        }
+        setLiked(!liked);
+      }
+    } catch (err) {
+      // 에러 처리 (필요시)
+    }
+  };
+
   return (
     <div className="view-post-bg">
       <Navbar2 />
@@ -125,53 +165,62 @@ const PortfolioView = () => {
         <div className="view-post-header">
           <div className="view-post-title-line" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h1 className="view-post-title">{portfolio.title}</h1>
-            {isMyPortfolio && (
-              <div className="comment-menu-wrapper">
-                <div
-                  className="comment-menu"
-                  onClick={() => setOpenMenuId(openMenuId === 'portfolio' ? null : 'portfolio')}
-                >
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                    <circle cx="3" cy="8" r="1.5"/>
-                    <circle cx="8" cy="8" r="1.5"/>
-                    <circle cx="13" cy="8" r="1.5"/>
-                  </svg>
-                </div>
-                {openMenuId === 'portfolio' && (
-                  <div className="comment-menu-popup" ref={menuRef}>
-                    <button 
-                      className="comment-menu-item"
-                      onClick={handleEditPortfolio}
-                    >
-                      수정하기
-                    </button>
-                    <button 
-                      className="comment-menu-item"
-                      onClick={handleDeletePortfolio}
-                    >
-                      삭제하기
-                    </button>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              {isMyPortfolio && (
+                <div className="comment-menu-wrapper" style={{ display: 'flex', alignItems: 'center', marginRight: '12px' }}>
+                  <div
+                    className="comment-menu"
+                    onClick={() => setOpenMenuId(openMenuId === 'portfolio' ? null : 'portfolio')}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                      <circle cx="3" cy="8" r="1.5"/>
+                      <circle cx="8" cy="8" r="1.5"/>
+                      <circle cx="13" cy="8" r="1.5"/>
+                    </svg>
                   </div>
-                )}
-              </div>
-            )}
+                  {openMenuId === 'portfolio' && (
+                    <div className="comment-menu-popup" ref={menuRef}>
+                      <button 
+                        className="comment-menu-item"
+                        onClick={handleEditPortfolio}
+                      >
+                        수정하기
+                      </button>
+                      <button 
+                        className="comment-menu-item"
+                        onClick={handleDeletePortfolio}
+                      >
+                        삭제하기
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+              <button
+                className={`like-btn${liked ? ' liked' : ''}`}
+                onClick={handleLike}
+                style={{
+                  border: 'none',
+                  background: 'none',
+                  cursor: 'pointer',
+                  fontSize: '20px',
+                  color: liked ? '#e74c3c' : '#888',
+                  marginLeft: isMyPortfolio ? '0' : '12px',
+                  display: 'flex',
+                  alignItems: 'center'
+                }}
+                aria-label="좋아요"
+              >
+                <span style={{marginRight: '6px'}}>{liked ? '❤️' : '🤍'}</span>
+                <span>{likeCount}</span>
+              </button>
+            </div>
           </div>
           <div className="view-post-meta-line">
             <div className="view-post-meta">
               <span>{portfolio.author}</span>
               <span>{portfolio.date}</span>
             </div>
-          </div>
-          <div className="view-post-tags-line">
-          <div className="view-post-tags">
-            {portfolio.tag
-              .split("#")
-              .map(tag => tag.trim())
-              .filter(tag => tag.length > 0)
-              .map((tag, index) => (
-                <span key={index}>{tag}</span>
-            ))}
-          </div>
           </div>
         </div>
 
