@@ -6,6 +6,8 @@ import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import "./Write.css";
 
+import { useNavigate } from "react-router-dom";
+
 import Component18 from "../../icons/GoBackIcon/GoBackIcon";
 import CloseIcon from "../../icons/CloseIcon/CloseIcon";
 import { SpellCheckComponent } from "../../components/SpellCheckComponent/SpellCheckComponent";
@@ -30,6 +32,7 @@ const Categories = [
 
 export default function Write() {
   // 상태 정의
+  const navigate = useNavigate();
   const [mode, setMode] = useState("basic");
   const [basicValue, setBasicValue] = useState("");
   const [markdownValue, setMarkdownValue] = useState("");
@@ -317,18 +320,17 @@ export default function Write() {
       const response = await api.post("/blog-service/posts", payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const msg =
-        response.data?.message ||
-        `${response.data?.data || ""} 글이 생성되었습니다.`;
+      const msg = response.data?.message;
       alert(msg);
+      navigate("/MainPageAfter");
 
       // 입력값 초기화
-      setTitle("");
-      setCategory(null);
-      setBasicValue("");
-      setMarkdownValue("");
-      setTags("");
-      setMode("basic");
+      // setTitle("");
+      // setCategory(null);
+      // setBasicValue("");
+      // setMarkdownValue("");
+      // setTags("");
+      // setMode("basic");
     } catch (err) {
       console.error(err);
       if (err.response?.data?.message) {
