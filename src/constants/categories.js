@@ -10,4 +10,6 @@ export const Categories = [
     { key: 8,  label: "성장 기록" },
     { key: 9,  label: "IT 뉴스" },
     { key: 10, label: "기타" },
+    { key: 11, label: "스터디" },
+    { key: 12, label: "공모전" },
   ];
