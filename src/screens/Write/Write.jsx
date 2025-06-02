@@ -273,7 +273,7 @@ export default function Write() {
     // 3) HTML 안에서 data URL 이미지 태그(<img src="data:…">)를 찾고, 각각 S3 업로드
     //    1. DOMParser로 HTML 문자열을 파싱
     //    2. <img> 태그들 중 src가 "data:…"로 시작하는 것만 골라서 순회
-    //    3. 각 data URL을 Blob으로 변환 → presigned URL 요청 → S3 PUT 업로드 → S3 URL 획득
+    //    3. presigned URL 요청 → S3 PUT 업로드 → S3 URL 획득
     //    4. 찾아둔 <img> 태그의 src 속성을 해당 S3 URL로 치환
     const parser = new DOMParser();
     const doc = parser.parseFromString(content, "text/html");
@@ -313,6 +313,20 @@ export default function Write() {
           console.error("이미지 업로드 중 오류:", uploadErr);
           alert("이미지 업로드에 실패했습니다.");
         }
+      } else if (src.startsWith("https")) {
+        // 예: 
+        //   src = "https://alog-profile-images.s3.ap-northeast-2.amazonaws.com/
+        //          post/8e2274fc-fd28-4892-9034-271542ffb1f8-%E1%84%8B%E1%85%A9%E1%84%85%E1%85%B5.jpg?..."
+        //
+        // 1) "/post/" 뒤부터 "?" 전까지 추출
+        const afterSlash = src.split("/post/")[1] || "";        // "8e2274fc-...-%E1%84%8B%E1%85%A9%E1%84%85%E1%85%B5.jpg?..."
+        const encodedFileName = afterSlash.split("?")[0];      // "8e2274fc-...-%E1%84%8B%E1%85%A9%E1%84%85%E1%85%B5.jpg"
+
+        // 2) percent-encoding 디코딩 (e.g. "%E1%84%8B..." → "오리")
+        const decodedFileName = decodeURIComponent(encodedFileName);
+
+        // 3) img 요소의 src를 "post/파일명" 형태로 교체
+        imgEl.setAttribute("src", `post/${decodedFileName}`);
       }
     }
 
