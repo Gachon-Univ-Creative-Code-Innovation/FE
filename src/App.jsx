@@ -74,6 +74,7 @@ const AnimatedRoutes = () => {
         <Route path="/MainPageAfter" element={<MainPageAfter />} />
         <Route path="/notice" element={<Notice />} />
         <Route path="/write" element={<Write />} />
+        <Route path="/write/:postId" element={<Write />} />
         <Route path="/follow" element={<FollowPage />} />
         <Route path="/generatereadme" element={<GenerateReadmeScreen />} />
         <Route path="/mypage" element={<MyPage />} />
@@ -82,6 +83,7 @@ const AnimatedRoutes = () => {
         <Route path="/message-room/:id" element={<MessageRoom />} />
         <Route path="/myblog" element={<MyBlog />} />
         <Route path="/viewpost" element={<ViewPost />} />
+        <Route path="/viewpost/:postId" element={<ViewPost />} />
         <Route path="/roadmapbefore" element={<RoadMapLoginBefore />} />
         <Route path="/roadmap" element={<RoadMap />} />
         <Route path="/community" element={<Community />} />

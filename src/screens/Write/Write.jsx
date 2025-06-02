@@ -6,7 +6,7 @@ import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import "./Write.css";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import Component18 from "../../icons/GoBackIcon/GoBackIcon";
 import CloseIcon from "../../icons/CloseIcon/CloseIcon";
@@ -14,24 +14,13 @@ import { SpellCheckComponent } from "../../components/SpellCheckComponent/SpellC
 import { SaveDraftComponent } from "../../components/SaveDraftComponent/SaveDraftComponent";
 import { PostComponent } from "../../components/PostComponent/PostComponent";
 import { PublishComponent } from "../../components/PublishComponent/PublishComponent";
+import { PostCategories } from "../../constants/categories";
 import api from "../../api/local-instance";
 
-const Categories = [
-  { key: null, label: "카테고리 선택" },
-  { key: 1, label: "개발" },
-  { key: 2, label: "클라우드 & 인프라" },
-  { key: 3, label: "AI" },
-  { key: 4, label: "데이터베이스" },
-  { key: 5, label: "CS 지식" },
-  { key: 6, label: "프로젝트" },
-  { key: 7, label: "문제해결(트러블 슈팅)" },
-  { key: 8, label: "성장 기록" },
-  { key: 9, label: "IT 뉴스" },
-  { key: 10, label: "기타" },
-];
 
 export default function Write() {
-  // 상태 정의
+  // 상태 정의  
+  const { postId } = useParams();    // URL에 :postId가 없으면 undefined
   const navigate = useNavigate();
   const [mode, setMode] = useState("basic");
   const [basicValue, setBasicValue] = useState("");
@@ -54,6 +43,40 @@ export default function Write() {
   const fileInputRef = useRef(null);
   const textAreaRef = useRef(null);
   const popupRef = useRef(null);
+
+  // postId가 있으면 수정 모드
+  useEffect(() => {
+    if (postId) {
+      const fetchPostForEdit = async () => {
+        try {
+          const token = localStorage.getItem("jwtToken");
+          const res = await api.get(`/blog-service/posts/${postId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const data = res.data.data;
+
+          // 가져온 post 데이터를 폼 필드에 채우기
+          setTitle(data.title);
+          setCategory(data.categoryCode);
+          setTags(
+            data.tagNameList
+              .map((tag) => `#${tag}`)
+              .join(" ")                
+          );
+          setBasicValue(data.content);
+          setSummaryText(data.summary);
+
+
+        } catch (err) {
+          console.error("수정할 게시글 로딩 실패:", err);
+          alert("게시글을 불러오는 중 오류가 발생했습니다.");
+          navigate(-1); // 뒤로 가기
+        }
+      };
+      fetchPostForEdit();
+    }
+  }, [postId, navigate]);
+
 
   // =============================================================================
   // 1) Quill 이미지 업로드 핸들러 함수들 (modules 선언보다 위에 위치)
@@ -250,7 +273,7 @@ export default function Write() {
     // 3) HTML 안에서 data URL 이미지 태그(<img src="data:…">)를 찾고, 각각 S3 업로드
     //    1. DOMParser로 HTML 문자열을 파싱
     //    2. <img> 태그들 중 src가 "data:…"로 시작하는 것만 골라서 순회
-    //    3. 각 data URL을 Blob으로 변환 → presigned URL 요청 → S3 PUT 업로드 → S3 URL 획득
+    //    3. presigned URL 요청 → S3 PUT 업로드 → S3 URL 획득
     //    4. 찾아둔 <img> 태그의 src 속성을 해당 S3 URL로 치환
     const parser = new DOMParser();
     const doc = parser.parseFromString(content, "text/html");
@@ -290,6 +313,20 @@ export default function Write() {
           console.error("이미지 업로드 중 오류:", uploadErr);
           alert("이미지 업로드에 실패했습니다.");
         }
+      } else if (src.startsWith("https")) {
+        // 예: 
+        //   src = "https://alog-profile-images.s3.ap-northeast-2.amazonaws.com/
+        //          post/8e2274fc-fd28-4892-9034-271542ffb1f8-%E1%84%8B%E1%85%A9%E1%84%85%E1%85%B5.jpg?..."
+        //
+        // 1) "/post/" 뒤부터 "?" 전까지 추출
+        const afterSlash = src.split("/post/")[1] || "";        // "8e2274fc-...-%E1%84%8B%E1%85%A9%E1%84%85%E1%85%B5.jpg?..."
+        const encodedFileName = afterSlash.split("?")[0];      // "8e2274fc-...-%E1%84%8B%E1%85%A9%E1%84%85%E1%85%B5.jpg"
+
+        // 2) percent-encoding 디코딩 (e.g. "%E1%84%8B..." → "오리")
+        const decodedFileName = decodeURIComponent(encodedFileName);
+
+        // 3) img 요소의 src를 "post/파일명" 형태로 교체
+        imgEl.setAttribute("src", `post/${decodedFileName}`);
       }
     }
 
@@ -317,20 +354,28 @@ export default function Write() {
 
     try {
       const token = localStorage.getItem("jwtToken");
-      const response = await api.post("/blog-service/posts", payload, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      let response;
+
+      if (postId) {
+        // 수정 모드: PATCH API 호출
+        response = await api.patch(
+          `/blog-service/posts/${postId}`,
+          payload,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      } else {
+        // 새 글 작성 모드: POST API 호출
+        response = await api.post(
+          `/blog-service/posts`,
+          payload,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      }
+
       const msg = response.data?.message;
       alert(msg);
       navigate("/MainPageAfter");
-
-      // 입력값 초기화
-      // setTitle("");
-      // setCategory(null);
-      // setBasicValue("");
-      // setMarkdownValue("");
-      // setTags("");
-      // setMode("basic");
+ 
     } catch (err) {
       console.error(err);
       if (err.response?.data?.message) {
@@ -413,7 +458,7 @@ export default function Write() {
               setCategory(e.target.value || null);}}
             className="editor-category-select"
           >
-            {Categories.map((c) => (
+            {PostCategories.map((c) => (
               <option key={c.key ?? "default"} value={c.key ?? ""}>
                 {c.label}
               </option>
