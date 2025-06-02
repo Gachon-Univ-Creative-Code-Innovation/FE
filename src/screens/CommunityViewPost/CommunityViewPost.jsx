@@ -31,6 +31,7 @@ const CommunityViewPost = () => {
   const editCommentInputRef = useRef(null);
   const editReplyInputRef = useRef(null);
   const [isMatchingModalOpen, setIsMatchingModalOpen] = useState(false);
+  const [matchedIds, setMatchedIds] = useState([]);
 
   const myName = "배고픈 송희";
 
@@ -268,9 +269,31 @@ const CommunityViewPost = () => {
     }
   };
 
-  const handleMatchingClick = () => {
-  setIsMatchingModalOpen(true);
-  };
+const handleMatchingClick = async () => {
+    try {
+        let tags = post.tag;
+        if (Array.isArray(tags)) tags = tags.join(",");
+        tags = encodeURIComponent(tags);
+        const url = `http://localhost/api/matching-service/search-user?tags=${tags}&topK=5&topKperTag=5`;
+        const res = await fetch(url, {
+          method: 'GET',
+          headers: { 'accept': 'application/json' }
+        });
+        const data = await res.json();
+        if (data.status === 200 && Array.isArray(data.data)) {
+          const ids = data.data.map(u => u.userID);
+          setMatchedIds(ids); // ids 저장
+          // alert(`매칭된 유저 ID: ${ids.join(', ')}`);
+        } else {
+          setMatchedIds([]);
+          alert('유저 검색 실패');
+        }
+      } catch (e) {
+        setMatchedIds([]);
+        alert('매칭 요청 실패');
+      }
+    setIsMatchingModalOpen(true);
+};
 
 
   const isMyPost = post.author === myName;
@@ -512,6 +535,7 @@ const CommunityViewPost = () => {
         <MatchingModal 
           isOpen={isMatchingModalOpen} 
           onClose={() => setIsMatchingModalOpen(false)} 
+          matchedIds={matchedIds}
         />
       )}
     </div>
