@@ -1,71 +1,99 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import "./MatchingModal.css";
 import CloseIcon from "../../icons/CloseIcon/CloseIcon";
 
-const MatchingModal = ({ isOpen, onClose }) => {
-  // 매칭된 사용자 데이터 
-  const matchedUsers = [
+const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
+  // 매칭된 사용자 데이터 (skills는 빈 배열로 초기화)
+  const [users, setUsers] = useState([
     {
-      id: 1,
+      id: matchedIds[0] !== undefined ? matchedIds[0] : 1,
       name: "경주니",
       experience: "3년차 FE 개발자",
-      skills: ["#React", "#JavaScript", "#Flutter", "#Dart"],
+      skills: [],
       profileImage: "/img/rectangle-31-1.png",
-      portfolioUrl: "https://i.pinimg.com/736x/f9/39/f9/f939f97b5c5f1488e09a441c1fa52d3d.jpg",
+      portfolioUrl: "",
       githubUrl: "https://i.pinimg.com/736x/f9/39/f9/f939f97b5c5f1488e09a441c1fa52d3d.jpg",
       blogUrl: "https://i.pinimg.com/736x/f9/39/f9/f939f97b5c5f1488e09a441c1fa52d3d.jpg"
     },
     {
-      id: 2,
+      id: matchedIds[1] !== undefined ? matchedIds[1] : 2,
       name: "준바이",
       experience: "1년차 BE 개발자",
-      skills: ["#SpringBoot", "#Java"],
+      skills: [],
       profileImage: "/img/rectangle-31.png",
       portfolioUrl: null,
       githubUrl: "https://i.pinimg.com/736x/f9/39/f9/f939f97b5c5f1488e09a441c1fa52d3d.jpg",
       blogUrl: "https://i.pinimg.com/736x/f9/39/f9/f939f97b5c5f1488e09a441c1fa52d3d.jpg"
     },
     {
-      id: 3,
+      id: matchedIds[2] !== undefined ? matchedIds[2] : 3,
       name: "쪼꼬",
       experience: "2년차 디자이너",
-      skills: ["#UI/UX", "#Figma", "#Sketch"],
+      skills: [],
       profileImage: null, // 프로필 이미지가 없는 경우
       portfolioUrl: "https://i.pinimg.com/736x/f9/39/f9/f939f97b5c5f1488e09a441c1fa52d3d.jpg",
       githubUrl: null, // 깃허브가 없는 경우
       blogUrl: "https://i.pinimg.com/736x/f9/39/f9/f939f97b5c5f1488e09a441c1fa52d3d.jpg"
     },
     {
-      id: 4,
+      id: matchedIds[3] !== undefined ? matchedIds[3] : 4,
       name: "승듀",
       experience: "5년차 풀스택 개발자",
-      skills: ["#Node.js", "#React", "#GraphQL"],
+      skills: [],
       profileImage: null, // 프로필 이미지가 없는 경우
       portfolioUrl: "https://i.pinimg.com/736x/f9/39/f9/f939f97b5c5f1488e09a441c1fa52d3d.jpg",
       githubUrl: null, // 깃허브가 없는 경우
       blogUrl: "https://i.pinimg.com/736x/f9/39/f9/f939f97b5c5f1488e09a441c1fa52d3d.jpg"
     },
     {
-      id: 5,
+      id: matchedIds[4] !== undefined ? matchedIds[4] : 5,
       name: "쏭이",
       experience: "4년차 모바일 개발자",
-      skills: ["#ReactNative", "#Swift", "#Kotlin"],
+      skills: [],
       profileImage: "/img/basic_profile_photo2.jpeg",
       portfolioUrl: "https://i.pinimg.com/736x/f9/39/f9/f939f97b5c5f1488e09a441c1fa52d3d.jpg",
       githubUrl: null, // 깃허브가 없는 경우
       blogUrl: "https://i.pinimg.com/736x/f9/39/f9/f939f97b5c5f1488e09a441c1fa52d3d.jpg"
-    },
-    {
-      id: 6,
-      name: "잼오",
-      experience: "3년차 데이터 엔지니어",
-      skills: ["#Python", "#SQL", "#BigData"],
-      profileImage: null, // 프로필 이미지가 없는 경우
-      portfolioUrl: null,
-      githubUrl: null, // 깃허브가 없는 경우
-      blogUrl: "https://i.pinimg.com/736x/f9/39/f9/f939f97b5c5f1488e09a441c1fa52d3d.jpg"
     }
-  ];
+  ]);
+
+  useEffect(() => {
+    // 각 유저의 skills와 portfolioUrl을 서버에서 받아오기
+    users.forEach((user, idx) => {
+      if (!user.id) return;
+      // skills fetch
+      fetch(`http://localhost/api/matching-service/represent-tags?userID=${user.id}&topK=4`, {
+        headers: { 'accept': 'application/json' }
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 200 && Array.isArray(data.data)) {
+            setUsers(prev => {
+              const copy = [...prev];
+              copy[idx] = { ...copy[idx], skills: data.data.map(tag => `#${tag}`) };
+              return copy;
+            });
+          }
+        })
+        .catch(() => {});
+      // portfolioUrl fetch
+      fetch(`http://localhost:8080/api/portfolio/user?userID=${user.id}`, {
+        headers: { 'accept': 'application/json' }
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 200 && data.data) {
+            setUsers(prev => {
+              const copy = [...prev];
+              copy[idx] = { ...copy[idx], portfolioUrl: `/portfolio/view/:${data.data}` };
+              return copy;
+            });
+          }
+        })
+        .catch(() => {});
+    });
+    // eslint-disable-next-line
+  }, [matchedIds]);
 
   const handlePortfolioClick = (e, url) => {
     e.stopPropagation();
@@ -111,7 +139,7 @@ const MatchingModal = ({ isOpen, onClose }) => {
 
         {/* 사용자 목록 */}
         <div className="matching-users-list">
-          {matchedUsers.map((user) => (
+          {users.map((user) => (
             <div 
               key={user.id} 
               className="matching-user-card"
