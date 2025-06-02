@@ -14,21 +14,9 @@ import { SpellCheckComponent } from "../../components/SpellCheckComponent/SpellC
 import { SaveDraftComponent } from "../../components/SaveDraftComponent/SaveDraftComponent";
 import { PostComponent } from "../../components/PostComponent/PostComponent";
 import { PublishComponent } from "../../components/PublishComponent/PublishComponent";
+import { Categories } from "../../constants/categories";
 import api from "../../api/local-instance";
 
-const Categories = [
-  { key: null, label: "카테고리 선택" },
-  { key: 1, label: "개발" },
-  { key: 2, label: "클라우드 & 인프라" },
-  { key: 3, label: "AI" },
-  { key: 4, label: "데이터베이스" },
-  { key: 5, label: "CS 지식" },
-  { key: 6, label: "프로젝트" },
-  { key: 7, label: "문제해결(트러블 슈팅)" },
-  { key: 8, label: "성장 기록" },
-  { key: 9, label: "IT 뉴스" },
-  { key: 10, label: "기타" },
-];
 
 export default function Write() {
   // 상태 정의
@@ -323,14 +311,7 @@ export default function Write() {
       const msg = response.data?.message;
       alert(msg);
       navigate("/MainPageAfter");
-
-      // 입력값 초기화
-      // setTitle("");
-      // setCategory(null);
-      // setBasicValue("");
-      // setMarkdownValue("");
-      // setTags("");
-      // setMode("basic");
+ 
     } catch (err) {
       console.error(err);
       if (err.response?.data?.message) {
