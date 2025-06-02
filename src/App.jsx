@@ -82,6 +82,7 @@ const AnimatedRoutes = () => {
         <Route path="/message-room/:id" element={<MessageRoom />} />
         <Route path="/myblog" element={<MyBlog />} />
         <Route path="/viewpost" element={<ViewPost />} />
+        <Route path="/viewpost/:postId" element={<ViewPost />} />
         <Route path="/roadmapbefore" element={<RoadMapLoginBefore />} />
         <Route path="/roadmap" element={<RoadMap />} />
         <Route path="/community" element={<Community />} />
