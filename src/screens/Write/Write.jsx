@@ -14,7 +14,7 @@ import { SpellCheckComponent } from "../../components/SpellCheckComponent/SpellC
 import { SaveDraftComponent } from "../../components/SaveDraftComponent/SaveDraftComponent";
 import { PostComponent } from "../../components/PostComponent/PostComponent";
 import { PublishComponent } from "../../components/PublishComponent/PublishComponent";
-import { Categories } from "../../constants/categories";
+import { PostCategories } from "../../constants/categories";
 import api from "../../api/local-instance";
 
 
@@ -458,7 +458,7 @@ export default function Write() {
               setCategory(e.target.value || null);}}
             className="editor-category-select"
           >
-            {Categories.map((c) => (
+            {PostCategories.map((c) => (
               <option key={c.key ?? "default"} value={c.key ?? ""}>
                 {c.label}
               </option>
