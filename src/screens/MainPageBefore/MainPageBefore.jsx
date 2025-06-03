@@ -196,7 +196,7 @@ export const MainPageBefore = () => {
 
         <div className="div-2">
           <div className="my-post">
-            <p className="p">Log in to access more features</p>
+            <p className="p">로그인 후 이용 가능합니다.</p>
             <LoginComponent className="component-1" property1="default" />
           </div>
 
