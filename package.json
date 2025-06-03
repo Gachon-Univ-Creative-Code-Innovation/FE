@@ -27,6 +27,7 @@
     "esbuild": "^0.25.4",
     "framer-motion": "^12.6.3",
     "hast-util-to-jsx-runtime": "^2.3.6",
+    "node-releases": "^2.0.19",
     "normalize.css": "^8.0.1",
     "prop-types": "^15.8.1",
     "quill": "^2.0.3",
