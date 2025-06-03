@@ -1,93 +1,96 @@
+/* LoginRequiredPopup.css */
+
 .login-required-popup {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.4);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    animation: login-required-fade-in 0.2s ease-out;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: login-required-fade-in 0.2s ease-out;
+}
+
+.login-required-popup__container {
+  background-color: #fafdff;
+  border: 1px solid #1d1652;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 360px;
+  padding: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: login-required-fade-slide 0.25s ease-out;
+  box-sizing: border-box;
+}
+
+.login-required-popup__title {
+  color: #000;
+  font-family: "Inter-Bold", Helvetica;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 3px;
+}
+
+.login-required-popup__description-wrapper {
+  padding: 0 10px;
+}
+
+.login-required-popup__description {
+  color: #000;
+  font-family: "Inter-Regular", Helvetica;
+  font-size: 13px;
+  text-align: center;
+  line-height: 15px;       /* 기존 20px에서 살짝 늘림 */
+  margin-bottom: 1px;      /* 문단 아래쪽 여백 살짝 추가 */
+}
+
+.login-required-popup__button-group {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.login-required-popup__button {
+  flex: 1;
+  padding: 12px 0;
+  text-align: center;
+  cursor: pointer;
+  box-sizing: border-box;
+  border-top: 1px solid #a3b3bf;
+  border-right: 1px solid #a3b3bf;
+}
+
+.login-required-popup__button:last-child {
+  border-right: none;
+}
+
+.login-required-popup__button-text {
+  font-size: 13px;
+  color: #1d1652;
+}
+
+@keyframes login-required-fade-slide {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  
-  .login-required-popup__container {
-    background-color: #fafdff;
-    border: 1px solid #1d1652;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 360px;
-    padding: 18px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    animation: login-required-fade-slide 0.25s ease-out;
-    box-sizing: border-box;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  .login-required-popup__title {
-    color: #000;
-    font-family: "Inter-Bold", Helvetica;
-    font-size: 16px;
-    font-weight: 700;
-    text-align: center;
+}
+
+@keyframes login-required-fade-in {
+  from {
+    opacity: 0;
   }
-  
-  .login-required-popup__description-wrapper {
-    padding: 0 10px;
+  to {
+    opacity: 1;
   }
-  
-  .login-required-popup__description {
-    color: #000;
-    font-family: "Inter-Regular", Helvetica;
-    font-size: 13px;
-    text-align: center;
-    line-height: 20px;
-  }
-  
-  .login-required-popup__button-group {
-    display: flex;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  
-  .login-required-popup__button {
-    flex: 1;
-    padding: 12px 0;
-    text-align: center;
-    cursor: pointer;
-    box-sizing: border-box;
-    border-top: 1px solid #a3b3bf;
-    border-right: 1px solid #a3b3bf;
-  }
-  
-  .login-required-popup__button:last-child {
-    border-right: none;
-  }
-  
-  .login-required-popup__button-text {
-    font-size: 13px;
-    color: #1d1652;
-  }
-  
-  @keyframes login-required-fade-slide {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  @keyframes login-required-fade-in {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  
+}
