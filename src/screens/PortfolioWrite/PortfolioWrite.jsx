@@ -6,7 +6,7 @@ import Component18 from "../../icons/GoBackIcon/GoBackIcon";
 import CloseIcon from "../../icons/CloseIcon/CloseIcon";
 import { SaveDraftComponent } from "../../components/SaveDraftComponent/SaveDraftComponent";
 import { PostComponent } from "../../components/PostComponent/PostComponent";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 // ReactQuill 모듈 설정
 const modules = {
@@ -112,6 +112,9 @@ export default function PortfolioWrite() {
   const popupRef = useRef(null);
   const quillRef = useRef(null); // ReactQuill ref 추가
   const navigate = useNavigate();
+  const location = useLocation();
+  const editMode = location.state?.editMode || false;
+  const portfolioData = location.state?.portfolioData || {};
 
   useEffect(() => {
     if (isRepoPopupOpen && inputRef.current) {
@@ -130,6 +133,15 @@ export default function PortfolioWrite() {
   useEffect(() => {
     if (isRepoPopupOpen) setFadeOut(false);
   }, [isRepoPopupOpen]);
+
+  // 수정 모드일 때 기존 데이터로 초기화
+  useEffect(() => {
+    if (editMode && portfolioData) {
+      setTitle(portfolioData.title || "");
+      setBasicValue(portfolioData.content || "");
+      setTags(portfolioData.tags || "");
+    }
+  }, [editMode, portfolioData]);
 
   const getMissingFields = () => {
     const miss = [];
@@ -202,24 +214,48 @@ export default function PortfolioWrite() {
     }
 
     try {
-      const params = new URLSearchParams({
-        title: title,
-        content: basicValue,
-        is_public: "true",
-        isTemp: "true",
-        image: imageUrl
-      });
-      const response = await fetch(`http://localhost:8080/api/portfolio/save?${params.toString()}`, {
-        method: 'POST',
-        headers: { 'accept': 'application/json' },
-        body: ''
-      });
-      const result = await response.json();
-      if (result.status === 200) {
-        alert("게시되었습니다!");
-        navigate("/portfolio");
+      if (editMode && portfolioData.id) {
+        // 수정(UPDATE) 모드: PUT 요청
+        const params = new URLSearchParams({
+          portfolioID: portfolioData.id,
+          title: title,
+          content: basicValue,
+          isPublic: "true",
+          isTemp: "true"
+        });
+        const response = await fetch(`http://localhost:8080/api/portfolio/update?${params.toString()}`, {
+          method: 'PUT',
+          headers: { 'accept': 'application/json' },
+          body: ''
+        });
+        const result = await response.json();
+        if (result.status === 200) {
+          alert("수정되었습니다!");
+          navigate("/portfolio");
+        } else {
+          alert(result.message || "수정 실패");
+        }
       } else {
-        alert(result.message || "게시 실패");
+        // 신규 작성(POST) 모드: 기존 로직
+        const params = new URLSearchParams({
+          title: title,
+          content: basicValue,
+          is_public: "true",
+          isTemp: "true",
+          image: imageUrl
+        });
+        const response = await fetch(`http://localhost:8080/api/portfolio/save?${params.toString()}`, {
+          method: 'POST',
+          headers: { 'accept': 'application/json' },
+          body: ''
+        });
+        const result = await response.json();
+        if (result.status === 200) {
+          alert("게시되었습니다!");
+          navigate("/portfolio");
+        } else {
+          alert(result.message || "게시 실패");
+        }
       }
     } catch (err) {
       alert("요청 중 오류가 발생했습니다.");
