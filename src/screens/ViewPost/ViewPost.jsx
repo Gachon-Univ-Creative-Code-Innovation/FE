@@ -148,28 +148,38 @@ const ViewPost = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
   
-      // 성공 시, 로컬 상태에 새 댓글을 추가합니다.
-      // 서버에서 생성된 commentId를 문자열로 리턴하므로, 숫자만 추출해 사용합니다.
-      const returnedMsg = response.data.data; 
-      // 예: "123 댓글이 정상적으로 생성되었습니다"
-      const createdId = Number(returnedMsg.split(" ")[0]);
+      // // 성공 시, 로컬 상태에 새 댓글을 추가합니다.
+      // // 서버에서 생성된 commentId를 문자열로 리턴하므로, 숫자만 추출해 사용합니다.
+      // const returnedMsg = response.data.data; 
+      // // 예: "123 댓글이 정상적으로 생성되었습니다"
+      // const createdId = Number(returnedMsg.split(" ")[0]);
   
-      // 현재 날짜(YYYY.MM.DD) 포맷
-      const today = new Date().toISOString().slice(0, 10).replace(/-/g, ".");
+      // // 현재 날짜(YYYY.MM.DD) 포맷
+      // const today = new Date().toISOString().slice(0, 10).replace(/-/g, ".");
   
-      setComments([
-        ...comments,
-        {
-          id: createdId,
-          author: myName,
-          profileUrl: myProfileUrl,
-          text: commentValue.trim(),
-          date: today,
-          replies: [],
-        },
-      ]);
+      // setComments([
+      //   ...comments,
+      //   {
+      //     id: createdId,
+      //     author: myName,
+      //     profileUrl: myProfileUrl,
+      //     text: commentValue.trim(),
+      //     date: today,
+      //     replies: [],
+      //   },
+      // ]);
   
       setCommentValue("");
+
+
+      // 생성 후 전체 댓글을 다시 로드해서 가장 최신 상태를 반영
+      const res2 = await api.get(
+        `/blog-service/comments/${postId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const nested = buildNestedComments(res2.data.data.commentList);
+      setComments(nested);
+
     } catch (err) {
       console.error("댓글 생성 실패:", err);
       const errMsg = err.response?.data?.message || "댓글 생성 중 오류가 발생했습니다.";
