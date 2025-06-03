@@ -17,18 +17,14 @@ export const MyPost = () => {
     following: 0,
   });
 
-  const handleFollowClick = () => {
-    navigate("/follow");
-  };
+  const handleFollowClick = () => navigate("/follow");
 
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
         const token = localStorage.getItem("jwtToken");
         const res = await api.get("/user-service/user/main", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
         const { nickname, profileUrl, followers, following } = res.data.data;
         setUserInfo({ nickname, profileUrl, followers, following });
@@ -58,14 +54,13 @@ export const MyPost = () => {
         <div className="mypost-userinfo">
           <div className="mypost-top">
             <div className="mypost-name-wrapper">
-              <div className="mypost-nickname">{userInfo.nickname}</div>
-              <img
-                className="mypost-subtract"
-                alt="Subtract"
-                src="/img/subtract.svg"
+              <div
+                className="mypost-nickname"
                 onClick={() => navigate("/mypage")}
                 style={{ cursor: "pointer" }}
-              />
+              >
+                {userInfo.nickname}
+              </div>
             </div>
 
             <LogoutComponent
@@ -80,6 +75,9 @@ export const MyPost = () => {
               Follower
             </div>
             <div className="mypost-count">{userInfo.followers}</div>
+
+            <div className="mypost-divider" />
+
             <div className="mypost-label" onClick={handleFollowClick}>
               Following
             </div>

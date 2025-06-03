@@ -16,7 +16,7 @@ import "./EditUser.css";
 export const EditUser = () => {
   const navigate = useNavigate();
 
-  // ─── ① 편집용 상태 ─────────────────────────────────────
+  // 1. 편집용 상태: 사용자가 수정할 값들을 저장
   const [nickname, setNickname] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -25,13 +25,16 @@ export const EditUser = () => {
   const [profileFile, setProfileFile] = useState(null);
   const [savedPassword, setSavedPassword] = useState("");
 
-  // ─── ② 원본 상태(서버에서 받아온 값) ──────────────────────
-  const [originalName, setOriginalName] = useState("");
+  // 2. 원본 상태: 서버에서 받아온 초기 값들 (비교용)
   const [originalNickname, setOriginalNickname] = useState("");
+  const [originalName, setOriginalName] = useState("");
   const [originalGithubLink, setOriginalGithubLink] = useState("");
   const [originalProfileUrl, setOriginalProfileUrl] = useState("");
 
-  // 편집 모드, 팝업 제어, 에러 메시지 등 기존 상태들...
+  // 3. 소셜 로그인 여부(state 추가)
+  const [isSocialLogin, setIsSocialLogin] = useState(false);
+
+  // 4. 팝업 및 편집 모드 관련 상태
   const [isEditingName, setIsEditingName] = useState(false);
   const [isEditingGithubLink, setIsEditingGithubLink] = useState(false);
   const [githubLinkError, setGithubLinkError] = useState("");
@@ -39,9 +42,10 @@ export const EditUser = () => {
   const [isPasswordPopupOpen, setIsPasswordPopupOpen] = useState(false);
   const [isFadingOut, setIsFadingOut] = useState(false);
 
+  // 파일 선택을 위한 ref
   const fileInputRef = useRef(null);
 
-  // ─── ② useEffect: 사용자 정보 가져와서 편집 상태 + 원본 상태 모두 설정 ───
+  // 5. useEffect: 사용자 정보 조회 및 초기 값 설정
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -51,18 +55,21 @@ export const EditUser = () => {
         });
         const data = res.data.data;
 
-        // [편집 상태]
+        // 편집용 상태에 초기 데이터 세팅
         setNickname(data.nickname);
         setEmail(data.email);
         setName(data.name);
         setGithubLink(data.githubUrl || "");
         setProfileUrl(data.profileUrl || "");
 
-        // [원본 상태]
+        // 원본 상태에 초기 데이터 세팅
         setOriginalNickname(data.nickname);
         setOriginalName(data.name);
         setOriginalGithubLink(data.githubUrl || "");
         setOriginalProfileUrl(data.profileUrl || "");
+
+        // ➊ 소셜 로그인 여부도 상태로 저장
+        setIsSocialLogin(data.socialLogin);
       } catch (err) {
         console.error("사용자 정보 조회 실패:", err);
       }
@@ -70,18 +77,23 @@ export const EditUser = () => {
     fetchUserInfo();
   }, []);
 
+  // 6. 프로필 이미지 선택창 열기
   const openFilePicker = () => {
     fileInputRef.current?.click();
   };
+
+  // 7. 프로필 이미지 변경 핸들러
   const handleProfileChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
     setProfileFile(file);
     const reader = new FileReader();
     reader.onload = () => setProfileUrl(reader.result);
     reader.readAsDataURL(file);
   };
 
+  // 8. 닉네임 팝업 관련 함수
   const openNicknamePopup = () => {
     setIsNicknamePopupOpen(true);
     setIsFadingOut(false);
@@ -98,6 +110,7 @@ export const EditUser = () => {
     closeNicknamePopup();
   };
 
+  // 9. 비밀번호 팝업 관련 함수
   const openPasswordPopup = () => {
     setIsPasswordPopupOpen(true);
     setIsFadingOut(false);
@@ -114,6 +127,7 @@ export const EditUser = () => {
     closePasswordPopup();
   };
 
+  // 10. GitHub 링크 검증 및 블러 이벤트 핸들러
   const validateGithubLink = (link) => {
     const regex = /^https:\/\/github\.com\/[A-Za-z0-9_-]+$/;
     return regex.test(link);
@@ -129,49 +143,46 @@ export const EditUser = () => {
     }
   };
 
-  // ─── ③ 수정된 필드만 골라서 PATCH 요청 보내기 ─────────────────────────
+  // 11. 최종 저장: 수정된 필드만 서버에 PATCH 요청
   const handleFinalSave = async () => {
     try {
       const token = localStorage.getItem("jwtToken");
       const formData = new FormData();
 
-      // 1) 이름(name)이 원본(originalName)과 다를 때만 추가
+      // 이름이 변경되었을 때만 추가
       if (name && name !== originalName) {
         formData.append("name", name);
       }
 
-      // 2) 비밀번호(password)는 원본에 저장되어 있지 않으므로, 새로운 값이 있을 때만 추가
-      if (savedPassword) {
+      // 비밀번호는 소셜 로그인 사용자는 건너뜀
+      if (!isSocialLogin && savedPassword) {
         formData.append("password", savedPassword);
       }
 
-      // 3) 닉네임(nickname)이 원본(originalNickname)과 다를 때만 추가
+      // 닉네임이 변경되었을 때만 추가
       if (nickname && nickname !== originalNickname) {
         formData.append("nickname", nickname);
       }
 
-      // 4) GitHub 링크(githubLink)가 원본(originalGithubLink)과 다를 때만 추가
+      // GitHub 링크가 변경되었을 때만 추가
       if (githubLink && githubLink !== originalGithubLink) {
         formData.append("githubUrl", githubLink);
       }
 
-      // 5) 프로필 이미지(profileFile)가 존재할 때만 추가
+      // 프로필 이미지 파일이 존재할 때만 추가
       if (profileFile) {
         formData.append("profileImage", profileFile);
       }
 
-      // 변경된 필드가 하나도 없다면, 굳이 API 호출을 하지 않아도 됩니다.
-      // 아래 주석을 해제하면 “변경된 항목 없을 때” API 요청을 생략할 수 있습니다.
-      // -------------------------------
+      // 변경된 항목이 없으면 API 호출 생략(선택사항)
       // if (formData.keys().next().done) {
       //   return;
       // }
-      // -------------------------------
 
       await api.patch("/user-service/user", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          // multipart/form-data의 Content-Type은 브라우저가 자동으로 설정합니다.
+          // Content-Type은 브라우저가 자동으로 설정
         },
       });
 
@@ -185,8 +196,10 @@ export const EditUser = () => {
     <PageTransitionWrapper>
       <div className="edituser-screen">
         <Navbar2 />
+
         <div className="edituser-div" style={{ marginTop: 100 }}>
           <div className="edituser-frame">
+            {/* 프로필 이미지 영역 */}
             <div className="edituser-view-wrapper">
               <div className="edituser-view">
                 <div className="edituser-div-wrapper">
@@ -212,8 +225,9 @@ export const EditUser = () => {
               </div>
             </div>
 
+            {/* 사용자 정보 편집 영역 */}
             <div className="edituser-view-2">
-              {/*  이름 편집 파트  */}
+              {/* 11-1. 이름 수정 파트 */}
               <div className="edituser-password">
                 <UserIcon className="edituser-user-user" />
                 <div className="edituser-frame-2">
@@ -240,7 +254,7 @@ export const EditUser = () => {
                 </div>
               </div>
 
-              {/* 닉네임 편집 파트 */}
+              {/* 11-2. 닉네임 수정 파트 */}
               <div className="edituser-password">
                 <UserUserCardId className="edituser-user-user-card-ID" />
                 <div className="edituser-frame-2">
@@ -254,7 +268,7 @@ export const EditUser = () => {
                 </div>
               </div>
 
-              {/* 이메일 표시 (편집 불필요) */}
+              {/* 11-3. 이메일 표시 (편집 불필요) */}
               <div className="edituser-password">
                 <CommunicationMail className="edituser-communication-mail" />
                 <div className="edituser-frame-2">
@@ -262,18 +276,23 @@ export const EditUser = () => {
                 </div>
               </div>
 
-              {/* 비밀번호 수정 팝업 */}
-              <div className="edituser-password">
-                <LockLight1 className="edituser-lock-light" />
-                <div className="edituser-frame-2">
-                  <div className="edituser-text-wrapper-2">*************</div>
+              {/* 11-4. 비밀번호 수정 팝업 (소셜 로그인 시 숨김) */}
+              {!isSocialLogin && (
+                <div className="edituser-password">
+                  <LockLight1 className="edituser-lock-light" />
+                  <div className="edituser-frame-2">
+                    <div className="edituser-text-wrapper-2">*************</div>
+                  </div>
+                  <div
+                    onClick={openPasswordPopup}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <UserEditIcon />
+                  </div>
                 </div>
-                <div onClick={openPasswordPopup} style={{ cursor: "pointer" }}>
-                  <UserEditIcon />
-                </div>
-              </div>
+              )}
 
-              {/* GitHub 링크 편집 파트 */}
+              {/* 11-5. GitHub 링크 수정 파트 */}
               <div className="edituser-password">
                 <InterfaceLinkHorizontal className="edituser-interface-link" />
                 <div className="edituser-frame-2">
@@ -320,7 +339,7 @@ export const EditUser = () => {
           </div>
         </div>
 
-        {/* 닉네임 팝업 */}
+        {/* 닉네임 팝업 모달 */}
         {isNicknamePopupOpen && (
           <div
             className={`nickname-popup-overlay ${
@@ -336,8 +355,8 @@ export const EditUser = () => {
           </div>
         )}
 
-        {/* 비밀번호 팝업 */}
-        {isPasswordPopupOpen && (
+        {/* 비밀번호 팝업 모달 (소셜 로그인 시 렌더링되지 않음) */}
+        {isPasswordPopupOpen && !isSocialLogin && (
           <div
             className={`nickname-popup-overlay ${
               isFadingOut ? "fade-out" : "fade-in"

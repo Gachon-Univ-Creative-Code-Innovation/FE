@@ -21,7 +21,7 @@ export const MyPage = () => {
     profileUrl: "",
   });
 
-  // ✅ 사용자 정보 불러오기
+  // 사용자 정보 불러오기
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -37,11 +37,11 @@ export const MyPage = () => {
         console.error("사용자 정보 불러오기 실패:", err);
       }
     };
-
     fetchUserInfo();
   }, []);
 
   const goToEditUser = () => navigate("/edituser");
+  const goToFollowPage = () => navigate("/follow"); // FollowPage로 이동
 
   const openDeletePopup = () => {
     setShowDeletePopup(true);
@@ -75,30 +75,47 @@ export const MyPage = () => {
 
         <div className="mypage-post-list">
           <div className="mypage-scrollable-div">
-            <div className="mypage-item-frame" onClick={goToEditUser}>
+            {/* 회원정보 수정 */}
+            <div
+              className="mypage-item-frame"
+              onClick={goToEditUser}
+              style={{ cursor: "pointer" }}
+            >
               <MypageUserIcon className="mypage-vector" />
               <div className="mypage-text">회원정보 수정</div>
               <ArrowRightIcon className="mypage-arrow" />
             </div>
 
-            <div className="mypage-item-frame">
+            {/* 팔로우 관리 */}
+            <div
+              className="mypage-item-frame"
+              onClick={goToFollowPage}
+              style={{ cursor: "pointer" }}
+            >
               <MypageFollowIcon className="mypage-vector-2" />
               <div className="mypage-text">팔로우 관리</div>
               <ArrowRightIcon className="mypage-arrow" />
             </div>
 
-            <div className="mypage-item-frame">
+            {/* 포트폴리오 관리 */}
+            <div
+              className="mypage-item-frame"
+              onClick={() => navigate("/portfolio")}
+              style={{ cursor: "pointer" }}
+            >
               <MypageDocumentIcon className="mypage-vector-3" />
               <div className="mypage-text">포트폴리오 관리</div>
               <ArrowRightIcon className="mypage-arrow" />
             </div>
 
+            {/* 로그아웃 */}
             <div className="mypage-item-frame">
               <MypageLogoutIcon className="mypage-vector-4" />
               <div className="mypage-text">로그아웃</div>
               <ArrowRightIcon className="mypage-arrow" />
             </div>
 
+            {/* 회원 탈퇴 */}
             <div
               className="mypage-item-frame"
               onClick={openDeletePopup}
