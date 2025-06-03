@@ -148,27 +148,6 @@ const ViewPost = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
   
-      // // 성공 시, 로컬 상태에 새 댓글을 추가합니다.
-      // // 서버에서 생성된 commentId를 문자열로 리턴하므로, 숫자만 추출해 사용합니다.
-      // const returnedMsg = response.data.data; 
-      // // 예: "123 댓글이 정상적으로 생성되었습니다"
-      // const createdId = Number(returnedMsg.split(" ")[0]);
-  
-      // // 현재 날짜(YYYY.MM.DD) 포맷
-      // const today = new Date().toISOString().slice(0, 10).replace(/-/g, ".");
-  
-      // setComments([
-      //   ...comments,
-      //   {
-      //     id: createdId,
-      //     author: myName,
-      //     profileUrl: myProfileUrl,
-      //     text: commentValue.trim(),
-      //     date: today,
-      //     replies: [],
-      //   },
-      // ]);
-  
       setCommentValue("");
 
 
@@ -188,26 +167,60 @@ const ViewPost = () => {
   };
 
   // 답글 등록
-  const handleAddReply = (commentId) => {
+  const handleAddReply = async(commentId) => {
     if (!replyValue.trim()) return;
-    setComments(comments.map(comment =>
-      comment.id === commentId
-        ? {
-            ...comment,
-            replies: [
-              ...(comment.replies || []),
-              {
-                id: Date.now(),
-                author: myName,
-                text: replyValue,
-                date: new Date().toISOString().slice(0, 10).replace(/-/g, '.'),
-              },
-            ],
-          }
-        : comment
-    ));
-    setReplyValue("");
-    setReplyTo(null);
+
+    try {
+      const token = localStorage.getItem("jwtToken");
+      const payload = {
+        postId: Number(postId),             // 현재 보고 있는 게시글 ID
+        parentCommentId: commentId,         // 답글을 다는 부모 댓글 ID
+        content: replyValue.trim(),         // 입력된 답글 내용
+      };
+  
+      // 1) 답글 생성 API 호출
+      await api.post(
+        "/blog-service/comments",
+        payload,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+  
+      setReplyValue("");
+      setReplyTo(null);
+  
+      // 2) 생성 후 전체 댓글을 다시 조회해서, 최신 상태의 중첩 구조를 반영
+      const res = await api.get(
+        `/blog-service/comments/${postId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const flatList = res.data.data.commentList;
+      const nested = buildNestedComments(flatList);
+      setComments(nested);
+  
+    } catch (err) {
+      console.error("답글 생성 실패:", err.response?.data ?? err);
+      alert(err.response?.data?.message || "답글 생성 중 오류가 발생했습니다.");
+    }
+
+
+    // setComments(comments.map(comment =>
+    //   comment.id === commentId
+    //     ? {
+    //         ...comment,
+    //         replies: [
+    //           ...(comment.replies || []),
+    //           {
+    //             id: Date.now(),
+    //             author: myName,
+    //             text: replyValue,
+    //             date: new Date().toISOString().slice(0, 10).replace(/-/g, '.'),
+    //           },
+    //         ],
+    //       }
+    //     : comment
+    // ));
+    // setReplyValue("");
+    // setReplyTo(null);
   };
 
   // 댓글 조회
