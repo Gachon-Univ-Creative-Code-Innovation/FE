@@ -13,6 +13,45 @@ function getLabelByKey(key) {
   return category ? category.label : "";
 }
 
+/**
+ * 백엔드에서 내려준 flat list를 nested structure({ replies: [] })로 바꿔준다.
+ * @param {Array<Object>} flatComments
+ *   └ 백엔드 GetComment DTO 배열. 각 항목에 commentId, parentCommentId, authorNickname, content, createTime 등이 있음.
+ * @returns {Array<Object>} nestedComments
+ */
+function buildNestedComments(flatComments) {
+  // 1) 모든 댓글을 id → 새로운 객체(프론트용)로 매핑
+  const map = {};
+  flatComments.forEach((c) => {
+    map[c.commentId] = {
+      id: c.commentId,
+      author: c.authorNickname,
+      text: c.content,
+      // createTime(예: "2025-06-03T05:00:00")을 "2025.06.03" 형태로 포맷
+      date: c.createTime.slice(0, 10).replace(/-/g, "."),
+      replies: []
+    };
+  });
+
+  // 2) parentCommentId가 있으면, 해당 parent의 replies 배열에 push
+  //    없으면 최상위(root) 댓글 목록에 추가
+  const nested = [];
+  flatComments.forEach((c) => {
+    const node = map[c.commentId];
+    if (c.parentCommentId) {
+      const parentNode = map[c.parentCommentId];
+      if (parentNode) {
+        parentNode.replies.push(node);
+      }
+      // 만약 parentNode가 없다면 (비정상 케이스) 그냥 무시해도 됩니다.
+    } else {
+      nested.push(node);
+    }
+  });
+
+  return nested;
+}
+
 const ViewPost = () => {
   const { postId } = useParams();
   const navigate = useNavigate();
@@ -46,8 +85,10 @@ const ViewPost = () => {
   const editCommentInputRef = useRef(null);
   const editReplyInputRef = useRef(null);
 
-  // 예시: 본인 닉네임(실제 서비스에서는 로그인 유저 정보 사용)
+  // 예시: 본인 닉네임(실제 서비스에서는 로그인 유저 정보 사용) 
+  // 프로필 조회 API 연결하기
   const myName = "배고픈 송희";
+  const myProfileUrl = "";
   const myUserId = localStorage.getItem("userId");
 
   
@@ -121,7 +162,7 @@ const ViewPost = () => {
         {
           id: createdId,
           author: myName,
-          profileUrl: "",
+          profileUrl: myProfileUrl,
           text: commentValue.trim(),
           date: today,
           replies: [],
@@ -158,6 +199,27 @@ const ViewPost = () => {
     setReplyValue("");
     setReplyTo(null);
   };
+
+  // 댓글 조회
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const token = localStorage.getItem("jwtToken");
+        // “postId별 댓글 조회” API 호출
+        const res = await api.get(
+          `/blog-service/comments/${postId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const flatList = res.data.data.commentList;
+        const nested = buildNestedComments(flatList);
+        setComments(nested);
+      } catch (err) {
+        console.error("댓글 조회 실패:", err);
+      }
+    };
+
+    fetchComments();
+  }, [postId]);
 
   // 댓글 삭제
   const handleDeleteComment = (commentId) => {
@@ -234,9 +296,15 @@ const ViewPost = () => {
         const res = await api.get(`/blog-service/posts/${postId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        // 백엔드 응답 예시: { data: { postId, title, authorNickname, content, createdAt, tagNameList, categoryCode, ... } }
         setPostData(res.data.data);
         console.log("상세 포스트 데이터:", res.data.data);
+
+        // 댓글 데이터 조회
+        const resComment = await api.get(`/blog-service/comments/${postId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        
+
       } catch (err) {
         console.error("상세 포스트 불러오기 실패:", err);
         alert("게시글을 불러오는 데 실패했습니다.");
