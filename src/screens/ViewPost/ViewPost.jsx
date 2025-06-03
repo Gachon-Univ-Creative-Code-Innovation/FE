@@ -7,6 +7,7 @@ import SendIcon from "../../icons/SendIcon/SendIcon";
 import dompurify from "dompurify";
 import { Categories } from "../../constants/categories";
 import api from "../../api/local-instance"; 
+import realApi from "../../api/instance"; 
 
 function getLabelByKey(key) {
   const category = Categories.find((c) => c.key === key);
@@ -27,6 +28,8 @@ function buildNestedComments(flatComments) {
       id: c.commentId,
       author: c.authorNickname,
       text: c.content,
+      authorId: c.authorId, // 댓글 작성자의 ID
+      authorProfileUrl: c.authorProfileUrl, // 댓글 작성자의 프로필 이미지 URL
       // createTime(예: "2025-06-03T05:00:00")을 "2025.06.03" 형태로 포맷
       date: c.createTime.slice(0, 10).replace(/-/g, "."),
       replies: []
@@ -68,15 +71,7 @@ const ViewPost = () => {
   const [replyValue, setReplyValue] = useState("");
   const [openMenuId, setOpenMenuId] = useState(null);
   const [commentValue, setCommentValue] = useState("");
-  const [comments, setComments] = useState([
-    {
-      id: 1,
-      author: "배고픈 송희",
-      text: "유익한 글 감사합니다!",
-      date: "2025.03.29",
-      replies: [],
-    },
-  ]);
+  const [comments, setComments] = useState(null);
   const [editCommentId, setEditCommentId] = useState(null);
   const [editCommentValue, setEditCommentValue] = useState("");
   const [editReplyId, setEditReplyId] = useState(null);
@@ -85,12 +80,8 @@ const ViewPost = () => {
   const editCommentInputRef = useRef(null);
   const editReplyInputRef = useRef(null);
 
-  // 예시: 본인 닉네임(실제 서비스에서는 로그인 유저 정보 사용) 
-  // 프로필 조회 API 연결하기
-  const myName = "배고픈 송희";
-  const myProfileUrl = "";
-  const myUserId = localStorage.getItem("userId");
-
+  // 현재 로그인한 사용자의 ID
+  const myUserId = Number(localStorage.getItem("userId"));
   
   // 바깥 클릭 시 메뉴 닫기
   useEffect(() => {
@@ -201,26 +192,6 @@ const ViewPost = () => {
       console.error("답글 생성 실패:", err.response?.data ?? err);
       alert(err.response?.data?.message || "답글 생성 중 오류가 발생했습니다.");
     }
-
-
-    // setComments(comments.map(comment =>
-    //   comment.id === commentId
-    //     ? {
-    //         ...comment,
-    //         replies: [
-    //           ...(comment.replies || []),
-    //           {
-    //             id: Date.now(),
-    //             author: myName,
-    //             text: replyValue,
-    //             date: new Date().toISOString().slice(0, 10).replace(/-/g, '.'),
-    //           },
-    //         ],
-    //       }
-    //     : comment
-    // ));
-    // setReplyValue("");
-    // setReplyTo(null);
   };
 
   // 댓글 조회
@@ -234,6 +205,7 @@ const ViewPost = () => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const flatList = res.data.data.commentList;
+        console.log("댓글 데이터:", flatList);
         const nested = buildNestedComments(flatList);
         setComments(nested);
       } catch (err) {
@@ -339,8 +311,9 @@ const ViewPost = () => {
 
     fetchPostDetail();
   }, [postId]);
+  
 
-  // --- 로딩 중일 때 처리 ---
+  // --- 포스트 조회 로딩 중일 때 처리 ---
   if (loadingPost) {
     return (
       <div className="view-post-bg">
@@ -408,7 +381,7 @@ const ViewPost = () => {
               </span>
             )}
           
-            {/* 답글 메뉴 (본인이 작성한 답글인 경우만) */}
+            {/* 포스트 메뉴 (본인이 작성한 포스트인 경우만) */}
             {postData.authorId == myUserId && (
               <div className="view-post-menu-wrapper">
                 <div
@@ -480,7 +453,11 @@ const ViewPost = () => {
             <div className="comment-list">
               {comments.map((comment) => (
                 <div key={comment.id} className="comment-item">
-                  <div className="comment-profile"></div>
+                  <div className="comment-profile-wrapper">
+                    {comment.authorProfileUrl && (
+                      <img src={comment.authorProfileUrl} alt="comment" className="comment-prfile-img" />
+                    )}
+                  </div>
                   <div className="comment-content-block">
                     <div className="comment-author">{comment.author}</div>
                     {editCommentId === comment.id ? (
@@ -530,7 +507,11 @@ const ViewPost = () => {
                       <div className="comment-replies-list">
                         {comment.replies.map(reply => (
                           <div key={reply.id} className="comment-reply-item">
-                            <div className="comment-profile"></div>
+                            <div className="comment-profile-wrapper">
+                              {reply.authorProfileUrl && (
+                                <img src={reply.authorProfileUrl} alt="reply" className="comment-prfile-img" />
+                              )}
+                            </div>
                             <div className="reply-content">
                               <div className="comment-author">{reply.author}</div>
                               {editReplyId === reply.id ? (
@@ -554,7 +535,7 @@ const ViewPost = () => {
                               </div>
                             </div>
                             {/* 답글 메뉴 (본인이 작성한 답글인 경우만) */}
-                            {reply.author === myName && (
+                            {reply.authorId == myUserId && (
                               <div className="comment-menu-wrapper">
                                 <div
                                   className="comment-menu"
@@ -590,7 +571,7 @@ const ViewPost = () => {
                     )}
                   </div>
                   {/* 댓글 메뉴 (본인이 작성한 댓글인 경우만) */}
-                  {comment.author === myName && (
+                  {comment.authorId == myUserId && (
                     <div className="comment-menu-wrapper">
                       <div
                         className="comment-menu"
