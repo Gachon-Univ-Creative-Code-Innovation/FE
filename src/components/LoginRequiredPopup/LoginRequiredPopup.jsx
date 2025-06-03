@@ -1,5 +1,8 @@
+import React from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import "./LoginRequiredPopup.css";
+import LoginComponent from "../../components/LoginComponent/LoginComponent";
 
 const MDiv = motion.div;
 
@@ -22,15 +25,15 @@ const LoginRequiredPopup = ({ onClose }) => {
 
         <div className="login-required-popup__description-wrapper">
           <p className="login-required-popup__description">
-            You need to be logged in to use this feature.
+            이 기능은 로그인 후 이용 가능합니다.
             <br />
-            Please log in and try again.
+            로그인으로 나만의 여정을 지금 바로 이어가 보세요.
           </p>
         </div>
 
         <div className="login-required-popup__button-group">
           <div className="login-required-popup__button" onClick={onClose}>
-            <div className="login-required-popup__button-text">OK</div>
+            <LoginComponent className="component-1" property1="default" />
           </div>
         </div>
       </MDiv>

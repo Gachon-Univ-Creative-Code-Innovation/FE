@@ -48,18 +48,16 @@
   
   .login-required-popup__button-group {
     display: flex;
+    justify-content: center;
     width: 100%;
     box-sizing: border-box;
   }
   
   .login-required-popup__button {
-    flex: 1;
     padding: 12px 0;
     text-align: center;
     cursor: pointer;
     box-sizing: border-box;
-    border-top: 1px solid #a3b3bf;
-    border-right: 1px solid #a3b3bf;
   }
   
   .login-required-popup__button:last-child {
