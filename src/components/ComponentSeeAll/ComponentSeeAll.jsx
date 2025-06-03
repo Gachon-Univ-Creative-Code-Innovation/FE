@@ -4,8 +4,8 @@ import "./ComponentSeeAll.css";
 
 export const ComponentSeeAll = ({ property1, className }) => {
   return (
-    <div className={`component-17 property-1-0-${property1} ${className}`}>
-      <div className="text-wrapper-14">See All</div>
+    <div className={`seeall-container seeall-${property1} ${className}`}>
+      <div className="seeall-text">See All</div>
     </div>
   );
 };
