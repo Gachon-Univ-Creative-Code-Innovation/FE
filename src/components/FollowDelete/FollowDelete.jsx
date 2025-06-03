@@ -1,4 +1,3 @@
-// FollowDelete.jsx
 import PropTypes from "prop-types";
 import React from "react";
 import "./FollowDelete.css";

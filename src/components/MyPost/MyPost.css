@@ -2,7 +2,7 @@
   align-items: flex-start;
   background-color: #fafdffcc;
   border-radius: 10px;
-  box-shadow: 0px 0px 10px #a3b3bf;
+  box-shadow: 0 0 10px #a3b3bf;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -10,30 +10,32 @@
 }
 
 .mypost-header {
-  align-items: center;
   display: flex;
-  gap: 10px;
-  justify-content: center;
+  align-items: center;
   padding: 20px 10px;
   width: 100%;
+  /* 프로필 영역을 왼쪽에 고정 */
+  justify-content: flex-start;
 }
 
 .mypost-profile-img {
   background-color: #d9d9d9;
-  height: 60px;
-  width: 48px;
+  width: 53px;
+  height: 65px;
+  /* 위치가 흔들리지 않도록 고정 크기 유지 */
+  flex-shrink: 0;
 }
 
 .mypost-profile-img-tag {
-  width: 48px;
-  height: 60px;
+  width: 53px;
+  height: 65px;
   object-fit: cover;
 }
 
 .mypost-profile-placeholder {
   background-color: #ccc;
-  width: 48px;
-  height: 60px;
+  width: 53px;
+  height: 65px;
 }
 
 .mypost-userinfo {
@@ -41,46 +43,53 @@
   flex-direction: column;
   gap: 20px;
   flex-grow: 1;
+  margin-left: 10px; /* 프로필과 간격 */
 }
 
 .mypost-top {
   display: flex;
   align-items: center;
-  gap: 25px;
-  width: 100%;
+  justify-content: space-between; /* 닉네임과 로그아웃 버튼 사이 공간 배분 */
+  width: 95%;
 }
 
 .mypost-name-wrapper {
   display: inline-flex;
   align-items: center;
   gap: 2px;
+  flex: 0 1 auto;
+  min-width: 0;  /* 자식이 넘치면 축소 가능 */
 }
 
 .mypost-nickname {
-  margin-top: 1px;
   font-size: 16px;
   font-weight: 500;
   font-family: "Inter", Helvetica;
   line-height: 10px;
   color: #000;
   white-space: nowrap;
+  overflow: hidden;        /* 넘치면 잘라냄 */
+  text-overflow: ellipsis; /* 잘린 부분에 … 표시 */
+  line-height: 1.2;
 }
 
 .mypost-subtract {
-  margin-left: 5px;
   height: 13px;
   width: 13px;
+  flex-shrink: 0; /* 아이콘 크기 고정 */
+  margin-left: 5px;
 }
 
 .mypost-logout {
-  margin-left: 37px;
-  height: 23px !important;
+  flex: 0 0 auto; /* 절대 축소되지 않음 */
   width: 60px !important;
+  height: 23px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   padding: 0 !important;
 }
+
 .mypost-logout-text {
   font-size: 11px !important;
   line-height: 1 !important;
@@ -92,7 +101,7 @@
 .mypost-follow {
   display: flex;
   align-items: center;
-  width: 100%;
+  width: 105%;
 }
 
 .mypost-label,

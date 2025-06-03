@@ -1,14 +1,13 @@
 .filtercomponent-btn {
   all: unset;
+  display: inline-flex;
   align-items: center;
-  border: 1px solid #a3b3bf;
+  justify-content: center;
+  gap: 10px;
+  padding: 5px 20px;
+  border: 2px solid #a3b3bf;
   border-radius: 10px;
   box-sizing: border-box;
-  display: inline-flex;
-  gap: 10px;
-  justify-content: center;
-  padding: 5px 30px;
-  position: relative;
   cursor: pointer;
   transition: border-color 0.3s, color 0.3s;
   min-width: 90px;
@@ -18,7 +17,7 @@
   color: #a3b3bf;
   font-family: "Inter", Helvetica;
   font-size: 15px;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 30px;
   text-align: center;
   white-space: nowrap;
@@ -28,22 +27,18 @@
 .filtercomponent-icon {
   height: 17.88px;
   width: 17.5px;
-  margin-right: -0.75px;
+  stroke: #a3b3bf;
   transition: stroke 0.3s ease;
 }
 
-/* active 상태 */
-.filtercomponent-btn.active,
-.filtercomponent-btn-active .filtercomponent-btn {
+.filtercomponent-btn.active {
   border-color: #1d1652;
 }
 
-.filtercomponent-btn.active .filtercomponent-text,
-.filtercomponent-btn-active .filtercomponent-text {
+.filtercomponent-btn.active .filtercomponent-text {
   color: #1d1652;
 }
 
-.filtercomponent-btn.active .filtercomponent-icon,
-.filtercomponent-btn-active .filtercomponent-icon {
+.filtercomponent-btn.active .filtercomponent-icon {
   stroke: #1d1652;
 }

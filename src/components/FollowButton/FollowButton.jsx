@@ -21,4 +21,4 @@ FollowButton.propTypes = {
   disabled: PropTypes.bool,
 };
 
-export default FollowButton; 
+export default FollowButton;

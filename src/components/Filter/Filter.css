@@ -9,10 +9,11 @@
 }
 
 .filtersection-btn-wrapper {
+  position: relative;
   cursor: pointer;
+  display: inline-block;
 }
 
-/* 아이콘 */
 .filtersection-icon-filter,
 .filtersection-icon-sort {
   display: inline-block;
@@ -56,8 +57,6 @@
   position: relative;
   cursor: pointer;
   display: inline-block;
-  border: 1px solid #a3b3bf;
-  border-radius: 8px;
 }
 
 .sortsection-dropdown {

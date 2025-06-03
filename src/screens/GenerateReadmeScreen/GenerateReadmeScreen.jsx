@@ -216,7 +216,7 @@ export const GenerateReadmeScreen = () => {
               />
             </div>
           ) : (
-            /* ─── “History” 화면 (HistoryList) ─── */
+            /* “History” 화면 (HistoryList) ─*/
             <div className="historylist-wrapper">
               <HistoryList
                 items={historyItems}
@@ -225,17 +225,12 @@ export const GenerateReadmeScreen = () => {
             </div>
           )}
 
-          {/* ─── ReadmeGenerator(로딩 스피너) ─── */}
-          {/*
-            “Generate README” 탭이고, showLoader === true일 때만 마운트(렌더)됩니다.
-            showLoader가 false라면 <ReadmeGenerator> 자체가 렌더되지 않으므로
-            스피너도 절대 보이지 않습니다.
-          */}
+          {/* ReadmeGenerator(로딩 스피너) */}
           {selectedTab === "Generate README" && showLoader && (
             <ReadmeGenerator active={showLoader} onDone={handleReadmeDone} />
           )}
 
-          {/* ─── Readme 미리보기 팝업 ─── */}
+          {/* Readme 미리보기 팝업 */}
           {showReadmePopup && (
             <div className="readme-popup-overlay">
               <Readme
