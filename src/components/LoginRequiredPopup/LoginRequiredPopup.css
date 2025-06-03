@@ -46,8 +46,8 @@
   font-family: "Inter-Regular", Helvetica;
   font-size: 13px;
   text-align: center;
-  line-height: 15px;       /* 기존 20px에서 살짝 늘림 */
-  margin-bottom: 1px;      /* 문단 아래쪽 여백 살짝 추가 */
+  line-height: 23px;
+  margin-bottom: 1px;
 }
 
 .login-required-popup__button-group {

@@ -29,7 +29,6 @@ const LoginRequiredPopup = ({ onClose }) => {
           <p className="login-required-popup__description">
             이 기능을 사용하려면 로그인이 필요합니다.
             <br />
-            <br />
             로그인 후 다시 시도해 주세요.
           </p>
         </div>

@@ -269,6 +269,17 @@
   cursor: pointer;
 }
 
+.login-alog-logo {
+  position: absolute;
+  top: 55px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 250px;
+  height: 100px;
+  object-fit: cover;
+  transform: translateX(10px);
+}
 
 
 .login-frame {
