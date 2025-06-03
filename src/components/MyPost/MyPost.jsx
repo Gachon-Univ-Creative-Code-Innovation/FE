@@ -112,10 +112,9 @@ export const MyPost = () => {
       </div>
 
       <div className="mypost-footer">
-        <ComponentSeeAll className="mypost-seeall" property1="frame-20" />
-        <div className="mypost-pagination">
-          <MyPostPageIcon className="mypost-pageicon" />
-          <MyPostPageIcon2 className="mypost-pagebutton" />
+        {/* See All 클릭시 마이블로그 이동*/}
+        <div onClick={() => navigate("/myblog")} style={{ cursor: "pointer" }}>
+          <ComponentSeeAll className="mypost-seeall" property1="frame-20" />
         </div>
       </div>
     </div>
