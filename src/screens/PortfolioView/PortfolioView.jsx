@@ -11,7 +11,7 @@ const PortfolioView = () => {
   const [openMenuId, setOpenMenuId] = useState(null);
   const menuRef = useRef(null);
 
-  const myName = "김송희";
+  const myName = localStorage.getItem("userId") || "";
 
   // 포트폴리오 데이터를 상태로 관리 (초기값 최소화)
   const [portfolio, setPortfolio] = useState({
@@ -110,13 +110,15 @@ const PortfolioView = () => {
 
   // 포트폴리오 수정 버튼 클릭 - Write 페이지로 이동
   const handleEditPortfolio = () => {
-    navigate('/portfolio/write', { 
-      state: { 
+    navigate('/portfolio/write', {
+      state: {
         editMode: true,
         portfolioData: {
+          id: portfolio.id,
           title: portfolio.title,
           content: portfolio.content,
-          id: portfolio.id
+          tags: portfolio.tags || '',
+          // 필요시 author, date 등 추가 가능
         }
       }
     });
@@ -124,15 +126,29 @@ const PortfolioView = () => {
   };
 
   // 포트폴리오 삭제 버튼 클릭
-  const handleDeletePortfolio = () => {
+  const handleDeletePortfolio = async () => {
     if (window.confirm("정말로 이 포트폴리오를 삭제하시겠습니까?")) {
-      console.log("포트폴리오 삭제하기");
+      try {
+        // id가 ":1"처럼 들어오면 앞의 콜론(:)을 제거
+        const cleanId = id && id.startsWith(":") ? id.slice(1) : id;
+        const res = await fetch(`http://localhost:8080/api/portfolio/delete?portfolioID=${cleanId}`, {
+          method: 'DELETE',
+          headers: { 'Accept': 'application/json' },
+        });
+        if (res.ok) {
+          alert("포트폴리오가 삭제되었습니다.");
+          navigate('/portfolio');
+        } else {
+          alert("삭제에 실패했습니다.");
+        }
+      } catch (err) {
+        alert("삭제 중 오류가 발생했습니다.");
+      }
       setOpenMenuId(null);
-      // navigate('/portfolio');
     }
   };
 
-  const isMyPortfolio = portfolio.author === myName;
+  const isMyPortfolio = String(portfolio.author) === String(myName);
 
   const handleLike = async () => {
     // id가 ":1"처럼 들어오면 앞의 콜론(:)을 제거

@@ -20,7 +20,7 @@
 
 /* 내용 외 정보 */
 .view-post-header {
-  padding: 0 60px;
+  padding: 0;
 }
 
 .view-post-title {
@@ -35,7 +35,10 @@
   align-items: center;
   gap: 16px;
   margin-bottom: 20px;
-  width: 100%;
+  width: auto;
+  margin-left: 0;
+  padding-left: 0;
+  justify-content: flex-start;
 }
 
 .view-post-meta {
