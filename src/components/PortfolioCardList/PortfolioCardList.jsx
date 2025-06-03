@@ -26,7 +26,11 @@ const PortfolioCardList = ({ data, page, itemsPerPage }) => {
                 alt={item.title}
                 className="portfoliolist-image"
               />
-              <div className="portfoliolist-overlay">
+              <div
+                className="portfoliolist-overlay"
+                onClick={() => window.location.href = `/portfolio/view/:${item.portfolio_id}`}
+                style={{ cursor: 'pointer' }}
+              >
                 <div className="portfoliolist-overlay-text">자세히 보기</div>
               </div>
             </div>

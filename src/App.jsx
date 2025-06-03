@@ -32,6 +32,7 @@ import PortfolioScreen from "./screens/Portfolio/PortfolioScreen";
 import KakaoCallBack from "./screens/Login/KakaoCallBack";
 import GoogleCallback from "./screens/Login/GoogleCallBack";
 import PortfolioWrite from "./screens/PortfolioWrite/PortfolioWrite";
+import PortfolioView from "./screens/PortfolioView/PortfolioView";
 import CommunityViewPost from "./screens/CommunityViewPost/CommunityViewPost";
 
 // 컨텍스트 및 SSE
@@ -47,7 +48,7 @@ const AnimatedRoutes = () => {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        {/* ✅ 첫 진입 시 토큰 존재하면 /MainPageAfter로 리디렉션 */}
+        {/*  첫 진입 시 토큰 존재하면 /MainPageAfter로 리디렉션 */}
         <Route
           path="/"
           element={
@@ -73,6 +74,7 @@ const AnimatedRoutes = () => {
         <Route path="/MainPageAfter" element={<MainPageAfter />} />
         <Route path="/notice" element={<Notice />} />
         <Route path="/write" element={<Write />} />
+        <Route path="/write/:postId" element={<Write />} />
         <Route path="/follow" element={<FollowPage />} />
         <Route path="/generatereadme" element={<GenerateReadmeScreen />} />
         <Route path="/mypage" element={<MyPage />} />
@@ -81,6 +83,7 @@ const AnimatedRoutes = () => {
         <Route path="/message-room/:id" element={<MessageRoom />} />
         <Route path="/myblog" element={<MyBlog />} />
         <Route path="/viewpost" element={<ViewPost />} />
+        <Route path="/viewpost/:postId" element={<ViewPost />} />
         <Route path="/roadmapbefore" element={<RoadMapLoginBefore />} />
         <Route path="/roadmap" element={<RoadMap />} />
         <Route path="/community" element={<Community />} />
@@ -88,6 +91,7 @@ const AnimatedRoutes = () => {
         <Route path="/portfolio" element={<PortfolioScreen />} />
         <Route path="/community/viewpost/:id" element={<CommunityViewPost />} />
         <Route path="/portfolio/write" element={<PortfolioWrite />} />
+        <Route path="/portfolio/view/:id" element={<PortfolioView />} />
 
         {/* 마이페이지 관련 라우트 */}
       </Routes>

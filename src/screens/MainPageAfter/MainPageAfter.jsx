@@ -13,21 +13,13 @@ import ScrollUp from "../../icons/ScrollUp/ScrollUp";
 import CommentIcon from "../../icons/CommentIcon/CommentIcon";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import "./MainPageAfter.css";
+import api from "../../api/local-instance";
 
-const generatePosts = (startId, count) =>
-  Array.from({ length: count }).map((_, i) => ({
-    id: startId + i,
-    author: "Songhui",
-    title: "[GitHub] 긋하브로 협업하기",
-    content: "Github".repeat(3),
-    date: "2025.03.23",
-    comments: 0,
-    views: 0,
-  }));
+
 
 export const MainPageAfter = () => {
   const [posts, setPosts] = useState([]);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [selectedTab, setSelectedTab] = useState("Hot");
   const [scrolled, setScrolled] = useState(false);
@@ -37,21 +29,100 @@ export const MainPageAfter = () => {
   const POSTS_PER_PAGE = 10;
   const MAX_PAGES = 5;
 
-  const fetchPosts = (pageNum) => {
-    if (pageNum > MAX_PAGES) {
+
+  const fetchPosts = async (pageNum, tab) => {
+    try {
+      const token = localStorage.getItem("jwtToken");
+      let url = "";
+      let params = { page: pageNum};
+      console.log("Fetching posts for tab:", tab, "Page:", pageNum);
+
+      switch (tab) {
+        case "Hot":
+          url = "/blog-service/posts/trending";
+          params.postType = "POST";
+          break;
+
+        case "All":
+          url = "/blog-service/posts/all";
+          params.postType = "POST";
+          break;
+
+        case "Category":
+          params.categoryId = 1; // 임시로 1번 카테고리로 설정
+          url = `/blog-service/posts/category/${params.categoryId}`;
+          break;
+
+        case "Feed":
+          url = "/blog-service/posts/following";
+          break;
+
+        case "Recommend":
+          url = "/blog-service/posts/recommend";
+          break;
+
+        default:
+          url = "/blog-service/posts/all";
+          params.postType = "POST";
+      }
+
+      const response = await api.get(url, {
+        headers: { Authorization: `Bearer ${token}` },
+        params,
+      });
+
+      const getPostList = response.data.data;
+      console.log("Fetched posts:", getPostList);
+      const rawPosts = getPostList.postList;
+
+      const newPosts = rawPosts.map((p) => {
+        // createdAt: "2025-05-28T02:28:34.515139"
+        const datePart = p.createdAt.split("T")[0]; // "2025-05-28"
+        const formattedDate = datePart.replace(/-/g, "."); // "2025.05.28"
+
+        return {
+          id: p.postId,
+          author: p.authorNickname,
+          title: p.title,
+          content: p.summary,
+          imageUrl: p.thumbnail || null, // 이미지가 없을 경우 null 처리
+          date: formattedDate,
+          comments: 0,    // DTO에 댓글 개수 필드가 없다면 0으로 두거나, 실제 필드명으로 수정
+          views: p.view,
+        };
+      });
+
+      // 페이지 0은 완전히 초기 상태이므로 덮어쓰기
+      // 그 외 페이지는 기존 포스트 뒤에 붙이기
+      setPosts((prev) => (pageNum === 0 ? newPosts : [...prev, ...newPosts]));
+
+      // 마지막 페이지인지 확인
+      if (getPostList.isLast || newPosts.length < POSTS_PER_PAGE) {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error("게시글 로딩 실패:", error);
       setHasMore(false);
-      return;
     }
-    const newPosts = generatePosts(
-      (pageNum - 1) * POSTS_PER_PAGE,
-      POSTS_PER_PAGE
-    );
-    setPosts((prev) => [...prev, ...newPosts]);
   };
 
+  // 1) 탭이 변경될 때마다: posts 초기화, page=1, hasMore=true, 그리고 첫 페이지 데이터 로드
   useEffect(() => {
-    fetchPosts(page);
+    setPosts([]);
+    setPage(0);
+    setHasMore(true);
+    fetchPosts(0, selectedTab);
+  }, [selectedTab]);
+
+  // 2) page가 변경될 때마다(탭 변경 시 첫 페이지 로드는 위 useEffect에서, 
+  //    이후 무한 스크롤로 page가 +1 될 때마다 이쪽에서 추가 로드)
+  useEffect(() => {
+    if (page !== 0 && hasMore) {
+      fetchPosts(page, selectedTab);
+    }
   }, [page]);
+
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -76,7 +147,11 @@ export const MainPageAfter = () => {
   );
 
   const postRender = (post, index) => (
-    <div key={post.id} ref={index === posts.length - 1 ? lastPostRef : null}>
+    <div key={post.id} ref={index === posts.length - 1 ? lastPostRef : null}
+          // 여기를 클릭 가능 영역으로 만들어 줍니다.
+          onClick={() => navigate(`/viewpost/${post.id}`)}
+          style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
+        >
       <div className="frame-2">
         <div className="frame-3">
           <div className="author">
@@ -103,7 +178,11 @@ export const MainPageAfter = () => {
             </div>
           </div>
         </div>
-        <div className="rectangle" />
+        <div className="post-img-wrapper">
+        {post.imageUrl && (
+            <img src={post.imageUrl} alt="post" className="post-img" />
+          )}
+        </div>
       </div>
     </div>
   );

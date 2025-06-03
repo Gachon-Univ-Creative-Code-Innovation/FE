@@ -361,11 +361,18 @@
   width: 10px;
 }
 
-.main-page-before .rectangle {
+.main-page-before .post-img-wrapper {
   align-self: stretch;
-  background-color: #d9d9d9;
+  background-color: transparent;
+  overflow: hidden;/* 컨테이너 범위 벗어나면 숨김 */
   position: relative;
   width: 120px;
+}
+
+.main-page-before .post-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* cover: 박스를 가득 채우면서 비율 유지, 잘리는 부분 발생 */
 }
 
 .main-page-before .frame-7 {

@@ -3,6 +3,7 @@ import "./CommunityViewPost.css";
 import Navbar2 from "../../components/Navbar2/Navbar2";
 import FollowButton from "../../components/FollowButton/FollowButton";
 import SendIcon from "../../icons/SendIcon/SendIcon";
+import MatchingModal from "../../components/MatchingModal/MatchingModal";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const CommunityViewPost = () => {
@@ -29,6 +30,8 @@ const CommunityViewPost = () => {
   const menuRef = useRef(null);
   const editCommentInputRef = useRef(null);
   const editReplyInputRef = useRef(null);
+  const [isMatchingModalOpen, setIsMatchingModalOpen] = useState(false);
+  const [matchedIds, setMatchedIds] = useState([]);
 
   const myName = "배고픈 송희";
 
@@ -266,6 +269,33 @@ const CommunityViewPost = () => {
     }
   };
 
+const handleMatchingClick = async () => {
+    try {
+        let tags = post.tag;
+        if (Array.isArray(tags)) tags = tags.join(",");
+        tags = encodeURIComponent(tags);
+        const url = `http://localhost/api/matching-service/search-user?tags=${tags}&topK=5&topKperTag=5`;
+        const res = await fetch(url, {
+          method: 'GET',
+          headers: { 'accept': 'application/json' }
+        });
+        const data = await res.json();
+        if (data.status === 200 && Array.isArray(data.data)) {
+          const ids = data.data.map(u => u.userID);
+          setMatchedIds(ids); // ids 저장
+          // alert(`매칭된 유저 ID: ${ids.join(', ')}`);
+        } else {
+          setMatchedIds([]);
+          alert('유저 검색 실패');
+        }
+      } catch (e) {
+        setMatchedIds([]);
+        alert('매칭 요청 실패');
+      }
+    setIsMatchingModalOpen(true);
+};
+
+
   const isMyPost = post.author === myName;
 
   return (
@@ -329,7 +359,7 @@ const CommunityViewPost = () => {
             {/* 본인 글인 경우 매칭하기 버튼 */}
             {isMyPost && (
               <div className="matching-button-wrapper">
-                <button className="matching-button">
+                <button className="matching-button" onClick={handleMatchingClick}>
                   🔗 USER 매칭 ✨
                 </button>
               </div>
@@ -501,6 +531,13 @@ const CommunityViewPost = () => {
           </div>
         </div>
       </div>
+      {isMatchingModalOpen && (
+        <MatchingModal 
+          isOpen={isMatchingModalOpen} 
+          onClose={() => setIsMatchingModalOpen(false)} 
+          matchedIds={matchedIds}
+        />
+      )}
     </div>
   );
 };
