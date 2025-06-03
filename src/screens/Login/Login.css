@@ -193,12 +193,15 @@
 }
 
 .login-alog-logo {
-  height: 80px;
-  left: 615px;
-  object-fit: cover;
   position: absolute;
   top: 55px;
-  width: 200px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 250px;
+  height: 100px;
+  object-fit: cover;
+  transform: translateX(10px);
 }
 
 .login-frame {
