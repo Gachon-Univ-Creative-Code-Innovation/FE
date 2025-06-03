@@ -6,12 +6,19 @@ import MDEditor from "@uiw/react-md-editor";
 import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import "./Write.css";
-import Component18 from "../../icons/GoBackIcon/GoBackIcon";
+import GoBackIcon from "../../icons/GoBackIcon/GoBackIcon";
 import CloseIcon from "../../icons/CloseIcon/CloseIcon";
 import { SpellCheckComponent } from "../../components/SpellCheckComponent/SpellCheckComponent";
 import { SaveDraftComponent } from "../../components/SaveDraftComponent/SaveDraftComponent";
 import { PostComponent } from "../../components/PostComponent/PostComponent";
 import { PublishComponent } from "../../components/PublishComponent/PublishComponent";
+
+// API 엔드포인트 상수화
+const API_ENDPOINTS = {
+  SUMMARIZE: "http://localhost:8500/api/summarize-service/summarize",
+  POST: "http://localhost:8000/api/post",
+  TAG_EXTRACT: "http://localhost:8000/api/career/tag"
+};
 
 const Categories = [
   { key: null, label: "카테고리 선택" },
@@ -49,13 +56,10 @@ const modules = {
         key: "Enter",
         shiftKey: true,
         handler(range) {
-          // 커서 바로 앞 한 글자의 모든 포맷 가져오기 (폰트 포함)
           const currentFormat = this.quill.getFormat(range.index, 1);
-          // 줄바꿈 삽입
           this.quill.insertText(range.index, "\n", currentFormat);
-          // 커서를 다음 줄 맨 앞에 위치
           this.quill.setSelection(range.index + 1, 0);
-          return false; // 기본 Enter 동작 방지
+          return false;
         }
       }
     }
@@ -77,6 +81,7 @@ const formats = [
 ];
 
 export default function Write() {
+  // 에디터 모드, 입력 값, 팝업 관련 상태 등
   const [mode, setMode] = useState("basic");
   const [basicValue, setBasicValue] = useState("");
   const [markdownValue, setMarkdownValue] = useState("");
@@ -84,133 +89,289 @@ export default function Write() {
   const [category, setCategory] = useState(null);
   const [tags, setTags] = useState("");
   const [isSummaryPopupOpen, setIsSummaryPopupOpen] = useState(false);
-  const [summaryText, setSummaryText] = useState("자동으로 요약한 내용을 불러오고, 수정도 가능하도록 했어용가리");
-  const [loadingSummary, setLoadingSummary] = useState(false);   // 요약 로딩 표시용
+  const [summaryText, setSummaryText] = useState("");
+  const [loadingSummary, setLoadingSummary] = useState(false);
+  const [summaryFailed, setSummaryFailed] = useState(false);
   const [showGithubUrlInput, setShowGithubUrlInput] = useState(false);
   const [githubUrl, setGithubUrl] = useState("");
-  const [url, setUrl] = useState(""); // 엔터로 저장할 url 상태 추가
-  const [fadeOut, setFadeOut] = useState(false); // fadeOut 상태 추가
-  const tagInputRef = useRef(null); // 태그 입력창 포커스용 ref
+  const [url, setUrl] = useState("");
+  const [fadeOut, setFadeOut] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false); // 전반적인 처리 상태
 
+  const tagInputRef = useRef(null);
   const textAreaRef = useRef(null);
   const popupRef = useRef(null);
 
+  // 팝업 외부 클릭 시 닫기 및 textarea 포커스 관리
   useEffect(() => {
-    // 로딩이 끝난 뒤에만 textarea에 포커스
     if (isSummaryPopupOpen && !loadingSummary && textAreaRef.current) {
       textAreaRef.current.focus();
       textAreaRef.current.setSelectionRange(summaryText.length, summaryText.length);
     }
+    
     function handleClickOutside(e) {
       if (popupRef.current && !popupRef.current.contains(e.target)) {
-        setIsSummaryPopupOpen(false);
+        handleCloseSummaryPopup();
       }
     }
-    if (isSummaryPopupOpen) document.addEventListener("mousedown", handleClickOutside);
+    
+    if (isSummaryPopupOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isSummaryPopupOpen, ,loadingSummary, summaryText]);
+  }, [isSummaryPopupOpen, loadingSummary, summaryText]);
 
   // 팝업이 열릴 때 fadeOut 초기화
   useEffect(() => {
     if (isSummaryPopupOpen) setFadeOut(false);
   }, [isSummaryPopupOpen]);
 
-  const getMissingFields = () => {
-    const miss = [];
-    if (!title.trim()) miss.push("제목");
-    if (!category) miss.push("카테고리");
-    const content = mode === "basic" ? basicValue.trim() : markdownValue.trim();
-    if (!content) miss.push("내용");
-    return miss;
+  // 필수 입력값 체크 함수
+  // HTML 태그를 제거하고, 남는 순수한 텍스트 길이를 체크하는 헬퍼 함수
+  const stripHtml = (html) => {
+    // 정규 표현식을 통해 <태그>…</태그> 제거
+    return html.replace(/<[^>]+>/g, "");
   };
 
+  const getMissingFields = () => {
+    const missing = [];
+    if (!title.trim()) missing.push("제목");
+    if (!category) missing.push("카테고리");
+
+    // ① 에디터 모드에 따라 raw HTML을 가져온다.
+    const rawContent = mode === "basic" ? basicValue : markdownValue;
+    
+    // ② HTML 태그를 모두 제거해서 순수 텍스트만 남긴 뒤 trim()
+    const plainText = stripHtml(rawContent).trim();
+
+    // ③ 순수 텍스트 길이가 0이면 “내용 누락”으로 판단
+    if (!plainText) missing.push("내용");
+    return missing;
+  };
+
+  // API 호출 헬퍼 함수
+  const apiCall = async (url, options = {}) => {
+    try {
+      const response = await fetch(url, {
+        headers: { "Content-Type": "application/json" },
+        ...options
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('API call failed:', error);
+      throw error;
+    }
+  };
+
+  // 요약 API 호출 함수
   const fetchSummary = async (content) => {
-    const res = await fetch("http://localhost:8500/api/summarize-service/summarize", {
+    const response = await apiCall(API_ENDPOINTS.SUMMARIZE, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ post_id: 0, context: content })
     });
-    const json = await res.json();        // { status, message, data }
-    if (json.status !== 200) {         // ✔️ status 검사
-      throw new Error(json.message);   //   실패면 일부러 예외 발생
+    
+    if (response.status !== 200) {
+      throw new Error(response.message || "요약 생성에 실패했습니다.");
     }
-    return json.data;                  //   성공이면 요약문 반환
+    
+    return response.data;
   };
 
+  // 임시 저장 버튼 클릭
   const handleSaveDraft = () => {
-    const miss = getMissingFields();
-    if (miss.length) return alert(`${miss.join(", ")}을(를) 입력해 주세요!`);
-    alert("임시 저장되었습니다!");
+    const missingFields = getMissingFields();
+    if (missingFields.length > 0) {
+      alert(`${missingFields.join(', ')}을 입력해 주세요!`);
+      return;
+    }
+    
+    // 임시 저장 로직 구현
+    const draftData = {
+      title,
+      category,
+      tags,
+      content: mode === "basic" ? basicValue : markdownValue,
+      mode,
+      github_url: url,
+      saved_at: new Date().toISOString()
+    };
+    
+    // localStorage에 임시 저장 (실제로는 서버에 저장해야 함)
+    try {
+      localStorage.setItem('draft_post', JSON.stringify(draftData));
+      alert("임시 저장이 완료되었습니다!");
+    } catch (error) {
+      console.error("임시 저장 실패:", error);
+      alert("임시 저장에 실패했습니다.");
+    }
   };
-  
+
+  // 게시하기 버튼 클릭 (요약 팝업 열기)
   const handlePost = async () => {
-   const miss = getMissingFields();
-    if (miss.length) return alert(`${miss.join(", ")}을(를) 입력해 주세요!`);
+    const missingFields = getMissingFields();
+    if (missingFields.length > 0) {
+      alert(`${missingFields.join(', ')}을 입력해 주세요!`);
+      return;
+    }
+
+    if (isProcessing) return;
 
     const content = mode === "basic" ? basicValue : markdownValue;
 
-    /* ① 팝업 먼저 띄우고 “요약 중…” 출력 */
-    setSummaryText("수동으로 요약하거나, 게시를 다시 시도해주세요!");
+    setSummaryText("");
     setIsSummaryPopupOpen(true);
     setLoadingSummary(true);
+    setSummaryFailed(false);
 
     try {
-      const summary = await fetchSummary(content); //실제 API 호출
-      setSummaryText(summary); //결과로 교체
-    } catch (err) {
-      alert("요약 생성에 실패했습니다. 요약을 수동 입력해주세요!");
+      const summary = await fetchSummary(content);
+      setSummaryText(summary);
+      setSummaryFailed(false);
+    } catch (error) {
+      console.error("요약 생성 실패:", error);
+      setSummaryFailed(true);
     } finally {
-      setLoadingSummary(false);//로딩 플래그 해제
+      setLoadingSummary(false);
     }
   };
 
-  const handlePublish = () => {
-    const miss = getMissingFields();
-    if (miss.length) return alert(`${miss.join(", ")}을(를) 입력해 주세요!`);
-    alert("게시되었습니다!");
+  // 게시하기(요약 결과 포함하여 POST 요청)
+  const handlePublish = async () => {
+    const missingFields = getMissingFields();
+    if (missingFields.length > 0) {
+      alert(`${missingFields.join(', ')}을 입력해 주세요!`);
+      return;
+    }
+
+    if (isProcessing) return;
+
+    setIsProcessing(true);
+    setIsSummaryPopupOpen(false);
+
+    const contentValue = mode === "basic" ? basicValue : markdownValue;
+    const postData = {
+      title,
+      category,
+      tags: tags
+        .split(",")
+        .map(tag => tag.trim())
+        .filter(tag => tag), // 빈 문자열 필터링
+      content: contentValue,
+      summary: summaryText,
+      github_url: url
+    };
+
+    try {
+      const result = await apiCall(API_ENDPOINTS.POST, {
+        method: "POST",
+        body: JSON.stringify(postData)
+      });
+      
+      if (result.status !== 200) {
+        throw new Error(result.message || "게시글 등록에 실패했습니다.");
+      }
+      
+      alert("게시글이 성공적으로 등록되었습니다!");
+      // 성공 시 폼 초기화 또는 페이지 이동 로직 추가
+      
+    } catch (error) {
+      console.error("게시글 등록 실패:", error);
+      alert("게시글 등록에 실패했습니다.");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
-  // 닫기 버튼 핸들러
+  // 요약 재생성
+  const handleRegenerateSummary = async () => {
+    const content = mode === "basic" ? basicValue : markdownValue;
+    setLoadingSummary(true);
+    setSummaryFailed(false);
+
+    try {
+      const summary = await fetchSummary(content);
+      setSummaryText(summary);
+      setSummaryFailed(false);
+    } catch (error) {
+      console.error("요약 재생성 실패:", error);
+      setSummaryFailed(true);
+    } finally {
+      setLoadingSummary(false);
+    }
+  };
+
+  // 팝업 닫기 버튼 클릭
   const handleCloseSummaryPopup = () => {
     setFadeOut(true);
     setTimeout(() => {
       setIsSummaryPopupOpen(false);
+      setFadeOut(false);
     }, 300); // CSS 트랜지션 시간과 맞춤
   };
 
-  // 깃허브 URL 엔터 시 태그 추출 API 호출 및 태그 입력창에 append
+  // 깃허브 URL 입력 후 Enter → 태그 추출 API 호출
   const handleGithubUrlKeyDown = async (e) => {
-    if (e.key === "Enter") {
-      const gitUrl = githubUrl;
+    if (e.key === "Enter" && githubUrl.trim()) {
+      const gitUrl = githubUrl.trim();
       setUrl(gitUrl);
       setGithubUrl("");
       setShowGithubUrlInput(false);
+      
       setTimeout(() => {
         if (tagInputRef.current) tagInputRef.current.focus();
       }, 0);
+
       try {
-        const response = await fetch("http://localhost:8000/api/career/tag", {
+        const result = await apiCall(API_ENDPOINTS.TAG_EXTRACT, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ git_url: gitUrl })
         });
-        const result = await response.json();
-        // 서버 응답이 { status, message, data } 형태일 때 data만 추출
+        
         const tagArr = Array.isArray(result.data) ? result.data : [];
         if (tagArr.length > 0) {
           const tagString = tagArr.map(tag => `#${tag}`).join(", ");
-          setTags(prev => prev ? prev + ", " + tagString : tagString);
+          setTags(prev => (prev ? prev + ", " + tagString : tagString));
         }
-      } catch (err) {
-        alert("깃허브 태그 추출에 실패했습니다.");
+        
+      } catch (error) {
+        console.error("깃허브 태그 추출 실패:", error);
       }
     }
   };
 
+  // 초기 드래프트 로드
+  useEffect(() => {
+    try {
+      const savedDraft = localStorage.getItem('draft_post');
+      if (savedDraft) {
+        const draft = JSON.parse(savedDraft);
+        setTitle(draft.title || "");
+        setCategory(draft.category || null);
+        setTags(draft.tags || "");
+        setMode(draft.mode || "basic");
+        if (draft.mode === "basic") {
+          setBasicValue(draft.content || "");
+        } else {
+          setMarkdownValue(draft.content || "");
+        }
+        setUrl(draft.github_url || "");
+      }
+    } catch (error) {
+      console.error("드래프트 로드 실패:", error);
+    }
+  }, []);
+
   return (
     <div className="write-editor">
       <div className="editor-top-bar">
-        <Component18 />
+        <GoBackIcon />
       </div>
 
       <div className="editor-content">
@@ -221,11 +382,13 @@ export default function Write() {
             value={title}
             onChange={e => setTitle(e.target.value)}
             className="editor-title-input"
+            disabled={isProcessing}
           />
           <select
             value={mode}
             onChange={e => setMode(e.target.value)}
             className="editor-mode-select"
+            disabled={isProcessing}
           >
             <option value="basic">기본모드</option>
             <option value="markdown">Markdown</option>
@@ -237,6 +400,7 @@ export default function Write() {
             value={category ?? ""}
             onChange={e => setCategory(e.target.value || null)}
             className="editor-category-select"
+            disabled={isProcessing}
           >
             {Categories.map(c => (
               <option key={c.key ?? "default"} value={c.key ?? ""}>
@@ -244,6 +408,7 @@ export default function Write() {
               </option>
             ))}
           </select>
+          
           <div style={{ display: 'flex', alignItems: 'center', width: '100%', gap: '8px' }}>
             {showGithubUrlInput ? (
               <input
@@ -253,6 +418,7 @@ export default function Write() {
                 onChange={e => setGithubUrl(e.target.value)}
                 onKeyDown={handleGithubUrlKeyDown}
                 className="editor-github-url-input editor-github-url-input-animated"
+                disabled={isProcessing}
               />
             ) : (
               <input
@@ -262,12 +428,14 @@ export default function Write() {
                 onChange={e => setTags(e.target.value)}
                 className="editor-tag-input"
                 ref={tagInputRef}
+                disabled={isProcessing}
               />
             )}
             <button
               type="button"
               className="editor-github-tag-btn"
               onClick={() => setShowGithubUrlInput(v => !v)}
+              disabled={isProcessing}
             >
               {showGithubUrlInput ? '돌아가기' : '깃허브에서 태그 추출'}
             </button>
@@ -283,12 +451,14 @@ export default function Write() {
               modules={modules}
               formats={formats}
               placeholder="내용을 입력하세요..."
+              readOnly={isProcessing}
             />
           ) : (
             <MDEditor
               value={markdownValue}
               onChange={setMarkdownValue}
               height={500}
+              preview="edit"
             />
           )}
         </div>
@@ -296,8 +466,14 @@ export default function Write() {
         <div className="editor-actions">
           <SpellCheckComponent className="spell-check-component" />
           <div className="editor-button-group">
-            <SaveDraftComponent onClick={handleSaveDraft} />
-            <PostComponent onClick={handlePost} />
+            <SaveDraftComponent 
+              onClick={handleSaveDraft} 
+              disabled={isProcessing}
+            />
+            <PostComponent 
+              onClick={handlePost} 
+              disabled={isProcessing}
+            />
           </div>
         </div>
       </div>
@@ -309,30 +485,50 @@ export default function Write() {
               <div className="popup-title">🫧 AlOG가 글을 요약했어요! 🫧</div>
               <CloseIcon onClick={handleCloseSummaryPopup} className="close-icon" />
             </div>
+
             {loadingSummary ? (
-              /* 로딩 화면 (스피너 대신 텍스트만) */
               <div style={{ padding: "40px 0", textAlign: "center" }}>
                 <p style={{ fontSize: "1.1rem" }}>요약 중… 잠시만 기다려 주세요</p>
               </div>
-            ):(
-              /* 요약 완료 후 편집 가능 textarea */
+            ) : summaryFailed ? (
+              <>
+                <div className="summary-failed-content">
+                  <div className="failed-icon">⚠️</div>
+                  <div className="failed-message">요약 생성에 실패했습니다</div>
+                  <div className="failed-description">
+                    네트워크 문제이거나 일시적인 오류일 수 있습니다.<br/>
+                    다시 시도해주세요.
+                  </div>
+                </div>
+                <div className="popup-buttons">
+                  <button
+                    onClick={handleRegenerateSummary}
+                    className="regenerate-button"
+                    disabled={loadingSummary}
+                  >
+                    다시 만들기
+                  </button>
+                </div>
+              </>
+            ) : (
               <textarea
                 ref={textAreaRef}
                 value={summaryText}
                 onChange={e => setSummaryText(e.target.value)}
                 className="summary-textarea"
                 style={{
-                  height: Math.min(
-                    80 + summaryText.split("\n").length * 20,
-                    450
-                  ) + "px",
+                  height: Math.min(80 + summaryText.split("\n").length * 20, 450) + "px",
                   overflowY: summaryText.split("\n").length > 10 ? "auto" : "hidden"
                 }}
               />
             )}
-            {!loadingSummary && (
+
+            {!loadingSummary && !summaryFailed && (
               <div className="popup-buttons">
-                <PublishComponent onClick={handlePublish} />
+                <PublishComponent 
+                  onClick={handlePublish} 
+                  disabled={isProcessing}
+                />
               </div>
             )}
           </div>
