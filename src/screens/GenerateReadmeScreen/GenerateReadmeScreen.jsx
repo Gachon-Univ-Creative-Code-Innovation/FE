@@ -7,7 +7,7 @@ import PaperPlaneIcon from "../../icons/PaperPlaneIcon/PaperPlaneIcon";
 import HistoryList from "../../components/HistoryList/HistoryList";
 import Readme from "../ShowReadme/ShowReadme";
 import Navbar2 from "../../components/Navbar2/Navbar2";
-import axios from "axios";
+import api from "../../api/local-instance";
 import "./GenerateReadmeScreen.css";
 
 export const GenerateReadmeScreen = () => {
@@ -29,14 +29,13 @@ export const GenerateReadmeScreen = () => {
     setShowLoader(true);
 
     try {
-      const apiUrl = `http://localhost:8000/api/career/readme`;
-      const token = localStorage.getItem("jwtToken");
-      const response = await axios.post(
+      const apiUrl = `http://localhost:8000/api/github-service/readme`;
+      //http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/github-service/readme  
+
+      const response = await api.post(
         apiUrl,
         { git_url: url },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Accept: "application/json" } }
       );
 
       if (response.data.status !== 200 || !response.data.data) {
@@ -114,12 +113,11 @@ export const GenerateReadmeScreen = () => {
       const fetchHistory = async () => {
         setShowLoader(true);
         try {
-          const userId = 312;
-          const apiUrl = `http://localhost:8000/api/career/db/user?userID=${userId}`;
-          const token = localStorage.getItem("jwtToken");
-          const response = await axios.get(apiUrl, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          const apiUrl = `http://localhost:8000/api/github-service/db/user`;
+          // http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/github-service/db/user
+          
+            
+          const response = await api.get(apiUrl, { headers: { Accept: "application/json" } });
 
           if (
             response.data.status !== 200 ||

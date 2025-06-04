@@ -1,6 +1,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Component22 from "../../components/SelectOKComponent/SelectOKComponent";
+import CloseIcon from "../../icons/CloseIcon/CloseIcon";
 import "./SelectMode.css";
 
 const MotionDiv = motion.div;
@@ -24,7 +25,7 @@ const SelectMode = ({ isOpen, onClose }) => {
             transition={{ duration: 0.3 }}
           >
             <button className="selectmode-close" onClick={onClose}>
-              ✖
+              <CloseIcon />
             </button>
 
             <div className="select-mode-wrapper">
@@ -34,11 +35,9 @@ const SelectMode = ({ isOpen, onClose }) => {
                   <br />
                   <br />
                   <br />
+                  이메일 인증을 통해 안전하게 계정을 만들어 보세요.
                   <br />
-                  Create your account using a verified email.
-                  <br />
-                  By signing up, you agree to the collection and use of your
-                  personal information.
+                  가입을 완료하면 서비스 이용을 위한 개인정보 수집 및 이용에 동의하게 됩니다.
                 </p>
 
                 <div className="selectmode-button-wrapper">

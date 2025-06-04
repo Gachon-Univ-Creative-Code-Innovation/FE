@@ -6,7 +6,8 @@ import Component18 from "../../icons/GoBackIcon/GoBackIcon";
 import CloseIcon from "../../icons/CloseIcon/CloseIcon";
 import { SaveDraftComponent } from "../../components/SaveDraftComponent/SaveDraftComponent";
 import { PostComponent } from "../../components/PostComponent/PostComponent";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import api from "../../api/local-instance";
 
 // ReactQuill 모듈 설정
 const modules = {
@@ -44,12 +45,11 @@ const modules = {
           formData.append('title', titleValue);
           formData.append('image', file);
           try {
-            const response = await fetch('http://localhost:8080/api/portfolio/upload-image', {
-              method: 'POST',
-              headers: {}, // Content-Type 자동 설정됨
-              body: formData
+            // http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/portfolio-service/upload-image
+            const response = await api.post('http://localhost:8080/api/portfolio-service/upload-image', formData, {
+              headers: { 'Content-Type': 'multipart/form-data' }
             });
-            const result = await response.json();
+            const result = response.data;
             if (result.status === 200 && result.data && result.data.image_url) {
               const quill = this.quill;
               const range = quill.getSelection(true);
@@ -112,6 +112,9 @@ export default function PortfolioWrite() {
   const popupRef = useRef(null);
   const quillRef = useRef(null); // ReactQuill ref 추가
   const navigate = useNavigate();
+  const location = useLocation();
+  const editMode = location.state?.editMode || false;
+  const portfolioData = location.state?.portfolioData || {};
 
   useEffect(() => {
     if (isRepoPopupOpen && inputRef.current) {
@@ -130,6 +133,15 @@ export default function PortfolioWrite() {
   useEffect(() => {
     if (isRepoPopupOpen) setFadeOut(false);
   }, [isRepoPopupOpen]);
+
+  // 수정 모드일 때 기존 데이터로 초기화
+  useEffect(() => {
+    if (editMode && portfolioData) {
+      setTitle(portfolioData.title || "");
+      setBasicValue(portfolioData.content || "");
+      setTags(portfolioData.tags || "");
+    }
+  }, [editMode, portfolioData]);
 
   const getMissingFields = () => {
     const miss = [];
@@ -158,19 +170,16 @@ export default function PortfolioWrite() {
     }
 
     try {
-      const params = new URLSearchParams({
+      const params = {
         title: title,
         content: basicValue,
         is_public: "false",
         isTemp: "false",
         image: imageUrl
-      });
-      const response = await fetch(`http://localhost:8080/api/portfolio/save?${params.toString()}`, {
-        method: 'POST',
-        headers: { 'accept': 'application/json' },
-        body: ''
-      });
-      const result = await response.json();
+      };
+      const response = await api.post('http://localhost:8080/api/portfolio-service/save', null, { params, headers: { 'accept': 'application/json' } });
+      //http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/portfolio-service/save
+      const result = response.data;
       if (result.status === 200) {
         alert("임시 저장되었습니다!");
         navigate("/portfolio");
@@ -202,24 +211,42 @@ export default function PortfolioWrite() {
     }
 
     try {
-      const params = new URLSearchParams({
-        title: title,
-        content: basicValue,
-        is_public: "true",
-        isTemp: "true",
-        image: imageUrl
-      });
-      const response = await fetch(`http://localhost:8080/api/portfolio/save?${params.toString()}`, {
-        method: 'POST',
-        headers: { 'accept': 'application/json' },
-        body: ''
-      });
-      const result = await response.json();
-      if (result.status === 200) {
-        alert("게시되었습니다!");
-        navigate("/portfolio");
+      if (editMode && portfolioData.id) {
+        // 수정(UPDATE) 모드: PUT 요청
+        const params = {
+          portfolioID: portfolioData.id,
+          title: title,
+          content: basicValue,
+          isPublic: "true",
+          isTemp: "true"
+        };
+        const response = await api.put('http://localhost:8080/api/portfolio-service/update', null, { params, headers: { 'accept': 'application/json' } });
+        // http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/portfolio-service/update
+        const result = response.data;
+        if (result.status === 200) {
+          alert("수정되었습니다!");
+          navigate("/portfolio");
+        } else {
+          alert(result.message || "수정 실패");
+        }
       } else {
-        alert(result.message || "게시 실패");
+        // 신규 작성(POST) 모드: 기존 로직
+        const params = {
+          title: title,
+          content: basicValue,
+          is_public: "true",
+          isTemp: "true",
+          image: imageUrl
+        };
+        const response = await api.post('http://localhost:8080/api/portfolio-service/save', null, { params, headers: { 'accept': 'application/json' } });
+        // http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/portfolio-service/save
+        const result = response.data;
+        if (result.status === 200) {
+          alert("게시되었습니다!");
+          navigate("/portfolio");
+        } else {
+          alert(result.message || "게시 실패");
+        }
       }
     } catch (err) {
       alert("요청 중 오류가 발생했습니다.");
@@ -248,12 +275,10 @@ export default function PortfolioWrite() {
     let result = null;
     let error = null;
     try {
-      const url = `http://localhost:8080/api/portfolio/make?gitURL=${encodeURIComponent(repoUrl.trim())}`;
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: { 'accept': 'application/json' }
-      });
-      result = await response.json();
+      const url = `http://localhost:8080/api/portfolio-service/make`;
+      // const url = `http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/portfolio-service/make`;
+      const response = await api.get(url, { params: { gitURL: repoUrl.trim() }, headers: { 'accept': 'application/json' } });
+      result = response.data;
     } catch (err) {
       error = err;
     }

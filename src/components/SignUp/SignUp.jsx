@@ -4,7 +4,7 @@ import "./SignUpstyle.css";
 export const SignUp = () => {
   return (
     <div className="sign-up">
-      <div className="text-wrapper">Sign up</div>
+      <div className="text-wrapper">회원가입</div>
     </div>
   );
 };

@@ -255,7 +255,7 @@ export const MainPageAfter = () => {
             </div>
 
             {!hasMore && (
-              <div className="end-message">더 이상 게시글이 없습니다.</div>
+              <div className="end-message">당신의 이야기를 기다리고 있습니다 ✍️</div>
             )}
           </div>
 
