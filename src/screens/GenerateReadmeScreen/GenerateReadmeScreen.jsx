@@ -7,7 +7,7 @@ import PaperPlaneIcon from "../../icons/PaperPlaneIcon/PaperPlaneIcon";
 import HistoryList from "../../components/HistoryList/HistoryList";
 import Readme from "../ShowReadme/ShowReadme";
 import Navbar2 from "../../components/Navbar2/Navbar2";
-import axios from "axios";
+import api from "../../api/local-instance";
 import "./GenerateReadmeScreen.css";
 
 export const GenerateReadmeScreen = () => {
@@ -30,13 +30,11 @@ export const GenerateReadmeScreen = () => {
 
     try {
       const apiUrl = `http://localhost:8000/api/career/readme`;
-      const token = localStorage.getItem("jwtToken");
-      const response = await axios.post(
+      // 토큰은 api 인스턴스에서 자동으로 처리하므로 headers에 Authorization을 직접 넣지 않음
+      const response = await api.post(
         apiUrl,
         { git_url: url },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Accept: "application/json" } }
       );
 
       if (response.data.status !== 200 || !response.data.data) {
@@ -116,10 +114,8 @@ export const GenerateReadmeScreen = () => {
         try {
           const userId = 312;
           const apiUrl = `http://localhost:8000/api/career/db/user?userID=${userId}`;
-          const token = localStorage.getItem("jwtToken");
-          const response = await axios.get(apiUrl, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          // 토큰은 api 인스턴스에서 자동으로 처리하므로 headers에 Authorization을 직접 넣지 않음
+          const response = await api.get(apiUrl, { headers: { Accept: "application/json" } });
 
           if (
             response.data.status !== 200 ||
