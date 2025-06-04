@@ -29,8 +29,9 @@ export const GenerateReadmeScreen = () => {
     setShowLoader(true);
 
     try {
-      const apiUrl = `http://localhost:8000/api/career/readme`;
-      // 토큰은 api 인스턴스에서 자동으로 처리하므로 headers에 Authorization을 직접 넣지 않음
+      const apiUrl = `http://localhost:8000/api/github-service/readme`;
+      //http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/github-service/readme  
+
       const response = await api.post(
         apiUrl,
         { git_url: url },
@@ -112,9 +113,10 @@ export const GenerateReadmeScreen = () => {
       const fetchHistory = async () => {
         setShowLoader(true);
         try {
-          const userId = 312;
-          const apiUrl = `http://localhost:8000/api/career/db/user?userID=${userId}`;
-          // 토큰은 api 인스턴스에서 자동으로 처리하므로 headers에 Authorization을 직접 넣지 않음
+          const apiUrl = `http://localhost:8000/api/github-service/db/user`;
+          // http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/github-service/db/user
+          
+            
           const response = await api.get(apiUrl, { headers: { Accept: "application/json" } });
 
           if (

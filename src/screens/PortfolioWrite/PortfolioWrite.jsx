@@ -45,8 +45,8 @@ const modules = {
           formData.append('title', titleValue);
           formData.append('image', file);
           try {
-            // axios 사용
-            const response = await api.post('http://localhost:8080/api/portfolio/upload-image', formData, {
+            // http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/portfolio-service/upload-image
+            const response = await api.post('http://localhost:8080/api/portfolio-service/upload-image', formData, {
               headers: { 'Content-Type': 'multipart/form-data' }
             });
             const result = response.data;
@@ -177,7 +177,8 @@ export default function PortfolioWrite() {
         isTemp: "false",
         image: imageUrl
       };
-      const response = await api.post('http://localhost:8080/api/portfolio/save', null, { params, headers: { 'accept': 'application/json' } });
+      const response = await api.post('http://localhost:8080/api/portfolio-service/save', null, { params, headers: { 'accept': 'application/json' } });
+      //http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/portfolio-service/save
       const result = response.data;
       if (result.status === 200) {
         alert("임시 저장되었습니다!");
@@ -219,7 +220,8 @@ export default function PortfolioWrite() {
           isPublic: "true",
           isTemp: "true"
         };
-        const response = await api.put('http://localhost:8080/api/portfolio/update', null, { params, headers: { 'accept': 'application/json' } });
+        const response = await api.put('http://localhost:8080/api/portfolio-service/update', null, { params, headers: { 'accept': 'application/json' } });
+        // http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/portfolio-service/update
         const result = response.data;
         if (result.status === 200) {
           alert("수정되었습니다!");
@@ -236,7 +238,8 @@ export default function PortfolioWrite() {
           isTemp: "true",
           image: imageUrl
         };
-        const response = await api.post('http://localhost:8080/api/portfolio/save', null, { params, headers: { 'accept': 'application/json' } });
+        const response = await api.post('http://localhost:8080/api/portfolio-service/save', null, { params, headers: { 'accept': 'application/json' } });
+        // http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/portfolio-service/save
         const result = response.data;
         if (result.status === 200) {
           alert("게시되었습니다!");
@@ -272,7 +275,8 @@ export default function PortfolioWrite() {
     let result = null;
     let error = null;
     try {
-      const url = `http://localhost:8080/api/portfolio/make`;
+      const url = `http://localhost:8080/api/portfolio-service/make`;
+      // const url = `http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/portfolio-service/make`;
       const response = await api.get(url, { params: { gitURL: repoUrl.trim() }, headers: { 'accept': 'application/json' } });
       result = response.data;
     } catch (err) {
