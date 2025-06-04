@@ -106,15 +106,13 @@
   padding: 0 !important;
 }
 
-/* .mypost-follow: 레이아웃은 flex 유지, 불필요한 width 제거하고 gap으로 간격 조절 */
+
 .mypost-follow {
   display: flex;
   align-items: center;
   gap: 8px; /* 레이블과 숫자 사이 기본 간격 */
-  /* width: 105%;  -> 제거 */
 }
 
-/* .mypost-label: flex:1 제거, 필요한 경우 간격 조절용 마진만 설정 */
 .mypost-label {
   font-family: "Inter", Helvetica;
   font-size: 11px;
@@ -122,25 +120,23 @@
   line-height: 14px;
   white-space: nowrap;
   cursor: pointer;
-  flex: 0;            /* flex-grow/Demo 제거 */
-  margin-right: 4px;  /* 레이블 뒤 숫자와 살짝 떨어뜨리기 */
+  flex: 0;
+  margin-right: 4px;
 }
 
-/* .mypost-count: 숫자 뒤에 너무 큰 여백이 있었다면 조정 */
 .mypost-count {
   font-family: "Inter", Helvetica;
   font-size: 11px;
   font-weight: 400;
   line-height: 14px;
   white-space: nowrap;
-  /* width: 31px; -> 필요에 따라 너비 제거하거나 줄임 */
   margin-right: 12px; /* 다음 레이블과 간격 */
 }
 
 .mypost-divider {
   width: 1px;
   height: 15px;            /* 글자 높이와 비슷하게 설정 */
-  background-color: #a3b3bf; /* 원하는 색상으로 변경 가능 */
+  background-color: #a3b3bf;
   margin-right: 12px;
 }
 

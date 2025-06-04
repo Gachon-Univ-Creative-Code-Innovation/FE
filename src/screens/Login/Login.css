@@ -201,7 +201,7 @@
   width: 250px;
   height: 100px;
   object-fit: cover;
-  transform: translateX(10px);
+  transform: translateX(7px);
 }
 
 .login-frame {
