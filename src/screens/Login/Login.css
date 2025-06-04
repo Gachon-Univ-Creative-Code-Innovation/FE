@@ -75,7 +75,6 @@
 }
 
 .login-left-section {
-  background: rgba(255, 255, 255, 0.3);
   flex: 1;
   display: flex;
   align-items: center;
@@ -102,6 +101,7 @@
 
 
 .login-right-section {
+  background: rgba(255, 255, 255, 0.3);
   flex: 2;
   padding: 40px;
   display: flex;

@@ -8,7 +8,6 @@ import SocialKakao from "./SocialKakao";
 import SocialGoogle from "./SocialGoogle";
 import "./Login.css";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
-import { AnimatePresence } from "framer-motion";
 import api from "../../api/instance";
 
 export const Login = () => {
@@ -55,7 +54,6 @@ export const Login = () => {
                 <img
                   src="/img/AlOG-logo.png"
                   alt="Alog Logo"
-                  
                 />
               </div>
               

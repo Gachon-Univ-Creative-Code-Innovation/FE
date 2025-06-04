@@ -12,6 +12,8 @@ import { AnimatePresence } from "framer-motion";
 import MainPageBefore from "./screens/MainPageBefore/MainPageBefore";
 import Login from "./screens/Login/Login";
 import SignUp from "./screens/SignUp/SignUp";
+import TermsOfService from "./screens/SignUp/TermsOfService";
+import PrivacyPolicy from "./screens/SignUp/PrivacyPolicy";
 import Notice from "./screens/Notice/Notice";
 import MainPageAfter from "./screens/MainPageAfter/MainPageAfter";
 import FollowPage from "./screens/FollowPage/FollowPage";
@@ -64,6 +66,8 @@ const AnimatedRoutes = () => {
         <Route path="/MainPageBefore" element={<MainPageBefore />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/signup/terms" element={<TermsOfService />} />
+        <Route path="/signup/privacy" element={<PrivacyPolicy />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
 
         {/* 카카오 인가 코드 콜백 */}
