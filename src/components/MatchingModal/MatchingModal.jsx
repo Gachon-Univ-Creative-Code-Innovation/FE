@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./MatchingModal.css";
 import CloseIcon from "../../icons/CloseIcon/CloseIcon";
+import api from "../../api/local-instance";
 
 const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
   // 더미데이터 제거, 빈 배열로 초기화
@@ -29,9 +30,9 @@ const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
 
       fixedMatchedIds.forEach((userId, idx) => {
         // 유저 기본 정보 fetch
-        fetch(`http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/user-service/details/${userId}`)
-          .then((res) => res.json())
-          .then((data) => {
+        api.get(`http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/user-service/details/${userId}`)
+          .then((res) => {
+            const data = res.data;
             if (data.status === 200 && data.data) {
               setUsers((prev) => {
                 const copy = [...prev];
@@ -67,11 +68,9 @@ const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
           });
 
         // skills fetch
-        fetch(`http://localhost/api/matching-service/represent-tags?userID=${userId}&topK=4`, {
-          headers: { accept: "application/json" },
-        })
-          .then((res) => res.json())
-          .then((data) => {
+        api.get(`http://localhost/api/matching-service/represent-tags`, { params: { userID: userId, topK: 4 }, headers: { accept: "application/json" } })
+          .then((res) => {
+            const data = res.data;
             if (data.status === 200 && Array.isArray(data.data)) {
               setUsers((prev) => {
                 const copy = [...prev];
@@ -83,11 +82,9 @@ const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
           .catch(() => {});
 
         // portfolioUrl fetch
-        fetch(`http://localhost:8080/api/portfolio/user?userID=${userId}`, {
-          headers: { accept: "application/json" },
-        })
-          .then((res) => res.json())
-          .then((data) => {
+        api.get(`http://localhost:8080/api/portfolio/user`, { params: { userID: userId }, headers: { accept: "application/json" } })
+          .then((res) => {
+            const data = res.data;
             if (data.status === 200 && data.data) {
               setUsers((prev) => {
                 const copy = [...prev];
