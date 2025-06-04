@@ -37,9 +37,9 @@
   }
   
   .navbar-logo {
-    height: 80px;
+    height: 100px;
     object-fit: cover;
-    width: 200px;
+    width: 250px;
   }
   
   .navbar-menu {

@@ -2,8 +2,8 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: auto;
+  height: auto;
   background: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
@@ -16,10 +16,12 @@
   border: 1px solid #1d1652;
   border-radius: 16px;
   width: 410px;
-  height: 500px;
+  height: 200px;
   position: relative;
   padding: 2rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  /* 추가: 완전히 중앙 정렬 보장 */
+  margin: auto;
 }
 
 .selectmode-close {
@@ -65,10 +67,4 @@
   left: 50%;
   transform: translateX(-50%);
   width: 310px;
-}
-
-.selectmode-button {
-  flex: 1;
-  max-width: 310px;
-  height: 60px;
 }

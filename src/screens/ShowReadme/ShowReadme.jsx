@@ -3,7 +3,7 @@ import XButton from "../../icons/XButton/XButton";
 import DownloadIcon from "../../icons/DownloadIcon/DownloadIcon";
 import RegenerateIcon from "../../icons/RegenerateIcon/RegenerateIcon";
 import ReactMarkdown from "react-markdown";
-import axios from "axios";
+import api from "../../api/local-instance";
 import "./ShowReadme.css";
 
 export const Readme = ({ onClose, markdown, url, onRegenerate }) => {
@@ -23,14 +23,14 @@ export const Readme = ({ onClose, markdown, url, onRegenerate }) => {
     if (!url) return;
     setRegenerating(true);
     try {
-      const apiUrl = `http://localhost:8000/api/career/readme`;
-      const token = localStorage.getItem("jwtToken");
-      const response = await axios.post(apiUrl, { git_url: url }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+      const apiUrl = `http://localhost:8000/api/github-service/readme`;
+      // const apiUrl = `http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/github-service/readme`;
+      const response = await api.post(apiUrl, { git_url: url }, {
+          headers: {
+            Accept: "application/json",
+          },
+        }
+      );
       if (response.data.status !== 200 || !response.data.data)
         throw new Error("README 정보를 불러오지 못했습니다.");
       const downloadUrl = response.data.data;

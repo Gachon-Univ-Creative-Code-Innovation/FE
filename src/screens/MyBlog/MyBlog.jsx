@@ -4,42 +4,82 @@ import GoGitHub from "../../components/GoGitHub/GoGitHub";
 import GoPortfolio from "../../components/GoPortfolio/GoPortfolio";
 import Navbar from "../../components/Navbar/Navbar";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
-import BlogEditIcon from "../../icons/BlogEditIcon/BlogEditIcon";
 import SettingIcon from "../../icons/SettingIcon/SettingIcon";
 import CommentIcon2 from "../../icons/CommentIcon2/CommentIcon2";
+import api from "../../api/instance";
 import "./MyBlog.css";
 
 export const MyBlog = () => {
   const navigate = useNavigate();
-  const [isEditing, setIsEditing] = useState(false);
-  const [description, setDescription] = useState(
-    "23년째 다이어트 호소중인 여리여리한 소녀입니다"
-  );
 
+  // 사용자 정보
+  const [nickname, setNickname] = useState("");
+  const [profileUrl, setProfileUrl] = useState("");
+  const [githubUrl, setGithubUrl] = useState("");
+  const [followerCount, setFollowerCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
+
+  // 게시글 상태
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+
   const observer = useRef();
 
+  // 마운트 시 사용자 정보 및 팔로워/팔로잉 불러오기
   useEffect(() => {
-    const newPosts = Array.from({ length: 10 }).map((_, i) => ({
-      id: (page - 1) * 10 + i + 1,
-      date: "2025. 03. 23",
-      snippet: "아 진짜 다이어트 해야하는데...",
-      image: `/img/rectangle-31${i % 4 === 0 ? "" : `-${i % 4}`}.png`,
-      showImage: i % 4 < 4,
-    }));
-    setPosts((prev) => [...prev, ...newPosts]);
-  }, [page]);
+    api
+      .get("/user-service/user/patch")
+      .then((res) => {
+        const data = res.data.data;
+        setNickname(data.nickname || "");
+        setProfileUrl(data.profileUrl || "");
+        setGithubUrl(data.githubUrl || "");
+      })
+      .catch((err) => console.error(err));
 
-  const lastPostRef = useCallback((node) => {
-    if (observer.current) observer.current.disconnect();
-    observer.current = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        setPage((prev) => prev + 1);
-      }
-    });
-    if (node) observer.current.observe(node);
+    api
+      .get("/user-service/follow/followers")
+      .then((res) => setFollowerCount((res.data.data || []).length))
+      .catch((err) => console.error(err));
+
+    api
+      .get("/user-service/follow/followees")
+      .then((res) => setFollowingCount((res.data.data || []).length))
+      .catch((err) => console.error(err));
   }, []);
+
+  // 페이지 변경 시 게시글 불러오기
+  useEffect(() => {
+    if (!hasMore || loading) return;
+    setLoading(true);
+
+    api
+      .get(`/blog-service/posts?page=${page}`)
+      .then((res) => {
+        const data = res.data.data || [];
+        setPosts((prev) => [...prev, ...data]);
+        if (data.length === 0) setHasMore(false);
+      })
+      .catch((err) => console.error(err))
+      .finally(() => setLoading(false));
+  }, [page, hasMore, loading]);
+
+  // 마지막 카드 감지하여 페이지 증가
+  const lastPostRef = useCallback(
+    (node) => {
+      if (loading) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPage((prev) => prev + 1);
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [loading, hasMore]
+  );
 
   return (
     <PageTransitionWrapper>
@@ -50,62 +90,51 @@ export const MyBlog = () => {
             <div className="myblog-profile-container">
               <img
                 className="myblog-profile-image"
-                alt="Chatgpt"
-                src="/img/chatgpt-image-2025-4-20-06-18-49.png"
+                alt="Profile"
+                src={profileUrl || "/img/default-profile.png"}
+                onError={(e) =>
+                  (e.currentTarget.src = "/img/default-profile.png")
+                }
               />
               <div className="myblog-profile-details">
-                <div className="myblog-username-box">
-                  <div className="myblog-username-row">
-                    <div className="myblog-username">Dietter</div>
-                    <SettingIcon
-                      className="myblog-icon-subtract"
-                      style={{ cursor: "pointer" }}
-                      onClick={() => navigate("/mypage")}
-                    />
-                  </div>
+                <div className="myblog-username-row">
+                  <div className="myblog-username">{nickname || "사용자"}</div>
+                  <SettingIcon
+                    className="myblog-icon-subtract"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => navigate("/mypage")}
+                  />
                 </div>
                 <div className="myblog-follow-info">
                   <div className="myblog-follow-box">
                     <div className="myblog-follow-label">Follower</div>
-                    <div className="myblog-follow-count">400</div>
+                    <div className="myblog-follow-count">{followerCount}</div>
                   </div>
                   <div className="myblog-follow-box">
                     <div className="myblog-follow-label">Following</div>
-                    <div className="myblog-follow-count">370</div>
-                  </div>
-                </div>
-                <div className="myblog-description-box">
-                  <div className="myblog-description-row">
-                    {isEditing ? (
-                      <input
-                        className="myblog-description-input"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        onBlur={() => setIsEditing(false)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") setIsEditing(false);
-                        }}
-                        autoFocus
-                      />
-                    ) : (
-                      <>
-                        <p className="myblog-description">{description}</p>
-                        <BlogEditIcon
-                          className="myblog-icon-vector"
-                          onClick={() => setIsEditing(true)}
-                          style={{ cursor: "pointer" }}
-                        />
-                      </>
-                    )}
+                    <div className="myblog-follow-count">{followingCount}</div>
                   </div>
                 </div>
               </div>
               <div className="myblog-side-buttons">
-                <GoPortfolio
-                  className="myblog-btn-default"
-                  property1="default"
-                />
-                <GoGitHub className="myblog-btn-github" property1="default" />
+                <div
+                  onClick={() => navigate("/portfolio")}
+                  style={{ cursor: "pointer" }}
+                >
+                  <GoPortfolio
+                    className="myblog-btn-default"
+                    property1="default"
+                  />
+                </div>
+                <div
+                  onClick={() => githubUrl && window.open(githubUrl, "_blank")}
+                  style={{
+                    cursor: githubUrl ? "pointer" : "default",
+                    marginLeft: "8px",
+                  }}
+                >
+                  <GoGitHub className="myblog-btn-github" property1="default" />
+                </div>
               </div>
             </div>
           </header>
@@ -116,7 +145,6 @@ export const MyBlog = () => {
                 <div className="myblog-post-title">최신글</div>
               </div>
             </div>
-
             <div className="myblog-post-list">
               <div className="myblog-post-grid">
                 {posts.map((post, i) => {
@@ -124,31 +152,27 @@ export const MyBlog = () => {
                   return (
                     <div
                       className="myblog-post-card"
-                      key={post.id}
+                      key={post.postId}
                       ref={isLast ? lastPostRef : null}
                     >
-                      <div
-                        className={
-                          post.showImage
-                            ? "myblog-post-image"
-                            : "myblog-post-placeholder"
-                        }
-                      >
-                        {post.showImage && (
-                          <img
-                            className="myblog-post-image"
-                            alt="Thumbnail"
-                            src={post.image}
-                          />
-                        )}
+                      <div className="myblog-post-image">
+                        <img
+                          className="myblog-post-image"
+                          alt="Thumbnail"
+                          src={post.thumbnail}
+                        />
                       </div>
                       <div className="myblog-post-content">
-                        <p className="myblog-post-snippet">{post.snippet}</p>
+                        <p className="myblog-post-snippet">{post.summary}</p>
                         <div className="myblog-post-meta">
-                          <div className="myblog-post-date">{post.date}</div>
+                          <div className="myblog-post-date">
+                            {post.createdAt}
+                          </div>
                           <div className="myblog-post-comment">
                             <CommentIcon2 className="myblog-comment-icon" />
-                            <div className="myblog-comment-count">0</div>
+                            <div className="myblog-comment-count">
+                              {post.commentCount}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -156,6 +180,13 @@ export const MyBlog = () => {
                   );
                 })}
               </div>
+
+              {/* 게시글이 없을 때 보여줄 메시지 */}
+              {!loading && posts.length === 0 && (
+                <div className="myblog-empty-message">
+                  당신의 이야기를 기다리고 있습니다 ✍️
+                </div>
+              )}
             </div>
           </div>
         </div>
