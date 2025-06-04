@@ -14,11 +14,6 @@ import Login from "./screens/Login/Login";
 import SignUp from "./screens/SignUp/SignUp";
 import TermsOfService from "./screens/SignUp/TermsOfService";
 import PrivacyPolicy from "./screens/SignUp/PrivacyPolicy";
-import Notice from "./screens/Notice/Notice";
-import MainPageAfter from "./screens/MainPageAfter/MainPageAfter";
-import FollowPage from "./screens/FollowPage/FollowPage";
-import Write from "./screens/Write/Write";
-import GenerateReadmeScreen from "./screens/GenerateReadmeScreen/GenerateReadmeScreen";
 import ForgotPassword from "./screens/ForgotPassword/ForgotPassword";
 import ResetPassword from "./screens/ResetPassword/ResetPassword";
 import KakaoCallBack from "./screens/Login/KakaoCallBack";
@@ -49,7 +44,6 @@ import { WebSocketProvider } from "./contexts/WebSocketContext";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
-  // pathname과 search를 함께 넘겨준다.
   const onlyPathnameAndSearch = {
     pathname: location.pathname,
     search: location.search,
