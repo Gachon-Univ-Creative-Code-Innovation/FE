@@ -1,3 +1,5 @@
+// src/App.jsx
+
 import React from "react";
 import {
   BrowserRouter,
@@ -12,13 +14,15 @@ import { AnimatePresence } from "framer-motion";
 import MainPageBefore from "./screens/MainPageBefore/MainPageBefore";
 import Login from "./screens/Login/Login";
 import SignUp from "./screens/SignUp/SignUp";
-import Notice from "./screens/Notice/Notice";
-import MainPageAfter from "./screens/MainPageAfter/MainPageAfter";
-import FollowPage from "./screens/FollowPage/FollowPage";
-import Write from "./screens/Write/Write";
-import GenerateReadmeScreen from "./screens/GenerateReadmeScreen/GenerateReadmeScreen";
 import ForgotPassword from "./screens/ForgotPassword/ForgotPassword";
 import ResetPassword from "./screens/ResetPassword/ResetPassword";
+import KakaoCallBack from "./screens/Login/KakaoCallBack";
+import GoogleCallback from "./screens/Login/GoogleCallBack";
+import MainPageAfter from "./screens/MainPageAfter/MainPageAfter";
+import Notice from "./screens/Notice/Notice";
+import Write from "./screens/Write/Write";
+import FollowPage from "./screens/FollowPage/FollowPage";
+import GenerateReadmeScreen from "./screens/GenerateReadmeScreen/GenerateReadmeScreen";
 import MyPage from "./screens/MyPage/MyPage";
 import EditUser from "./screens/EditUser/EditUser";
 import Message from "./screens/Message/Message";
@@ -29,31 +33,29 @@ import RoadMapLoginBefore from "./screens/RoadMapLoginBefore/RoadMapLoginBefore"
 import RoadMap from "./screens/RoadMap/RoadMap";
 import Community from "./screens/Community/Community";
 import CommunityWrite from "./screens/CommunityWrite/CommunityWrite";
+import CommunityViewPost from "./screens/CommunityViewPost/CommunityViewPost";
 import PortfolioScreen from "./screens/Portfolio/PortfolioScreen";
-import KakaoCallBack from "./screens/Login/KakaoCallBack";
-import GoogleCallback from "./screens/Login/GoogleCallBack";
 import PortfolioWrite from "./screens/PortfolioWrite/PortfolioWrite";
 import PortfolioView from "./screens/PortfolioView/PortfolioView";
-import CommunityViewPost from "./screens/CommunityViewPost/CommunityViewPost";
 
-// 컨텍스트 및 SSE
+// SSE 및 Context
 import SSEAlarmConnector from "./SSEAlarmConnector";
 import { WebSocketProvider } from "./contexts/WebSocketContext";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
-
-  const token = localStorage.getItem("jwtToken");
-  const refresh = localStorage.getItem("refreshToken");
+  // 쿼리를 제외한 순수한 pathname만 넘겨줌
+  const onlyPathname = { pathname: location.pathname };
 
   return (
     <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        {/* 첫 진입 시 토큰 존재하면 /MainPageAfter로 리디렉션 */}
+      <Routes location={onlyPathname} key={location.pathname}>
+        {/* 첫 진입 시 토큰이 있으면 MainPageAfter로, 아니면 MainPageBefore */}
         <Route
           path="/"
           element={
-            token && refresh ? (
+            localStorage.getItem("jwtToken") &&
+            localStorage.getItem("refreshToken") ? (
               <Navigate to="/MainPageAfter" replace />
             ) : (
               <MainPageBefore />
@@ -68,7 +70,7 @@ const AnimatedRoutes = () => {
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* 카카오 인가 코드 콜백 */}
+        {/* 소셜 로그인 콜백 */}
         <Route path="/oauth/kakao/redirect" element={<KakaoCallBack />} />
         <Route path="/oauth/google/redirect" element={<GoogleCallback />} />
 
@@ -90,12 +92,10 @@ const AnimatedRoutes = () => {
         <Route path="/roadmap" element={<RoadMap />} />
         <Route path="/community" element={<Community />} />
         <Route path="/community/write" element={<CommunityWrite />} />
-        <Route path="/portfolio" element={<PortfolioScreen />} />
         <Route path="/community/viewpost/:id" element={<CommunityViewPost />} />
+        <Route path="/portfolio" element={<PortfolioScreen />} />
         <Route path="/portfolio/write" element={<PortfolioWrite />} />
         <Route path="/portfolio/view/:id" element={<PortfolioView />} />
-
-        {/* 마이페이지 관련 라우트 */}
       </Routes>
     </AnimatePresence>
   );

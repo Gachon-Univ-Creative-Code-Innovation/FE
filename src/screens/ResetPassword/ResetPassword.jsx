@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import CommunicationLock from "../../icons/LockLight1/LockLight1"; // 비밀번호 아이콘
+import CommunicationLock from "../../icons/LockLight1/LockLight1";
 import GoBackIcon from "../../icons/GoBackIcon/GoBackIcon";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import api from "../../api/instance";
-import "./ResetPassword.css"; // 필요하다면 ForgotPassword.css를 복사해 클래스명만 변경해서 사용
+import "./ResetPassword.css";
 
 export const ResetPassword = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // URL 쿼리에서 token을 꺼냄
+  // URL 쿼리에서 token 추출
   const [token, setToken] = useState("");
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -32,7 +32,7 @@ export const ResetPassword = () => {
 
   // “Reset Password” 버튼 클릭 처리
   const handleReset = async () => {
-    // 비어 있거나 길이 부족 검사
+    // 1) 비어 있거나 길이 검사
     if (!newPassword) {
       setPasswordMessage("새 비밀번호를 입력해주세요.");
       return;
@@ -41,7 +41,7 @@ export const ResetPassword = () => {
       setPasswordMessage("비밀번호는 최소 8자 이상이어야 합니다.");
       return;
     }
-    // 확인 비밀번호 검사
+    // 2) 확인 비밀번호 검사
     if (!confirmPassword) {
       setConfirmMessage("비밀번호 확인을 입력해주세요.");
       return;
@@ -50,7 +50,7 @@ export const ResetPassword = () => {
       setConfirmMessage("비밀번호가 일치하지 않습니다.");
       return;
     }
-    // 토큰 유무 검사
+    // 3) 토큰 검사
     if (!token) {
       setResultMessage("유효한 토큰이 없습니다. 다시 시도해주세요.");
       return;
@@ -62,15 +62,16 @@ export const ResetPassword = () => {
       setPasswordMessage("");
       setConfirmMessage("");
 
-      // 실제 API 호출: /api/user-service/reset-password
-      const response = await api.post("/api/user-service/reset-password", {
+      // 🔄 명세에 맞춰 API 경로 수정
+      const response = await api.post("/user-service/reset-password", {
         token,
         newPassword,
       });
 
+      // 4) 성공 응답 (status 200)
       if (response.status === 200) {
         setResultMessage(
-          "비밀번호가 성공적으로 변경되었습니다. 로그인 페이지로 이동합니다."
+          "비밀번호가 성공적으로 변경되었습니다. 로그인으로 이동합니다."
         );
         setTimeout(() => {
           navigate("/login");
@@ -78,8 +79,15 @@ export const ResetPassword = () => {
       }
     } catch (error) {
       const status = error.response?.status;
+      // 5) 실패 응답 처리
       if (status === 400) {
-        setResultMessage("입력값이 올바르지 않습니다. (최소 8자)");
+        // 백엔드에서 data 배열로 상세 메시지를 내려줄 수 있음
+        const detail = error.response.data?.data;
+        if (Array.isArray(detail) && detail.length > 0) {
+          setResultMessage(detail[0]); // 예: "newPassword: 비밀번호는 최소 8자 이상이어야 합니다."
+        } else {
+          setResultMessage("입력값이 올바르지 않습니다.");
+        }
       } else if (status === 401) {
         setResultMessage("유효하지 않거나 만료된 토큰입니다.");
       } else {
@@ -170,7 +178,11 @@ export const ResetPassword = () => {
 
           {/* Alog 로고 */}
           <div className="resetpassword-logo-container">
-            <AlogIcon className="resetpassword-logo" />
+            <AlogIcon
+              className="resetpassword-logo"
+              onClick={() => navigate("/mainpagebefore")}
+              style={{ cursor: "pointer" }}
+            />
           </div>
         </div>
       </div>

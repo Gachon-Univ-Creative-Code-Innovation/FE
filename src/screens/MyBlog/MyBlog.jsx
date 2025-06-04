@@ -6,20 +6,20 @@ import Navbar from "../../components/Navbar/Navbar";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import SettingIcon from "../../icons/SettingIcon/SettingIcon";
 import CommentIcon2 from "../../icons/CommentIcon2/CommentIcon2";
-import api from "../../api/instance"; // API 인스턴스
+import api from "../../api/instance";
 import "./MyBlog.css";
 
 export const MyBlog = () => {
   const navigate = useNavigate();
 
-  // 사용자 정보 상태
+  // 사용자 정보
   const [nickname, setNickname] = useState("");
   const [profileUrl, setProfileUrl] = useState("");
   const [githubUrl, setGithubUrl] = useState("");
   const [followerCount, setFollowerCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
 
-  // 게시글 상태: 리스트, 페이지, 로딩, 추가 데이터 여부
+  // 게시글 상태
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -27,8 +27,8 @@ export const MyBlog = () => {
 
   const observer = useRef();
 
+  // 마운트 시 사용자 정보 및 팔로워/팔로잉 불러오기
   useEffect(() => {
-    // 사용자 정보 조회
     api
       .get("/user-service/user/patch")
       .then((res) => {
@@ -37,26 +37,24 @@ export const MyBlog = () => {
         setProfileUrl(data.profileUrl || "");
         setGithubUrl(data.githubUrl || "");
       })
-      .catch((err) => console.error("사용자 정보 조회 실패:", err));
+      .catch((err) => console.error(err));
 
-    // 팔로워 수 조회
     api
       .get("/user-service/follow/followers")
       .then((res) => setFollowerCount((res.data.data || []).length))
-      .catch((err) => console.error("팔로워 조회 실패:", err));
+      .catch((err) => console.error(err));
 
-    // 팔로잉 수 조회
     api
       .get("/user-service/follow/followees")
       .then((res) => setFollowingCount((res.data.data || []).length))
-      .catch((err) => console.error("팔로잉 조회 실패:", err));
+      .catch((err) => console.error(err));
   }, []);
 
+  // 페이지 변경 시 게시글 불러오기
   useEffect(() => {
     if (!hasMore || loading) return;
-
     setLoading(true);
-    // 게시글 페이지별 조회
+
     api
       .get(`/blog-service/posts?page=${page}`)
       .then((res) => {
@@ -64,11 +62,11 @@ export const MyBlog = () => {
         setPosts((prev) => [...prev, ...data]);
         if (data.length === 0) setHasMore(false);
       })
-      .catch((err) => console.error("게시글 조회 실패:", err))
+      .catch((err) => console.error(err))
       .finally(() => setLoading(false));
-  }, [page]);
+  }, [page, hasMore, loading]);
 
-  // 마지막 게시글 감지
+  // 마지막 카드 감지하여 페이지 증가
   const lastPostRef = useCallback(
     (node) => {
       if (loading) return;
@@ -90,7 +88,6 @@ export const MyBlog = () => {
         <div className="myblog-content-frame">
           <header className="myblog-header">
             <div className="myblog-profile-container">
-              {/* 프로필 이미지 */}
               <img
                 className="myblog-profile-image"
                 alt="Profile"
@@ -101,7 +98,6 @@ export const MyBlog = () => {
               />
               <div className="myblog-profile-details">
                 <div className="myblog-username-row">
-                  {/* 닉네임 */}
                   <div className="myblog-username">{nickname || "사용자"}</div>
                   <SettingIcon
                     className="myblog-icon-subtract"
@@ -121,7 +117,6 @@ export const MyBlog = () => {
                 </div>
               </div>
               <div className="myblog-side-buttons">
-                {/* 포트폴리오 이동 */}
                 <div
                   onClick={() => navigate("/portfolio")}
                   style={{ cursor: "pointer" }}
@@ -131,7 +126,6 @@ export const MyBlog = () => {
                     property1="default"
                   />
                 </div>
-                {/* GitHub 이동 */}
                 <div
                   onClick={() => githubUrl && window.open(githubUrl, "_blank")}
                   style={{
@@ -185,11 +179,14 @@ export const MyBlog = () => {
                     </div>
                   );
                 })}
-                {!loading && posts.length === 0 && (
-                  <div>게시글이 없습니다.</div>
-                )}
-                {loading && <div>로딩 중...</div>}
               </div>
+
+              {/* 게시글이 없을 때 보여줄 메시지 */}
+              {!loading && posts.length === 0 && (
+                <div className="myblog-empty-message">
+                  당신의 이야기를 기다리고 있습니다 ✍️
+                </div>
+              )}
             </div>
           </div>
         </div>
