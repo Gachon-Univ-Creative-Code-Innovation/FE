@@ -403,12 +403,12 @@ export default function Write() {
         if (tagInputRef.current) tagInputRef.current.focus();
       }, 0);
       try {
-        const response = await fetch("http://localhost:8000/api/career/tag", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ git_url: gitUrl }),
-        });
-        const result = await response.json();
+        const response = await api.post(
+          "http://localhost:8000/api/career/tag",
+          { git_url: gitUrl },
+          { headers: { Accept: "application/json" } }
+        );
+        const result = response.data;
         const tagArr = Array.isArray(result.data) ? result.data : [];
         if (tagArr.length > 0) {
           const tagString = tagArr.map((tag) => `#${tag}`).join(", ");

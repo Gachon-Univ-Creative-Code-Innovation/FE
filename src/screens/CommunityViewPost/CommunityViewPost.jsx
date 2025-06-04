@@ -5,6 +5,7 @@ import FollowButton from "../../components/FollowButton/FollowButton";
 import SendIcon from "../../icons/SendIcon/SendIcon";
 import MatchingModal from "../../components/MatchingModal/MatchingModal";
 import { useNavigate, useLocation } from "react-router-dom";
+import api from "../../api/local-instance";
 
 const CommunityViewPost = () => {
   const navigate = useNavigate();
@@ -274,16 +275,15 @@ const handleMatchingClick = async () => {
         let tags = post.tag;
         if (Array.isArray(tags)) tags = tags.join(",");
         tags = encodeURIComponent(tags);
-        const url = `http://localhost/api/matching-service/search-user?tags=${tags}&topK=5&topKperTag=5`;
-        const res = await fetch(url, {
-          method: 'GET',
+        const url = `http://localhost/api/matching-service/search-user`;
+        const res = await api.get(url, {
+          params: { tags, topK: 5, topKperTag: 5 },
           headers: { 'accept': 'application/json' }
         });
-        const data = await res.json();
+        const data = res.data;
         if (data.status === 200 && Array.isArray(data.data)) {
           const ids = data.data.map(u => u.userID);
           setMatchedIds(ids); // ids 저장
-          // alert(`매칭된 유저 ID: ${ids.join(', ')}`);
         } else {
           setMatchedIds([]);
           alert('유저 검색 실패');

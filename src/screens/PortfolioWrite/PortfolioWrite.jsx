@@ -7,6 +7,7 @@ import CloseIcon from "../../icons/CloseIcon/CloseIcon";
 import { SaveDraftComponent } from "../../components/SaveDraftComponent/SaveDraftComponent";
 import { PostComponent } from "../../components/PostComponent/PostComponent";
 import { useNavigate, useLocation } from "react-router-dom";
+import api from "../../api/local-instance";
 
 // ReactQuill 모듈 설정
 const modules = {
@@ -44,12 +45,11 @@ const modules = {
           formData.append('title', titleValue);
           formData.append('image', file);
           try {
-            const response = await fetch('http://localhost:8080/api/portfolio/upload-image', {
-              method: 'POST',
-              headers: {}, // Content-Type 자동 설정됨
-              body: formData
+            // axios 사용
+            const response = await api.post('http://localhost:8080/api/portfolio/upload-image', formData, {
+              headers: { 'Content-Type': 'multipart/form-data' }
             });
-            const result = await response.json();
+            const result = response.data;
             if (result.status === 200 && result.data && result.data.image_url) {
               const quill = this.quill;
               const range = quill.getSelection(true);
@@ -170,19 +170,15 @@ export default function PortfolioWrite() {
     }
 
     try {
-      const params = new URLSearchParams({
+      const params = {
         title: title,
         content: basicValue,
         is_public: "false",
         isTemp: "false",
         image: imageUrl
-      });
-      const response = await fetch(`http://localhost:8080/api/portfolio/save?${params.toString()}`, {
-        method: 'POST',
-        headers: { 'accept': 'application/json' },
-        body: ''
-      });
-      const result = await response.json();
+      };
+      const response = await api.post('http://localhost:8080/api/portfolio/save', null, { params, headers: { 'accept': 'application/json' } });
+      const result = response.data;
       if (result.status === 200) {
         alert("임시 저장되었습니다!");
         navigate("/portfolio");
@@ -216,19 +212,15 @@ export default function PortfolioWrite() {
     try {
       if (editMode && portfolioData.id) {
         // 수정(UPDATE) 모드: PUT 요청
-        const params = new URLSearchParams({
+        const params = {
           portfolioID: portfolioData.id,
           title: title,
           content: basicValue,
           isPublic: "true",
           isTemp: "true"
-        });
-        const response = await fetch(`http://localhost:8080/api/portfolio/update?${params.toString()}`, {
-          method: 'PUT',
-          headers: { 'accept': 'application/json' },
-          body: ''
-        });
-        const result = await response.json();
+        };
+        const response = await api.put('http://localhost:8080/api/portfolio/update', null, { params, headers: { 'accept': 'application/json' } });
+        const result = response.data;
         if (result.status === 200) {
           alert("수정되었습니다!");
           navigate("/portfolio");
@@ -237,19 +229,15 @@ export default function PortfolioWrite() {
         }
       } else {
         // 신규 작성(POST) 모드: 기존 로직
-        const params = new URLSearchParams({
+        const params = {
           title: title,
           content: basicValue,
           is_public: "true",
           isTemp: "true",
           image: imageUrl
-        });
-        const response = await fetch(`http://localhost:8080/api/portfolio/save?${params.toString()}`, {
-          method: 'POST',
-          headers: { 'accept': 'application/json' },
-          body: ''
-        });
-        const result = await response.json();
+        };
+        const response = await api.post('http://localhost:8080/api/portfolio/save', null, { params, headers: { 'accept': 'application/json' } });
+        const result = response.data;
         if (result.status === 200) {
           alert("게시되었습니다!");
           navigate("/portfolio");
@@ -284,12 +272,9 @@ export default function PortfolioWrite() {
     let result = null;
     let error = null;
     try {
-      const url = `http://localhost:8080/api/portfolio/make?gitURL=${encodeURIComponent(repoUrl.trim())}`;
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: { 'accept': 'application/json' }
-      });
-      result = await response.json();
+      const url = `http://localhost:8080/api/portfolio/make`;
+      const response = await api.get(url, { params: { gitURL: repoUrl.trim() }, headers: { 'accept': 'application/json' } });
+      result = response.data;
     } catch (err) {
       error = err;
     }

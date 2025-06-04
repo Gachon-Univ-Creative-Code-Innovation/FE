@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import "./PortfolioView.css";
 import Navbar2 from "../../components/Navbar2/Navbar2";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
+import api from "../../api/local-instance";
 
 const PortfolioView = () => {
   const navigate = useNavigate();
@@ -32,9 +33,9 @@ const PortfolioView = () => {
     const cleanId = id.startsWith(":") ? id.slice(1) : id;
     const fetchPortfolioDetail = async () => {
       try {
-        const url = `http://localhost:8080/api/portfolio/detail?portfolioID=${cleanId}`;
-        const res = await fetch(url, { headers: { Accept: "application/json" } });
-        const data = await res.json();
+        const url = `http://localhost:8080/api/portfolio/detail`;
+        const res = await api.get(url, { params: { portfolioID: cleanId }, headers: { Accept: "application/json" } });
+        const data = res.data;
         if (data && data.status === 200 && data.data) {
           setPortfolio({
             id: cleanId,
@@ -147,11 +148,9 @@ const PortfolioView = () => {
       try {
         // id가 ":1"처럼 들어오면 앞의 콜론(:)을 제거
         const cleanId = id && id.startsWith(":") ? id.slice(1) : id;
-        const res = await fetch(`http://localhost:8080/api/portfolio/delete?portfolioID=${cleanId}`, {
-          method: 'DELETE',
-          headers: { 'Accept': 'application/json' },
-        });
-        if (res.ok) {
+        const url = `http://localhost:8080/api/portfolio/delete`;
+        const res = await api.delete(url, { params: { portfolioID: cleanId }, headers: { 'Accept': 'application/json' } });
+        if (res.status === 200 || res.data?.status === 200) {
           alert("포트폴리오가 삭제되었습니다.");
           navigate('/portfolio');
         } else {
@@ -170,13 +169,10 @@ const PortfolioView = () => {
     // id가 ":1"처럼 들어오면 앞의 콜론(:)을 제거
     const cleanId = id && id.startsWith(":") ? id.slice(1) : id;
     try {
-      const res = await fetch(`http://localhost:8080/api/portfolio/like?portfolioID=${cleanId}`, {
-        method: 'POST',
-        headers: { 'Accept': 'application/json' },
-        body: ''
-      });
+      const url = `http://localhost:8080/api/portfolio/like`;
+      const res = await api.post(url, '', { params: { portfolioID: cleanId }, headers: { 'Accept': 'application/json' } });
       // 서버 응답에 따라 likeCount, liked 상태 변경
-      if (res.ok) {
+      if (res.status === 200 || res.data?.status === 200) {
         if (liked) {
           setLikeCount(likeCount - 1);
         } else {
