@@ -15,8 +15,6 @@ import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTr
 import "./MainPageAfter.css";
 import api from "../../api/local-instance";
 
-
-
 export const MainPageAfter = () => {
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(0);
@@ -29,12 +27,11 @@ export const MainPageAfter = () => {
   const POSTS_PER_PAGE = 10;
   const MAX_PAGES = 5;
 
-
   const fetchPosts = async (pageNum, tab) => {
     try {
       const token = localStorage.getItem("jwtToken");
       let url = "";
-      let params = { page: pageNum};
+      let params = { page: pageNum };
       console.log("Fetching posts for tab:", tab, "Page:", pageNum);
 
       switch (tab) {
@@ -87,7 +84,7 @@ export const MainPageAfter = () => {
           content: p.summary,
           imageUrl: p.thumbnail || null, // 이미지가 없을 경우 null 처리
           date: formattedDate,
-          comments: 0,    // DTO에 댓글 개수 필드가 없다면 0으로 두거나, 실제 필드명으로 수정
+          comments: 0, // DTO에 댓글 개수 필드가 없다면 0으로 두거나, 실제 필드명으로 수정
           views: p.view,
         };
       });
@@ -114,15 +111,13 @@ export const MainPageAfter = () => {
     fetchPosts(0, selectedTab);
   }, [selectedTab]);
 
-  // 2) page가 변경될 때마다(탭 변경 시 첫 페이지 로드는 위 useEffect에서, 
+  // 2) page가 변경될 때마다(탭 변경 시 첫 페이지 로드는 위 useEffect에서,
   //    이후 무한 스크롤로 page가 +1 될 때마다 이쪽에서 추가 로드)
   useEffect(() => {
     if (page !== 0 && hasMore) {
       fetchPosts(page, selectedTab);
     }
   }, [page]);
-
-
 
   useEffect(() => {
     const handleScroll = () => {
@@ -147,11 +142,13 @@ export const MainPageAfter = () => {
   );
 
   const postRender = (post, index) => (
-    <div key={post.id} ref={index === posts.length - 1 ? lastPostRef : null}
-          // 여기를 클릭 가능 영역으로 만들어 줍니다.
-          onClick={() => navigate(`/viewpost/${post.id}`)}
-          style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
-        >
+    <div
+      key={post.id}
+      ref={index === posts.length - 1 ? lastPostRef : null}
+      // 여기를 클릭 가능 영역으로 만들어 줍니다.
+      onClick={() => navigate(`/viewpost/${post.id}`)}
+      style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
+    >
       <div className="frame-2">
         <div className="frame-3">
           <div className="author">
@@ -179,7 +176,7 @@ export const MainPageAfter = () => {
           </div>
         </div>
         <div className="post-img-wrapper">
-        {post.imageUrl && (
+          {post.imageUrl && (
             <img src={post.imageUrl} alt="post" className="post-img" />
           )}
         </div>
@@ -255,11 +252,16 @@ export const MainPageAfter = () => {
             </div>
 
             {!hasMore && (
-              <div className="end-message">당신의 이야기를 기다리고 있습니다 ✍️</div>
+              <div className="end-message">
+                당신의 이야기를 기다리고 있습니다 ✍️
+              </div>
             )}
           </div>
 
-          <div className="overlap-wrapper">
+          <div
+            className="overlap-wrapper"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          >
             <div className="overlap">
               <ScrollUp className="component-19" />
             </div>
