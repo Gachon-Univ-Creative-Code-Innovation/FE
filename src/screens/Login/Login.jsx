@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ForgotPassword from "../../components/ForgotPassword/ForgotPassword";
 import SignUp from "../../components/SignUp/SignUp";
-import SelectMode from "../../screens/SelectMode/SelectMode";
 import GoBackIcon from "../../icons/GoBackIcon/GoBackIcon";
 import Property1Unchecked from "../../icons/PropertyUnchecked/PropertyUnchecked";
 import SocialKakao from "./SocialKakao";
@@ -14,13 +13,9 @@ import api from "../../api/instance";
 
 export const Login = () => {
   const navigate = useNavigate();
-  const [showModal, setShowModal] = useState(false);
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-
-  const openModal = () => setShowModal(true);
-  const closeModal = () => setShowModal(false);
 
   const handleLogin = async () => {
     setErrorMessage("");
@@ -96,7 +91,7 @@ export const Login = () => {
                 />
               </div>
 
-              {/* 로그인 유지 체크박스와 비밀번호 찾기 */}
+              {/* 로그인 유지 체크박스와 회원가입, 비밀번호 찾기 */}
               <div className="login-keep-sign-up-forgot-group">
                 <div className="login-keep-logged-in">
                   <Property1Unchecked
@@ -107,10 +102,13 @@ export const Login = () => {
                 </div>
                 <div className = "login-sign-up-forgot-group">
                   <div className="login-signup">
-                  <div onClick={openModal}>
-                    <SignUp property1="default" />
+                    <div 
+                    onClick={() => navigate("/signup")}
+                    style={{ cursor: "pointer" }}
+                    >
+                      <SignUp property1="default" />
+                    </div>
                   </div>
-                </div>
                   <div className="login-forgot-password">
                     <div
                       onClick={() => navigate("/forgotpassword")}
@@ -142,10 +140,6 @@ export const Login = () => {
               <SocialKakao />
               <SocialGoogle />
             </div>
-
-            <AnimatePresence>
-              <SelectMode isOpen={showModal} onClose={closeModal} />
-            </AnimatePresence>
           </div>
         </div>
       </div>
