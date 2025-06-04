@@ -15,8 +15,6 @@ import LoginRequiredPopup from "../../components/LoginRequiredPopup/LoginRequire
 import Navbar from "../../components/Navbar/Navbar";
 import "./MainPageBefore.css";
 import api from "../../api/local-instance";
-import { head, header } from "framer-motion/client";
-
 
 export const MainPageBefore = () => {
   const [posts, setPosts] = useState([]);
@@ -29,33 +27,26 @@ export const MainPageBefore = () => {
   const navigate = useNavigate();
 
   const POSTS_PER_PAGE = 10;
-  const MAX_PAGES = 5;
-
 
   const fetchPosts = async (pageNum, tab) => {
     try {
       const token = localStorage.getItem("jwtToken");
       let url = "";
-      let params = { page: pageNum};
-      console.log("Fetching posts for tab:", tab, "Page:", pageNum);
-
+      let params = { page: pageNum };
 
       switch (tab) {
         case "Hot":
           url = "/blog-service/posts/trending";
           params.postType = "POST";
           break;
-
         case "All":
           url = "/blog-service/posts/all";
           params.postType = "POST";
           break;
-
         case "Category":
-          params.categoryId = 1; // 임시로 1번 카테고리로 설정
+          params.categoryId = 1;
           url = `/blog-service/posts/category/${params.categoryId}`;
           break;
-
         default:
           url = "/blog-service/posts/all";
           params.postType = "POST";
@@ -70,27 +61,22 @@ export const MainPageBefore = () => {
       const rawPosts = getPostList.postList;
 
       const newPosts = rawPosts.map((p) => {
-        // createdAt: "2025-05-28T02:28:34.515139"
-        const datePart = p.createdAt.split("T")[0]; // "2025-05-28"
-        const formattedDate = datePart.replace(/-/g, "."); // "2025.05.28"
-
+        const datePart = p.createdAt.split("T")[0];
+        const formattedDate = datePart.replace(/-/g, ".");
         return {
           id: p.postId,
           author: p.authorNickname,
           title: p.title,
           content: p.summary,
-          imageUrl: p.thumbnail || null, // 이미지가 없을 경우 null 처리
+          imageUrl: p.thumbnail || null,
           date: formattedDate,
-          comments: 0,    // DTO에 댓글 개수 필드가 없다면 0으로 두거나, 실제 필드명으로 수정
+          comments: 0,
           views: p.view,
         };
       });
 
-      // 페이지 0은 완전히 초기 상태이므로 덮어쓰기
-      // 그 외 페이지는 기존 포스트 뒤에 붙이기
       setPosts((prev) => (pageNum === 0 ? newPosts : [...prev, ...newPosts]));
 
-      // 마지막 페이지인지 확인
       if (getPostList.isLast || newPosts.length < POSTS_PER_PAGE) {
         setHasMore(false);
       }
@@ -100,7 +86,6 @@ export const MainPageBefore = () => {
     }
   };
 
-  // 1) 탭이 변경될 때마다: posts 초기화, page=0, hasMore=true, 그리고 첫 페이지 데이터 로드
   useEffect(() => {
     setPosts([]);
     setPage(0);
@@ -109,12 +94,10 @@ export const MainPageBefore = () => {
   }, [selectedTab]);
 
   useEffect(() => {
-      if (page!==0 && hasMore) {
-        fetchPosts(page, selectedTab);
-      }
-    }, [page]);
-
-
+    if (page !== 0 && hasMore) {
+      fetchPosts(page, selectedTab);
+    }
+  }, [page]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -166,7 +149,7 @@ export const MainPageBefore = () => {
             </div>
           </div>
         </div>
-          <div className="post-img-wrapper">
+        <div className="post-img-wrapper">
           {post.imageUrl && (
             <img src={post.imageUrl} alt="post" className="post-img" />
           )}
@@ -182,6 +165,10 @@ export const MainPageBefore = () => {
     } else {
       setShowPopup(true);
     }
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -226,14 +213,12 @@ export const MainPageBefore = () => {
                 className="component-instance"
                 divClassName="feedcomponent-text"
                 property1={selectedTab === "Feed" ? "hover" : "default"}
-                // onClick={() => setSelectedTab("Feed")}
                 onClick={() => setShowPopup(true)}
               />
               <RecommendComponent
                 className="component-instance"
                 divClassName="recommendcomponent-text"
                 property1={selectedTab === "Recommend" ? "hover" : "default"}
-                // onClick={() => setSelectedTab("Recommend")}
                 onClick={() => setShowPopup(true)}
               />
             </div>
@@ -243,11 +228,16 @@ export const MainPageBefore = () => {
             </div>
 
             {!hasMore && (
-              <div className="end-message">당신의 이야기를 기다리고 있습니다 ✍️</div>
+              <div className="end-message">
+                당신의 이야기를 기다리고 있습니다 ✍️
+              </div>
             )}
           </div>
 
-          <div className="overlap-wrapper">
+          <div
+            className="overlap-wrapper"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          >
             <div className="overlap">
               <Scrollup className="component-19" />
             </div>
