@@ -1,11 +1,12 @@
 .myblog-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #a3b3bf;
-    height: 100%;
-    padding-top: 120px;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #a3b3bf;
+  /* 높이를 뷰포트 전체로 설정 */
+  min-height: 100vh;
+  padding-top: 120px;
+}
   
   .myblog-content-frame {
     display: flex;
@@ -56,13 +57,17 @@
     margin-bottom: 20px;
   }
   
-  .myblog-username {
-    font-family: "Inter", Helvetica;
-    font-size: 50px;
-    font-weight: 700;
-    color: #ffffff;
-    white-space: nowrap;
-  }
+.myblog-username {
+  font-family: "Inter", Helvetica;
+  font-size: 45px;
+  font-weight: 700;
+  color: #ffffff;
+  display: inline-block;
+  max-width: 350px;
+  white-space: nowrap;
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+}
   
   .myblog-icon-subtract {
     width: 25px;
@@ -119,13 +124,14 @@
   }
   
   .myblog-btn-default {
-    width: 114px;
-    height: 48px;
+    width: 100px;
+    height: 30px;
   }
   
   .myblog-btn-github {
-    width: 114px;
-    height: 48px;
+    width: 100px;
+    height: 30px;
+    margin-left: 32px;
   }
   
   .myblog-post-section {
@@ -135,6 +141,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-bottom: 50px;
   }
   
   .myblog-post-header {

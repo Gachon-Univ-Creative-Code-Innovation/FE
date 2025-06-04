@@ -68,7 +68,7 @@ export const EditUser = () => {
         setOriginalGithubLink(data.githubUrl || "");
         setOriginalProfileUrl(data.profileUrl || "");
 
-        // ➊ 소셜 로그인 여부도 상태로 저장
+        // 소셜 로그인 여부도 상태로 저장
         setIsSocialLogin(data.socialLogin);
       } catch (err) {
         console.error("사용자 정보 조회 실패:", err);
@@ -276,13 +276,23 @@ export const EditUser = () => {
                 </div>
               </div>
 
-              {/* 11-4. 비밀번호 수정 팝업 (소셜 로그인 시 숨김) */}
+              {/* 11-4. 비밀번호 수정 파트 (소셜 로그인 시 숨김) */}
               {!isSocialLogin && (
                 <div className="edituser-password">
+                  {/* 비밀번호 아이콘 */}
                   <LockLight1 className="edituser-lock-light" />
+
                   <div className="edituser-frame-2">
-                    <div className="edituser-text-wrapper-2">*************</div>
+                    {/* 
+                      실제 savedPassword 값은 화면에 노출하지 않고,
+                      저장된 비밀번호가 있으면 항상 마스킹된 ●●●●● 형식으로만 표시합니다. 
+                    */}
+                    <div className="edituser-text-wrapper-2">
+                      {savedPassword ? "●●●●●●●" : "비밀번호 변경"}
+                    </div>
                   </div>
+
+                  {/* 클릭하면 팝업 열기 */}
                   <div
                     onClick={openPasswordPopup}
                     style={{ cursor: "pointer" }}

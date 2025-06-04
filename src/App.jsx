@@ -20,6 +20,7 @@ import FollowPage from "./screens/FollowPage/FollowPage";
 import Write from "./screens/Write/Write";
 import GenerateReadmeScreen from "./screens/GenerateReadmeScreen/GenerateReadmeScreen";
 import ForgotPassword from "./screens/ForgotPassword/ForgotPassword";
+import ResetPassword from "./screens/ResetPassword/ResetPassword";
 import MyPage from "./screens/MyPage/MyPage";
 import EditUser from "./screens/EditUser/EditUser";
 import Message from "./screens/Message/Message";
@@ -50,7 +51,7 @@ const AnimatedRoutes = () => {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        {/*  첫 진입 시 토큰 존재하면 /MainPageAfter로 리디렉션 */}
+        {/* 첫 진입 시 토큰 존재하면 /MainPageAfter로 리디렉션 */}
         <Route
           path="/"
           element={
@@ -69,6 +70,7 @@ const AnimatedRoutes = () => {
         <Route path="/signup/terms" element={<TermsOfService />} />
         <Route path="/signup/privacy" element={<PrivacyPolicy />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* 카카오 인가 코드 콜백 */}
         <Route path="/oauth/kakao/redirect" element={<KakaoCallBack />} />
