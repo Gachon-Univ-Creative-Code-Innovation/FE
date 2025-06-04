@@ -33,7 +33,8 @@ const PortfolioView = () => {
     const cleanId = id.startsWith(":") ? id.slice(1) : id;
     const fetchPortfolioDetail = async () => {
       try {
-        const url = `http://localhost:8080/api/portfolio/detail`;
+        const url = `http://localhost:8080/api/portfolio-service/detail`;
+        // const url = `http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8080/api/portfolio-service/detail`;
         const res = await api.get(url, { params: { portfolioID: cleanId }, headers: { Accept: "application/json" } });
         const data = res.data;
         if (data && data.status === 200 && data.data) {
@@ -148,7 +149,8 @@ const PortfolioView = () => {
       try {
         // id가 ":1"처럼 들어오면 앞의 콜론(:)을 제거
         const cleanId = id && id.startsWith(":") ? id.slice(1) : id;
-        const url = `http://localhost:8080/api/portfolio/delete`;
+        const url = `http://localhost:8080/api/portfolio-service/delete`;
+        // const url = `http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8080/api/portfolio-service/delete`;  
         const res = await api.delete(url, { params: { portfolioID: cleanId }, headers: { 'Accept': 'application/json' } });
         if (res.status === 200 || res.data?.status === 200) {
           alert("포트폴리오가 삭제되었습니다.");
@@ -169,7 +171,8 @@ const PortfolioView = () => {
     // id가 ":1"처럼 들어오면 앞의 콜론(:)을 제거
     const cleanId = id && id.startsWith(":") ? id.slice(1) : id;
     try {
-      const url = `http://localhost:8080/api/portfolio/like`;
+      const url = `http://localhost:8080/api/portfolio-service/like`;
+      // const url = `http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8080/api/portfolio-service/like`;
       const res = await api.post(url, '', { params: { portfolioID: cleanId }, headers: { 'Accept': 'application/json' } });
       // 서버 응답에 따라 likeCount, liked 상태 변경
       if (res.status === 200 || res.data?.status === 200) {
