@@ -23,7 +23,8 @@ export const Readme = ({ onClose, markdown, url, onRegenerate }) => {
     if (!url) return;
     setRegenerating(true);
     try {
-      const apiUrl = `http://localhost:8000/api/career/readme`;
+      const apiUrl = `http://localhost:8000/api/github-service/readme`;
+      // const apiUrl = `http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/github-service/readme`;
       const response = await api.post(apiUrl, { git_url: url }, {
           headers: {
             Accept: "application/json",
