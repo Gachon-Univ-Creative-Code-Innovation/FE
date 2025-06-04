@@ -1,5 +1,3 @@
-// src/App.jsx
-
 import React from "react";
 import {
   BrowserRouter,
@@ -44,12 +42,15 @@ import { WebSocketProvider } from "./contexts/WebSocketContext";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
-  // 쿼리를 제외한 순수한 pathname만 넘겨줌
-  const onlyPathname = { pathname: location.pathname };
+  // pathname과 search를 함께 넘겨준다.
+  const onlyPathnameAndSearch = {
+    pathname: location.pathname,
+    search: location.search,
+  };
 
   return (
     <AnimatePresence mode="wait">
-      <Routes location={onlyPathname} key={location.pathname}>
+      <Routes location={onlyPathnameAndSearch} key={location.pathname}>
         {/* 첫 진입 시 토큰이 있으면 MainPageAfter로, 아니면 MainPageBefore */}
         <Route
           path="/"
@@ -68,7 +69,7 @@ const AnimatedRoutes = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/reset-password/" element={<ResetPassword />} />
 
         {/* 소셜 로그인 콜백 */}
         <Route path="/oauth/kakao/redirect" element={<KakaoCallBack />} />
