@@ -23,6 +23,7 @@ const PortfolioView = () => {
   });
   const [likeCount, setLikeCount] = useState(0);
   const [liked, setLiked] = useState(false);
+  const [authorNickname, setAuthorNickname] = useState('');
 
   // 포트폴리오 상세 데이터 가져오기
   useEffect(() => {
@@ -43,6 +44,21 @@ const PortfolioView = () => {
             content: data.data.content || ''
           });
           setLikeCount(data.data.like_count ?? 0);
+          // 닉네임 가져오기
+          if (data.data.author) {
+            fetch(`http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/user-service/profile-nickname/${data.data.author}`)
+              .then(r => r.json())
+              .then(profileData => {
+                if (profileData && profileData.status === 200 && profileData.data && profileData.data.nickname) {
+                  setAuthorNickname(profileData.data.nickname);
+                } else {
+                  setAuthorNickname(data.data.author);
+                }
+              })
+              .catch(() => setAuthorNickname(data.data.author));
+          } else {
+            setAuthorNickname('');
+          }
         }
       } catch (err) {
         // 에러 처리 (필요시)
@@ -234,7 +250,7 @@ const PortfolioView = () => {
           </div>
           <div className="view-post-meta-line">
             <div className="view-post-meta">
-              <span>{portfolio.author}</span>
+              <span>{authorNickname || portfolio.author}</span>
               <span>{portfolio.date}</span>
             </div>
           </div>

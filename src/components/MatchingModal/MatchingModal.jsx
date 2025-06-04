@@ -1,114 +1,123 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import "./MatchingModal.css";
 import CloseIcon from "../../icons/CloseIcon/CloseIcon";
 
 const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
-  // 매칭된 사용자 데이터 (skills는 빈 배열로 초기화)
-  const [users, setUsers] = useState([
-    {
-      id: matchedIds[0] !== undefined ? matchedIds[0] : 1,
-      name: "경주니",
-      experience: "3년차 FE 개발자",
-      skills: [],
-      profileImage: "/img/rectangle-31-1.png",
-      portfolioUrl: "",
-      githubUrl: "https://i.pinimg.com/736x/f9/39/f9/f939f97b5c5f1488e09a441c1fa52d3d.jpg",
-      blogUrl: "https://i.pinimg.com/736x/f9/39/f9/f939f97b5c5f1488e09a441c1fa52d3d.jpg"
-    },
-    {
-      id: matchedIds[1] !== undefined ? matchedIds[1] : 2,
-      name: "준바이",
-      experience: "1년차 BE 개발자",
-      skills: [],
-      profileImage: "/img/rectangle-31.png",
-      portfolioUrl: null,
-      githubUrl: "https://i.pinimg.com/736x/f9/39/f9/f939f97b5c5f1488e09a441c1fa52d3d.jpg",
-      blogUrl: "https://i.pinimg.com/736x/f9/39/f9/f939f97b5c5f1488e09a441c1fa52d3d.jpg"
-    },
-    {
-      id: matchedIds[2] !== undefined ? matchedIds[2] : 3,
-      name: "쪼꼬",
-      experience: "2년차 디자이너",
-      skills: [],
-      profileImage: null, // 프로필 이미지가 없는 경우
-      portfolioUrl: "https://i.pinimg.com/736x/f9/39/f9/f939f97b5c5f1488e09a441c1fa52d3d.jpg",
-      githubUrl: null, // 깃허브가 없는 경우
-      blogUrl: "https://i.pinimg.com/736x/f9/39/f9/f939f97b5c5f1488e09a441c1fa52d3d.jpg"
-    },
-    {
-      id: matchedIds[3] !== undefined ? matchedIds[3] : 4,
-      name: "승듀",
-      experience: "5년차 풀스택 개발자",
-      skills: [],
-      profileImage: null, // 프로필 이미지가 없는 경우
-      portfolioUrl: "https://i.pinimg.com/736x/f9/39/f9/f939f97b5c5f1488e09a441c1fa52d3d.jpg",
-      githubUrl: null, // 깃허브가 없는 경우
-      blogUrl: "https://i.pinimg.com/736x/f9/39/f9/f939f97b5c5f1488e09a441c1fa52d3d.jpg"
-    },
-    {
-      id: matchedIds[4] !== undefined ? matchedIds[4] : 5,
-      name: "쏭이",
-      experience: "4년차 모바일 개발자",
-      skills: [],
-      profileImage: "/img/basic_profile_photo2.jpeg",
-      portfolioUrl: "https://i.pinimg.com/736x/f9/39/f9/f939f97b5c5f1488e09a441c1fa52d3d.jpg",
-      githubUrl: null, // 깃허브가 없는 경우
-      blogUrl: "https://i.pinimg.com/736x/f9/39/f9/f939f97b5c5f1488e09a441c1fa52d3d.jpg"
-    }
-  ]);
+  // 더미데이터 제거, 빈 배열로 초기화
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    // 각 유저의 skills와 portfolioUrl을 서버에서 받아오기
-    users.forEach((user, idx) => {
-      if (!user.id) return;
-      // skills fetch
-      fetch(`http://localhost/api/matching-service/represent-tags?userID=${user.id}&topK=4`, {
-        headers: { 'accept': 'application/json' }
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (data.status === 200 && Array.isArray(data.data)) {
-            setUsers(prev => {
+    if (!matchedIds.length) {
+      setUsers([]);
+      return;
+    }
+
+    const fixedMatchedIds = [253, ...matchedIds.slice(1)];
+
+    const fetchUsers = async () => {
+      const initialUsers = fixedMatchedIds.map((id) => ({
+        id,
+        name: "",
+        experience: "",
+        skills: [],
+        profileImage: null,
+        portfolioUrl: "",
+        githubUrl: null,
+        blogUrl: null,
+      }));
+      setUsers(initialUsers);
+
+      fixedMatchedIds.forEach((userId, idx) => {
+        // 유저 기본 정보 fetch
+        fetch(`http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/user-service/details/${userId}`)
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.status === 200 && data.data) {
+              setUsers((prev) => {
+                const copy = [...prev];
+                if (copy[idx]) {
+                  copy[idx].name = data.data.nickname || `유저${userId}`;
+                  copy[idx].profileImage = data.data.profileUrl ? data.data.profileUrl : "https://upload.wikimedia.org/wikipedia/commons/b/bc/Unknown_person.jpg";
+                  copy[idx].githubUrl = data.data.githubUrl;
+                  copy[idx].blogUrl = data.data.email ? `mailto:${data.data.email}` : null;
+                  copy[idx].experience = data.data.email || "";
+                }
+                return copy;
+              });
+            } else {
+              setUsers((prev) => {
+                const copy = [...prev];
+                if (copy[idx]) {
+                  copy[idx].name = "unknown";
+                  copy[idx].profileImage = "https://upload.wikimedia.org/wikipedia/commons/b/bc/Unknown_person.jpg";
+                }
+                return copy;
+              });
+            }
+          })
+          .catch(() => {
+            setUsers((prev) => {
               const copy = [...prev];
-              copy[idx] = { ...copy[idx], skills: data.data.map(tag => `#${tag}`) };
+              if (copy[idx]) {
+                copy[idx].name = "unknown";
+                copy[idx].profileImage = "https://upload.wikimedia.org/wikipedia/commons/b/bc/Unknown_person.jpg";
+              }
               return copy;
             });
-          }
+          });
+
+        // skills fetch
+        fetch(`http://localhost/api/matching-service/represent-tags?userID=${userId}&topK=4`, {
+          headers: { accept: "application/json" },
         })
-        .catch(() => {});
-      // portfolioUrl fetch
-      fetch(`http://localhost:8080/api/portfolio/user?userID=${user.id}`, {
-        headers: { 'accept': 'application/json' }
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (data.status === 200 && data.data) {
-            setUsers(prev => {
-              const copy = [...prev];
-              copy[idx] = { ...copy[idx], portfolioUrl: `/portfolio/view/:${data.data}` };
-              return copy;
-            });
-          }
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.status === 200 && Array.isArray(data.data)) {
+              setUsers((prev) => {
+                const copy = [...prev];
+                if (copy[idx]) copy[idx].skills = data.data.map((tag) => `#${tag}`);
+                return copy;
+              });
+            }
+          })
+          .catch(() => {});
+
+        // portfolioUrl fetch
+        fetch(`http://localhost:8080/api/portfolio/user?userID=${userId}`, {
+          headers: { accept: "application/json" },
         })
-        .catch(() => {});
-    });
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.status === 200 && data.data) {
+              setUsers((prev) => {
+                const copy = [...prev];
+                if (copy[idx]) copy[idx].portfolioUrl = `/portfolio/view/:${data.data}`;
+                return copy;
+              });
+            }
+          })
+          .catch(() => {});
+      });
+    };
+
+    fetchUsers();
     // eslint-disable-next-line
   }, [matchedIds]);
 
   const handlePortfolioClick = (e, url) => {
     e.stopPropagation();
-    window.open(url, '_blank');
+    if (url) window.open(url, "_blank");
   };
 
   const handleGithubClick = (e, url) => {
     e.stopPropagation();
     if (url) {
-      window.open(url, '_blank');
+      window.open(url, "_blank");
     }
   };
 
   const handleProfileClick = (blogUrl) => {
-    window.open(blogUrl, '_blank');
+    if (blogUrl) window.open(blogUrl, "_blank");
   };
 
   useEffect(() => {
@@ -117,7 +126,6 @@ const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
     } else {
       document.body.style.overflow = "auto";
     }
-    // cleanup: 모달 unmount 시 원복
     return () => {
       document.body.style.overflow = "auto";
     };
@@ -139,40 +147,45 @@ const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
 
         {/* 사용자 목록 */}
         <div className="matching-users-list">
-          {users.map((user) => (
-            <div 
-              key={user.id} 
+          {users.map((user, idx) => (
+            <div
+              key={user.id}
               className="matching-user-card"
               onClick={() => handleProfileClick(user.blogUrl)}
             >
               <div className="matching-user-profile">
                 <div className="matching-user-avatar">
-                  <img 
+                  <img
                     src={user.profileImage ? user.profileImage : "/img/basic_profile_photo.png"}
                     alt="profile"
-                    onError={e => { e.target.src = "/img/basic_profile_photo.png"; }}
+                    onError={(e) => {
+                      e.target.src = "/img/basic_profile_photo.png";
+                    }}
                   />
                 </div>
                 <div className="matching-user-info">
-                  <h3 className="matching-user-name">{user.name}</h3>
+                  <h3 className="matching-user-name">{user.name || `유저${user.id}`}</h3>
                   <p className="matching-user-experience">{user.experience}</p>
                   <div className="matching-user-skills">
                     {user.skills.map((skill, index) => (
-                      <span key={index} className="skill-tag">{skill}</span>
+                      <span key={index} className="skill-tag">
+                        {skill}
+                      </span>
                     ))}
                   </div>
                 </div>
               </div>
-              
+
               <div className="matching-user-actions">
-                <button 
-                  className={`action-button portfolio-button ${!user.portfolioUrl ? 'disabled' : ''}`}
+                <button
+                  className={`action-button portfolio-button ${!user.portfolioUrl ? "disabled" : ""}`}
                   onClick={(e) => handlePortfolioClick(e, user.portfolioUrl)}
+                  disabled={!user.portfolioUrl}
                 >
                   포트폴리오 →
                 </button>
-                <button 
-                  className={`action-button github-button ${!user.githubUrl ? 'disabled' : ''}`}
+                <button
+                  className={`action-button github-button ${!user.githubUrl ? "disabled" : ""}`}
                   onClick={(e) => handleGithubClick(e, user.githubUrl)}
                   disabled={!user.githubUrl}
                 >
