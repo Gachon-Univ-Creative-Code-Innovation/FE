@@ -9,8 +9,7 @@ export const MakePortfolio = ({ className, onClick }) => {
       onClick={onClick}
       style={{ cursor: "pointer" }}
     >
-      <img className="img-front" src="/img/front-real.png" alt="front" />
-      <img className="img-hover" src="/img/hover-real.png" alt="hover" />
+      <img className="img-front" src="/img/portfoilo_new.png" alt="front" />
     </div>
   );
 };
