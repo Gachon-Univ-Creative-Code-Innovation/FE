@@ -2,7 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 import "./FollowButton.css";
 
-const FollowButton = ({ onClick, className = "", disabled = false }) => {
+const FollowButton = ({
+  onClick,
+  className = "",
+  disabled = false,
+  isFollowing,
+}) => {
   return (
     <button
       className={`follow-btn-component ${className}`}
@@ -10,15 +15,16 @@ const FollowButton = ({ onClick, className = "", disabled = false }) => {
       disabled={disabled}
       type="button"
     >
-      Follow
+      {isFollowing ? "Unfollow" : "Follow"}
     </button>
   );
 };
 
 FollowButton.propTypes = {
-  onClick: PropTypes.func,
+  onClick: PropTypes.func.isRequired,
   className: PropTypes.string,
   disabled: PropTypes.bool,
+  isFollowing: PropTypes.bool.isRequired,
 };
 
 export default FollowButton;

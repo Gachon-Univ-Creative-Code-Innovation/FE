@@ -165,11 +165,19 @@
     text-align: center;
   }
   
-  .myblog-post-list {
-    width: 100%;
-    padding: 10px;
-    overflow-y: auto;
-  }
+.myblog-post-list {
+  position: relative;
+}
+
+.myblog-empty-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  font-family: "Inter", Helvetica;
+  font-size: 15px;
+  color: #555;
+}
   
   .myblog-post-list::-webkit-scrollbar {
     display: none;
