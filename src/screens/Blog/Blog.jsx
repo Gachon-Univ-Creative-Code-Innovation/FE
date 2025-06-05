@@ -6,9 +6,10 @@ import GoGitHub from "../../components/GoGitHub/GoGitHub";
 import GoPortfolio from "../../components/GoPortfolio/GoPortfolio";
 import Navbar2 from "../../components/Navbar2/Navbar2";
 import FollowButton from "../../components/FollowButton/FollowButton";
+import MailIcon from "../../icons/MailIcon/MailIcon";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import CommentIcon2 from "../../icons/CommentIcon2/CommentIcon2";
-import api from "../../api/instance";
+import api from "../../api/instance"; // axios 인스턴스 (baseURL: http://a-log.site:8082 로 설정되어 있어야 함)
 import "./Blog.css";
 
 export const Blog = () => {
@@ -29,6 +30,7 @@ export const Blog = () => {
   const observer = useRef();
   const jwtToken = localStorage.getItem("jwtToken") || "";
 
+  // 1) 사용자 프로필 정보 조회
   useEffect(() => {
     api
       .get(`/user-service/details/${viewedUserId}`)
@@ -42,19 +44,22 @@ export const Blog = () => {
         console.error("타인 사용자 조회 에러:", err);
       });
 
-    // 현재 사용자가 해당 사용자를 팔로우 중인지 확인 (optional, API 추가 필요)
+    // 2) 팔로잉 목록 조회 (followees)로 isFollowing 설정
     api
-      .get(`/user-service/follow/status/${viewedUserId}`, {
+      .get(`/user-service/follow/followees`, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       })
       .then((res) => {
-        setIsFollowing(res.data.data.isFollowing);
+        const followees = res.data.data || [];
+        setIsFollowing(followees.includes(viewedUserId));
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error("팔로잉 목록 조회 에러:", err);
         setIsFollowing(false);
       });
   }, [viewedUserId, jwtToken]);
 
+  // (이하 게시글 조회 로직은 생략: 기존 코드와 동일)
   useEffect(() => {
     if (!hasMore) return;
     setLoading(true);
@@ -92,7 +97,7 @@ export const Blog = () => {
     }
 
     if (isFollowing) {
-      // 언팔로우: DELETE 요청
+      // 언팔로우: DELETE /api/user-service/follow
       api
         .delete(`/user-service/follow`, {
           headers: { Authorization: `Bearer ${jwtToken}` },
@@ -112,7 +117,7 @@ export const Blog = () => {
           }
         });
     } else {
-      // 팔로우: POST 요청
+      // 팔로우: POST /api/user-service/follow
       api
         .post(
           `/user-service/follow`,
@@ -139,7 +144,7 @@ export const Blog = () => {
 
   const handlePortfolioClick = () => {
     api
-      .get("/portfolio-service/user", {
+      .get("/api/portfolio-service/user", {
         params: { userID: viewedUserId },
         headers: { accept: "application/json" },
       })
@@ -157,6 +162,16 @@ export const Blog = () => {
       });
   };
 
+  // ————— MailIcon 클릭 시 “특정 유저와의 채팅방”으로 이동 —————
+  const handleChatClick = () => {
+    if (!jwtToken) {
+      navigate("/login");
+      return;
+    }
+    // 단순히 targetUserId를 경로에 넘겨서 MessageRoom 컴포넌트로 이동
+    navigate(`/message-room/${viewedUserId}`);
+  };
+
   return (
     <PageTransitionWrapper>
       <Navbar2 />
@@ -168,18 +183,21 @@ export const Blog = () => {
               <img
                 className="blog-profile-image"
                 alt="Profile"
-                src={profileUrl || "/img/default-profile.png"}
+                src={profileUrl || "/img/basic_profile_photo.png"}
                 onError={(e) =>
-                  (e.currentTarget.src = "/img/default-profile.png")
+                  (e.currentTarget.src = "/img/basic_profile_photo.png")
                 }
               />
               <div className="blog-profile-details">
                 <div className="blog-username-row">
                   <div className="blog-username">{nickname || "사용자"}</div>
-                  <FollowButton
-                    isFollowing={isFollowing}
-                    onClick={handleFollow}
-                  />
+                  <div className="blog-follow-with-icon">
+                    <FollowButton
+                      isFollowing={isFollowing}
+                      onClick={handleFollow}
+                    />
+                    <MailIcon className="mail-icon" onClick={handleChatClick} />
+                  </div>
                 </div>
               </div>
 
@@ -208,6 +226,7 @@ export const Blog = () => {
             </div>
           </header>
 
+          {/* 게시글 목록 (기존 로직) */}
           <div className="blog-post-section">
             <div className="blog-post-header">
               <div className="blog-tab-latest">
