@@ -45,7 +45,8 @@
 .post-profile-img {
   width: 100%;
   height: 100%;
-  object-fit: contain; /* cover: 박스를 가득 채우면서 비율 유지, 잘리는 부분 발생 */
+  object-fit: cover; /* cover: 박스를 가득 채우면서 비율 유지, 잘리는 부분 발생 */
+  object-position: center;
 }
 
 .view-post-meta-line {
@@ -254,13 +255,23 @@
   margin-bottom: 24px;
 }
 
-.comment-profile {
+.comment-profile-wrapper {
+  align-self: stretch;
+  background-color: transparent;
+  overflow: hidden; /*컨테이너 범위 벗어나면 숨김 */
+  position: relative;
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #e0e0e0;
   margin-top: 4px;
   flex-shrink: 0;
+}
+
+.comment-profile-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* cover: 박스를 가득 채우면서 비율 유지, 잘리는 부분 발생 */
+  object-position: center;
 }
 
 .comment-content-block {

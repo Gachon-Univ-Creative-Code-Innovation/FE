@@ -6,11 +6,53 @@ import FollowButton from "../../components/FollowButton/FollowButton";
 import SendIcon from "../../icons/SendIcon/SendIcon";
 import dompurify from "dompurify";
 import { Categories } from "../../constants/categories";
-import api from "../../api/local-instance"; 
+import api from "../../api/instance"; 
+import realApi from "../../api/instance"; 
 
 function getLabelByKey(key) {
   const category = Categories.find((c) => c.key === key);
   return category ? category.label : "";
+}
+
+/**
+ * 백엔드에서 내려준 flat list를 nested structure({ replies: [] })로 바꿔준다.
+ * @param {Array<Object>} flatComments
+ *   └ 백엔드 GetComment DTO 배열. 각 항목에 commentId, parentCommentId, authorNickname, content, createTime 등이 있음.
+ * @returns {Array<Object>} nestedComments
+ */
+function buildNestedComments(flatComments) {
+  // 1) 모든 댓글을 id → 새로운 객체(프론트용)로 매핑
+  const map = {};
+  flatComments.forEach((c) => {
+    map[c.commentId] = {
+      id: c.commentId,
+      author: c.authorNickname,
+      text: c.content,
+      authorId: c.authorId, // 댓글 작성자의 ID
+      authorProfileUrl: c.authorProfileUrl, // 댓글 작성자의 프로필 이미지 URL
+      // createTime(예: "2025-06-03T05:00:00")을 "2025.06.03" 형태로 포맷
+      date: c.createTime.slice(0, 10).replace(/-/g, "."),
+      replies: []
+    };
+  });
+
+  // 2) parentCommentId가 있으면, 해당 parent의 replies 배열에 push
+  //    없으면 최상위(root) 댓글 목록에 추가
+  const nested = [];
+  flatComments.forEach((c) => {
+    const node = map[c.commentId];
+    if (c.parentCommentId) {
+      const parentNode = map[c.parentCommentId];
+      if (parentNode) {
+        parentNode.replies.push(node);
+      }
+      // 만약 parentNode가 없다면 (비정상 케이스) 그냥 무시해도 됩니다.
+    } else {
+      nested.push(node);
+    }
+  });
+
+  return nested;
 }
 
 const ViewPost = () => {
@@ -29,15 +71,7 @@ const ViewPost = () => {
   const [replyValue, setReplyValue] = useState("");
   const [openMenuId, setOpenMenuId] = useState(null);
   const [commentValue, setCommentValue] = useState("");
-  const [comments, setComments] = useState([
-    {
-      id: 1,
-      author: "배고픈 송희",
-      text: "유익한 글 감사합니다!",
-      date: "2025.03.29",
-      replies: [],
-    },
-  ]);
+  const [comments, setComments] = useState(null);
   const [editCommentId, setEditCommentId] = useState(null);
   const [editCommentValue, setEditCommentValue] = useState("");
   const [editReplyId, setEditReplyId] = useState(null);
@@ -46,10 +80,8 @@ const ViewPost = () => {
   const editCommentInputRef = useRef(null);
   const editReplyInputRef = useRef(null);
 
-  // 예시: 본인 닉네임(실제 서비스에서는 로그인 유저 정보 사용)
-  const myName = "배고픈 송희";
-  const myUserId = localStorage.getItem("userId");
-
+  // 현재 로그인한 사용자의 ID
+  const myUserId = Number(localStorage.getItem("userId"));
   
   // 바깥 클릭 시 메뉴 닫기
   useEffect(() => {
@@ -91,43 +123,98 @@ const ViewPost = () => {
   }, [editReplyId]);
 
   // 댓글 등록
-  const handleAddComment = () => {
-    if (!commentValue.trim()) return;
-    setComments([
-      ...comments,
-      {
-        id: Date.now(),
-        author: myName,
-        text: commentValue,
-        date: new Date().toISOString().slice(0, 10).replace(/-/g, '.'),
-        replies: [],
-      },
-    ]);
-    setCommentValue("");
+  const handleAddComment = async() => {
+    try {
+      const token = localStorage.getItem("jwtToken");
+      const payload = {
+        postId: Number(postId),       // 현재 보고 있는 글의 ID
+        parentCommentId: null,        // 루트 댓글이므로 null
+        content: commentValue.trim(), // 입력된 댓글 내용
+      };
+  
+      // 댓글 생성 API 호출
+      const response = await api.post(
+        "/blog-service/comments",
+        payload,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+  
+      setCommentValue("");
+
+
+      // 생성 후 전체 댓글을 다시 로드해서 가장 최신 상태를 반영
+      const res2 = await api.get(
+        `/blog-service/comments/${postId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const nested = buildNestedComments(res2.data.data.commentList);
+      setComments(nested);
+
+    } catch (err) {
+      console.error("댓글 생성 실패:", err);
+      const errMsg = err.response?.data?.message || "댓글 생성 중 오류가 발생했습니다.";
+      alert(errMsg);
+    }
   };
 
   // 답글 등록
-  const handleAddReply = (commentId) => {
+  const handleAddReply = async(commentId) => {
     if (!replyValue.trim()) return;
-    setComments(comments.map(comment =>
-      comment.id === commentId
-        ? {
-            ...comment,
-            replies: [
-              ...(comment.replies || []),
-              {
-                id: Date.now(),
-                author: myName,
-                text: replyValue,
-                date: new Date().toISOString().slice(0, 10).replace(/-/g, '.'),
-              },
-            ],
-          }
-        : comment
-    ));
-    setReplyValue("");
-    setReplyTo(null);
+
+    try {
+      const token = localStorage.getItem("jwtToken");
+      const payload = {
+        postId: Number(postId),             // 현재 보고 있는 게시글 ID
+        parentCommentId: commentId,         // 답글을 다는 부모 댓글 ID
+        content: replyValue.trim(),         // 입력된 답글 내용
+      };
+  
+      // 1) 답글 생성 API 호출
+      await api.post(
+        "/blog-service/comments",
+        payload,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+  
+      setReplyValue("");
+      setReplyTo(null);
+  
+      // 2) 생성 후 전체 댓글을 다시 조회해서, 최신 상태의 중첩 구조를 반영
+      const res = await api.get(
+        `/blog-service/comments/${postId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const flatList = res.data.data.commentList;
+      const nested = buildNestedComments(flatList);
+      setComments(nested);
+  
+    } catch (err) {
+      console.error("답글 생성 실패:", err.response?.data ?? err);
+      alert(err.response?.data?.message || "답글 생성 중 오류가 발생했습니다.");
+    }
   };
+
+  // 댓글 조회
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const token = localStorage.getItem("jwtToken");
+        // “postId별 댓글 조회” API 호출
+        const res = await api.get(
+          `/blog-service/comments/${postId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const flatList = res.data.data.commentList;
+        console.log("댓글 데이터:", flatList);
+        const nested = buildNestedComments(flatList);
+        setComments(nested);
+      } catch (err) {
+        console.error("댓글 조회 실패:", err);
+      }
+    };
+
+    fetchComments();
+  }, [postId]);
 
   // 댓글 삭제
   const handleDeleteComment = (commentId) => {
@@ -204,9 +291,15 @@ const ViewPost = () => {
         const res = await api.get(`/blog-service/posts/${postId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        // 백엔드 응답 예시: { data: { postId, title, authorNickname, content, createdAt, tagNameList, categoryCode, ... } }
         setPostData(res.data.data);
         console.log("상세 포스트 데이터:", res.data.data);
+
+        // 댓글 데이터 조회
+        const resComment = await api.get(`/blog-service/comments/${postId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        
+
       } catch (err) {
         console.error("상세 포스트 불러오기 실패:", err);
         alert("게시글을 불러오는 데 실패했습니다.");
@@ -218,8 +311,9 @@ const ViewPost = () => {
 
     fetchPostDetail();
   }, [postId]);
+  
 
-  // --- 로딩 중일 때 처리 ---
+  // --- 포스트 조회 로딩 중일 때 처리 ---
   if (loadingPost) {
     return (
       <div className="view-post-bg">
@@ -271,7 +365,7 @@ const ViewPost = () => {
             <div className="view-post-meta">
               <div className="post-profile-wrapper">
                 {postData.profileUrl && (
-                  <img src={postData.profileUrl} alt="post" className="post-prfile-img" />
+                  <img src={postData.profileUrl} alt="post" className="post-profile-img" />
                 )}
               </div>
               <div className="view-post-meta-text">{postData.authorNickname}</div>
@@ -287,7 +381,7 @@ const ViewPost = () => {
               </span>
             )}
           
-            {/* 답글 메뉴 (본인이 작성한 답글인 경우만) */}
+            {/* 포스트 메뉴 (본인이 작성한 포스트인 경우만) */}
             {postData.authorId == myUserId && (
               <div className="view-post-menu-wrapper">
                 <div
@@ -359,7 +453,11 @@ const ViewPost = () => {
             <div className="comment-list">
               {comments.map((comment) => (
                 <div key={comment.id} className="comment-item">
-                  <div className="comment-profile"></div>
+                  <div className="comment-profile-wrapper">
+                    {comment.authorProfileUrl && (
+                      <img src={comment.authorProfileUrl} alt="comment" className="comment-profile-img" />
+                    )}
+                  </div>
                   <div className="comment-content-block">
                     <div className="comment-author">{comment.author}</div>
                     {editCommentId === comment.id ? (
@@ -409,7 +507,11 @@ const ViewPost = () => {
                       <div className="comment-replies-list">
                         {comment.replies.map(reply => (
                           <div key={reply.id} className="comment-reply-item">
-                            <div className="comment-profile"></div>
+                            <div className="comment-profile-wrapper">
+                              {reply.authorProfileUrl && (
+                                <img src={reply.authorProfileUrl} alt="reply" className="comment-profile-img" />
+                              )}
+                            </div>
                             <div className="reply-content">
                               <div className="comment-author">{reply.author}</div>
                               {editReplyId === reply.id ? (
@@ -433,7 +535,7 @@ const ViewPost = () => {
                               </div>
                             </div>
                             {/* 답글 메뉴 (본인이 작성한 답글인 경우만) */}
-                            {reply.author === myName && (
+                            {reply.authorId == myUserId && (
                               <div className="comment-menu-wrapper">
                                 <div
                                   className="comment-menu"
@@ -469,7 +571,7 @@ const ViewPost = () => {
                     )}
                   </div>
                   {/* 댓글 메뉴 (본인이 작성한 댓글인 경우만) */}
-                  {comment.author === myName && (
+                  {comment.authorId == myUserId && (
                     <div className="comment-menu-wrapper">
                       <div
                         className="comment-menu"

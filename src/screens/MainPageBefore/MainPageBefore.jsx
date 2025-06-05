@@ -14,7 +14,9 @@ import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTr
 import LoginRequiredPopup from "../../components/LoginRequiredPopup/LoginRequiredPopup";
 import Navbar from "../../components/Navbar/Navbar";
 import "./MainPageBefore.css";
-import api from "../../api/local-instance";
+import api from "../../api/instance";
+import { head, header } from "framer-motion/client";
+
 
 export const MainPageBefore = () => {
   const [posts, setPosts] = useState([]);
@@ -68,7 +70,8 @@ export const MainPageBefore = () => {
           author: p.authorNickname,
           title: p.title,
           content: p.summary,
-          imageUrl: p.thumbnail || null,
+          profileUrl: p.profileUrl,
+          imageUrl: p.thumbnail || null, // 이미지가 없을 경우 null 처리
           date: formattedDate,
           comments: 0,
           views: p.view,
@@ -127,7 +130,11 @@ export const MainPageBefore = () => {
         <div className="frame-3">
           <div className="author">
             <div className="frame-4">
-              <div className="ellipse" />
+              <div className="author-profile-wrapper">
+                {post.profileUrl && (
+                  <img src={post.profileUrl} alt="post" className="author-profile-img" />
+                )}
+              </div>
               <div className="text-wrapper-10">{post.author}</div>
             </div>
           </div>

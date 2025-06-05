@@ -13,7 +13,7 @@ import ScrollUp from "../../icons/ScrollUp/ScrollUp";
 import CommentIcon from "../../icons/CommentIcon/CommentIcon";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import "./MainPageAfter.css";
-import api from "../../api/local-instance";
+import api from "../../api/instance";
 
 export const MainPageAfter = () => {
   const [posts, setPosts] = useState([]);
@@ -82,6 +82,7 @@ export const MainPageAfter = () => {
           author: p.authorNickname,
           title: p.title,
           content: p.summary,
+          profileUrl: p.profileUrl,
           imageUrl: p.thumbnail || null, // 이미지가 없을 경우 null 처리
           date: formattedDate,
           comments: 0, // DTO에 댓글 개수 필드가 없다면 0으로 두거나, 실제 필드명으로 수정
@@ -153,7 +154,11 @@ export const MainPageAfter = () => {
         <div className="frame-3">
           <div className="author">
             <div className="frame-4">
-              <div className="ellipse" />
+              <div className="author-profile-wrapper">
+                {post.profileUrl && (
+                  <img src={post.profileUrl} alt="post" className="author-profile-img" />
+                )}
+              </div>
               <div className="text-wrapper-10">{post.author}</div>
             </div>
           </div>
