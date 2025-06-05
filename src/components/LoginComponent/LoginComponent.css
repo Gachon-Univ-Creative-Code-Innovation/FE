@@ -2,10 +2,9 @@
 .component {
   width: 102px;
   height: 26px;
-  border: 1px solid #1d1652;
-  border-radius: 9px;
-  background-color: #ffffff;
   position: relative;
+  display: flex;
+  justify-content: center;
   cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -13,27 +12,24 @@
 /* 텍스트 스타일 */
 .component .text-wrapper {
   font-family: "Inter", Helvetica;
-  font-size: 12px;
-  font-weight: 400;
+  font-size: 16px;
+  font-weight: 700;
   letter-spacing: 0;
   line-height: 10px;
   white-space: nowrap;
   text-align: center;
   color: #1d1652;
   position: absolute;
-  left: 33px;
-  top: 6px;
-  transition: color 0.3s ease;
+  justify-content: center;
+  transform: scale(1);
+  transition: transform 0.2s ease-in-out;
 }
 
 /* Hover 시 색 반전 (default 상태만 적용) */
 .component.default:hover {
-  background-color: #1d1652;
+  transform: scale(1.1);
 }
 
-.component.default:hover .text-wrapper {
-  color: #ffffff;
-}
 
 /* fill 상태: 어두운 배경 + 흰 글씨 */
 .component.fill {

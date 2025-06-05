@@ -16,7 +16,7 @@ export const LoginComponent = ({ property1, className }) => {
       onClick={handleClick}
       style={{ cursor: "pointer" }}
     >
-      <div className="text-wrapper">Log in</div>
+      <div className="text-wrapper">🔑 로그인</div>
     </div>
   );
 };
