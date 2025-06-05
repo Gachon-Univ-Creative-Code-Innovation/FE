@@ -14,7 +14,7 @@ import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTr
 import LoginRequiredPopup from "../../components/LoginRequiredPopup/LoginRequiredPopup";
 import Navbar from "../../components/Navbar/Navbar";
 import "./MainPageBefore.css";
-import api from "../../api/local-instance";
+import api from "../../api/instance";
 import { head, header } from "framer-motion/client";
 
 
