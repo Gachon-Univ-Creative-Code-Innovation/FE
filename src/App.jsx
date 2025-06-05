@@ -5,6 +5,7 @@ import {
   Route,
   Navigate,
   useLocation,
+  useParams,
 } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 
@@ -28,6 +29,7 @@ import EditUser from "./screens/EditUser/EditUser";
 import Message from "./screens/Message/Message";
 import MessageRoom from "./screens/MessageRoom/MessageRoom";
 import MyBlog from "./screens/MyBlog/MyBlog";
+import Blog from "./screens/Blog/Blog";
 import ViewPost from "./screens/ViewPost/ViewPost";
 import RoadMapLoginBefore from "./screens/RoadMapLoginBefore/RoadMapLoginBefore";
 import RoadMap from "./screens/RoadMap/RoadMap";
@@ -44,17 +46,15 @@ import { WebSocketProvider } from "./contexts/WebSocketContext";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
-
-  // pathname과 search를 함께 넘겨준다.
-  const onlyPathnameAndSearch = {
+  const onlyPathAndSearch = {
     pathname: location.pathname,
     search: location.search,
   };
 
   return (
     <AnimatePresence mode="wait">
-      <Routes location={onlyPathnameAndSearch} key={location.pathname}>
-        {/* 첫 진입 시 토큰이 있으면 MainPageAfter로, 아니면 MainPageBefore */}
+      <Routes location={onlyPathAndSearch} key={location.pathname}>
+        {/* 루트 경로: 토큰 있으면 MainPageAfter, 없으면 MainPageBefore */}
         <Route
           path="/"
           element={
@@ -91,14 +91,26 @@ const AnimatedRoutes = () => {
         <Route path="/edituser" element={<EditUser />} />
         <Route path="/message" element={<Message />} />
         <Route path="/message-room/:id" element={<MessageRoom />} />
+
+        {/* 내 블로그 */}
         <Route path="/myblog" element={<MyBlog />} />
+        {/* 타인 블로그: URL에 userId를 붙여서 접근 */}
+        <Route path="/blog/:userId" element={<Blog />} />
+
+        {/* 게시글 상세 보기 */}
         <Route path="/viewpost" element={<ViewPost />} />
         <Route path="/viewpost/:postId" element={<ViewPost />} />
+
+        {/* 로드맵 */}
         <Route path="/roadmapbefore" element={<RoadMapLoginBefore />} />
         <Route path="/roadmap" element={<RoadMap />} />
+
+        {/* 커뮤니티 */}
         <Route path="/community" element={<Community />} />
         <Route path="/community/write" element={<CommunityWrite />} />
         <Route path="/community/viewpost/:id" element={<CommunityViewPost />} />
+
+        {/* 포트폴리오 */}
         <Route path="/portfolio" element={<PortfolioScreen />} />
         <Route path="/portfolio/write" element={<PortfolioWrite />} />
         <Route path="/portfolio/view/:id" element={<PortfolioView />} />
