@@ -1,5 +1,3 @@
-// src/screens/Blog/Blog.jsx
-
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import GoGitHub from "../../components/GoGitHub/GoGitHub";
@@ -9,7 +7,7 @@ import FollowButton from "../../components/FollowButton/FollowButton";
 import MailIcon from "../../icons/MailIcon/MailIcon";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import CommentIcon2 from "../../icons/CommentIcon2/CommentIcon2";
-import api from "../../api/instance"; // axios 인스턴스 (baseURL: http://a-log.site:8082 로 설정되어 있어야 함)
+import api from "../../api/instance";
 import "./Blog.css";
 
 export const Blog = () => {
@@ -30,52 +28,46 @@ export const Blog = () => {
   const observer = useRef();
   const jwtToken = localStorage.getItem("jwtToken") || "";
 
-  // 1) 사용자 프로필 정보 조회
+  // 사용자 정보 및 팔로잉 상태 조회
   useEffect(() => {
     api
-      .get(`/user-service/details/${viewedUserId}`)
+      .get(`/api/user-service/details/${viewedUserId}`)
       .then((res) => {
         const data = res.data.data;
         setNickname(data.nickname || "");
         setProfileUrl(data.profileUrl || "");
         setGithubUrl(data.githubUrl || "");
       })
-      .catch((err) => {
-        console.error("타인 사용자 조회 에러:", err);
-      });
+      .catch((err) => console.error("사용자 정보 조회 실패:", err));
 
-    // 2) 팔로잉 목록 조회 (followees)로 isFollowing 설정
     api
-      .get(`/user-service/follow/followees`, {
+      .get(`/api/user-service/follow/followees`, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       })
       .then((res) => {
         const followees = res.data.data || [];
         setIsFollowing(followees.includes(viewedUserId));
       })
-      .catch((err) => {
-        console.error("팔로잉 목록 조회 에러:", err);
-        setIsFollowing(false);
-      });
+      .catch(() => setIsFollowing(false));
   }, [viewedUserId, jwtToken]);
 
-  // (이하 게시글 조회 로직은 생략: 기존 코드와 동일)
+  // 게시글 페이징 조회
   useEffect(() => {
     if (!hasMore) return;
     setLoading(true);
+
     api
-      .get(`/blog-service/posts/user/${viewedUserId}?page=${page}`)
+      .get(`/api/blog-service/posts/user/${viewedUserId}?page=${page}`)
       .then((res) => {
         const data = res.data.data || [];
         setPosts((prev) => [...prev, ...data]);
-        if (data.length === 0) {
-          setHasMore(false);
-        }
+        if (data.length === 0) setHasMore(false);
       })
-      .catch((err) => console.error("게시글 조회 에러:", err))
+      .catch((err) => console.error("게시글 조회 실패:", err))
       .finally(() => setLoading(false));
   }, [page, viewedUserId, hasMore]);
 
+  // 마지막 포스트 관찰하여 페이지 증가
   const lastPostRef = useCallback(
     (node) => {
       if (loading) return;
@@ -90,6 +82,7 @@ export const Blog = () => {
     [loading, hasMore]
   );
 
+  // 팔로우/언팔로우 처리
   const handleFollow = () => {
     if (!jwtToken) {
       navigate("/login");
@@ -97,51 +90,37 @@ export const Blog = () => {
     }
 
     if (isFollowing) {
-      // 언팔로우: DELETE /api/user-service/follow
       api
-        .delete(`/user-service/follow`, {
+        .delete(`/api/user-service/follow`, {
           headers: { Authorization: `Bearer ${jwtToken}` },
           data: { followeeId: viewedUserId },
         })
-        .then(() => {
-          setIsFollowing(false);
-        })
+        .then(() => setIsFollowing(false))
         .catch((err) => {
           const status = err.response?.status;
-          if (status === 400) {
-            console.error(err.response.data.message);
-          } else if (status === 401) {
-            navigate("/login");
-          } else {
-            console.error("언팔로우 중 오류 발생:", err.response?.data || err);
-          }
+          if (status === 400) console.error(err.response.data.message);
+          else if (status === 401) navigate("/login");
+          else console.error("언팔로우 실패:", err);
         });
     } else {
-      // 팔로우: POST /api/user-service/follow
       api
         .post(
-          `/user-service/follow`,
+          `/api/user-service/follow`,
           { followeeId: viewedUserId },
           { headers: { Authorization: `Bearer ${jwtToken}` } }
         )
-        .then(() => {
-          setIsFollowing(true);
-        })
+        .then(() => setIsFollowing(true))
         .catch((err) => {
           const status = err.response?.status;
-          if (status === 409) {
-            console.error("이미 팔로우한 사용자입니다.");
-          } else if (status === 400) {
-            console.error(err.response.data.message);
-          } else if (status === 401) {
-            navigate("/login");
-          } else {
-            console.error("팔로우 중 오류 발생:", err.response?.data || err);
-          }
+          if (status === 409) console.error("이미 팔로우된 사용자입니다.");
+          else if (status === 400) console.error(err.response.data.message);
+          else if (status === 401) navigate("/login");
+          else console.error("팔로우 실패:", err);
         });
     }
   };
 
+  // 포트폴리오 이동
   const handlePortfolioClick = () => {
     api
       .get("/api/portfolio-service/user", {
@@ -162,13 +141,12 @@ export const Blog = () => {
       });
   };
 
-  // ————— MailIcon 클릭 시 “특정 유저와의 채팅방”으로 이동 —————
+  // MailIcon 클릭 → 채팅방으로 이동
   const handleChatClick = () => {
     if (!jwtToken) {
       navigate("/login");
       return;
     }
-    // 단순히 targetUserId를 경로에 넘겨서 MessageRoom 컴포넌트로 이동
     navigate(`/message-room/${viewedUserId}`);
   };
 
@@ -226,7 +204,6 @@ export const Blog = () => {
             </div>
           </header>
 
-          {/* 게시글 목록 (기존 로직) */}
           <div className="blog-post-section">
             <div className="blog-post-header">
               <div className="blog-tab-latest">
