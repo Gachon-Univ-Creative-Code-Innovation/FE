@@ -15,8 +15,16 @@
   align-items: center;
   justify-content: flex-start;
   width: 100%;
+  transform: scale(1);
+  transition: transform 0.2s ease-in-out;
+  font-weight: 400;
+}
+.hamburger-component-instance:hover {
+  color: #1d1652;
+  transform: scale(1.05);
+  font-weight: 700;
 }
 
 .hamburger-screen .logout-component .text-wrapper {
-  color: #1d1652 !important;
+  color: rgba(29, 22, 82, 0.7) !important;
 }

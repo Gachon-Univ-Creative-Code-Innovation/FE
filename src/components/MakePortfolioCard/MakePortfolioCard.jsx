@@ -18,12 +18,6 @@ export const MakePortfolio = ({ className }) => {
       style={{ cursor: "pointer" }}
     >
       <img className="img-front" src="/img/portfolio_new.png" alt="front" />
-
-      {/* 별 요소 (중심 회전) */}
-      <div className="sparkle-extra orbit1"></div>
-      <div className="sparkle-extra orbit2"></div>
-      <div className="sparkle-extra orbit3"></div>
-      <div className="sparkle-extra orbit4"></div>
     </div>
   );
 };
