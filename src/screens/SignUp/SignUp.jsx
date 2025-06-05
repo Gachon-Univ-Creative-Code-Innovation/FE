@@ -29,12 +29,12 @@ const SignUp = () => {
 
   // STEP 1: 이메일·인증 코드·비밀번호 상태
   const [email, setEmail] = useState("");
-  const [emailMessage, setEmailMessage] = useState("");
+  const [emailMessage, setEmailMessage] = useState(""); // HEAD에서 추가
   const [verificationCode, setVerificationCode] = useState("");
   const [codeMessage, setCodeMessage] = useState("");
   const [isCodeValid, setIsCodeValid] = useState(false);
   const [password, setPassword] = useState("");
-  const [passwordMessage, setPasswordMessage] = useState("");
+  const [passwordMessage, setPasswordMessage] = useState(""); // HEAD에서 추가
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmMessage, setConfirmMessage] = useState("");
 
@@ -44,7 +44,7 @@ const SignUp = () => {
   // 전체 오류 메시지
   const [errorMessage, setErrorMessage] = useState("");
 
-  // STEP 0: 닉네임 중복 확인
+  // STEP 0: 닉네임 중복 확인 (HEAD의 개선된 로직 적용)
   const handleCheckNickname = async () => {
     setNicknameMessage("");
     setIsNicknameValid(false);
@@ -53,6 +53,7 @@ const SignUp = () => {
       setNicknameMessage("닉네임을 입력해주세요.");
       return;
     }
+    
     try {
       const res = await api.get(`/user-service/check-nickname/${nickname}`);
       if (res.data.data === true) {
@@ -68,13 +69,14 @@ const SignUp = () => {
     }
   };
 
-  // STEP 1: 이메일 인증번호 발송
+  // STEP 1: 이메일 인증번호 발송 (HEAD의 개선된 에러 처리 적용)
   const handleSendEmail = async () => {
     setEmailMessage("");
     if (!email.trim()) {
       setEmailMessage("이메일을 입력해주세요.");
       return;
     }
+    
     try {
       await api.post("/user-service/verify/send", { email });
       setEmailMessage("인증번호가 발송되었습니다.");
@@ -83,14 +85,16 @@ const SignUp = () => {
     }
   };
 
-  // STEP 1: 인증 코드 확인
+  // STEP 1: 인증 코드 확인 (HEAD의 개선된 에러 처리 적용)
   const handleConfirmCode = async () => {
     setErrorMessage("");
     setCodeMessage("");
+    
     if (!email.trim() || !verificationCode.trim()) {
       setCodeMessage("이메일과 인증번호를 입력해주세요.");
       return;
     }
+    
     try {
       await api.post("/user-service/verify/check", {
         email,
@@ -104,15 +108,18 @@ const SignUp = () => {
     }
   };
 
-  // STEP 1: 비밀번호 유효성 검사
+  // STEP 1: 비밀번호 유효성 검사 (HEAD의 개선된 메시지 적용)
   const handlePasswordChange = (e) => {
     const value = e.target.value;
     setPassword(value);
+    
     if (value.length < 8) {
       setPasswordMessage("비밀번호는 최소 8자 이상이어야 합니다.");
     } else {
       setPasswordMessage("");
     }
+    
+    // 비밀번호 확인과의 일치 여부 체크
     if (confirmPassword && value !== confirmPassword) {
       setConfirmMessage("비밀번호가 일치하지 않습니다.");
     } else {
@@ -120,9 +127,11 @@ const SignUp = () => {
     }
   };
 
+  // 비밀번호 재입력 변화 (HEAD의 개선된 메시지 적용)
   const handleConfirmPasswordChange = (e) => {
     const value = e.target.value;
     setConfirmPassword(value);
+    
     if (value !== password) {
       setConfirmMessage("비밀번호가 일치하지 않습니다.");
     } else {
@@ -130,10 +139,11 @@ const SignUp = () => {
     }
   };
 
-  // STEP 2: 최종 회원가입 API 호출
+  // STEP 2: 최종 회원가입 API 호출 (HEAD의 FormData 로직 적용)
   const handleSignUp = async (e) => {
     e.preventDefault();
     setErrorMessage("");
+    
     try {
       const formData = new FormData();
       formData.append("email", email.trim());
@@ -141,6 +151,7 @@ const SignUp = () => {
       formData.append("password", password);
       formData.append("nickname", nickname.trim());
       formData.append("role", "USER");
+      
       if (githubLink.trim()) {
         formData.append("githubUsername", githubLink.trim());
       }
@@ -149,28 +160,30 @@ const SignUp = () => {
       alert("회원가입이 완료되었습니다. 로그인 해주세요.");
       navigate("/login");
     } catch (err) {
-      setErrorMessage(err.response?.data?.message || "회원가입 실패");
+      setErrorMessage(err.response?.data?.message || "회원가입에 실패했습니다.");
     }
   };
 
-  // 다음 단계로 이동 (STEP 0, 1, 2 검증 후)
+  // 다음 단계로 이동 (개선된 유효성 검사)
   const handleNext = () => {
     setErrorMessage("");
+    
     if (step === 0) {
       // STEP 0: 이름·닉네임·약관 검증
       if (!name.trim() || !nickname.trim()) {
         setErrorMessage("이름과 닉네임을 입력해주세요.");
         return;
       }
+      if (!isNicknameValid || nicknameMessage === "이미 사용 중인 닉네임입니다.") {
+        setErrorMessage("닉네임 중복 확인을 완료해주세요.");
+        return;
+      }
       if (!termsChecked || !privacyChecked) {
         setErrorMessage("약관 및 개인정보 수집 동의가 필요합니다.");
         return;
       }
-      if (nicknameMessage === "이미 사용 중인 닉네임입니다.") {
-        setErrorMessage("다른 닉네임을 선택해주세요.");
-        return;
-      }
     }
+    
     if (step === 1) {
       // STEP 1: 이메일·인증·비밀번호 검증
       if (!email.includes("@")) {
@@ -178,25 +191,27 @@ const SignUp = () => {
         return;
       }
       if (!isCodeValid) {
-        setErrorMessage("인증을 완료해주세요.");
+        setErrorMessage("이메일 인증을 완료해주세요.");
         return;
       }
-      if (passwordMessage) {
-        setErrorMessage("올바른 비밀번호를 입력해주세요.");
+      if (password.length < 8) {
+        setErrorMessage("비밀번호는 최소 8자 이상이어야 합니다.");
         return;
       }
-      if (confirmMessage) {
+      if (password !== confirmPassword) {
         setErrorMessage("비밀번호가 일치하지 않습니다.");
         return;
       }
     }
+    
     if (step === 2) {
       // STEP 2: GitHub URL 검증 (선택 사항)
       if (githubLink.trim() && !githubLink.startsWith("https://github.com/")) {
-        setErrorMessage("올바른 GitHub URL을 입력해주세요.");
+        setErrorMessage("올바른 GitHub URL을 입력해주세요. (예: https://github.com/username)");
         return;
       }
     }
+    
     setStep(step + 1);
   };
 
@@ -218,6 +233,7 @@ const SignUp = () => {
         const isStep0Valid =
           name.trim() &&
           nickname.trim() &&
+          isNicknameValid &&
           termsChecked &&
           privacyChecked &&
           nicknameMessage !== "이미 사용 중인 닉네임입니다.";
@@ -255,8 +271,15 @@ const SignUp = () => {
                   type="button"
                   onClick={handleCheckNickname}
                   className={
-                    nickname.trim() ? "signup-button-sm active" : "signup-button-sm"
+                    nickname.trim() && !isNicknameValid 
+                      ? "signup-button-sm active" 
+                      : "signup-button-sm"
                   }
+                  disabled={isNicknameValid}
+                  style={{
+                    cursor: isNicknameValid ? "not-allowed" : "pointer",
+                    opacity: isNicknameValid ? 0.5 : 1,
+                  }}
                 >
                   중복 확인
                 </button>
@@ -311,13 +334,17 @@ const SignUp = () => {
             </div>
 
             <div className="signup-right-bottom-section">
-              {/* STEP 0 “다음” 버튼 */}
-              <button className="signup-button" onClick={handleNext}>
-                <div
-                  className={`signup-next-button ${
-                    isStep0Valid ? "active" : ""
-                  }`}
-                >
+              {/* STEP 0 "다음" 버튼 */}
+              <button 
+                className="signup-button" 
+                onClick={handleNext}
+                disabled={!isStep0Valid}
+                style={{
+                  cursor: !isStep0Valid ? "not-allowed" : "pointer",
+                  opacity: !isStep0Valid ? 0.5 : 1,
+                }}
+              >
+                <div className={`signup-next-button ${isStep0Valid ? "active" : ""}`}>
                   다음
                 </div>
               </button>
@@ -345,6 +372,7 @@ const SignUp = () => {
                   className="signup-text-input"
                   placeholder="이메일을 입력하세요"
                   value={email}
+                  disabled={isCodeValid}
                   onChange={(e) => {
                     setEmail(e.target.value);
                     setEmailMessage("");
@@ -354,14 +382,21 @@ const SignUp = () => {
                   type="button"
                   onClick={handleSendEmail}
                   className={
-                    email.trim() ? "signup-button-sm active" : "signup-button-sm"
+                    email.trim() && !isCodeValid 
+                      ? "signup-button-sm active" 
+                      : "signup-button-sm"
                   }
+                  disabled={isCodeValid}
+                  style={{
+                    cursor: isCodeValid ? "not-allowed" : "pointer",
+                    opacity: isCodeValid ? 0.5 : 1,
+                  }}
                 >
                   발송
                 </button>
               </div>
               {emailMessage && (
-                <div className="signup-error-message">{emailMessage}</div>
+                <div className="signup-info-message">{emailMessage}</div>
               )}
 
               {/* STEP 1: 인증번호 입력 & 확인 */}
@@ -372,6 +407,7 @@ const SignUp = () => {
                   className="signup-text-input"
                   placeholder="인증번호를 입력하세요"
                   value={verificationCode}
+                  disabled={isCodeValid}
                   onChange={(e) => {
                     setVerificationCode(e.target.value);
                     setErrorMessage("");
@@ -382,10 +418,15 @@ const SignUp = () => {
                   type="button"
                   onClick={handleConfirmCode}
                   className={
-                    verificationCode.trim()
+                    verificationCode.trim() && !isCodeValid
                       ? "signup-button-sm active"
                       : "signup-button-sm"
                   }
+                  disabled={isCodeValid}
+                  style={{
+                    cursor: isCodeValid ? "not-allowed" : "pointer",
+                    opacity: isCodeValid ? 0.5 : 1,
+                  }}
                 >
                   확인
                 </button>
@@ -431,6 +472,10 @@ const SignUp = () => {
               {confirmMessage && (
                 <div className="signup-error-message">{confirmMessage}</div>
               )}
+
+              {errorMessage && (
+                <div className="signup-error-message">{errorMessage}</div>
+              )}
             </div>
 
             <div className="signup-right-bottom-section">
@@ -439,13 +484,17 @@ const SignUp = () => {
                   <div className="signup-before-button">이전</div>
                 </button>
 
-                {/* STEP 1 “다음” 버튼 */}
-                <button className="signup-button" onClick={handleNext}>
-                  <div
-                    className={`signup-next-button ${
-                      isStep1Valid ? "active" : ""
-                    }`}
-                  >
+                {/* STEP 1 "다음" 버튼 */}
+                <button 
+                  className="signup-button" 
+                  onClick={handleNext}
+                  disabled={!isStep1Valid}
+                  style={{
+                    cursor: !isStep1Valid ? "not-allowed" : "pointer",
+                    opacity: !isStep1Valid ? 0.5 : 1,
+                  }}
+                >
+                  <div className={`signup-next-button ${isStep1Valid ? "active" : ""}`}>
                     다음
                   </div>
                 </button>
@@ -469,7 +518,7 @@ const SignUp = () => {
                 <input
                   type="url"
                   className="signup-text-input"
-                  placeholder="GitHub URL (선택)"
+                  placeholder="GitHub URL (선택사항, 예: https://github.com/username)"
                   value={githubLink}
                   onChange={(e) => {
                     setGithubLink(e.target.value);
@@ -489,13 +538,17 @@ const SignUp = () => {
                   <div className="signup-before-button">이전</div>
                 </button>
 
-                {/* STEP 2 “회원가입 완료” 버튼 */}
-                <button className="signup-button" onClick={handleSignUp}>
-                  <div
-                    className={`signup-next-button ${
-                      isStep2Valid ? "active" : ""
-                    }`}
-                  >
+                {/* STEP 2 "회원가입 완료" 버튼 */}
+                <button 
+                  className="signup-button" 
+                  onClick={handleSignUp}
+                  disabled={!isStep2Valid}
+                  style={{
+                    cursor: !isStep2Valid ? "not-allowed" : "pointer",
+                    opacity: !isStep2Valid ? 0.5 : 1,
+                  }}
+                >
+                  <div className={`signup-next-button ${isStep2Valid ? "active" : ""}`}>
                     회원가입 완료
                   </div>
                 </button>
