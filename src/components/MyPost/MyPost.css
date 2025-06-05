@@ -1,12 +1,14 @@
 .mypost-wrapper {
   align-items: flex-start;
-  background-color: #fafdffcc;
   border-radius: 10px;
-  box-shadow: 0 0 10px #a3b3bf;
   display: flex;
   flex-direction: column;
   gap: 10px;
   width: 272px;
+  background-color: rgba(255, 255, 255, 0.5) ;
+  border: 2px solid #d7e4ee;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.15);
+
 }
 
 .mypost-header {

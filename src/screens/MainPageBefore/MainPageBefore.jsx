@@ -228,8 +228,21 @@ export const MainPageBefore = () => {
             </div>
 
             {!hasMore && (
-              <div className="end-message">
-                당신의 이야기를 기다리고 있습니다 ✍️
+              <div className="end-message-wrapper">
+                <div className="end-message">
+                  당신의 이야기를 기다리고 있습니다 ✍️
+                </div>
+                <div className="sparkle-extra orbit1 sparkle-yellow" />
+                <div className="sparkle-extra orbit2 sparkle-yellow" />
+                <div className="sparkle-extra orbit3 sparkle-yellow" />
+                <div className="sparkle-extra orbit4 sparkle-purple" />
+                <div className="sparkle-extra orbit5 sparkle-blue" />
+                <div className="sparkle-extra orbit6 sparkle-yellow" />
+                <div className="sparkle-extra orbit7 sparkle-blue" />
+                <div className="sparkle-extra orbit8 sparkle-purple" />
+                <div className="sparkle-extra orbit9 sparkle-purple" />
+                <div className="sparkle-extra orbit10 sparkle-pink" />
+                <div className="sparkle-extra orbit11 sparkle-pink" />
               </div>
             )}
           </div>
