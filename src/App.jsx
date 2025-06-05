@@ -44,6 +44,8 @@ import { WebSocketProvider } from "./contexts/WebSocketContext";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
+
+  // pathname과 search를 함께 넘겨준다.
   const onlyPathnameAndSearch = {
     pathname: location.pathname,
     search: location.search,
