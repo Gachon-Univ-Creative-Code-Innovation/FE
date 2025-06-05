@@ -12,6 +12,8 @@ import { AnimatePresence } from "framer-motion";
 import MainPageBefore from "./screens/MainPageBefore/MainPageBefore";
 import Login from "./screens/Login/Login";
 import SignUp from "./screens/SignUp/SignUp";
+import TermsOfService from "./screens/SignUp/TermsOfService";
+import PrivacyPolicy from "./screens/SignUp/PrivacyPolicy";
 import ForgotPassword from "./screens/ForgotPassword/ForgotPassword";
 import ResetPassword from "./screens/ResetPassword/ResetPassword";
 import KakaoCallBack from "./screens/Login/KakaoCallBack";
@@ -42,6 +44,7 @@ import { WebSocketProvider } from "./contexts/WebSocketContext";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
+
   // pathname과 search를 함께 넘겨준다.
   const onlyPathnameAndSearch = {
     pathname: location.pathname,
@@ -68,6 +71,8 @@ const AnimatedRoutes = () => {
         <Route path="/MainPageBefore" element={<MainPageBefore />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/signup/terms" element={<TermsOfService />} />
+        <Route path="/signup/privacy" element={<PrivacyPolicy />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/reset-password/" element={<ResetPassword />} />
 
