@@ -27,7 +27,6 @@ export const Blog = () => {
 
   const observer = useRef();
 
-  // 타인 사용자 정보 조회 (한 번만 실행)
   useEffect(() => {
     api
       .get(`/user-service/details/${viewedUserId}`)
@@ -42,14 +41,13 @@ export const Blog = () => {
       });
   }, [viewedUserId]);
 
-  // 타인 게시글 목록 조회: page가 바뀔 때마다 한 번씩 호출
   useEffect(() => {
-    if (!hasMore) return; // 더 이상 불러올 글이 없으면 중단
+    if (!hasMore) return;
 
     setLoading(true);
 
     api
-      .get(`/blog-service/posts?authorId=${viewedUserId}&page=${page}`)
+      .get(`/blog-service/posts/user/${viewedUserId}?page=${page}`)
       .then((res) => {
         const data = res.data.data || [];
         setPosts((prev) => [...prev, ...data]);
@@ -61,10 +59,9 @@ export const Blog = () => {
       .finally(() => setLoading(false));
   }, [page, viewedUserId, hasMore]);
 
-  // 무한 스크롤: 마지막 카드 보이면 page 증가
   const lastPostRef = useCallback(
     (node) => {
-      if (loading) return; // 로딩 중에는 관찰 중단
+      if (loading) return;
       if (observer.current) observer.current.disconnect();
 
       observer.current = new IntersectionObserver((entries) => {
@@ -77,6 +74,25 @@ export const Blog = () => {
     },
     [loading, hasMore]
   );
+
+  const handlePortfolioClick = () => {
+    api
+      .get("/portfolio-service/user", {
+        params: { userID: viewedUserId },
+        headers: { accept: "application/json" },
+      })
+      .then((res) => {
+        const data = res.data;
+        if (data.status === 200 && data.data) {
+          navigate(`/portfolio/view/${data.data}`);
+        }
+      })
+      .catch(() => {
+        // 실패 시 그냥 /portfolio 로 이동하거나 에러 처리
+        console.error("포트폴리오 조회 실패");
+        navigate("/portfolio");
+      });
+  };
 
   return (
     <PageTransitionWrapper>
@@ -97,17 +113,13 @@ export const Blog = () => {
               <div className="blog-profile-details">
                 <div className="blog-username-row">
                   <div className="blog-username">{nickname || "사용자"}</div>
-                  <FollowButton
-                    onClick={() => {
-                      console.log("Follow 버튼 클릭됨");
-                    }}
-                  />
+                  <FollowButton onClick={() => {}} />
                 </div>
               </div>
 
               <div className="blog-side-buttons">
                 <div
-                  onClick={() => navigate("/portfolio")}
+                  onClick={handlePortfolioClick}
                   style={{ cursor: "pointer" }}
                 >
                   <GoPortfolio

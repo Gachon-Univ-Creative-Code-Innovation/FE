@@ -17,7 +17,7 @@ export const MakePortfolio = ({ onClick }) => {
           <span className="makeportfolio-subtext">
             레포지토리 주소만 입력하면
           </span>
-          <span className="makeportfolio-logo-bold">AlOG</span>
+          <span className="makeportfolio-logo-bold"> AlOG</span>
           <span className="makeportfolio-subtext">
             가 자동으로 초안을 생성해 줘요!
           </span>
