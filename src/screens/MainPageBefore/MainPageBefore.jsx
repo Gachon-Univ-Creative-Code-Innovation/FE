@@ -167,10 +167,6 @@ export const MainPageBefore = () => {
     }
   };
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   return (
     <PageTransitionWrapper>
       <div className="main-page-before">
