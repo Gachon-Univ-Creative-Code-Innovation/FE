@@ -365,7 +365,7 @@ const ViewPost = () => {
             <div className="view-post-meta">
               <div className="post-profile-wrapper">
                 {postData.profileUrl && (
-                  <img src={postData.profileUrl} alt="post" className="post-prfile-img" />
+                  <img src={postData.profileUrl} alt="post" className="post-profile-img" />
                 )}
               </div>
               <div className="view-post-meta-text">{postData.authorNickname}</div>
@@ -455,7 +455,7 @@ const ViewPost = () => {
                 <div key={comment.id} className="comment-item">
                   <div className="comment-profile-wrapper">
                     {comment.authorProfileUrl && (
-                      <img src={comment.authorProfileUrl} alt="comment" className="comment-prfile-img" />
+                      <img src={comment.authorProfileUrl} alt="comment" className="comment-profile-img" />
                     )}
                   </div>
                   <div className="comment-content-block">
@@ -509,7 +509,7 @@ const ViewPost = () => {
                           <div key={reply.id} className="comment-reply-item">
                             <div className="comment-profile-wrapper">
                               {reply.authorProfileUrl && (
-                                <img src={reply.authorProfileUrl} alt="reply" className="comment-prfile-img" />
+                                <img src={reply.authorProfileUrl} alt="reply" className="comment-profile-img" />
                               )}
                             </div>
                             <div className="reply-content">
