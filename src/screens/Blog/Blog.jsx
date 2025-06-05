@@ -25,7 +25,9 @@ export const Blog = () => {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
+  const [isFollowing, setIsFollowing] = useState(false);
   const observer = useRef();
+  const jwtToken = localStorage.getItem("jwtToken") || "";
 
   useEffect(() => {
     api
@@ -39,13 +41,23 @@ export const Blog = () => {
       .catch((err) => {
         console.error("타인 사용자 조회 에러:", err);
       });
-  }, [viewedUserId]);
+
+    // 현재 사용자가 해당 사용자를 팔로우 중인지 확인 (optional, API 추가 필요)
+    api
+      .get(`/user-service/follow/status/${viewedUserId}`, {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      })
+      .then((res) => {
+        setIsFollowing(res.data.data.isFollowing);
+      })
+      .catch(() => {
+        setIsFollowing(false);
+      });
+  }, [viewedUserId, jwtToken]);
 
   useEffect(() => {
     if (!hasMore) return;
-
     setLoading(true);
-
     api
       .get(`/blog-service/posts/user/${viewedUserId}?page=${page}`)
       .then((res) => {
@@ -63,17 +75,67 @@ export const Blog = () => {
     (node) => {
       if (loading) return;
       if (observer.current) observer.current.disconnect();
-
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && hasMore) {
           setPage((prev) => prev + 1);
         }
       });
-
       if (node) observer.current.observe(node);
     },
     [loading, hasMore]
   );
+
+  const handleFollow = () => {
+    if (!jwtToken) {
+      navigate("/login");
+      return;
+    }
+
+    if (isFollowing) {
+      // 언팔로우: DELETE 요청
+      api
+        .delete(`/user-service/follow`, {
+          headers: { Authorization: `Bearer ${jwtToken}` },
+          data: { followeeId: viewedUserId },
+        })
+        .then(() => {
+          setIsFollowing(false);
+        })
+        .catch((err) => {
+          const status = err.response?.status;
+          if (status === 400) {
+            console.error(err.response.data.message);
+          } else if (status === 401) {
+            navigate("/login");
+          } else {
+            console.error("언팔로우 중 오류 발생:", err.response?.data || err);
+          }
+        });
+    } else {
+      // 팔로우: POST 요청
+      api
+        .post(
+          `/user-service/follow`,
+          { followeeId: viewedUserId },
+          { headers: { Authorization: `Bearer ${jwtToken}` } }
+        )
+        .then(() => {
+          setIsFollowing(true);
+        })
+        .catch((err) => {
+          const status = err.response?.status;
+          if (status === 409) {
+            console.error("이미 팔로우한 사용자입니다.");
+          } else if (status === 400) {
+            console.error(err.response.data.message);
+          } else if (status === 401) {
+            navigate("/login");
+          } else {
+            console.error("팔로우 중 오류 발생:", err.response?.data || err);
+          }
+        });
+    }
+  };
 
   const handlePortfolioClick = () => {
     api
@@ -85,10 +147,11 @@ export const Blog = () => {
         const data = res.data;
         if (data.status === 200 && data.data) {
           navigate(`/portfolio/view/${data.data}`);
+        } else {
+          navigate("/portfolio");
         }
       })
       .catch(() => {
-        // 실패 시 그냥 /portfolio 로 이동하거나 에러 처리
         console.error("포트폴리오 조회 실패");
         navigate("/portfolio");
       });
@@ -113,7 +176,10 @@ export const Blog = () => {
               <div className="blog-profile-details">
                 <div className="blog-username-row">
                   <div className="blog-username">{nickname || "사용자"}</div>
-                  <FollowButton onClick={() => {}} />
+                  <FollowButton
+                    isFollowing={isFollowing}
+                    onClick={handleFollow}
+                  />
                 </div>
               </div>
 
@@ -127,7 +193,6 @@ export const Blog = () => {
                     property1="default"
                   />
                 </div>
-
                 <div
                   onClick={() =>
                     githubUrl ? window.open(githubUrl, "_blank") : null
