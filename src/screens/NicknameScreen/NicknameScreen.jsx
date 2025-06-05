@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Xbutton from "../../icons/XButton/XButton";
 import UserUserCardId from "../../icons/UserUserCardId/UserUserCardId";
+import api from "../../api/instance";
 import "./NicknameScreen.css";
 
 export const NicknameScreen = ({ onClose, onSave }) => {
@@ -9,29 +10,39 @@ export const NicknameScreen = ({ onClose, onSave }) => {
   const [isDuplicate, setIsDuplicate] = useState(false);
   const [message, setMessage] = useState("");
 
-  const handleCheckDuplicate = () => {
-    if (nickname === "taken") {
-      setIsDuplicate(true);
-      setChecked(true);
-      setMessage("This nickname is already in use.");
-    } else {
+  const handleCheckDuplicate = async () => {
+    const trimmed = nickname.trim();
+    if (trimmed.length < 2 || trimmed.length > 20) {
+      setChecked(false);
       setIsDuplicate(false);
+      setMessage("닉네임은 2 ~ 20자 내로 작성해야 합니다.");
+      return;
+    }
+    try {
+      const res = await api.get(`/user-service/check-nickname/${trimmed}`);
+      const isTaken = res.data.data;
       setChecked(true);
-      setMessage("This nickname is available.");
+      setIsDuplicate(isTaken);
+      setMessage(
+        isTaken ? "이미 사용 중인 닉네임입니다." : "사용 가능한 닉네임입니다."
+      );
+    } catch {
+      setChecked(false);
+      setIsDuplicate(false);
+      setMessage("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
     }
   };
 
   const handleSave = () => {
     if (!checked) {
-      setMessage("Please verify if the nickname is available.");
+      setMessage("먼저 중복 확인을 진행해주세요.");
       return;
     }
     if (isDuplicate) {
-      setMessage("This nickname is already in use.");
+      setMessage("중복된 닉네임입니다. 다른 닉네임을 입력해주세요.");
       return;
     }
-
-    onSave(nickname); // 부모로 전달
+    onSave(nickname.trim());
   };
 
   return (
@@ -65,6 +76,7 @@ export const NicknameScreen = ({ onClose, onSave }) => {
             onChange={(e) => {
               setNickname(e.target.value);
               setChecked(false);
+              setIsDuplicate(false);
               setMessage("");
             }}
           />
@@ -78,7 +90,7 @@ export const NicknameScreen = ({ onClose, onSave }) => {
           </div>
         </div>
 
-        <div className="nickname-message">{message}</div>
+        {message && <div className="nickname-message">{message}</div>}
       </div>
 
       <button className="nickname-save-button" onClick={handleSave}>

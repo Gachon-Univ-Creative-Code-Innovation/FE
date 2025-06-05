@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import "./PortfolioView.css";
 import Navbar2 from "../../components/Navbar2/Navbar2";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
+import api from "../../api/local-instance";
 
 const PortfolioView = () => {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ const PortfolioView = () => {
   const [openMenuId, setOpenMenuId] = useState(null);
   const menuRef = useRef(null);
 
-  const myName = "김송희";
+  const myName = localStorage.getItem("userId") || "";
 
   // 포트폴리오 데이터를 상태로 관리 (초기값 최소화)
   const [portfolio, setPortfolio] = useState({
@@ -23,6 +24,7 @@ const PortfolioView = () => {
   });
   const [likeCount, setLikeCount] = useState(0);
   const [liked, setLiked] = useState(false);
+  const [authorNickname, setAuthorNickname] = useState('');
 
   // 포트폴리오 상세 데이터 가져오기
   useEffect(() => {
@@ -31,9 +33,10 @@ const PortfolioView = () => {
     const cleanId = id.startsWith(":") ? id.slice(1) : id;
     const fetchPortfolioDetail = async () => {
       try {
-        const url = `http://localhost:8080/api/portfolio/detail?portfolioID=${cleanId}`;
-        const res = await fetch(url, { headers: { Accept: "application/json" } });
-        const data = await res.json();
+        const url = `http://localhost:8080/api/portfolio-service/detail`;
+        // const url = `http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8080/api/portfolio-service/detail`;
+        const res = await api.get(url, { params: { portfolioID: cleanId }, headers: { Accept: "application/json" } });
+        const data = res.data;
         if (data && data.status === 200 && data.data) {
           setPortfolio({
             id: cleanId,
@@ -43,6 +46,21 @@ const PortfolioView = () => {
             content: data.data.content || ''
           });
           setLikeCount(data.data.like_count ?? 0);
+          // 닉네임 가져오기
+          if (data.data.author) {
+            fetch(`http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/user-service/profile-nickname/${data.data.author}`)
+              .then(r => r.json())
+              .then(profileData => {
+                if (profileData && profileData.status === 200 && profileData.data && profileData.data.nickname) {
+                  setAuthorNickname(profileData.data.nickname);
+                } else {
+                  setAuthorNickname(data.data.author);
+                }
+              })
+              .catch(() => setAuthorNickname(data.data.author));
+          } else {
+            setAuthorNickname('');
+          }
         }
       } catch (err) {
         // 에러 처리 (필요시)
@@ -110,13 +128,15 @@ const PortfolioView = () => {
 
   // 포트폴리오 수정 버튼 클릭 - Write 페이지로 이동
   const handleEditPortfolio = () => {
-    navigate('/portfolio/write', { 
-      state: { 
+    navigate('/portfolio/write', {
+      state: {
         editMode: true,
         portfolioData: {
+          id: portfolio.id,
           title: portfolio.title,
           content: portfolio.content,
-          id: portfolio.id
+          tags: portfolio.tags || '',
+          // 필요시 author, date 등 추가 가능
         }
       }
     });
@@ -124,27 +144,38 @@ const PortfolioView = () => {
   };
 
   // 포트폴리오 삭제 버튼 클릭
-  const handleDeletePortfolio = () => {
+  const handleDeletePortfolio = async () => {
     if (window.confirm("정말로 이 포트폴리오를 삭제하시겠습니까?")) {
-      console.log("포트폴리오 삭제하기");
+      try {
+        // id가 ":1"처럼 들어오면 앞의 콜론(:)을 제거
+        const cleanId = id && id.startsWith(":") ? id.slice(1) : id;
+        const url = `http://localhost:8080/api/portfolio-service/delete`;
+        // const url = `http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8080/api/portfolio-service/delete`;  
+        const res = await api.delete(url, { params: { portfolioID: cleanId }, headers: { 'Accept': 'application/json' } });
+        if (res.status === 200 || res.data?.status === 200) {
+          alert("포트폴리오가 삭제되었습니다.");
+          navigate('/portfolio');
+        } else {
+          alert("삭제에 실패했습니다.");
+        }
+      } catch (err) {
+        alert("삭제 중 오류가 발생했습니다.");
+      }
       setOpenMenuId(null);
-      // navigate('/portfolio');
     }
   };
 
-  const isMyPortfolio = portfolio.author === myName;
+  const isMyPortfolio = String(portfolio.author) === String(myName);
 
   const handleLike = async () => {
     // id가 ":1"처럼 들어오면 앞의 콜론(:)을 제거
     const cleanId = id && id.startsWith(":") ? id.slice(1) : id;
     try {
-      const res = await fetch(`http://localhost:8080/api/portfolio/like?portfolioID=${cleanId}`, {
-        method: 'POST',
-        headers: { 'Accept': 'application/json' },
-        body: ''
-      });
+      const url = `http://localhost:8080/api/portfolio-service/like`;
+      // const url = `http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8080/api/portfolio-service/like`;
+      const res = await api.post(url, '', { params: { portfolioID: cleanId }, headers: { 'Accept': 'application/json' } });
       // 서버 응답에 따라 likeCount, liked 상태 변경
-      if (res.ok) {
+      if (res.status === 200 || res.data?.status === 200) {
         if (liked) {
           setLikeCount(likeCount - 1);
         } else {
@@ -218,7 +249,7 @@ const PortfolioView = () => {
           </div>
           <div className="view-post-meta-line">
             <div className="view-post-meta">
-              <span>{portfolio.author}</span>
+              <span>{authorNickname || portfolio.author}</span>
               <span>{portfolio.date}</span>
             </div>
           </div>

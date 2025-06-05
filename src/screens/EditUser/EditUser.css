@@ -37,7 +37,7 @@
 }
 
 .edituser-view {
-  width: 200px;
+  width: 180px;
   aspect-ratio: 3 / 4;
   display: flex;
   flex-direction: column;
@@ -48,17 +48,17 @@
 }
 
 .edituser-div-wrapper {
-  width: 200px;
-  aspect-ratio: 3 / 4;
+  width: 180px;
   overflow: hidden;
   margin: 0 auto;
 }
 
 .edituser-profile-img {
   width: 100%;
-  height: 100%;
-  object-fit: contain;
-  margin: 0;
+  aspect-ratio: 3 / 4;
+  object-fit: fit;
+  border-radius: 12px;
+  display: block;
 }
 
 .edituser-edit-ic-wrapper {

@@ -23,7 +23,7 @@
 .messageroom-header {
   background: #d7e3ed;
   display: flex;
-  justify-content: center; /* 중앙 정렬 */
+  justify-content: space-between;
   align-items: center;
   position: relative;      /* 아이콘 배치용 기준 */
   padding: 10px 30px;
@@ -33,9 +33,13 @@
 .messageroom-back-icon {
   width: 24px;
   height: 34px;
+  margin-top:-15px;
 }
 
 .messageroom-username {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   font-size: 30px;
   font-weight: bold;
   color: #1d1652;

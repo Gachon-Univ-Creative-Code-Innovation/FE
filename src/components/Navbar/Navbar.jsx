@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import NoticeBell from "../../icons/NoticeBell/NoticeBell";
 import AlogLogo from "../../icons/AlogLogo/AlogLogo";
@@ -7,9 +7,8 @@ import MailIcon from "../../icons/MailIcon/MailIcon";
 import HamburgerIcon from "../../icons/HamburgerIcon/HamburgerIcon";
 import { HamburgerScreen } from "../HamburgerScreen/HamburgerScreen";
 import { useAlarmStore } from "../../store/useAlarmStore";
-import api from "../../api/instance";
-import "./Navbar.css";
 import { useWebSocket } from "../../contexts/WebSocketContext";
+import "./Navbar.css";
 
 const Navbar = ({ onShowPopup, scrolled, isLoggedIn }) => {
   const navigate = useNavigate();
@@ -21,11 +20,13 @@ const Navbar = ({ onShowPopup, scrolled, isLoggedIn }) => {
   const toggleSidebar = () => setShowSidebar(!showSidebar);
   const closeSidebar = () => setShowSidebar(false);
 
+  // 로고 클릭 시: JWT 토큰이 있으면 MainPageAfter, 없으면 MainPageBefore
   const handleLogoClick = () => {
-    if (location.pathname.includes("After")) {
+    const jwt = localStorage.getItem("jwtToken");
+    if (jwt) {
       navigate("/MainPageAfter");
     } else {
-      navigate("/MainPagebefore");
+      navigate("/MainPageBefore");
     }
   };
 
@@ -87,6 +88,7 @@ const Navbar = ({ onShowPopup, scrolled, isLoggedIn }) => {
           </div>
         </div>
       </div>
+
       <div className={`hamburger-sidebar ${showSidebar ? "open" : ""}`}>
         <HamburgerScreen
           isLoggedIn={isLoggedIn}

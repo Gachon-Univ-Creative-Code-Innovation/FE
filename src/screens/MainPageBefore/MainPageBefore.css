@@ -21,25 +21,26 @@
 
 .main-page-before .my-post {
   align-items: center;
-  background-color: #f9fcff;
+  background-color: rgba(255, 255, 255, 0.5) ;
+  border: 2px solid #d7e4ee;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding: 19px 26px;
+  gap: 32px;
+  padding: 28px 26px 20px 26px;
   position: absolute;
   top: 150px;
   left: 53px;
   width: 100%;
   max-width: 274px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.15);
 }
 
 .main-page-before .p {
   align-self: stretch;
-  color: #000000;
+  color: #a0a0a0;
   font-family: "Inter", Helvetica;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 10px;
@@ -49,11 +50,10 @@
 }
 
 .main-page-before .component-1 {
-  border-radius: 10px !important;
+  border-radius: 0px !important;
 }
 
 .main-page-before .component-10 {
-  box-shadow: 3px 4px 4px #00000040 !important;
   left: 90px !important;
   position: absolute !important;
   top: 327px !important;
@@ -69,7 +69,7 @@
 .main-page-before .post-list-hot {
   position: absolute;
   top: 151px;
-  left: 383px;
+  left: 400px;
   width: 100%;
   max-width: 890px;
   background-color: #fafdff;
@@ -519,6 +519,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
 .main-page-before .overlap {
@@ -565,12 +566,223 @@
   transition: box-shadow 0.05s ease-in-out;
 }
 
+.end-message-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 80px;
+  margin-bottom: 60px;
+  padding: 40px 0;
+  width: 100%;
+}
+
 .end-message {
+  position: relative;
   text-align: center;
-  margin-top: 10px;
-  margin-bottom: 40px;
   color: #888;
-  font-size: 14px;
+  font-size: 20px !important;
+  font-family: "Inter", Helvetica;
+  font-weight: 400;
+  z-index: 1;
+  margin: 0;
+  padding: 0;
+}
+
+
+/* 공통 별 스타일 (애니메이션은 orbit별로 따로 지정) */
+.sparkle-extra {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.8;
+  transform: scale(1);
+}
+
+/* 노란 별 (기존 스타일 유지) */
+.sparkle-yellow {
+  background: radial-gradient(circle, #fff 0%, #ffee6a 40%, #fff200 80%);
+  box-shadow: 0 0 8px #fff200, 0 0 16px #ffee6a, 0 0 24px #ffffff, inset 0 0 2px #fff;
+}
+
+/* 하늘색 별 */
+.sparkle-blue {
+  background: radial-gradient(circle, #e0f7ff 0%, #90e0ff 40%, #62cfff 80%);
+  box-shadow: 0 0 8px #62cfff, 0 0 14px #90e0ff, 0 0 20px #e0f7ff, inset 0 0 1px #fff;
+}
+
+/* 보라색 별 */
+.sparkle-purple {
+  background: radial-gradient(circle, #f3e9ff 0%, #c89eff 40%, #9b6eff 80%);
+  box-shadow: 0 0 8px #b984ff, 0 0 14px #c89eff, 0 0 20px #f3e9ff, inset 0 0 1px #fff;
+}
+
+/* ✨ 핑크색 별 전용 스타일 */
+.sparkle-pink {
+  background: radial-gradient(circle, #fff0f5 0%, #ffc0cb 40%, #ff6fa0 80%);
+  box-shadow:
+    0 0 8px #ffc0cb,
+    0 0 14px #ffb6c1,
+    0 0 20px #fff0f5,
+    inset 0 0 1px #fff;
+}
+
+/* 별 궤도 애니메이션 정의 */
+@keyframes orbitMove1 {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0.8; }
+  25%  { transform: translate(30px, -30px) scale(1.2); opacity: 0.5; }
+  50%  { transform: translate(0, -60px) scale(0.9); opacity: 0.4; }
+  75%  { transform: translate(-30px, -30px) scale(1.1); opacity: 0.6; }
+  100% { transform: translate(0, 0) scale(1); opacity: 0.8; }
+}
+
+@keyframes orbitMove2 {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0.7; }
+  25%  { transform: translate(-45px, 20px) scale(0.9); opacity: 0.4; }
+  50%  { transform: translate(-60px, -40px) scale(1.3); opacity: 0.5; }
+  75%  { transform: translate(-30px, -45px) scale(1.1); opacity: 0.6; }
+  100% { transform: translate(0, 0) scale(1); opacity: 0.7; }
+}
+
+@keyframes orbitMove3 {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0.8; }
+  25%  { transform: translate(40px, 40px) scale(1.1); opacity: 0.6; }
+  50%  { transform: translate(0, 70px) scale(0.8); opacity: 0.3; }
+  75%  { transform: translate(-45px, 25px) scale(1.3); opacity: 0.5; }
+  100% { transform: translate(0, 0) scale(1); opacity: 0.8; }
+}
+
+@keyframes orbitMove4 {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0.9; }
+  25%  { transform: translate(35px, 50px) scale(1.2); opacity: 0.6; }
+  50%  { transform: translate(0, 80px) scale(0.9); opacity: 0.4; }
+  75%  { transform: translate(-35px, 45px) scale(1.1); opacity: 0.7; }
+  100% { transform: translate(0, 0) scale(1); opacity: 0.9; }
+}
+
+@keyframes orbitMove5 {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0.7; }
+  25%  { transform: translate(25px, -40px) scale(1.2); opacity: 0.5; }
+  50%  { transform: translate(10px, -60px) scale(0.9); opacity: 0.4; }
+  75%  { transform: translate(-25px, -30px) scale(1.1); opacity: 0.6; }
+  100% { transform: translate(0, 0) scale(1); opacity: 0.7; }
+}
+
+@keyframes orbitMove6 {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0.8; }
+  25%  { transform: translate(40px, 15px) scale(0.8); opacity: 0.4; }
+  50%  { transform: translate(60px, 30px) scale(1.1); opacity: 0.6; }
+  75%  { transform: translate(20px, 60px) scale(1.3); opacity: 0.5; }
+  100% { transform: translate(0, 0) scale(1); opacity: 0.8; }
+}
+
+@keyframes orbitMove7 {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0.9; }
+  25%  { transform: translate(-30px, 35px) scale(1.1); opacity: 0.5; }
+  50%  { transform: translate(-10px, 70px) scale(0.9); opacity: 0.3; }
+  75%  { transform: translate(25px, 20px) scale(1.2); opacity: 0.6; }
+  100% { transform: translate(0, 0) scale(1); opacity: 0.9; }
+}
+
+@keyframes orbitMove8 {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0.85; }
+  25%  { transform: translate(25px, -45px) scale(1.2); opacity: 0.5; }
+  50%  { transform: translate(10px, -70px) scale(0.9); opacity: 0.4; }
+  75%  { transform: translate(-20px, -35px) scale(1.1); opacity: 0.6; }
+  100% { transform: translate(0, 0) scale(1); opacity: 0.85; }
+}
+
+@keyframes orbitMove9 {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0.75; }
+  25%  { transform: translate(-35px, 25px) scale(1.1); opacity: 0.4; }
+  50%  { transform: translate(-15px, 50px) scale(0.8); opacity: 0.3; }
+  75%  { transform: translate(20px, 10px) scale(1.3); opacity: 0.5; }
+  100% { transform: translate(0, 0) scale(1); opacity: 0.75; }
+}
+
+@keyframes orbitMove10 {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0.8; }
+  25%  { transform: translate(35px, -20px) scale(1.1); opacity: 0.5; }
+  50%  { transform: translate(20px, -60px) scale(0.8); opacity: 0.4; }
+  75%  { transform: translate(-15px, -30px) scale(1.2); opacity: 0.6; }
+  100% { transform: translate(0, 0) scale(1); opacity: 0.8; }
+}
+
+@keyframes orbitMove11 {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0.9; }
+  25%  { transform: translate(-40px, 10px) scale(1.2); opacity: 0.6; }
+  50%  { transform: translate(-25px, 50px) scale(0.9); opacity: 0.3; }
+  75%  { transform: translate(15px, 20px) scale(1.1); opacity: 0.5; }
+  100% { transform: translate(0, 0) scale(1); opacity: 0.9; }
+}
+
+.sparkle-extra.orbit1 {
+  top: 30%;
+  left: 40%;
+  animation: orbitMove1 8s infinite ease-in-out;
+}
+
+.sparkle-extra.orbit2 {
+  top: 40%;
+  right: 15%;
+  animation: orbitMove2 10s infinite ease-in-out;
+}
+
+.sparkle-extra.orbit3 {
+  bottom: 20%;
+  left: 30%;
+  animation: orbitMove3 12s infinite ease-in-out;
+}
+
+.sparkle-extra.orbit4 {
+  bottom: 10%;
+  right: 35%;
+  animation: orbitMove4 9s infinite ease-in-out;
+}
+
+.sparkle-extra.orbit5 {
+  top: 15%;
+  left: 60%;
+  animation: orbitMove5 9s infinite ease-in-out;
+}
+
+.sparkle-extra.orbit6 {
+  bottom: 50%;
+  left: 10%;
+  animation: orbitMove6 11s infinite ease-in-out;
+}
+
+.sparkle-extra.orbit7 {
+  bottom: 15%;
+  right: 5%;
+  animation: orbitMove7 13s infinite ease-in-out;
+}
+
+.sparkle-extra.orbit8 {
+  top: 25%;
+  left: 75%;
+  animation: orbitMove8 10s infinite ease-in-out;
+}
+
+.sparkle-extra.orbit9 {
+  bottom: 25%;
+  left: 20%;
+  animation: orbitMove9 12s infinite ease-in-out;
+}
+
+.sparkle-extra.orbit10 {
+  top: 40%;
+  left: 50%;
+  animation: orbitMove10 11s infinite ease-in-out;
+}
+
+.sparkle-extra.orbit11 {
+  bottom: 5%;
+  left: 15%;
+  animation: orbitMove11 13s infinite ease-in-out;
 }
 
 @media screen and (max-width: 768px) {

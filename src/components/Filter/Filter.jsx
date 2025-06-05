@@ -1,4 +1,3 @@
-// Filter.jsx
 import React, { useState, useEffect, useRef } from "react";
 import FilterComponent from "../FilterComponent/FilterComponent";
 import SortComponent from "../SortComponent/SortComponent";
@@ -63,8 +62,7 @@ export const Filter = ({ selectedSort, onSortChange }) => {
           onClick={openFilter}
         >
           <FilterComponent
-            className="filtersection-btn"
-            property1="default"
+            className={`filtersection-btn ${isFilterActive ? "active" : ""}`}
             isActive={isFilterActive}
           />
         </div>
@@ -77,8 +75,7 @@ export const Filter = ({ selectedSort, onSortChange }) => {
           onClick={toggleSort}
         >
           <SortComponent
-            className="filtersection-btn"
-            property1="default"
+            className={`filtersection-btn ${selectedSort ? "active" : ""}`}
             isActive={!!selectedSort}
           />
           {showSortPopup && (

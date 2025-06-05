@@ -1,10 +1,9 @@
-// FollowDelete.jsx
 import PropTypes from "prop-types";
 import React from "react";
 import "./FollowDelete.css";
 
 export const FollowDelete = ({ className, tabType, onDelete }) => {
-  const buttonText = tabType === "follower" ? "Unfollow" : "Delete";
+  const buttonText = tabType === "follower" ? "Delete" : "Unfollow";
 
   return (
     <div className={`follow-delete-wrapper ${className}`} onClick={onDelete}>

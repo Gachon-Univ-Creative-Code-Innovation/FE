@@ -28,7 +28,11 @@ const SocialKakao = () => {
       <img
         src="/img/kakao_login.png"
         alt="카카오 로그인"
-        style={{ height: 60, width: 260, borderRadius: 7 }}
+        style={{
+          height: 60,
+          width: 260,
+          borderRadius: 6,
+        }}
       />
     </button>
   );

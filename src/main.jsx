@@ -5,7 +5,6 @@ import { App } from "./App";
 import "./index.css";
 import "normalize.css";
 
-
 createRoot(document.getElementById("app")).render(
   <StrictMode>
     <App />

@@ -7,7 +7,7 @@ import PaperPlaneIcon from "../../icons/PaperPlaneIcon/PaperPlaneIcon";
 import HistoryList from "../../components/HistoryList/HistoryList";
 import Readme from "../ShowReadme/ShowReadme";
 import Navbar2 from "../../components/Navbar2/Navbar2";
-import axios from "axios";
+import api from "../../api/local-instance";
 import "./GenerateReadmeScreen.css";
 
 export const GenerateReadmeScreen = () => {
@@ -29,14 +29,13 @@ export const GenerateReadmeScreen = () => {
     setShowLoader(true);
 
     try {
-      const apiUrl = `http://localhost:8000/api/career/readme`;
-      const token = localStorage.getItem("jwtToken");
-      const response = await axios.post(
+      const apiUrl = `http://localhost:8000/api/github-service/readme`;
+      //http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/github-service/readme  
+
+      const response = await api.post(
         apiUrl,
         { git_url: url },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Accept: "application/json" } }
       );
 
       if (response.data.status !== 200 || !response.data.data) {
@@ -114,12 +113,11 @@ export const GenerateReadmeScreen = () => {
       const fetchHistory = async () => {
         setShowLoader(true);
         try {
-          const userId = 312;
-          const apiUrl = `http://localhost:8000/api/career/db/user?userID=${userId}`;
-          const token = localStorage.getItem("jwtToken");
-          const response = await axios.get(apiUrl, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          const apiUrl = `http://localhost:8000/api/github-service/db/user`;
+          // http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/github-service/db/user
+          
+            
+          const response = await api.get(apiUrl, { headers: { Accept: "application/json" } });
 
           if (
             response.data.status !== 200 ||
@@ -216,7 +214,7 @@ export const GenerateReadmeScreen = () => {
               />
             </div>
           ) : (
-            /* ─── “History” 화면 (HistoryList) ─── */
+            /* “History” 화면 (HistoryList) ─*/
             <div className="historylist-wrapper">
               <HistoryList
                 items={historyItems}
@@ -225,17 +223,12 @@ export const GenerateReadmeScreen = () => {
             </div>
           )}
 
-          {/* ─── ReadmeGenerator(로딩 스피너) ─── */}
-          {/*
-            “Generate README” 탭이고, showLoader === true일 때만 마운트(렌더)됩니다.
-            showLoader가 false라면 <ReadmeGenerator> 자체가 렌더되지 않으므로
-            스피너도 절대 보이지 않습니다.
-          */}
+          {/* ReadmeGenerator(로딩 스피너) */}
           {selectedTab === "Generate README" && showLoader && (
             <ReadmeGenerator active={showLoader} onDone={handleReadmeDone} />
           )}
 
-          {/* ─── Readme 미리보기 팝업 ─── */}
+          {/* Readme 미리보기 팝업 */}
           {showReadmePopup && (
             <div className="readme-popup-overlay">
               <Readme
