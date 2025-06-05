@@ -31,7 +31,7 @@ export const Blog = () => {
   // 사용자 정보 및 팔로잉 상태 조회
   useEffect(() => {
     api
-      .get(`/api/user-service/details/${viewedUserId}`)
+      .get(`/user-service/details/${viewedUserId}`)
       .then((res) => {
         const data = res.data.data;
         setNickname(data.nickname || "");
@@ -41,7 +41,7 @@ export const Blog = () => {
       .catch((err) => console.error("사용자 정보 조회 실패:", err));
 
     api
-      .get(`/api/user-service/follow/followees`, {
+      .get(`/user-service/follow/followees`, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       })
       .then((res) => {
@@ -57,7 +57,7 @@ export const Blog = () => {
     setLoading(true);
 
     api
-      .get(`/api/blog-service/posts/user/${viewedUserId}?page=${page}`)
+      .get(`/blog-service/posts/user/${viewedUserId}?page=${page}`)
       .then((res) => {
         const data = res.data.data || [];
         setPosts((prev) => [...prev, ...data]);
@@ -91,7 +91,7 @@ export const Blog = () => {
 
     if (isFollowing) {
       api
-        .delete(`/api/user-service/follow`, {
+        .delete(`/user-service/follow`, {
           headers: { Authorization: `Bearer ${jwtToken}` },
           data: { followeeId: viewedUserId },
         })
@@ -105,7 +105,7 @@ export const Blog = () => {
     } else {
       api
         .post(
-          `/api/user-service/follow`,
+          `/user-service/follow`,
           { followeeId: viewedUserId },
           { headers: { Authorization: `Bearer ${jwtToken}` } }
         )
@@ -123,7 +123,7 @@ export const Blog = () => {
   // 포트폴리오 이동
   const handlePortfolioClick = () => {
     api
-      .get("/api/portfolio-service/user", {
+      .get("/portfolio-service/user", {
         params: { userID: viewedUserId },
         headers: { accept: "application/json" },
       })
