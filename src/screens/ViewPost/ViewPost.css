@@ -46,6 +46,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover; /* cover: 박스를 가득 채우면서 비율 유지, 잘리는 부분 발생 */
+  object-position: center;
 }
 
 .view-post-meta-line {
@@ -270,6 +271,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover; /* cover: 박스를 가득 채우면서 비율 유지, 잘리는 부분 발생 */
+  object-position: center;
 }
 
 .comment-content-block {
