@@ -30,6 +30,7 @@ function buildNestedComments(flatComments) {
       text: c.content,
       authorId: c.authorId, // 댓글 작성자의 ID
       authorProfileUrl: c.authorProfileUrl, // 댓글 작성자의 프로필 이미지 URL
+      isDeleted : c.isDeleted,
       // createTime(예: "2025-06-03T05:00:00")을 "2025.06.03" 형태로 포맷
       date: c.createTime.slice(0, 10).replace(/-/g, "."),
       replies: []
@@ -268,16 +269,6 @@ const ViewPost = () => {
       console.error("답글 삭제 실패:", error);
       alert("답글 삭제에 실패했습니다.");
     }
-
-    // setComments(comments.map(comment =>
-    //   comment.id === commentId
-    //     ? {
-    //         ...comment,
-    //         replies: comment.replies.filter(reply => reply.id !== replyId)
-    //       }
-    //     : comment
-    // ));
-    // setOpenMenuId(null);
   };
 
   // 댓글 수정 모드 진입
@@ -523,13 +514,15 @@ const ViewPost = () => {
                     )}
                     <div className="comment-meta">
                       <span>{comment.date}</span>
-                      <span
-                        className="reply-btn"
-                        style={{ cursor: "pointer", color: "#6c6c8a", marginLeft: 8 }}
-                        onClick={() => setReplyTo(replyTo === comment.id ? null : comment.id)}
-                      >
-                        reply
-                      </span>
+                      {!comment.isDeleted && (
+                        <span
+                          className="reply-btn"
+                          style={{ cursor: "pointer", color: "#6c6c8a", marginLeft: 8 }}
+                          onClick={() => setReplyTo(replyTo === comment.id ? null : comment.id)}
+                        >
+                          reply
+                        </span>
+                      )}
                     </div>
                     {/* 답글 입력창 */}
                     {replyTo === comment.id && (
