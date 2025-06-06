@@ -13,7 +13,7 @@ import ScrollUp from "../../icons/ScrollUp/ScrollUp";
 import CommentIcon from "../../icons/CommentIcon/CommentIcon";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import "./MainPageAfter.css";
-import api from "../../api/instance";
+import api from "../../api/local-instance";
 
 export const MainPageAfter = () => {
   const [posts, setPosts] = useState([]);

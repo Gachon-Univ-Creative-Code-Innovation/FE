@@ -6,7 +6,7 @@ import FollowButton from "../../components/FollowButton/FollowButton";
 import SendIcon from "../../icons/SendIcon/SendIcon";
 import dompurify from "dompurify";
 import { Categories } from "../../constants/categories";
-import api from "../../api/instance"; 
+import api from "../../api/local-instance"; 
 import realApi from "../../api/instance"; 
 
 function getLabelByKey(key) {
@@ -122,6 +122,7 @@ const ViewPost = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [editReplyId]);
 
+
   // 댓글 등록
   const handleAddComment = async() => {
     try {
@@ -156,6 +157,7 @@ const ViewPost = () => {
       alert(errMsg);
     }
   };
+
 
   // 답글 등록
   const handleAddReply = async(commentId) => {
@@ -194,6 +196,8 @@ const ViewPost = () => {
     }
   };
 
+
+
   // 댓글 조회
   useEffect(() => {
     const fetchComments = async () => {
@@ -217,9 +221,30 @@ const ViewPost = () => {
   }, [postId]);
 
   // 댓글 삭제
-  const handleDeleteComment = (commentId) => {
-    setComments(comments.filter(comment => comment.id !== commentId));
-    setOpenMenuId(null);
+  const handleDeleteComment = async(commentId) => {
+    try {
+      const token = localStorage.getItem("jwtToken");
+      await api.delete(`/blog-service/comments/${commentId}`, {
+        headers: {
+          Authorization: `Bearer ${token}` // 토큰 필요 시
+        }
+      });
+  
+      // 프론트 상태에서 삭제
+      // 2) 생성 후 전체 댓글을 다시 조회해서, 최신 상태의 중첩 구조를 반영
+      const res = await api.get(
+        `/blog-service/comments/${postId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const flatList = res.data.data.commentList;
+      const nested = buildNestedComments(flatList);
+      setComments(nested);
+      // setComments(comments.filter(comment => comment.commentId !== commentId));
+      // setOpenMenuId(null);
+    } catch (error) {
+      console.error("댓글 삭제 실패:", error);
+      alert("댓글 삭제에 실패했습니다.");
+    }
   };
 
   // 답글 삭제
@@ -444,7 +469,7 @@ const ViewPost = () => {
                 onChange={e => setCommentValue(e.target.value)}
                 onKeyDown={e => { if (e.key === "Enter") handleAddComment(); }}
           />
-              <button className="comment-send-btn" onClick={handleAddComment}>
+          <button className="comment-send-btn" onClick={handleAddComment}>
                 <SendIcon />
           </button>
         </div>
