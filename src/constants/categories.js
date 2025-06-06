@@ -27,3 +27,11 @@ export const Categories = [
     { key: 9,  label: "IT 뉴스" },
     { key: 10, label: "기타" },
   ];
+
+  export const MatchingCategories = [
+    { key: null, label: "전체" },
+    { key: 6,  label: "프로젝트" },
+    { key: 10, label: "기타" },
+    { key: 11, label: "스터디" },
+    { key: 12, label: "공모전" },
+  ]
