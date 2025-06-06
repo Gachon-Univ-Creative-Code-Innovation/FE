@@ -46,7 +46,7 @@ export const Community = () => {
           </div>
 
           <CommunityTab />
-
+          {/*검색할 때에만 보이게하기 - 기본 글 목록 조회시에는 최신순으로만 보여줌!*/}
           <div className="community-frame-sort">
             <SortButton onChange={(option) => setSelectedSort(option)} />
           </div>
