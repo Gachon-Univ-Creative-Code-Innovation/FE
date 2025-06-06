@@ -15,7 +15,7 @@ import { SaveDraftComponent } from "../../components/SaveDraftComponent/SaveDraf
 import { PostComponent } from "../../components/PostComponent/PostComponent";
 import { PublishComponent } from "../../components/PublishComponent/PublishComponent";
 import { PostCategories } from "../../constants/categories";
-import api from "../../api/local-instance";
+import api from "../../api/instance";
 
 
 export default function Write() {
