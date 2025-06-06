@@ -16,6 +16,8 @@ import Navbar from "../../components/Navbar/Navbar";
 import "./MainPageBefore.css";
 import api from "../../api/local-instance";
 import { head, header } from "framer-motion/client";
+import SearchModal from "../../components/SearchModal/SearchModal";//추가
+
 
 
 export const MainPageBefore = () => {
@@ -25,6 +27,7 @@ export const MainPageBefore = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedTab, setSelectedTab] = useState("Hot");
   const [scrolled, setScrolled] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false); //추가
   const observer = useRef();
   const navigate = useNavigate();
 
@@ -190,6 +193,7 @@ export const MainPageBefore = () => {
         <Navbar
           onShowPopup={() => setShowPopup(true)}
           onReadmeClick={handleReadmeClick}
+          onSearch={() => setIsSearchOpen(true)} //추가
           scrolled={scrolled}
           isLoggedIn={false}
         />
@@ -258,6 +262,10 @@ export const MainPageBefore = () => {
             <LoginRequiredPopup onClose={() => setShowPopup(false)} />
           )}
         </AnimatePresence>
+
+        {isSearchOpen && (
+          <SearchModal onClose={() => setIsSearchOpen(false)} /> //추가
+        )}
       </div>
     </PageTransitionWrapper>
   );
