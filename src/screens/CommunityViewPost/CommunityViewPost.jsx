@@ -39,19 +39,9 @@ const CommunityViewPost = () => {
   const myName = "배고픈 송희";
 
   // 글 데이터를 상태로 관리
-  const [post, setPost] = useState({
-    id: 1,
-    title: "Title",
-    author: "배고픈 송희",
-    date: "2025.03.26",
-    category: "공모전",
-    tag: "#배고파",
-    content: `집에 들어서자마자 은은하게 퍼지는 포근한 향기, 침대에 누울 때마다 느껴지는 산뜻한 상쾌함. 혹시 이런 감각을 경험해 보셨나요? 오늘은 일상의 작은 행복을 주는 숨겨진 아이템 '리넨워터(Linen Water)'를 소개하려 합니다.
+  const [post, setPost] = useState(null);
+  const [loadingPost, setLoadingPost] = useState(true);
 
-리넨워터란 무엇일까요? 이름만 들으면 조금 생소할 수도 있지만, 쉽게 말해 리넨워터는 천연 에센셜 오일과 정제수 등을 섞어 만든 섬유 전용 향수라고 할 수 있습니다. 주로 침구류나 옷감에 뿌려서 사용하는 제품인데요, 일반적인 섬유유연제와는 다르게 끈적이지 않고 잔여물이 거의 없어 옷감이나 피부에 부담 없이 사용할 수 있는 게 큰 장점입니다.
-
-리넨워터의 가장 큰 특징은 바로 그 은은한 향기입니다. 일반적인 향수나 섬유유연제보다 훨씬 가벼운 느낌으로, 자극적이지 않은 부드러운 향기가 오랫동안 지속됩니다. 또한, 향기뿐 아니라 탈취와 항균 효과까지 있어서 생활 속 다양한 상황에서 활용도가 높습니다.`,
-  });
 
   // HTML 컨텐츠를 안전하게 렌더링하는 함수 (이미지 포함)
   const renderContent = (content) => {
@@ -122,6 +112,9 @@ const CommunityViewPost = () => {
         });
       } catch (err) {
         console.error("게시글 상세 조회 실패", err);
+        navigate(-1);
+      } finally {
+        setLoadingPost(false);
       }
     };
 
@@ -327,7 +320,28 @@ const handleMatchingClick = async () => {
 };
 
 
-  const isMyPost = post.author === myName;
+
+// --- 포스트 조회 로딩 중일 때 처리 ---
+if (loadingPost) {
+  return (
+    <div className="view-post-bg">
+      <Navbar2 />
+      <div className="viewpost-loading">로딩 중...</div>
+    </div>
+  );
+}
+
+// --- 게시글이 없을 때 처리 ---
+if (!post) {
+  return (
+    <div className="view-post-bg">
+      <Navbar2 />
+      <div className="viewpost-notfound">게시글을 찾을 수 없습니다.</div>
+    </div>
+  );
+}
+
+  // const isMyPost = post.author === myName;
 
   return (
     <div className="view-post-bg">
@@ -337,7 +351,7 @@ const handleMatchingClick = async () => {
         <div className="view-post-header">
           <div className="view-post-title-line" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h1 className="view-post-title">{post.title}</h1>
-            {isMyPost && (
+            {post.author === myName && (
               <div className="comment-menu-wrapper">
                 <div
                   className="comment-menu"
@@ -373,7 +387,7 @@ const handleMatchingClick = async () => {
               <span>{post.author}</span>
               <span>{post.date}</span>
             </div>
-            {!isMyPost && <FollowButton />}
+            {post.author !== myName  && <FollowButton />}
           </div>
           <div className="view-post-tags-line">
             <span className="view-post-category">{post.category}</span>
@@ -388,7 +402,7 @@ const handleMatchingClick = async () => {
               {renderContent(post.content)}
             </div>
             {/* 본인 글인 경우 매칭하기 버튼 */}
-            {isMyPost && (
+            {post.author === myName  && (
               <div className="matching-button-wrapper">
                 <button className="matching-button" onClick={handleMatchingClick}>
                   🔗 USER 매칭 ✨

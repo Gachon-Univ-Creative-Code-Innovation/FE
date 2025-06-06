@@ -135,7 +135,7 @@ export default function CommunityWrite() {
       title: title.trim(),
       content: updatedHtml,
       summary: null,
-      tagNameList: [],
+      tagNameList: tags,
       categoryCode: category ? Number(category) : null,
       postType: "MATCHING",
     };
