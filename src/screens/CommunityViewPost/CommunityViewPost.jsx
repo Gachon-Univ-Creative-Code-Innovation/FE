@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import "./CommunityViewPost.css";
 import Navbar2 from "../../components/Navbar2/Navbar2";
 import FollowButton from "../../components/FollowButton/FollowButton";
@@ -9,6 +10,7 @@ import api from "../../api/local-instance";
 
 const CommunityViewPost = () => {
   const navigate = useNavigate();
+  const { postId } = useParams();
   const location = useLocation();
   
   const [replyTo, setReplyTo] = useState(null);
@@ -69,35 +71,63 @@ const CommunityViewPost = () => {
     );
   };
 
-  // 수정된 데이터를 받아와서 글 정보 업데이트
+  // // 수정된 데이터를 받아와서 글 정보 업데이트
+  // useEffect(() => {
+  //   if (location.state?.updatedPost) {
+  //     const updatedPost = location.state.updatedPost;
+  //     setPost(prevPost => ({
+  //       ...prevPost,
+  //       title: updatedPost.title || prevPost.title,
+  //       category: updatedPost.category || prevPost.category,
+  //       content: updatedPost.content || prevPost.content,
+  //       tag: updatedPost.tags || prevPost.tag, // tags -> tag 매핑
+  //       id: updatedPost.id || prevPost.id
+  //     }));
+  //     // state 정리
+  //     window.history.replaceState({}, document.title);
+  //   } else if (location.state?.newPost) {
+  //     // 새 글인 경우
+  //     const newPost = location.state.newPost;
+  //     setPost({
+  //       id: newPost.id,
+  //       title: newPost.title,
+  //       author: newPost.author,
+  //       date: new Date(newPost.createdAt).toISOString().slice(0, 10).replace(/-/g, '.'),
+  //       category: newPost.category,
+  //       tag: newPost.tags,
+  //       content: newPost.content
+  //     });
+  //     window.history.replaceState({}, document.title);
+  //   }
+  // }, [location.state]);
+
+  // 게시글 상세 조회
   useEffect(() => {
-    if (location.state?.updatedPost) {
-      const updatedPost = location.state.updatedPost;
-      setPost(prevPost => ({
-        ...prevPost,
-        title: updatedPost.title || prevPost.title,
-        category: updatedPost.category || prevPost.category,
-        content: updatedPost.content || prevPost.content,
-        tag: updatedPost.tags || prevPost.tag, // tags -> tag 매핑
-        id: updatedPost.id || prevPost.id
-      }));
-      // state 정리
-      window.history.replaceState({}, document.title);
-    } else if (location.state?.newPost) {
-      // 새 글인 경우
-      const newPost = location.state.newPost;
-      setPost({
-        id: newPost.id,
-        title: newPost.title,
-        author: newPost.author,
-        date: new Date(newPost.createdAt).toISOString().slice(0, 10).replace(/-/g, '.'),
-        category: newPost.category,
-        tag: newPost.tags,
-        content: newPost.content
-      });
-      window.history.replaceState({}, document.title);
-    }
-  }, [location.state]);
+    const fetchPostDetail = async () => {
+      try {
+        console.log("postid", postId)
+        const token = localStorage.getItem("jwtToken");
+        const res = await api.get(`/blog-service/posts/${postId}`,{
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = res.data.data;
+        setPost({
+          id: data.postId,
+          title: data.title,
+          author: data.authorNickname,
+          date: new Date(data.createdAt).toISOString().slice(0, 10).replace(/-/g, "."),
+          category: data.categoryCode, // categoryName이 아니라면 추후 매핑 필요
+          tag: Array.from(data.tagNameList).join(", "),
+          content: data.content,
+        });
+      } catch (err) {
+        console.error("게시글 상세 조회 실패", err);
+      }
+    };
+
+    fetchPostDetail();
+  }, [postId]);
+
 
   // 바깥 클릭 시 메뉴 닫기
   useEffect(() => {

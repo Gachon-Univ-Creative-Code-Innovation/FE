@@ -107,7 +107,7 @@ const AnimatedRoutes = () => {
         {/* 커뮤니티 */}
         <Route path="/community" element={<Community />} />
         <Route path="/community/write" element={<CommunityWrite />} />
-        <Route path="/community/viewpost/:id" element={<CommunityViewPost />} />
+        <Route path="/community/viewpost/:postId" element={<CommunityViewPost />} />
 
         {/* 포트폴리오 */}
         <Route path="/portfolio" element={<PortfolioScreen />} />
