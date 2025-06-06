@@ -6,7 +6,7 @@ import FollowButton from "../../components/FollowButton/FollowButton";
 import SendIcon from "../../icons/SendIcon/SendIcon";
 import dompurify from "dompurify";
 import { Categories } from "../../constants/categories";
-import api from "../../api/local-instance"; 
+import api from "../../api/instance"; 
 
 function getLabelByKey(key) {
   const category = Categories.find((c) => c.key === key);

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import CommentIcon from "../../icons/CommentIcon/CommentIcon";
 import "./CommunityPostList.css";
 import { useNavigate } from "react-router-dom";
-import api from "../../api/local-instance"
+import api from "../../api/instance"
 import { MatchingCategories } from "../../constants/categories";
 
 

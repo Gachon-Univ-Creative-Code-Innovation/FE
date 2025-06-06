@@ -7,7 +7,7 @@ import { SaveDraftComponent } from "../../components/SaveDraftComponent/SaveDraf
 import { PostComponent } from "../../components/PostComponent/PostComponent";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { MatchingCategories } from "../../constants/categories";
-import api from "../../api/local-instance"
+import api from "../../api/instance"
 
 
 export default function CommunityWrite() {
