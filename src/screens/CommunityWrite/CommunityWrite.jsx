@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "./CommunityWrite.css";
@@ -14,50 +14,6 @@ const CommunityCategories = [
   { key: "공모전", label: "공모전" },
   { key: "스터디", label: "스터디" },
   { key: "기타", label: "기타" }
-];
-
-// ReactQuill 모듈 설정
-const modules = {
-  toolbar: [
-    [{ header: [1, 2, 3, 4, 5, 6, false] }],
-    [{ font: [] }],
-    ["bold", "italic", "underline", "strike"],
-    ["blockquote", "code-block"],
-    [{ color: [] }, { background: [] }],
-    [{ script: "sub" }, { script: "super" }],
-    [{ list: "ordered" }, { list: "bullet" }],
-    [{ indent: "-1" }, { indent: "+1" }],
-    [{ align: [] }],
-    ["link", "image", "video"],
-    ["clean"]
-  ],
-  keyboard: {
-    bindings: {
-      "shift enter": {
-        key: "Enter",
-        shiftKey: true,
-        handler(range) {
-          const currentFormat = this.quill.getFormat(range.index, 1);
-          this.quill.insertText(range.index, "\n", currentFormat);
-          this.quill.setSelection(range.index + 1, 0);
-          return false;
-        }
-      }
-    }
-  },
-  clipboard: {
-    matchVisual: false
-  }
-};
-
-const formats = [
-  "header", "font",
-  "bold", "italic", "underline", "strike",
-  "blockquote", "code-block",
-  "color", "background",
-  "script", "list", "bullet", "indent",
-  "align",
-  "link", "image", "video"
 ];
 
 export default function CommunityWrite() {
@@ -120,20 +76,118 @@ export default function CommunityWrite() {
     const miss = getMissingFields();
     if (miss.length) return alert(`${miss.join(", ")}을(를) 입력해 주세요!`);
     
+    
+    const content = mode === "basic" ? basicValue : markdownValue;
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(content, "text/html");
+    const imgElements = Array.from(doc.querySelectorAll("img"));
+
+    for (const imgEl of imgElements) {
+      const src = imgEl.getAttribute("src") || "";
+      if (src.startsWith("data:")) {
+        const originalFile = imageNameMap.current[src];
+        try {
+          const token = localStorage.getItem("jwtToken");
+          const presignedRes = await api.post(
+            `/blog-service/s3/upload-url?fileName=${encodeURIComponent(originalFile.name)}`,
+            null,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          const { presignedUrl, s3ObjectUrl } = presignedRes.data.data;
+
+          await fetch(presignedUrl, {
+            method: "PUT",
+            body: originalFile,
+            headers: { "Content-Type": originalFile.type },
+          });
+
+          imgEl.setAttribute("src", s3ObjectUrl);
+        } catch (uploadErr) {
+          console.error("이미지 업로드 실패:", uploadErr);
+          alert("이미지 업로드 실패");
+          return;
+        }
+      } else if (src.startsWith("https")) {
+        const afterSlash = src.split("/post/")[1] || "";
+        const encodedFileName = afterSlash.split("?")[0];
+        const decodedFileName = decodeURIComponent(encodedFileName);
+        imgEl.setAttribute("src", `post/${decodedFileName}`);
+      }
+    }
+
+    const updatedHtml = doc.body.innerHTML;
+    const tagNameList = tags
+      .split(",")
+      .map((tag) => tag.trim().replace(/^#/, ""))
+      .filter((tag) => tag.length > 0);
+
+    const payload = {
+      parentPostId: null,
+      draftPostId: null,
+      title: title.trim(),
+      content: updatedHtml,
+      summary: null,
+      tagNameList: null,
+      categoryCode: category ? Number(category) : null,
+      postType: "MATCHING",
+    };
+    
+
+
+  // try {
+  //   const token = localStorage.getItem("jwtToken");
+  //   let response;
+  //   if (isEditMode && postId) {
+  //     response = await api.patch(`/blog-service/posts/${postId}`, payload, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
+  //   } else {
+  //     response = await api.post(`/blog-service/posts`, payload, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
+  //   }
+
+  //   const msg = response.data?.message;
+  //   alert(msg);
+
+  //   localStorage.removeItem("communityDraft");
+  //   navigate(`/community/viewpost/${response.data?.data || postId}`, {
+  //     state: {
+  //       [isEditMode ? "updatedPost" : "newPost"]: {
+  //         ...payload,
+  //         id: response.data?.data || postId,
+  //         author: "배고픈 송희",
+  //         createdAt: new Date().toISOString(),
+  //       },
+  //     },
+  //   });
+  // } catch (err) {
+  //   console.error("게시글 등록/수정 오류:", err);
+  //   alert(err.response?.data?.message || "게시글 저장 중 오류 발생");
+  // }
+
+
+
+  const token = localStorage.getItem("jwtToken");
+  let response;
     if (isEditMode) {
       // 수정 모드인 경우
-      const updatedPostData = {
-        id: postData?.id,
-        title,
-        category,
-        content,
-        tags,
-        updatedAt: new Date().toISOString()
-      };
+      // const updatedPostData = {
+      //   id: postData?.id,
+      //   title,
+      //   category,
+      //   content,
+      //   tags,
+      //   updatedAt: new Date().toISOString()
+      // };
       
       try {
         // 실제 서비스에서는 여기서 API 호출
         // await updatePost(updatedPostData);
+
+        response = await api.patch(`/blog-service/posts/${postId}`, payload, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         
         console.log("글 수정 완료:", updatedPostData);
         alert("글이 수정되었습니다!");
@@ -155,19 +209,23 @@ export default function CommunityWrite() {
       }
     } else {
       // 새 글 작성인 경우
-      const newPostData = {
-        id: Date.now(), // 실제로는 서버에서 생성된 ID 사용
-        title,
-        category,
-        content,
-        tags,
-        author: "배고픈 송희", // 실제로는 로그인한 사용자 정보
-        createdAt: new Date().toISOString()
-      };
+      // const newPostData = {
+      //   id: Date.now(), // 실제로는 서버에서 생성된 ID 사용
+      //   title,
+      //   category,
+      //   content,
+      //   tags,
+      //   author: "배고픈 송희", // 실제로는 로그인한 사용자 정보
+      //   createdAt: new Date().toISOString()
+      // };
       
       try {
         // 실제 서비스에서는 여기서 API 호출
         // const response = await createPost(newPostData);
+
+        response = await api.post(`/blog-service/posts`, payload, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         
         console.log("새 글 작성 완료:", newPostData);
         alert("게시되었습니다!");
@@ -188,6 +246,103 @@ export default function CommunityWrite() {
       }
     }
   };
+
+
+  // =============================================================================
+  // 1) Quill 이미지 업로드 핸들러 함수들 (modules 선언보다 위에 위치)
+  // =============================================================================
+  // **이미지 data URL ↔ 원본 파일명 매핑을 보관할 Map**
+  const imageNameMap = useRef({});
+
+  // (a) 툴바의 “이미지” 버튼을 클릭하면, 숨겨둔 file input 열기
+  const handleImageInsert = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  // (b) 파일이 선택되면 FileReader로 data URL을 생성 → Quill에 삽입
+  const onQuillImageSelect = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result;
+      imageNameMap.current[dataUrl] = file;
+
+      const quill = reactQuillRef.current.getEditor();
+      // 현재 커서 위치(없으면 맨 뒤) 구하기
+      const range = quill.getSelection();
+      const index = range ? range.index : quill.getLength();
+      // data URL로 이미지 삽입
+      quill.insertEmbed(index, "image", dataUrl);
+      quill.setSelection(index + 1, 0);
+    };
+    reader.readAsDataURL(file);
+
+    // 선택 후 input 초기화
+    e.target.value = "";
+  };
+
+  // =============================================================================
+  // 2) useMemo로 한 번만 modules/ formats 객체 생성
+  // =============================================================================
+
+
+  // ReactQuill 모듈 설정
+  const modules = useMemo(() => {
+    return {
+      toolbar: {
+        container : [
+          [{ header: [1, 2, 3, 4, 5, 6, false] }],
+          [{ font: [] }],
+          ["bold", "italic", "underline", "strike"],
+          ["blockquote", "code-block"],
+          [{ color: [] }, { background: [] }],
+          [{ script: "sub" }, { script: "super" }],
+          [{ list: "ordered" }, { list: "bullet" }],
+          [{ indent: "-1" }, { indent: "+1" }],
+          [{ align: [] }],
+          ["link", "image", "video"],
+          ["clean"]
+        ],
+        handlers: {
+          image: handleImageInsert,
+        },
+      },
+      keyboard: {
+        bindings: {
+          "shift enter": {
+            key: "Enter",
+            shiftKey: true,
+            handler(range) {
+              const currentFormat = this.quill.getFormat(range.index, 1);
+              this.quill.insertText(range.index, "\n", currentFormat);
+              this.quill.setSelection(range.index + 1, 0);
+              return false;
+            }
+          }
+        }
+      },
+      clipboard: {
+        matchVisual: false
+      }};
+  }, []);
+
+  const formats = useMemo(() =>{
+    return [
+    "header", "font",
+    "bold", "italic", "underline", "strike",
+    "blockquote", "code-block",
+    "color", "background",
+    "script", "list", "bullet", "indent",
+    "align",
+    "link", "image", "video"
+  ]}, []);
+
+
+  
 
   // 임시 저장된 초안 불러오기
   const loadDraft = () => {
