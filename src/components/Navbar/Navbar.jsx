@@ -10,7 +10,7 @@ import { useAlarmStore } from "../../store/useAlarmStore";
 import { useWebSocket } from "../../contexts/WebSocketContext";
 import "./Navbar.css";
 
-const Navbar = ({ onShowPopup, scrolled, isLoggedIn }) => {
+const Navbar = ({ onShowPopup, scrolled, isLoggedIn, onSearch }) => { // onSearch prop 추가함
   const navigate = useNavigate();
   const location = useLocation();
   const [showSidebar, setShowSidebar] = useState(false);
@@ -52,7 +52,13 @@ const Navbar = ({ onShowPopup, scrolled, isLoggedIn }) => {
 
           <div className="navbar-right">
             <div className="navbar-icons">
-              <img className="navbar-icon" alt="Icon" src="/img/icon.svg" />
+              <img
+                  className="navbar-icon"
+                  alt="Icon"
+                  src="/img/icon.svg"
+                  onClick={onSearch}    // 추가
+                  style={{ cursor: "pointer" }}
+                />
               <div style={{ position: "relative", display: "inline-block" }}>
                 <NoticeBell
                   className="navbar-bell"

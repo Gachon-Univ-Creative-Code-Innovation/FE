@@ -12,7 +12,10 @@ import "./MyBlog.css";
 export const MyBlog = () => {
   const navigate = useNavigate();
 
-  // 사용자 정보
+  // 로그인 토큰만 있으면 내 블로그 접근 가능
+  const jwtToken = localStorage.getItem("jwtToken") || "";
+
+  // 프로필 정보 상태
   const [nickname, setNickname] = useState("");
   const [profileUrl, setProfileUrl] = useState("");
   const [githubUrl, setGithubUrl] = useState("");
@@ -27,46 +30,61 @@ export const MyBlog = () => {
 
   const observer = useRef();
 
-  // 마운트 시 사용자 정보 및 팔로워/팔로잉 불러오기
+  // 1) 내 정보 & 팔로우/팔로잉 조회
   useEffect(() => {
+    if (!jwtToken) {
+      navigate("/login");
+      return;
+    }
+
     api
-      .get("/user-service/user/patch")
+      .get("/user-service/user/patch", {
+        headers: { Authorization: jwtToken },
+      })
       .then((res) => {
         const data = res.data.data;
         setNickname(data.nickname || "");
         setProfileUrl(data.profileUrl || "");
         setGithubUrl(data.githubUrl || "");
       })
-      .catch((err) => console.error(err));
+      .catch((err) => console.error("내 정보 조회 에러:", err));
 
     api
-      .get("/user-service/follow/followers")
+      .get("/user-service/follow/followers", {
+        headers: { Authorization: jwtToken },
+      })
       .then((res) => setFollowerCount((res.data.data || []).length))
-      .catch((err) => console.error(err));
+      .catch((err) => console.error("팔로워 조회 에러:", err));
 
     api
-      .get("/user-service/follow/followees")
+      .get("/user-service/follow/followees", {
+        headers: { Authorization: jwtToken },
+      })
       .then((res) => setFollowingCount((res.data.data || []).length))
-      .catch((err) => console.error(err));
-  }, []);
+      .catch((err) => console.error("팔로잉 조회 에러:", err));
+  }, [jwtToken, navigate]);
 
-  // 페이지 변경 시 게시글 불러오기
+  // 2) 내 게시글 목록 불러오기
   useEffect(() => {
-    if (!hasMore || loading) return;
+    if (!jwtToken || !hasMore) return;
     setLoading(true);
 
     api
-      .get(`/blog-service/posts?page=${page}`)
+      .get(`/blog-service/posts?page=${page}`, {
+        headers: { Authorization: jwtToken },
+      })
       .then((res) => {
         const data = res.data.data || [];
         setPosts((prev) => [...prev, ...data]);
-        if (data.length === 0) setHasMore(false);
+        if (data.length === 0) {
+          setHasMore(false);
+        }
       })
-      .catch((err) => console.error(err))
+      .catch((err) => console.error("게시글 조회 에러:", err))
       .finally(() => setLoading(false));
-  }, [page, hasMore, loading]);
+  }, [page, hasMore, jwtToken]);
 
-  // 마지막 카드 감지하여 페이지 증가
+  // 3) 무한 스크롤: 마지막 카드 보이면 페이지 증가
   const lastPostRef = useCallback(
     (node) => {
       if (loading) return;
@@ -83,9 +101,12 @@ export const MyBlog = () => {
 
   return (
     <PageTransitionWrapper>
+      {/* 내 블로그이므로 Navbar */}
       <Navbar isLoggedIn={true} onShowPopup={() => {}} />
+
       <div className="myblog-wrapper">
         <div className="myblog-content-frame">
+          {/* 프로필 헤더 */}
           <header className="myblog-header">
             <div className="myblog-profile-container">
               <img
@@ -99,6 +120,7 @@ export const MyBlog = () => {
               <div className="myblog-profile-details">
                 <div className="myblog-username-row">
                   <div className="myblog-username">{nickname || "사용자"}</div>
+                  {/* 설정 아이콘 */}
                   <SettingIcon
                     className="myblog-icon-subtract"
                     style={{ cursor: "pointer" }}
@@ -116,6 +138,7 @@ export const MyBlog = () => {
                   </div>
                 </div>
               </div>
+
               <div className="myblog-side-buttons">
                 <div
                   onClick={() => navigate("/portfolio")}
@@ -127,7 +150,9 @@ export const MyBlog = () => {
                   />
                 </div>
                 <div
-                  onClick={() => githubUrl && window.open(githubUrl, "_blank")}
+                  onClick={() =>
+                    githubUrl ? window.open(githubUrl, "_blank") : null
+                  }
                   style={{
                     cursor: githubUrl ? "pointer" : "default",
                     marginLeft: "8px",
@@ -139,6 +164,7 @@ export const MyBlog = () => {
             </div>
           </header>
 
+          {/* 게시글 섹션 */}
           <div className="myblog-post-section">
             <div className="myblog-post-header">
               <div className="myblog-tab-latest">
@@ -181,7 +207,7 @@ export const MyBlog = () => {
                 })}
               </div>
 
-              {/* 게시글이 없을 때 보여줄 메시지 */}
+              {/* 게시글이 없을 때 */}
               {!loading && posts.length === 0 && (
                 <div className="myblog-empty-message">
                   당신의 이야기를 기다리고 있습니다 ✍️
