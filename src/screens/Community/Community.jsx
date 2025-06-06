@@ -11,6 +11,7 @@ import "./Community.css";
 
 export const Community = () => {
   const navigate = useNavigate();
+  const [selectedTab, setSelectedTab] = useState("전체");
   const [selectedSort, setSelectedSort] = useState("최신순");
 
   const handleRecruitClick = () => {
@@ -45,13 +46,16 @@ export const Community = () => {
             />
           </div>
 
-          <CommunityTab />
-          {/*검색할 때에만 보이게하기 - 기본 글 목록 조회시에는 최신순으로만 보여줌!*/}
+          <CommunityTab 
+            selectedTab={selectedTab}
+            onTabChange={(tab) => setSelectedTab(tab)}
+          />
+          {/*검색할 때에만 보이게하면 안될까요? - 기본 글 목록 조회시에는 최신순으로만 보여줌!*/}
           <div className="community-frame-sort">
             <SortButton onChange={(option) => setSelectedSort(option)} />
           </div>
 
-          <CommunityPostList sortBy={selectedSort} />
+          <CommunityPostList sortBy={selectedSort} category = {selectedTab} />
         </div>
       </div>
     </PageTransitionWrapper>

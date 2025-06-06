@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import CommentIcon from "../../icons/CommentIcon/CommentIcon";
 import "./CommunityPostList.css";
 import api from "../../api/local-instance"
+import { MatchingCategories } from "../../constants/categories";
 
 // const DUMMY_DATA = [
 //   "제7회 서울교육 데이터 분석·활...",
@@ -26,28 +27,38 @@ import api from "../../api/local-instance"
 
 const ITEMS_PER_PAGE = 15;
 
-export const CommunityPostList = () => {
+export const CommunityPostList = ({sortBy, category}) => {
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const ITEMS_PER_PAGE = 15;
   const POST_TYPE = "MATCHING";
+  
 
-  // const [page, setPage] = useState(0);
-  // const totalPages = Math.ceil(DUMMY_DATA.length / ITEMS_PER_PAGE);
-
-  // const currentPageData = DUMMY_DATA.slice(
-  //   page * ITEMS_PER_PAGE,
-  //   (page + 1) * ITEMS_PER_PAGE
-  // );
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const token = localStorage.getItem("jwtToken");
+        let url = "";
+        const params = {page:page}
+
+        if(category == "전체"){
+            url = `/blog-service/posts/all`
+            params.postType = POST_TYPE;
+        } 
+        else {
+          // find()로 해당 label을 가진 객체를 찾는다
+          const found = MatchingCategories.find((cat) => cat.label === category);
+          const key = found ? found.key : null;
+          url = `/blog-service/posts/matching/category/${key}`
+
+        }
+        
         const res = await api.get(
-          `/blog-service/posts/all?postType=${POST_TYPE}&page=${page}`, {
+          url, {
             headers: { Authorization: `Bearer ${token}` },
+            params,
           }
         );
         const data = res.data.data;
@@ -60,11 +71,12 @@ export const CommunityPostList = () => {
     };
 
     fetchPosts();
-  }, [page]);
+  }, [category, page]);
 
   const handlePageChange = (newPage) => {
-    if (newPage >= 0 && newPage < totalPages) {
+    if (newPage >= 0 && newPage <= totalPages-1) {
       setPage(newPage);
+      console.log("page", newPage, page)
     }
   };
 
@@ -126,14 +138,14 @@ export const CommunityPostList = () => {
         <button
           className="communitypost-pagination-arrow"
           onClick={() => handlePageChange(page + 1)}
-          disabled={page === totalPages}
+          disabled={page === totalPages-1}
         >
           &#62;
         </button>
         <button
           className="communitypost-pagination-arrow"
           onClick={() => handlePageChange(totalPages - 1)}
-          disabled={page === totalPages}
+          disabled={page === totalPages-1}
         >
           &#187;
         </button>
