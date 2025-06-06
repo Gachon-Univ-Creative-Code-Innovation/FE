@@ -289,15 +289,34 @@ const ViewPost = () => {
   };
 
   // 댓글 수정 저장
-  const handleSaveEditComment = (commentId) => {
+  const handleSaveEditComment = async(commentId) => {
     if (!editCommentValue.trim()) return;
-    setComments(comments.map(comment =>
-      comment.id === commentId
-        ? { ...comment, text: editCommentValue }
-        : comment
-    ));
-    setEditCommentId(null);
-    setEditCommentValue("");
+    try {
+      const token = localStorage.getItem("jwtToken");
+      await api.patch(`/blog-service/comments/${commentId}`, {
+        content: editCommentValue,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+  
+       // 2) 생성 후 전체 댓글을 다시 조회해서, 최신 상태의 중첩 구조를 반영
+       const res = await api.get(
+        `/blog-service/comments/${postId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const flatList = res.data.data.commentList;
+      const nested = buildNestedComments(flatList);
+      setComments(nested);
+
+    
+      setEditCommentId(null);
+      setEditCommentValue("");
+    } catch (error) {
+      console.error("댓글 수정 실패:", error);
+      alert("댓글 수정에 실패했습니다.");
+    }
   };
 
   // 답글 수정 저장
