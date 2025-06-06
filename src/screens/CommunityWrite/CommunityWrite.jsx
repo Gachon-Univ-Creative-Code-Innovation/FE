@@ -142,43 +142,8 @@ export default function CommunityWrite() {
     console.log("payload, ", payload);
     
 
-
-  // try {
-  //   const token = localStorage.getItem("jwtToken");
-  //   let response;
-  //   if (isEditMode && postId) {
-  //     response = await api.patch(`/blog-service/posts/${postId}`, payload, {
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     });
-  //   } else {
-  //     response = await api.post(`/blog-service/posts`, payload, {
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     });
-  //   }
-
-  //   const msg = response.data?.message;
-  //   alert(msg);
-
-  //   localStorage.removeItem("communityDraft");
-  //   navigate(`/community/viewpost/${response.data?.data || postId}`, {
-  //     state: {
-  //       [isEditMode ? "updatedPost" : "newPost"]: {
-  //         ...payload,
-  //         id: response.data?.data || postId,
-  //         author: "배고픈 송희",
-  //         createdAt: new Date().toISOString(),
-  //       },
-  //     },
-  //   });
-  // } catch (err) {
-  //   console.error("게시글 등록/수정 오류:", err);
-  //   alert(err.response?.data?.message || "게시글 저장 중 오류 발생");
-  // }
-
-
-
-  const token = localStorage.getItem("jwtToken");
-  let response;
+    const token = localStorage.getItem("jwtToken");
+    let response;
     if (isEditMode) {
       // 수정 모드인 경우
       // const updatedPostData = {
@@ -217,21 +182,8 @@ export default function CommunityWrite() {
         alert("글 수정에 실패했습니다. 다시 시도해주세요.");
       }
     } else {
-      // 새 글 작성인 경우
-      // const newPostData = {
-      //   id: Date.now(), // 실제로는 서버에서 생성된 ID 사용
-      //   title,
-      //   category,
-      //   content,
-      //   tags,
-      //   author: "배고픈 송희", // 실제로는 로그인한 사용자 정보
-      //   createdAt: new Date().toISOString()
-      // };
-      
-      try {
-        // 실제 서비스에서는 여기서 API 호출
-        // const response = await createPost(newPostData);
 
+      try {
         response = await api.post(`/blog-service/posts`, payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -246,12 +198,6 @@ export default function CommunityWrite() {
         
         // 새로 작성된 글로 이동
         navigate(`/community/viewpost/${newPostId}`)
-        // navigate(`/community/viewpost`, {
-        //   state: {
-        //     newPost: newPostData,
-        //     isNew: true
-        //   }
-        // });
       } catch (error) {
         console.error("글 작성 실패:", error);
         console.error(error.response?.data);
