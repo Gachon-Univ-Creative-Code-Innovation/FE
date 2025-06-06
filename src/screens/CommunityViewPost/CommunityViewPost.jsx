@@ -303,12 +303,24 @@ const CommunityViewPost = () => {
   };
 
   // 글 삭제 버튼 클릭
-  const handleDeletePost = () => {
+  const handleDeletePost = async() => {
     if (window.confirm("정말로 이 글을 삭제하시겠습니까?")) {
       console.log("글 삭제하기");
       setOpenMenuId(null);
-      // navigate('/community');
-    }
+
+      // 게시글 삭제 API 호출 함수
+    try {
+      const token = localStorage.getItem("jwtToken");
+      await api.delete(`/blog-service/posts/${postId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      alert("글이 정상적으로 삭제되었습니다.");
+      navigate("/community");
+    } catch (err) {
+      console.error("삭제 실패:", err);
+      const msg = err.response?.data?.message;
+      alert(msg || "삭제 중 오류가 발생했습니다.");
+    }}
   };
 
 const handleMatchingClick = async () => {
