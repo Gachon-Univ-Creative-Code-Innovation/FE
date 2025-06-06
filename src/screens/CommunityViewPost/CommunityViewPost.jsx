@@ -46,6 +46,9 @@ const CommunityViewPost = () => {
   const [matchedIds, setMatchedIds] = useState([]);
 
   const myName = "배고픈 송희";
+  const myUserId = Number(localStorage.getItem("userId"));
+  
+
 
   // 글 데이터를 상태로 관리
   const [post, setPost] = useState(null);
@@ -115,12 +118,14 @@ const CommunityViewPost = () => {
           id: data.postId,
           title: data.title,
           author: data.authorNickname,
+          authorId: data.authorId,
           profileUrl: data.profileUrl,
           date: new Date(data.createdAt).toISOString().slice(0, 10).replace(/-/g, "."),
           category: data.categoryCode, // categoryName이 아니라면 추후 매핑 필요
           tag: Array.from(data.tagNameList).join(", "),
           content: data.content,
         });
+
       } catch (err) {
         console.error("게시글 상세 조회 실패", err);
         navigate("/community");
@@ -280,6 +285,8 @@ const CommunityViewPost = () => {
 
   // 글 수정 버튼 클릭 - Write 페이지로 이동
   const handleEditPost = () => {
+    console.log("navigate state:", { editMode: true, post });
+
     navigate('/community/write', { 
       state: { 
         editMode: true,
@@ -361,7 +368,7 @@ if (!post) {
         <div className="view-post-header">
           <div className="view-post-title-line" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h1 className="view-post-title">{post.title}</h1>
-            {post.author === myName && (
+            {post.authorId == myUserId && (
               <div className="comment-menu-wrapper">
                 <div
                   className="comment-menu"
@@ -377,7 +384,10 @@ if (!post) {
                   <div className="comment-menu-popup" ref={menuRef}>
                     <button 
                       className="comment-menu-item"
-                      onClick={handleEditPost}
+                      // onClick={handleEditPost}
+                      onClick={() => {
+                        navigate(`/community/write/${postId}`);
+                      }}
                     >
                       수정하기
                     </button>
@@ -402,7 +412,7 @@ if (!post) {
               <div className="view-post-meta-text">{post.author}</div>
               <div className="view-post-meta-text">{post.date}</div>
             </div>
-            {post.author !== myName  && <FollowButton />}
+            {post.authorId !== myUserId  && <FollowButton />}
           </div>
           <div className="view-post-tags-line">
             <span className="view-post-category">{getLabelByKey(post.category)}</span>
@@ -417,7 +427,7 @@ if (!post) {
               {renderContent(post.content)}
             </div>
             {/* 본인 글인 경우 매칭하기 버튼 */}
-            {post.author === myName  && (
+            {post.authorId === myUserId  && (
               <div className="matching-button-wrapper">
                 <button className="matching-button" onClick={handleMatchingClick}>
                   🔗 USER 매칭 ✨
@@ -520,7 +530,7 @@ if (!post) {
                                 <span>{reply.date}</span>
                               </div>
                             </div>
-                            {reply.author === myName && (
+                            {reply.authorId === myUserId && (
                               <div className="comment-menu-wrapper">
                                 <div
                                   className="comment-menu"
@@ -555,7 +565,7 @@ if (!post) {
                       </div>
                     )}
                   </div>
-                  {comment.author === myName && (
+                  {comment.authorId === myUserId && (
                     <div className="comment-menu-wrapper">
                       <div
                         className="comment-menu"

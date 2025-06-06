@@ -5,26 +5,21 @@ import "./CommunityWrite.css";
 import Component18 from "../../icons/GoBackIcon/GoBackIcon";
 import { SaveDraftComponent } from "../../components/SaveDraftComponent/SaveDraftComponent";
 import { PostComponent } from "../../components/PostComponent/PostComponent";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { MatchingCategories } from "../../constants/categories";
 import api from "../../api/local-instance"
 
-// const CommunityCategories = [
-//   { key: null, label: "카테고리 선택" },
-//   { key: "전체", label: "전체" },
-//   { key: "프로젝트", label: "프로젝트" },
-//   { key: "공모전", label: "공모전" },
-//   { key: "스터디", label: "스터디" },
-//   { key: "기타", label: "기타" }
-// ];
 
 export default function CommunityWrite() {
   const location = useLocation();
+  const { postId } = useParams();    // URL에 :postId가 없으면 undefined
   const navigate = useNavigate();
   
-  // 수정 모드 여부와 기존 데이터 확인
-  const isEditMode = location.state?.editMode || false;
-  const postData = location.state?.postData || null;
+  // // 수정 모드 여부와 기존 데이터 확인
+  // const isEditMode = location.state?.editMode || false;
+  // const postData = location.state?.postData || null;
+  const [isEditMode, setisEditMode] = useState(false);
+
 
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
@@ -40,13 +35,37 @@ export default function CommunityWrite() {
 
   // 컴포넌트가 마운트될 때 기존 데이터로 초기화
   useEffect(() => {
-    if (isEditMode && postData) {
-      setTitle(postData.title || "");
-      setCategory(postData.category || null);
-      setContent(postData.content || "");
-      setTags(postData.tags || "");
+    if(postId){
+      setisEditMode(true);
+      const fetchPostForEdit = async () => {
+        try {
+          const token = localStorage.getItem("jwtToken");
+          const res = await api.get(`/blog-service/posts/${postId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const data = res.data.data;
+
+          // 가져온 post 데이터를 폼 필드에 채우기
+          setTitle(data.title);
+          setCategory(data.categoryCode);
+          setTags(
+            data.tagNameList
+              // .map((tag) => `#${tag}`)
+              // .join(" ")                
+          );
+          setContent(data.content);
+
+
+        } catch (err) {
+          console.error("수정할 게시글 로딩 실패:", err.data);
+          alert("게시글을 불러오는 중 오류가 발생했습니다.");
+          navigate(-1); // 뒤로 가기
+        }
+      };
+      fetchPostForEdit();
     }
-  }, [isEditMode, postData]);
+    
+},[]);
 
   const getMissingFields = () => {
     const miss = [];
@@ -67,7 +86,7 @@ export default function CommunityWrite() {
       content,
       tags,
       savedAt: new Date().toISOString(),
-      isEditMode,
+      // isEditMode,
       originalId: postData?.id
     };
     
