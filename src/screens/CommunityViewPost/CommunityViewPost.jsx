@@ -6,7 +6,16 @@ import FollowButton from "../../components/FollowButton/FollowButton";
 import SendIcon from "../../icons/SendIcon/SendIcon";
 import MatchingModal from "../../components/MatchingModal/MatchingModal";
 import { useNavigate, useLocation } from "react-router-dom";
+import { MatchingCategories } from "../../constants/categories";
 import api from "../../api/local-instance";
+
+
+
+function getLabelByKey(key) {
+  const category = MatchingCategories.find((c) => c.key === key);
+  return category ? category.label : "";
+}
+
 
 const CommunityViewPost = () => {
   const navigate = useNavigate();
@@ -101,10 +110,12 @@ const CommunityViewPost = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = res.data.data;
+        console.log("data ", data)
         setPost({
           id: data.postId,
           title: data.title,
           author: data.authorNickname,
+          profileUrl: data.profileUrl,
           date: new Date(data.createdAt).toISOString().slice(0, 10).replace(/-/g, "."),
           category: data.categoryCode, // categoryName이 아니라면 추후 매핑 필요
           tag: Array.from(data.tagNameList).join(", "),
@@ -112,7 +123,7 @@ const CommunityViewPost = () => {
         });
       } catch (err) {
         console.error("게시글 상세 조회 실패", err);
-        navigate(-1);
+        navigate("/community");
       } finally {
         setLoadingPost(false);
       }
@@ -341,7 +352,6 @@ if (!post) {
   );
 }
 
-  // const isMyPost = post.author === myName;
 
   return (
     <div className="view-post-bg">
@@ -384,13 +394,18 @@ if (!post) {
           </div>
           <div className="view-post-meta-line">
             <div className="view-post-meta">
-              <span>{post.author}</span>
-              <span>{post.date}</span>
+              <div className="post-profile-wrapper">
+                {post.profileUrl && (
+                  <img src={post.profileUrl} alt="post" className="post-profile-img" />
+                )}
+              </div>
+              <div className="view-post-meta-text">{post.author}</div>
+              <div className="view-post-meta-text">{post.date}</div>
             </div>
             {post.author !== myName  && <FollowButton />}
           </div>
           <div className="view-post-tags-line">
-            <span className="view-post-category">{post.category}</span>
+            <span className="view-post-category">{getLabelByKey(post.category)}</span>
             <span className="view-post-tags">{post.tag}</span>
           </div>
         </div>
