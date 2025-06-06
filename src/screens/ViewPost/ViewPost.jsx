@@ -6,8 +6,7 @@ import FollowButton from "../../components/FollowButton/FollowButton";
 import SendIcon from "../../icons/SendIcon/SendIcon";
 import dompurify from "dompurify";
 import { Categories } from "../../constants/categories";
-import api from "../../api/local-instance"; 
-import realApi from "../../api/instance"; 
+import api from "../../api/instance"; 
 
 function getLabelByKey(key) {
   const category = Categories.find((c) => c.key === key);
@@ -310,7 +309,7 @@ const ViewPost = () => {
       const nested = buildNestedComments(flatList);
       setComments(nested);
 
-    
+      // 3) 댓글 수정 창 닫기
       setEditCommentId(null);
       setEditCommentValue("");
     } catch (error) {
@@ -321,28 +320,8 @@ const ViewPost = () => {
 
   // 답글 수정 저장
   const handleSaveEditReply = async(commentId, replyId) => {
-    // if (!editReplyValue.trim()) return;
-    // setComments(comments.map(comment =>
-    //   comment.id === commentId
-    //     ? {
-    //         ...comment,
-    //         replies: comment.replies.map(reply =>
-    //           reply.id === replyId
-    //             ? { ...reply, text: editReplyValue }
-    //             : reply
-    //         )
-    //       }
-    //     : comment
-    // ));
-    // setEditReplyId(null);
-    // setEditReplyValue("");
-
-    console.log("댓글 수정: ", replyId)
-
-    if (!editReplyValue.trim()) {return;}
+    if (!editReplyValue.trim()) return;
     try {
-      console.log("댓글 수정 try")
-
       const token = localStorage.getItem("jwtToken");
       await api.patch(`/blog-service/comments/${replyId}`, {
         content: editReplyValue,
@@ -352,7 +331,6 @@ const ViewPost = () => {
         }
       });
   
-      console.log("댓글 수정 후")
 
        // 2) 생성 후 전체 댓글을 다시 조회해서, 최신 상태의 중첩 구조를 반영
        const res = await api.get(
@@ -362,11 +340,10 @@ const ViewPost = () => {
       const flatList = res.data.data.commentList;
       const nested = buildNestedComments(flatList);
       setComments(nested);
-      console.log("댓글 조회 후")
 
-    
-    setEditReplyId(null);
-    setEditReplyValue("");
+      // 3) 답글 수정 창 닫기
+      setEditReplyId(null);
+      setEditReplyValue("");
     } catch (error) {
       console.error("댓글 수정 실패:", error);
       alert("댓글 수정에 실패했습니다.");
