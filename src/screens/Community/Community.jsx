@@ -1,15 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import RecruitButton from "../../components/RecruitButton/RecruitButton";
 import Navbar2 from "../../components/Navbar2/Navbar2";
 import CommunityText from "../../components/CommunityText/CommunityText";
 import CommunityTab from "../../components/CommunityTab/CommunityTab";
 import CommunityPostList from "../../components/CommunityPostList/CommunityPostList";
+import SortButton from "../../components/SortButton/SortButton";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import "./Community.css";
 
 export const Community = () => {
   const navigate = useNavigate();
+  const [selectedSort, setSelectedSort] = useState("최신순");
 
   const handleRecruitClick = () => {
     navigate("/community/write");
@@ -21,6 +23,8 @@ export const Community = () => {
         <Navbar2 className="community-image" />
         <div className="community-frame-outer">
           <CommunityText />
+
+          {/* 검색창 + 모집 버튼 */}
           <div className="community-frame-keyword">
             <div className="community-keyword-box">
               <input
@@ -42,7 +46,12 @@ export const Community = () => {
           </div>
 
           <CommunityTab />
-          <CommunityPostList />
+
+          <div className="community-frame-sort">
+            <SortButton onChange={(option) => setSelectedSort(option)} />
+          </div>
+
+          <CommunityPostList sortBy={selectedSort} />
         </div>
       </div>
     </PageTransitionWrapper>

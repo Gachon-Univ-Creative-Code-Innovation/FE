@@ -1,0 +1,74 @@
+/* SortButton.css */
+
+.sort-button {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border: 2px solid #1d1652;
+  border-radius: 10px;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: border-color 0.3s, color 0.3s;
+  min-width: 90px;
+  position: relative;
+}
+
+
+.sort-button .sort-text {
+  color: #1d1652;
+  font-family: "Inter", Helvetica, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: color 0.3s;
+}
+
+
+
+.sort-button .sort-icon {
+  width: 18px;
+  height: 18px;
+  stroke: #1d1652;
+  transition: stroke 0.3s;
+}
+
+
+
+
+.sort-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.sort-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  background: #fff;
+  border: 1px solid #a3b3bf;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+  width: 120px;
+  padding: 4px 0;
+}
+
+.sort-option {
+  padding: 10px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #666;
+  transition: background 0.2s;
+}
+
+.sort-option:hover {
+  background-color: #f1f1f1;
+}
+
+.sort-option.active {
+  color: #1d1652;
+  font-weight: 600;
+}
