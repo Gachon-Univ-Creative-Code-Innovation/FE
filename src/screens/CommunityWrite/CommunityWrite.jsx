@@ -50,8 +50,8 @@ export default function CommunityWrite() {
           setCategory(data.categoryCode);
           setTags(
             data.tagNameList
-              // .map((tag) => `#${tag}`)
-              // .join(" ")                
+              .map((tag) => `#${tag}`)
+              .join(" ")                
           );
           setContent(data.content);
 
@@ -144,9 +144,12 @@ export default function CommunityWrite() {
 
     const updatedHtml = doc.body.innerHTML;
     const tagNameList = tags
-      .split(",")
+      .split(" ")
       .map((tag) => tag.trim().replace(/^#/, ""))
       .filter((tag) => tag.length > 0);
+
+    console.log("tags", tags)
+    console.log("tagNameList", tagNameList)
 
     const payload = {
       parentPostId: null,
@@ -154,7 +157,7 @@ export default function CommunityWrite() {
       title: title.trim(),
       content: updatedHtml,
       summary: null,
-      tagNameList: tags,
+      tagNameList: tagNameList,
       categoryCode: category ? Number(category) : null,
       postType: "MATCHING",
     };
@@ -182,7 +185,7 @@ export default function CommunityWrite() {
           headers: { Authorization: `Bearer ${token}` },
         });
         
-        console.log("글 수정 완료:", updatedPostData);
+        // console.log("글 수정 완료:", updatedPostData);
         alert("글이 수정되었습니다!");
         
         // 임시 저장된 초안 삭제
@@ -190,14 +193,17 @@ export default function CommunityWrite() {
         
         // 수정된 데이터를 ViewPost에 전달하면서 이동
         // 동적 라우팅을 위해 postId 사용
-        navigate(`/community/viewpost/id:${postData?.id || 1}`, {
-          state: {
-            updatedPost: updatedPostData,
-            isUpdated: true // 업데이트 플래그 추가
-          }
-        });
+        navigate(`/community/viewpost/${postId}`)
+
+        // navigate(`/community/viewpost/id:${postData?.id || 1}`, {
+        //   state: {
+        //     updatedPost: updatedPostData,
+        //     isUpdated: true // 업데이트 플래그 추가
+        //   }
+        // });
       } catch (error) {
         console.error("글 수정 실패:", error);
+        console.error(error.response?.data);
         alert("글 수정에 실패했습니다. 다시 시도해주세요.");
       }
     } else {
