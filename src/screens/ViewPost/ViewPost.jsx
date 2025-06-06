@@ -7,7 +7,6 @@ import SendIcon from "../../icons/SendIcon/SendIcon";
 import dompurify from "dompurify";
 import { Categories } from "../../constants/categories";
 import api from "../../api/instance"; 
-import realApi from "../../api/instance"; 
 
 function getLabelByKey(key) {
   const category = Categories.find((c) => c.key === key);
@@ -30,6 +29,7 @@ function buildNestedComments(flatComments) {
       text: c.content,
       authorId: c.authorId, // 댓글 작성자의 ID
       authorProfileUrl: c.authorProfileUrl, // 댓글 작성자의 프로필 이미지 URL
+      isDeleted : c.isDeleted,
       // createTime(예: "2025-06-03T05:00:00")을 "2025.06.03" 형태로 포맷
       date: c.createTime.slice(0, 10).replace(/-/g, "."),
       replies: []
@@ -122,6 +122,7 @@ const ViewPost = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [editReplyId]);
 
+
   // 댓글 등록
   const handleAddComment = async() => {
     try {
@@ -156,6 +157,7 @@ const ViewPost = () => {
       alert(errMsg);
     }
   };
+
 
   // 답글 등록
   const handleAddReply = async(commentId) => {
@@ -194,6 +196,8 @@ const ViewPost = () => {
     }
   };
 
+
+
   // 댓글 조회
   useEffect(() => {
     const fetchComments = async () => {
@@ -217,22 +221,53 @@ const ViewPost = () => {
   }, [postId]);
 
   // 댓글 삭제
-  const handleDeleteComment = (commentId) => {
-    setComments(comments.filter(comment => comment.id !== commentId));
-    setOpenMenuId(null);
+  const handleDeleteComment = async(commentId) => {
+    try {
+      const token = localStorage.getItem("jwtToken");
+      await api.delete(`/blog-service/comments/${commentId}`, {
+        headers: {
+          Authorization: `Bearer ${token}` // 토큰 필요 시
+        }
+      });
+  
+      // 2) 생성 후 전체 댓글을 다시 조회해서, 최신 상태의 중첩 구조를 반영
+      const res = await api.get(
+        `/blog-service/comments/${postId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const flatList = res.data.data.commentList;
+      const nested = buildNestedComments(flatList);
+      setComments(nested);
+
+    } catch (error) {
+      console.error("댓글 삭제 실패:", error);
+      alert("댓글 삭제에 실패했습니다.");
+    }
   };
 
   // 답글 삭제
-  const handleDeleteReply = (commentId, replyId) => {
-    setComments(comments.map(comment =>
-      comment.id === commentId
-        ? {
-            ...comment,
-            replies: comment.replies.filter(reply => reply.id !== replyId)
-          }
-        : comment
-    ));
-    setOpenMenuId(null);
+  const handleDeleteReply = async(commentId, replyId) => {
+    try {
+      const token = localStorage.getItem("jwtToken");
+      await api.delete(`/blog-service/comments/${replyId}`, {
+        headers: {
+          Authorization: `Bearer ${token}` // 토큰 필요 시
+        }
+      });
+  
+      // 2) 생성 후 전체 댓글을 다시 조회해서, 최신 상태의 중첩 구조를 반영
+      const res = await api.get(
+        `/blog-service/comments/${postId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const flatList = res.data.data.commentList;
+      const nested = buildNestedComments(flatList);
+      setComments(nested);
+
+    } catch (error) {
+      console.error("답글 삭제 실패:", error);
+      alert("답글 삭제에 실패했습니다.");
+    }
   };
 
   // 댓글 수정 모드 진입
@@ -253,34 +288,66 @@ const ViewPost = () => {
   };
 
   // 댓글 수정 저장
-  const handleSaveEditComment = (commentId) => {
+  const handleSaveEditComment = async(commentId) => {
     if (!editCommentValue.trim()) return;
-    setComments(comments.map(comment =>
-      comment.id === commentId
-        ? { ...comment, text: editCommentValue }
-        : comment
-    ));
-    setEditCommentId(null);
-    setEditCommentValue("");
+    try {
+      const token = localStorage.getItem("jwtToken");
+      await api.patch(`/blog-service/comments/${commentId}`, {
+        content: editCommentValue,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+  
+       // 2) 생성 후 전체 댓글을 다시 조회해서, 최신 상태의 중첩 구조를 반영
+       const res = await api.get(
+        `/blog-service/comments/${postId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const flatList = res.data.data.commentList;
+      const nested = buildNestedComments(flatList);
+      setComments(nested);
+
+      // 3) 댓글 수정 창 닫기
+      setEditCommentId(null);
+      setEditCommentValue("");
+    } catch (error) {
+      console.error("댓글 수정 실패:", error);
+      alert("댓글 수정에 실패했습니다.");
+    }
   };
 
   // 답글 수정 저장
-  const handleSaveEditReply = (commentId, replyId) => {
+  const handleSaveEditReply = async(commentId, replyId) => {
     if (!editReplyValue.trim()) return;
-    setComments(comments.map(comment =>
-      comment.id === commentId
-        ? {
-            ...comment,
-            replies: comment.replies.map(reply =>
-              reply.id === replyId
-                ? { ...reply, text: editReplyValue }
-                : reply
-            )
-          }
-        : comment
-    ));
-    setEditReplyId(null);
-    setEditReplyValue("");
+    try {
+      const token = localStorage.getItem("jwtToken");
+      await api.patch(`/blog-service/comments/${replyId}`, {
+        content: editReplyValue,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+  
+
+       // 2) 생성 후 전체 댓글을 다시 조회해서, 최신 상태의 중첩 구조를 반영
+       const res = await api.get(
+        `/blog-service/comments/${postId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const flatList = res.data.data.commentList;
+      const nested = buildNestedComments(flatList);
+      setComments(nested);
+
+      // 3) 답글 수정 창 닫기
+      setEditReplyId(null);
+      setEditReplyValue("");
+    } catch (error) {
+      console.error("댓글 수정 실패:", error);
+      alert("댓글 수정에 실패했습니다.");
+    }
   };
 
   // ---  게시글 상세 API 호출  ---
@@ -444,7 +511,7 @@ const ViewPost = () => {
                 onChange={e => setCommentValue(e.target.value)}
                 onKeyDown={e => { if (e.key === "Enter") handleAddComment(); }}
           />
-              <button className="comment-send-btn" onClick={handleAddComment}>
+          <button className="comment-send-btn" onClick={handleAddComment}>
                 <SendIcon />
           </button>
         </div>
@@ -478,13 +545,15 @@ const ViewPost = () => {
                     )}
                     <div className="comment-meta">
                       <span>{comment.date}</span>
-                      <span
-                        className="reply-btn"
-                        style={{ cursor: "pointer", color: "#6c6c8a", marginLeft: 8 }}
-                        onClick={() => setReplyTo(replyTo === comment.id ? null : comment.id)}
-                      >
-                        reply
-                      </span>
+                      {!comment.isDeleted && (
+                        <span
+                          className="reply-btn"
+                          style={{ cursor: "pointer", color: "#6c6c8a", marginLeft: 8 }}
+                          onClick={() => setReplyTo(replyTo === comment.id ? null : comment.id)}
+                        >
+                          reply
+                        </span>
+                      )}
                     </div>
                     {/* 답글 입력창 */}
                     {replyTo === comment.id && (
