@@ -230,7 +230,6 @@ const ViewPost = () => {
         }
       });
   
-      // 프론트 상태에서 삭제
       // 2) 생성 후 전체 댓글을 다시 조회해서, 최신 상태의 중첩 구조를 반영
       const res = await api.get(
         `/blog-service/comments/${postId}`,
@@ -239,8 +238,7 @@ const ViewPost = () => {
       const flatList = res.data.data.commentList;
       const nested = buildNestedComments(flatList);
       setComments(nested);
-      // setComments(comments.filter(comment => comment.commentId !== commentId));
-      // setOpenMenuId(null);
+
     } catch (error) {
       console.error("댓글 삭제 실패:", error);
       alert("댓글 삭제에 실패했습니다.");
@@ -248,16 +246,38 @@ const ViewPost = () => {
   };
 
   // 답글 삭제
-  const handleDeleteReply = (commentId, replyId) => {
-    setComments(comments.map(comment =>
-      comment.id === commentId
-        ? {
-            ...comment,
-            replies: comment.replies.filter(reply => reply.id !== replyId)
-          }
-        : comment
-    ));
-    setOpenMenuId(null);
+  const handleDeleteReply = async(commentId, replyId) => {
+    try {
+      const token = localStorage.getItem("jwtToken");
+      await api.delete(`/blog-service/comments/${replyId}`, {
+        headers: {
+          Authorization: `Bearer ${token}` // 토큰 필요 시
+        }
+      });
+  
+      // 2) 생성 후 전체 댓글을 다시 조회해서, 최신 상태의 중첩 구조를 반영
+      const res = await api.get(
+        `/blog-service/comments/${postId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const flatList = res.data.data.commentList;
+      const nested = buildNestedComments(flatList);
+      setComments(nested);
+
+    } catch (error) {
+      console.error("답글 삭제 실패:", error);
+      alert("답글 삭제에 실패했습니다.");
+    }
+
+    // setComments(comments.map(comment =>
+    //   comment.id === commentId
+    //     ? {
+    //         ...comment,
+    //         replies: comment.replies.filter(reply => reply.id !== replyId)
+    //       }
+    //     : comment
+    // ));
+    // setOpenMenuId(null);
   };
 
   // 댓글 수정 모드 진입
