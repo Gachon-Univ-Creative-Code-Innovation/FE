@@ -13,7 +13,10 @@ import ScrollUp from "../../icons/ScrollUp/ScrollUp";
 import CommentIcon from "../../icons/CommentIcon/CommentIcon";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import "./MainPageAfter.css";
-import api from "../../api/instance";
+import api from "../../api/local-instance";
+import SearchModal from "../../components/SearchModal/SearchModal";
+
+
 
 export const MainPageAfter = () => {
   const [posts, setPosts] = useState([]);
@@ -21,6 +24,7 @@ export const MainPageAfter = () => {
   const [hasMore, setHasMore] = useState(true);
   const [selectedTab, setSelectedTab] = useState("Hot");
   const [scrolled, setScrolled] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false); //추가
   const observer = useRef();
   const navigate = useNavigate();
 
@@ -201,6 +205,7 @@ export const MainPageAfter = () => {
     <PageTransitionWrapper>
       <div className="main-page-after">
         <Navbar
+          onSearch={() => setIsSearchOpen(true)} //추가
           onReadmeClick={handleReadmeClick}
           onShowPopup={() => {}}
           scrolled={scrolled}
@@ -286,6 +291,10 @@ export const MainPageAfter = () => {
             </div>
           </div>
         </div>
+        {isSearchOpen && (
+          <SearchModal onClose={() => setIsSearchOpen(false)} /> //추가
+        )}
+
       </div>
     </PageTransitionWrapper>
   );
