@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "./CommunityWrite.css";
@@ -6,15 +6,17 @@ import Component18 from "../../icons/GoBackIcon/GoBackIcon";
 import { SaveDraftComponent } from "../../components/SaveDraftComponent/SaveDraftComponent";
 import { PostComponent } from "../../components/PostComponent/PostComponent";
 import { useLocation, useNavigate } from "react-router-dom";
+import { MatchingCategories } from "../../constants/categories";
+import api from "../../api/local-instance"
 
-const CommunityCategories = [
-  { key: null, label: "카테고리 선택" },
-  { key: "전체", label: "전체" },
-  { key: "프로젝트", label: "프로젝트" },
-  { key: "공모전", label: "공모전" },
-  { key: "스터디", label: "스터디" },
-  { key: "기타", label: "기타" }
-];
+// const CommunityCategories = [
+//   { key: null, label: "카테고리 선택" },
+//   { key: "전체", label: "전체" },
+//   { key: "프로젝트", label: "프로젝트" },
+//   { key: "공모전", label: "공모전" },
+//   { key: "스터디", label: "스터디" },
+//   { key: "기타", label: "기타" }
+// ];
 
 export default function CommunityWrite() {
   const location = useLocation();
@@ -32,6 +34,7 @@ export default function CommunityWrite() {
   //이미지
   const reactQuillRef = useRef(null);
   const fileInputRef = useRef(null);
+  
 
 
 
@@ -83,7 +86,6 @@ export default function CommunityWrite() {
     if (miss.length) return alert(`${miss.join(", ")}을(를) 입력해 주세요!`);
     
     
-    const content = mode === "basic" ? basicValue : markdownValue;
     const parser = new DOMParser();
     const doc = parser.parseFromString(content, "text/html");
     const imgElements = Array.from(doc.querySelectorAll("img"));
@@ -133,10 +135,11 @@ export default function CommunityWrite() {
       title: title.trim(),
       content: updatedHtml,
       summary: null,
-      tagNameList: null,
+      tagNameList: [],
       categoryCode: category ? Number(category) : null,
       postType: "MATCHING",
     };
+    console.log("payload, ", payload);
     
 
 
@@ -233,21 +236,27 @@ export default function CommunityWrite() {
           headers: { Authorization: `Bearer ${token}` },
         });
         
-        console.log("새 글 작성 완료:", newPostData);
+        const msg = response.data?.data; // 예: "503 글이 정상적으로 생성되었습니다."
+        const newPostId = msg?.split(" ")[0];
+        console.log("새 글 작성 완료:", newPostId);
         alert("게시되었습니다!");
         
         // 임시 저장된 초안 삭제
         localStorage.removeItem('communityDraft');
         
         // 새로 작성된 글로 이동
-        navigate(`/community/viewpost`, {
-          state: {
-            newPost: newPostData,
-            isNew: true
-          }
-        });
+        navigate(`/community/viewpost/${newPostId}`)
+        // navigate(`/community/viewpost`, {
+        //   state: {
+        //     newPost: newPostData,
+        //     isNew: true
+        //   }
+        // });
       } catch (error) {
         console.error("글 작성 실패:", error);
+        console.error(error.response?.data);
+
+        console.error(error.response?.data?.message);
         alert("글 작성에 실패했습니다. 다시 시도해주세요.");
       }
     }
@@ -390,10 +399,12 @@ export default function CommunityWrite() {
         <div className="community-editor-title-row">
           <select
             value={category ?? ""}
-            onChange={e => setCategory(e.target.value || null)}
+            onChange={(e) => {
+              console.log("선택된 카테고리 key:", e.target.value);
+              setCategory(e.target.value || null);}}
             className="community-editor-category-select"
           >
-            {CommunityCategories.map(c => (
+            {MatchingCategories.map(c => (
               <option key={c.key ?? "default"} value={c.key ?? ""}>
                 {c.label}
               </option>
