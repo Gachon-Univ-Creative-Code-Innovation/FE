@@ -31,7 +31,7 @@
   gap: 50px;
   justify-content: center;
   position: relative;
-  width: 532px;
+  width: 650px;
 }
 
 .community-keyword-box {
@@ -108,4 +108,14 @@
   font-size: 16px;
   outline: none;
   box-sizing: border-box;
+}
+
+.community-frame-sort {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: flex-start;;
+  position: relative;
+  width: 100%;
+  padding: 40px;;
 }
