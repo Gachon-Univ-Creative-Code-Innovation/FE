@@ -122,7 +122,7 @@ const CommunityViewPost = () => {
           profileUrl: data.profileUrl,
           date: new Date(data.createdAt).toISOString().slice(0, 10).replace(/-/g, "."),
           category: data.categoryCode, // categoryName이 아니라면 추후 매핑 필요
-          tag: Array.from(data.tagNameList).join(", "),
+          tag: data.tagNameList,
           content: data.content,
         });
 
@@ -416,7 +416,11 @@ if (!post) {
           </div>
           <div className="view-post-tags-line">
             <span className="view-post-category">{getLabelByKey(post.category)}</span>
-            <span className="view-post-tags">{post.tag}</span>
+            {post.tag && post.tag.length > 0 && (
+              <span className="view-post-tags">
+                {post.tag.map((tag) => `#${tag}`).join(" ")}
+              </span>
+            )}
           </div>
         </div>
 
