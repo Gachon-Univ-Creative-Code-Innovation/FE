@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import CommentIcon from "../../icons/CommentIcon/CommentIcon";
 import "./CommunityPostList.css";
+import { useNavigate } from "react-router-dom";
 import api from "../../api/local-instance"
 import { MatchingCategories } from "../../constants/categories";
 
@@ -8,6 +9,7 @@ import { MatchingCategories } from "../../constants/categories";
 const ITEMS_PER_PAGE = 15;
 
 export const CommunityPostList = ({sortBy, category}) => {
+  const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -64,7 +66,12 @@ export const CommunityPostList = ({sortBy, category}) => {
     <div className="communitypost-list">
       <div className="communitypost-frame-2">
         {posts.map((post) => (
-          <div className="communitypost-frame-3" key={post.postId}>
+          <div 
+            className="communitypost-frame-3" 
+            key={post.postId}
+            style={{ cursor: "pointer" }}
+            onClick={() => navigate(`/community/viewpost/${post.postId}`)} // ← 여기가 핵심
+          >
             <div className="communitypost-thumbnail-wrapper">
               {post.thumbnail && (
                 <img src={post.thumbnail} alt="post" className="communitypost-thumbnail-img" />
