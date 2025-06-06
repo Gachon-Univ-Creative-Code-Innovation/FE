@@ -29,6 +29,12 @@ export default function CommunityWrite() {
   const [category, setCategory] = useState(null);
   const [tags, setTags] = useState("");
 
+  //이미지
+  const reactQuillRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+
+
   // 컴포넌트가 마운트될 때 기존 데이터로 초기화
   useEffect(() => {
     if (isEditMode && postData) {
@@ -404,12 +410,21 @@ export default function CommunityWrite() {
 
         <div className="community-editor-area">
           <ReactQuill
+            ref={reactQuillRef}
             value={content}
             onChange={setContent}
             theme="snow"
             modules={modules}
             formats={formats}
             placeholder="내용을 입력하세요..."
+          />
+          {/* 숨겨진 파일 입력창 (이미지 선택 시 onQuillImageSelect 실행) */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept="image/*"
+            style={{ display: "none" }}
+            onChange={onQuillImageSelect}
           />
         </div>
 
