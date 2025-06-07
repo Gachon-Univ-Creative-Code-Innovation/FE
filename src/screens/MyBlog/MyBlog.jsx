@@ -10,20 +10,20 @@ import CommentIcon2 from "../../icons/CommentIcon2/CommentIcon2";
 import api from "../../api/instance";
 import "./MyBlog.css";
 
-// 파도타기 효과 컴포넌트
+// 텍스트에 물결 애니메이션 적용
 const WaveText = ({ text, className }) => {
-  const [startWaveAnimation, setStartWaveAnimation] = useState(false);
+  const [animating, setAnimating] = useState(false);
 
   useEffect(() => {
-    const startWaveLoop = () => {
-      setStartWaveAnimation(true);
-      const totalTime = (text.length * 0.15 + 0.6) * 1000;
+    const loop = () => {
+      setAnimating(true);
+      const duration = (text.length * 0.15 + 0.6) * 1000;
       setTimeout(() => {
-        setStartWaveAnimation(false);
-        setTimeout(startWaveLoop, 3000);
-      }, totalTime);
+        setAnimating(false);
+        setTimeout(loop, 3000);
+      }, duration);
     };
-    const timer = setTimeout(startWaveLoop, 1000);
+    const timer = setTimeout(loop, 1000);
     return () => clearTimeout(timer);
   }, [text]);
 
@@ -32,7 +32,7 @@ const WaveText = ({ text, className }) => {
       {text.split("").map((ch, i) => (
         <span
           key={i}
-          className={`wave-letter ${startWaveAnimation ? "wave-animate" : ""}`}
+          className={`wave-letter ${animating ? "wave-animate" : ""}`}
           style={{ "--delay": `${i * 0.15}s` }}
         >
           {ch === " " ? "\u00A0" : ch}
@@ -44,78 +44,76 @@ const WaveText = ({ text, className }) => {
 
 export const MyBlog = () => {
   const navigate = useNavigate();
-  const jwtToken = localStorage.getItem("jwtToken") || "";
+  const token = localStorage.getItem("jwtToken") || "";
 
-  // 프로필 정보
+  // 프로필 및 팔로우 정보
   const [nickname, setNickname] = useState("");
   const [profileUrl, setProfileUrl] = useState("");
   const [githubUrl, setGithubUrl] = useState("");
   const [followerCount, setFollowerCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
 
-  // 게시글
+  // 게시글 로딩 상태
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const observer = useRef();
 
-  // 1) 내 정보 & 팔로우/팔로잉 조회
+  // 로그인 체크 및 사용자 정보 가져오기
   useEffect(() => {
-    if (!jwtToken) return navigate("/login");
+    if (!token) return navigate("/login");
 
     api
-      .get("/user-service/user/patch", { headers: { Authorization: jwtToken } })
+      .get("/user-service/user/patch", { headers: { Authorization: token } })
       .then((res) => {
         const d = res.data.data || {};
         setNickname(d.nickname || "");
         setProfileUrl(d.profileUrl || "");
         setGithubUrl(d.githubUrl || "");
       })
-      .catch((err) => console.error("내 정보 조회 에러:", err));
+      .catch((err) => console.error("내 정보 조회 실패:", err));
 
     api
       .get("/user-service/follow/followers", {
-        headers: { Authorization: jwtToken },
+        headers: { Authorization: token },
       })
       .then((res) => setFollowerCount((res.data.data || []).length))
-      .catch((err) => console.error("팔로워 조회 에러:", err));
+      .catch((err) => console.error("팔로워 조회 실패:", err));
 
     api
       .get("/user-service/follow/followees", {
-        headers: { Authorization: jwtToken },
+        headers: { Authorization: token },
       })
       .then((res) => setFollowingCount((res.data.data || []).length))
-      .catch((err) => console.error("팔로잉 조회 에러:", err));
-  }, [jwtToken, navigate]);
+      .catch((err) => console.error("팔로잉 조회 실패:", err));
+  }, [token, navigate]);
 
-  // 2) 내 게시글 불러오기
+  // 게시글 불러오기
   useEffect(() => {
-    if (!jwtToken || !hasMore) return;
+    if (!token || !hasMore) return;
     setLoading(true);
 
     api
       .get(`/blog-service/posts?page=${page}`, {
-        headers: { Authorization: jwtToken },
+        headers: { Authorization: token },
       })
       .then((res) => {
         const data = res.data.data || [];
         setPosts((prev) => [...prev, ...data]);
         if (data.length === 0) setHasMore(false);
       })
-      .catch((err) => console.error("게시글 조회 에러:", err))
+      .catch((err) => console.error("게시글 조회 실패:", err))
       .finally(() => setLoading(false));
-  }, [page, hasMore, jwtToken]);
+  }, [page, hasMore, token]);
 
-  // 3) 무한 스크롤
+  // 무한 스크롤 관찰 설정
   const lastPostRef = useCallback(
     (node) => {
       if (loading) return;
       if (observer.current) observer.current.disconnect();
       observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && hasMore) {
-          setPage((prev) => prev + 1);
-        }
+        if (entries[0].isIntersecting && hasMore) setPage((prev) => prev + 1);
       });
       if (node) observer.current.observe(node);
     },
@@ -131,7 +129,6 @@ export const MyBlog = () => {
           {/* 프로필 헤더 */}
           <header className="myblog-header">
             <div className="myblog-profile-container">
-              {/* CSS placeholder + background-image */}
               <div
                 className="myblog-profile-image"
                 style={{
@@ -144,16 +141,23 @@ export const MyBlog = () => {
                   <div className="myblog-username">{nickname || "사용자"}</div>
                   <SettingIcon
                     className="myblog-icon-subtract"
-                    style={{ cursor: "pointer" }}
                     onClick={() => navigate("/mypage")}
                   />
                 </div>
                 <div className="myblog-follow-info">
-                  <div className="myblog-follow-box">
+                  <div
+                    className="myblog-follow-box"
+                    onClick={() => navigate("/follow")}
+                    style={{ cursor: "pointer" }}
+                  >
                     <div className="myblog-follow-label">팔로워</div>
                     <div className="myblog-follow-count">{followerCount}</div>
                   </div>
-                  <div className="myblog-follow-box">
+                  <div
+                    className="myblog-follow-box"
+                    onClick={() => navigate("/follow")}
+                    style={{ cursor: "pointer" }}
+                  >
                     <div className="myblog-follow-label">팔로잉</div>
                     <div className="myblog-follow-count">{followingCount}</div>
                   </div>
@@ -161,31 +165,20 @@ export const MyBlog = () => {
               </div>
 
               <div className="myblog-side-buttons">
-                <div
-                  onClick={() => navigate("/portfolio")}
-                  style={{ cursor: "pointer" }}
-                >
-                  <GoPortfolio
-                    className="myblog-btn-default"
-                    property1="default"
-                  />
+                <div onClick={() => navigate("/portfolio")}>
+                  <GoPortfolio property1="default" />
                 </div>
                 <div
-                  onClick={() =>
-                    githubUrl ? window.open(githubUrl, "_blank") : null
-                  }
-                  style={{
-                    cursor: githubUrl ? "pointer" : "default",
-                    marginLeft: 8,
-                  }}
+                  onClick={() => githubUrl && window.open(githubUrl, "_blank")}
+                  style={{ marginLeft: 8 }}
                 >
-                  <GoGitHub className="myblog-btn-github" property1="default" />
+                  <GoGitHub property1="default" />
                 </div>
               </div>
             </div>
           </header>
 
-          {/* 게시글 섹션 */}
+          {/* 게시글 목록 */}
           <div className="myblog-post-section">
             <div className="myblog-post-header">
               <div className="myblog-tab-latest">
@@ -198,13 +191,11 @@ export const MyBlog = () => {
                   const isLast = i === posts.length - 1;
                   return (
                     <div
-                      className="myblog-post-card"
                       key={post.postId}
                       ref={isLast ? lastPostRef : null}
+                      className="myblog-post-card"
                       onClick={() => navigate(`/viewpost/${post.postId}`)}
-                      style={{ cursor: "pointer" }}
                     >
-                      {/* 썸네일 placeholder + background-image */}
                       <div
                         className="myblog-post-image"
                         style={{
@@ -212,8 +203,6 @@ export const MyBlog = () => {
                           backgroundImage: post.thumbnail
                             ? `url(${post.thumbnail})`
                             : "none",
-                          backgroundSize: "cover",
-                          backgroundPosition: "center",
                         }}
                       />
                       <div className="myblog-post-content">
@@ -223,7 +212,7 @@ export const MyBlog = () => {
                             {post.createdAt}
                           </div>
                           <div className="myblog-post-comment">
-                            <CommentIcon2 className="myblog-comment-icon" />
+                            <CommentIcon2 />
                             <div className="myblog-comment-count">
                               {post.commentCount}
                             </div>
@@ -235,6 +224,7 @@ export const MyBlog = () => {
                 })}
               </div>
 
+              {/* 게시글 없을 때 */}
               {!loading && posts.length === 0 && (
                 <WaveText
                   text="당신의 이야기를 기다리고 있습니다 ✍️"
