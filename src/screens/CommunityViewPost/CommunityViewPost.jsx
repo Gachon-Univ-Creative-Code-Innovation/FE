@@ -596,13 +596,13 @@ if (!post) {
                     )}
                     <div className="comment-meta">
                       <span>{comment.date}</span>
-                      <span
+                      {!comment.isDeleted && (<span
                         className="reply-btn"
                         style={{ cursor: "pointer", color: "#6c6c8a", marginLeft: 8 }}
                         onClick={() => setReplyTo(replyTo === comment.id ? null : comment.id)}
                       >
                         reply
-                      </span>
+                      </span>)}
                     </div>
                     {/* 답글 입력창 */}
                     {replyTo === comment.id && (
