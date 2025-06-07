@@ -1,12 +1,18 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { motion, AnimatePresence } from "framer-motion";
+import PortfolioIntro from "../PortfolioIntro/PortfolioIntro";
 import "./PortfolioCardList.css";
 const MotionDiv = motion.div;
 
-const PortfolioCardList = ({ data, page, itemsPerPage }) => {
+const PortfolioCardList = ({ data, page, itemsPerPage, showIntro = false }) => {
   const startIndex = page * itemsPerPage;
   const currentData = data.slice(startIndex, startIndex + itemsPerPage);
+
+  // 데이터가 없고 소개를 보여달라고 요청된 경우
+  if (data.length === 0 && showIntro) {
+    return <PortfolioIntro />;
+  }
 
   return (
     <AnimatePresence mode="wait">
@@ -46,6 +52,7 @@ PortfolioCardList.propTypes = {
   data: PropTypes.array.isRequired,
   page: PropTypes.number.isRequired,
   itemsPerPage: PropTypes.number.isRequired,
+  showIntro: PropTypes.bool,
 };
 
 export default PortfolioCardList;

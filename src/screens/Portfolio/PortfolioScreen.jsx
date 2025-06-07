@@ -21,6 +21,9 @@ export const PortfolioScreen = () => {
   const [selectedSort, setSelectedSort] = useState("최신순");
   const [page, setPage] = useState(0);
   const [pageGroup, setPageGroup] = useState(0);
+  
+  // 로그인 상태 확인
+  const isLoggedIn = !!localStorage.getItem("jwtToken");
 
   const getSortParams = () => {
     if (selectedSort === "최신순") return { isDesc: true };
@@ -123,13 +126,17 @@ export const PortfolioScreen = () => {
               onClick={() => handleTabChange("explore")}
             />
           </div>
-          <Filter selectedSort={selectedSort} onSortChange={setSelectedSort} />
+          {!(selectedTab === "workspace" && !isLoggedIn) && (
+            <Filter selectedSort={selectedSort} onSortChange={setSelectedSort} />
+          )}
           <PortfolioCardList
             data={currentData}
             page={page}
             itemsPerPage={ITEMS_PER_PAGE}
+            showIntro={selectedTab === "workspace" && myData.length === 0 && !isLoggedIn}
           />
-          <div className="portfolio-pagination">
+          {!(selectedTab === "workspace" && !isLoggedIn) && (
+            <div className="portfolio-pagination">
             <button
               className="portfolio-pagination-arrow"
               disabled={page === 0}
@@ -174,6 +181,7 @@ export const PortfolioScreen = () => {
               &#62;
             </button>
           </div>
+          )}
         </div>
       </div>
     </PageTransitionWrapper>
