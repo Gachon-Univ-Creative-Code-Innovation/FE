@@ -243,42 +243,52 @@ const CommunityViewPost = () => {
     } catch (e) {
       console.error("댓글 등록 실패", e);
     }
-
-
-    // setComments([
-    //   ...comments,
-    //   {
-    //     id: Date.now(),
-    //     author: myName,
-    //     text: commentValue,
-    //     date: new Date().toISOString().slice(0, 10).replace(/-/g, '.'),
-    //     replies: [],
-    //   },
-    // ]);
-    // setCommentValue("");
   };
 
   // 답글 등록
-  const handleAddReply = (commentId) => {
+  const handleAddReply = async(commentId) => {
     if (!replyValue.trim()) return;
-    setComments(comments.map(comment =>
-      comment.id === commentId
-        ? {
-            ...comment,
-            replies: [
-              ...(comment.replies || []),
-              {
-                id: Date.now(),
-                author: myName,
-                text: replyValue,
-                date: new Date().toISOString().slice(0, 10).replace(/-/g, '.'),
-              },
-            ],
-          }
-        : comment
-    ));
-    setReplyValue("");
-    setReplyTo(null);
+
+    try {
+      const token = localStorage.getItem("jwtToken");
+      const payload = {
+        postId: Number(postId),             // 현재 보고 있는 게시글 ID
+        parentCommentId: commentId,         // 답글을 다는 부모 댓글 ID
+        content: replyValue.trim(),         // 입력된 답글 내용
+      };
+
+      await api.post(
+        "/blog-service/comments",
+        payload,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setReplyValue("");
+      setReplyTo(null);
+      fetchComments();
+    } catch (e) {
+      console.error("답글 등록 실패", e);
+    }
+
+
+    // setComments(comments.map(comment =>
+    //   comment.id === commentId
+    //     ? {
+    //         ...comment,
+    //         replies: [
+    //           ...(comment.replies || []),
+    //           {
+    //             id: Date.now(),
+    //             author: myName,
+    //             text: replyValue,
+    //             date: new Date().toISOString().slice(0, 10).replace(/-/g, '.'),
+    //           },
+    //         ],
+    //       }
+    //     : comment
+    // ));
+    // setReplyValue("");
+    // setReplyTo(null);
   };
 
   //댓글 조회
