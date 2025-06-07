@@ -7,7 +7,7 @@ import SendIcon from "../../icons/SendIcon/SendIcon";
 import MatchingModal from "../../components/MatchingModal/MatchingModal";
 import { useNavigate, useLocation } from "react-router-dom";
 import { MatchingCategories } from "../../constants/categories";
-import api from "../../api/instance"
+import api from "../../api/local-instance"
 
 
 
@@ -15,6 +15,50 @@ function getLabelByKey(key) {
   const category = MatchingCategories.find((c) => c.key === key);
   return category ? category.label : "";
 }
+
+
+/**
+ * 백엔드에서 내려준 flat list를 nested structure({ replies: [] })로 바꿔준다.
+ * @param {Array<Object>} flatComments
+ *   └ 백엔드 GetComment DTO 배열. 각 항목에 commentId, parentCommentId, authorNickname, content, createTime 등이 있음.
+ * @returns {Array<Object>} nestedComments
+ */
+function buildNestedComments(flatComments) {
+  // 1) 모든 댓글을 id → 새로운 객체(프론트용)로 매핑
+  const map = {};
+  flatComments.forEach((c) => {
+    map[c.commentId] = {
+      id: c.commentId,
+      author: c.authorNickname,
+      text: c.content,
+      authorId: c.authorId, // 댓글 작성자의 ID
+      authorProfileUrl: c.authorProfileUrl, // 댓글 작성자의 프로필 이미지 URL
+      isDeleted : c.isDeleted,
+      // createTime(예: "2025-06-03T05:00:00")을 "2025.06.03" 형태로 포맷
+      date: c.createTime.slice(0, 10).replace(/-/g, "."),
+      replies: []
+    };
+  });
+
+  // 2) parentCommentId가 있으면, 해당 parent의 replies 배열에 push
+  //    없으면 최상위(root) 댓글 목록에 추가
+  const nested = [];
+  flatComments.forEach((c) => {
+    const node = map[c.commentId];
+    if (c.parentCommentId) {
+      const parentNode = map[c.parentCommentId];
+      if (parentNode) {
+        parentNode.replies.push(node);
+      }
+      // 만약 parentNode가 없다면 (비정상 케이스) 그냥 무시해도 됩니다.
+    } else {
+      nested.push(node);
+    }
+  });
+
+  return nested;
+}
+
 
 
 const CommunityViewPost = () => {
@@ -215,6 +259,29 @@ const CommunityViewPost = () => {
     setReplyValue("");
     setReplyTo(null);
   };
+
+
+  // 댓글 조회
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const token = localStorage.getItem("jwtToken");
+        // “postId별 댓글 조회” API 호출
+        const res = await api.get(
+          `/blog-service/comments/${postId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const flatList = res.data.data.commentList;
+        console.log("댓글 데이터:", flatList);
+        const nested = buildNestedComments(flatList);
+        setComments(nested);
+      } catch (err) {
+        console.error("댓글 조회 실패:", err);
+      }
+    };
+
+    fetchComments();
+  }, [postId]);
 
   // 댓글 삭제
   const handleDeleteComment = (commentId) => {
