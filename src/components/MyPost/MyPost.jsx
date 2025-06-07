@@ -101,7 +101,7 @@ export const MyPost = () => {
                   <div className="mypost-comment-count">0</div>
                 </div>
                 <div className="mypost-views">
-                  <div className="mypost-date">Views</div>
+                  <div className="mypost-date">조회수</div>
                   <div className="mypost-views-count">0</div>
                 </div>
               </div>

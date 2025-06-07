@@ -5,7 +5,7 @@ import "./ComponentSeeAll.css";
 export const ComponentSeeAll = ({ property1, className }) => {
   return (
     <div className={`seeall-container seeall-${property1} ${className}`}>
-      <div className="seeall-text">See All</div>
+      <div className="seeall-text">전체 보기</div>
     </div>
   );
 };
