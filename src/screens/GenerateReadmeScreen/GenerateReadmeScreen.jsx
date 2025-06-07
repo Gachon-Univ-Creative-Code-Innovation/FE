@@ -1,3 +1,4 @@
+// README 생성 화면 - 사용자 경험 개선 완료 (UI 한국어화, 타이핑 애니메이션 등)
 import React, { useState, useEffect } from "react";
 import GenerateReadme from "../../components/GenerateReadme/GenerateReadme";
 import Historys from "../../components/Historys/Historys";
