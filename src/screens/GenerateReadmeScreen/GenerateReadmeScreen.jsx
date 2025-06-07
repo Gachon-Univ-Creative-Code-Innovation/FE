@@ -12,7 +12,7 @@ import "./GenerateReadmeScreen.css";
 
 export const GenerateReadmeScreen = () => {
   // 탭을 실제 표시되는 이름 그대로 설정
-  const [selectedTab, setSelectedTab] = useState("Generate README");
+  const [selectedTab, setSelectedTab] = useState("README 생성");
   const [url, setUrl] = useState("");
   const [historyItems, setHistoryItems] = useState([]);
   const [showLoader, setShowLoader] = useState(false);
@@ -109,7 +109,7 @@ export const GenerateReadmeScreen = () => {
 
   // “History” 탭일 때만 히스토리 데이터 가져오기
   useEffect(() => {
-    if (selectedTab === "History") {
+    if (selectedTab === "내 작업실") {
       const fetchHistory = async () => {
         setShowLoader(true);
         try {
@@ -169,50 +169,87 @@ export const GenerateReadmeScreen = () => {
         <div className="generate-README-2">
           {/* ─── 탭 버튼(Side by Side) ─── */}
           <div className="category">
-            {/* Generate README 탭: 클릭 시 showLoader를 즉시 false로 초기화 */}
+            {/* README 생성 탭: 클릭 시 showLoader를 즉시 false로 초기화 */}
             <div
               onClick={() => {
-                setSelectedTab("Generate README");
+                setSelectedTab("README 생성");
                 setShowLoader(false);
               }}
             >
               <GenerateReadme
                 property1={
-                  selectedTab === "Generate README" ? "selected" : "default"
+                  selectedTab === "README 생성" ? "selected" : "default"
                 }
                 className="generate-README-instance"
               />
             </div>
 
-            {/* History 탭: 클릭 시 showLoader를 즉시 false로 초기화 */}
+            {/* 내 작업실 탭: 클릭 시 showLoader를 즉시 false로 초기화 */}
             <div
               onClick={() => {
-                setSelectedTab("History");
+                setSelectedTab("내 작업실");
                 setShowLoader(false);
               }}
             >
               <Historys
-                property1={selectedTab === "History" ? "selected" : "default"}
+                property1={selectedTab === "내 작업실" ? "selected" : "default"}
                 className="history-instance"
               />
             </div>
           </div>
 
           {/* ─── “Generate README” 화면 (URL 입력 & 전송 버튼) ─── */}
-          {selectedTab === "Generate README" ? (
-            <div className="frame-4">
-              <input
-                className="url-input"
-                type="text"
-                placeholder="https://github.com/your-repo"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-              />
-              <PaperPlaneIcon
-                className="generate-readme__icon"
-                onClick={handleGenerate}
-              />
-            </div>
+          {selectedTab === "README 생성" ? (
+            <>
+              <div className="frame-4">
+                <input
+                  className="url-input"
+                  type="text"
+                  placeholder="https://github.com/your-repo"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                />
+                <PaperPlaneIcon
+                  className={`generate-readme__icon ${url.trim() ? 'active' : ''}`}
+                  onClick={handleGenerate}
+                />
+              </div>
+              
+              <div className="readme-intro">
+                <h3>
+                  {"✨ README 작성이 어려우신가요?".split('').map((char, index) => (
+                    <span 
+                      key={index} 
+                      className="typing-char"
+                      style={{animationDelay: `${index * 0.05}s`}}
+                    >
+                      {char === ' ' ? '\u00A0' : char}
+                    </span>
+                  ))}
+                </h3>
+                <p>
+                  {"GitHub 주소만 넣어주세요!".split('').map((char, index) => (
+                    <span 
+                      key={index} 
+                      className="typing-char"
+                      style={{animationDelay: `${(20 + index) * 0.05}s`}}
+                    >
+                      {char === ' ' ? '\u00A0' : char}
+                    </span>
+                  ))}
+                  <br/>
+                  {"AlOG가 프로젝트를 분석해서 멋진 README를 만들어드릴게요.".split('').map((char, index) => (
+                    <span 
+                      key={index} 
+                      className="typing-char"
+                      style={{animationDelay: `${(35 + index) * 0.05}s`}}
+                    >
+                      {char === ' ' ? '\u00A0' : char}
+                    </span>
+                  ))}
+                </p>
+              </div>
+            </>
           ) : (
             /* “History” 화면 (HistoryList) ─*/
             <div className="historylist-wrapper">
@@ -224,7 +261,7 @@ export const GenerateReadmeScreen = () => {
           )}
 
           {/* ReadmeGenerator(로딩 스피너) */}
-          {selectedTab === "Generate README" && showLoader && (
+          {selectedTab === "README 생성" && showLoader && (
             <ReadmeGenerator active={showLoader} onDone={handleReadmeDone} />
           )}
 

@@ -8,7 +8,7 @@ export const GenerateReadme = ({ property1, className }) => {
   return (
     <div className={`generate-README ${stateClass} ${className}`}>
       <div className="frame">
-        <div className="text-wrapper">Generate README</div>
+        <div className="text-wrapper">README 생성</div>
       </div>
     </div>
   );
