@@ -58,7 +58,7 @@
   }
   
 .myblog-username {
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 37px;
   font-weight: 700;
   color: #ffffff;
@@ -90,7 +90,7 @@
   .myblog-follow-label,
   .myblog-follow-count {
     color: #ffffff;
-    font-family: "Inter", Helvetica;
+    font-family: "GmarketSans", sans-serif;
     font-size: 15px;
   }
   
@@ -105,7 +105,7 @@
   
   .myblog-description {
     color: #ffffff;
-    font-family: "Inter", Helvetica;
+    font-family: "GmarketSans", sans-serif;
     font-size: 15px;
     font-weight: 500;
     white-space: nowrap;
@@ -159,7 +159,7 @@
   }
   
   .myblog-post-title {
-    font-family: "Inter", Helvetica;
+    font-family: "GmarketSans", sans-serif;
     font-size: 20px;
     font-weight: 700;
     text-align: center;
@@ -174,7 +174,7 @@
   justify-content: center;
   align-items: center;
   min-height: 200px;
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 15px;
   color: #555;
 }
@@ -216,7 +216,7 @@
   }
   
   .myblog-post-snippet {
-    font-family: "Inter", Helvetica;
+    font-family: "GmarketSans", sans-serif;
     font-size: 13px;
     font-weight: 600;
     font-style: italic;
@@ -231,7 +231,7 @@
   
   .myblog-post-date {
     font-size: 8px;
-    font-family: "Inter", Helvetica;
+    font-family: "GmarketSans", sans-serif;
     font-style: italic;
     color: #a0a0a0;
   }
@@ -249,7 +249,7 @@
   
   .myblog-comment-count {
     font-size: 10px;
-    font-family: "Inter", Helvetica;
+    font-family: "GmarketSans", sans-serif;
     color: #a0a0a0;
     font-style: italic;
   }
@@ -264,7 +264,7 @@
   }
   
   .myblog-description-input {
-    font-family: "Inter", Helvetica;
+    font-family: "GmarketSans", sans-serif;
     font-size: 15px;
     font-weight: 500;
     background-color: transparent;

@@ -39,7 +39,7 @@
 .main-page-before .p {
   align-self: stretch;
   color: #a0a0a0;
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 14px;
   font-weight: 400;
   letter-spacing: 0;
@@ -109,7 +109,7 @@
 
 .main-page-before .text-wrapper-9 {
   color: #1d1652;
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 15px;
   font-weight: 400;
   height: 14px;
@@ -252,7 +252,7 @@
 
 .main-page-before .text-wrapper-10 {
   color: #000000;
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 12px;
   font-weight: 400;
   letter-spacing: 0;
@@ -286,7 +286,7 @@
 
 .main-page-before .text-wrapper-11 {
   color: #000000;
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0;
@@ -300,7 +300,7 @@
 .main-page-before .text-wrapper-12 {
   align-self: stretch;
   color: #000000;
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 13px;
   font-weight: 400;
   letter-spacing: 0;
@@ -319,7 +319,7 @@
 
 .main-page-before .text-wrapper-13 {
   color: #a3b3bf;
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 10px;
   font-weight: 400;
   letter-spacing: 0;
@@ -348,7 +348,7 @@
   align-self: stretch;
   color: #a3b3bf;
   flex: 1;
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 10px;
   font-weight: 400;
   letter-spacing: 0;
@@ -371,7 +371,7 @@
 .main-page-before .text-wrapper-15 {
   align-self: stretch;
   color: #a3b3bf;
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 10px;
   font-weight: 400;
   letter-spacing: 0;
@@ -532,7 +532,7 @@
 
 .main-page-before .text {
   color: transparent;
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 12px;
   font-weight: 400;
   left: 7px;
@@ -582,7 +582,7 @@
   text-align: center;
   color: #888;
   font-size: 20px !important;
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-weight: 400;
   z-index: 1;
   margin: 0;

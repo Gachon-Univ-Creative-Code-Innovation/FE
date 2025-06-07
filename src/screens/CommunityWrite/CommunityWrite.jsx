@@ -6,6 +6,8 @@ import Component18 from "../../icons/GoBackIcon/GoBackIcon";
 import { SaveDraftComponent } from "../../components/SaveDraftComponent/SaveDraftComponent";
 import { PostComponent } from "../../components/PostComponent/PostComponent";
 import { useLocation, useNavigate } from "react-router-dom";
+import PostSuccessPopup from "../../components/PostSuccessPopup/PostSuccessPopup";
+import { AnimatePresence } from "framer-motion";
 
 const CommunityCategories = [
   { key: null, label: "카테고리 선택" },
@@ -72,6 +74,8 @@ export default function CommunityWrite() {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState(null);
   const [tags, setTags] = useState("");
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [newPostData, setNewPostData] = useState(null);
 
   // 컴포넌트가 마운트될 때 기존 데이터로 초기화
   useEffect(() => {
@@ -136,19 +140,13 @@ export default function CommunityWrite() {
         // await updatePost(updatedPostData);
         
         console.log("글 수정 완료:", updatedPostData);
-        alert("글이 수정되었습니다!");
         
         // 임시 저장된 초안 삭제
         localStorage.removeItem('communityDraft');
         
-        // 수정된 데이터를 ViewPost에 전달하면서 이동
-        // 동적 라우팅을 위해 postId 사용
-        navigate(`/community/viewpost/id:${postData?.id || 1}`, {
-          state: {
-            updatedPost: updatedPostData,
-            isUpdated: true // 업데이트 플래그 추가
-          }
-        });
+        // 팝업 데이터 설정 후 팝업 표시
+        setNewPostData(updatedPostData);
+        setShowSuccessPopup(true);
       } catch (error) {
         console.error("글 수정 실패:", error);
         alert("글 수정에 실패했습니다. 다시 시도해주세요.");
@@ -170,22 +168,39 @@ export default function CommunityWrite() {
         // const response = await createPost(newPostData);
         
         console.log("새 글 작성 완료:", newPostData);
-        alert("게시되었습니다!");
         
         // 임시 저장된 초안 삭제
         localStorage.removeItem('communityDraft');
         
-        // 새로 작성된 글로 이동
-        navigate(`/community/viewpost`, {
-          state: {
-            newPost: newPostData,
-            isNew: true
-          }
-        });
+        // 팝업 데이터 설정 후 팝업 표시
+        setNewPostData(newPostData);
+        setShowSuccessPopup(true);
       } catch (error) {
         console.error("글 작성 실패:", error);
         alert("글 작성에 실패했습니다. 다시 시도해주세요.");
       }
+    }
+  };
+
+  const handlePopupConfirm = () => {
+    setShowSuccessPopup(false);
+    
+    if (isEditMode) {
+      // 수정된 데이터를 ViewPost에 전달하면서 이동
+      navigate(`/community/viewpost/id:${postData?.id || 1}`, {
+        state: {
+          updatedPost: newPostData,
+          isUpdated: true // 업데이트 플래그 추가
+        }
+      });
+    } else {
+      // 새로 작성된 글로 이동
+      navigate(`/community/viewpost`, {
+        state: {
+          newPost: newPostData,
+          isNew: true
+        }
+      });
     }
   };
 
@@ -275,6 +290,15 @@ export default function CommunityWrite() {
           </div>
         </div>
       </div>
+
+      <AnimatePresence>
+        {showSuccessPopup && (
+          <PostSuccessPopup
+            message={isEditMode ? "글이 수정되었습니다!" : "게시되었습니다!"}
+            onConfirm={handlePopupConfirm}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

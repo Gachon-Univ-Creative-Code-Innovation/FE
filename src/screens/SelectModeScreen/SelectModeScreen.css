@@ -28,7 +28,7 @@
 
 .select-mode-screen__title {
   color: #000;
-  font-family: "Inter-Bold", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 16px;
   font-weight: 700;
   text-align: center;
@@ -40,7 +40,7 @@
 
 .select-mode-screen__description {
   color: #000;
-  font-family: "Inter-Regular", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 13px;
   text-align: center;
   line-height: 20px;

@@ -40,7 +40,7 @@
   
   .nickname-title-text {
     color: #000000;
-    font-family: "Inter", Helvetica;
+    font-family: "GmarketSans", sans-serif;
     font-size: 20px;
     font-weight: 400;
     letter-spacing: 0;
@@ -95,7 +95,7 @@
     background: transparent;
     outline: none;
     color: #000;
-    font-family: "Inter", Helvetica;
+    font-family: "GmarketSans", sans-serif;
     font-size: 15px;
     flex: 1;
     transition: all 0.3s ease;
@@ -125,7 +125,7 @@
   
   .nickname-check-text {
     color: #a0a0a0;
-    font-family: "Inter", Helvetica;
+    font-family: "GmarketSans", sans-serif;
     font-size: 15px;
     font-weight: 400;
     letter-spacing: 0;
@@ -144,7 +144,7 @@
   
   .nickname-message {
     color: #000000;
-    font-family: "Inter", Helvetica;
+    font-family: "GmarketSans", sans-serif;
     font-size: 15px;
     font-weight: 400;
     letter-spacing: 0;
@@ -178,7 +178,7 @@
   
   .nickname-save-text {
     color: #ffffff;
-    font-family: "Inter", Helvetica;
+    font-family: "GmarketSans", sans-serif;
     font-size: 20px;
     font-weight: 600;
     letter-spacing: 1px;

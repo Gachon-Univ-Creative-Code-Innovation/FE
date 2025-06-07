@@ -28,7 +28,7 @@
 
 .readmepopup-title {
   color: #ffffff;
-  font-family: "Inter-Regular", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 20px;
   font-weight: 400;
   letter-spacing: 0;
@@ -70,7 +70,7 @@
 
 .readmepopup-label {
   color: #ffffff;
-  font-family: "Inter-Regular", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 15px;
   font-weight: 400;
   letter-spacing: 0;
@@ -112,7 +112,7 @@
   padding: 32px 40px;
   border-radius: 8px;
   overflow-y: auto;
-  font-family: "Inter", "Segoe UI", "Arial", sans-serif;
+  font-family: "GmarketSans", sans-serif;
   font-size: 16px;
   line-height: 1.7;
   box-sizing: border-box;

@@ -27,7 +27,7 @@
 
 .historylist-repo-label {
   color: #000;
-  font-family: "Inter-SemiBold", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 12px;
   font-weight: 600;
   line-height: 30px;
@@ -39,7 +39,7 @@
 
 .historylist-repo-url {
   color: #000;
-  font-family: "Inter-Regular", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 12px;
   font-weight: 400;
   line-height: 30px;
@@ -131,7 +131,7 @@
   background: rgba(0, 0, 0, 0.55);
   color: #fff;
   font-size: 12px;
-  font-family: "Inter", Helvetica, Arial, sans-serif;
+  font-family: "GmarketSans", sans-serif, Arial, sans-serif;
   padding: 8px 7px 4px 7px;
   border-radius: 6px 6px 0 0;
   overflow: hidden;

@@ -54,7 +54,7 @@
 }
 
 .filterscreen-title {
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 15px;
   font-weight: 400;
   line-height: 30px;
@@ -92,7 +92,7 @@
 }
 
 .filterscreen-tag-text {
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 15px;
   font-weight: 400;
   line-height: 30px;

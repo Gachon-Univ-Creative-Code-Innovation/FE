@@ -72,7 +72,7 @@
 .mypost-nickname {
   font-size: 14px;
   font-weight: 500;
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   line-height: 10px;
   color: #000;
   white-space: nowrap;
@@ -116,7 +116,7 @@
 }
 
 .mypost-label {
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 11px;
   font-weight: 400;
   line-height: 14px;
@@ -127,7 +127,7 @@
 }
 
 .mypost-count {
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 11px;
   font-weight: 400;
   line-height: 14px;
@@ -193,7 +193,7 @@
 .mypost-comment-count,
 .mypost-views-count {
   font-size: 10px;
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-weight: 400;
   color: #a3b3bf;
   text-align: center;
