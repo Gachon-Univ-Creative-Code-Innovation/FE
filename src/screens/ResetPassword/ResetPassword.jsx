@@ -24,6 +24,43 @@ export const ResetPassword = () => {
   const [resultMessage, setResultMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // 비밀번호 유효성 검사 (실시간)
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setNewPassword(value);
+    setResultMessage("");
+    
+    if (value.length === 0) {
+      setPasswordMessage("");
+    } else if (value.length < 8) {
+      setPasswordMessage("비밀번호는 최소 8자 이상이어야 합니다.");
+    } else {
+      setPasswordMessage("사용 가능한 비밀번호입니다.");
+    }
+    
+    // 비밀번호 확인과의 일치 여부 체크
+    if (confirmPassword && value !== confirmPassword) {
+      setConfirmMessage("비밀번호가 일치하지 않습니다.");
+    } else if (confirmPassword && value === confirmPassword) {
+      setConfirmMessage("비밀번호가 일치합니다.");
+    }
+  };
+
+  // 비밀번호 확인 유효성 검사 (실시간)
+  const handleConfirmPasswordChange = (e) => {
+    const value = e.target.value;
+    setConfirmPassword(value);
+    setResultMessage("");
+    
+    if (value.length === 0) {
+      setConfirmMessage("");
+    } else if (value !== newPassword) {
+      setConfirmMessage("비밀번호가 일치하지 않습니다.");
+    } else {
+      setConfirmMessage("비밀번호가 일치합니다.");
+    }
+  };
+
   const handleReset = async (e) => {
     e.preventDefault();
 
@@ -51,8 +88,6 @@ export const ResetPassword = () => {
     try {
       setIsSubmitting(true);
       setResultMessage("");
-      setPasswordMessage("");
-      setConfirmMessage("");
 
       const response = await api.post("/user-service/reset-password", {
         token,
@@ -86,19 +121,34 @@ export const ResetPassword = () => {
     }
   };
 
+  // 버튼 활성화 조건 계산
+  const isFormValid = 
+    token &&
+    newPassword.length >= 8 &&
+    confirmPassword &&
+    newPassword === confirmPassword;
+
   return (
     <PageTransitionWrapper>
-      <GoBackIcon
-        className="resetpassword-goback-icon"
-        onClick={() => navigate(-1)}
-      />
+      <GoBackIcon className="resetpassword-component-18" onClick={() => navigate(-1)} />
 
-      <div className="resetpassword-wrapper">
-        <div className="resetpassword-container">
-          <div className="resetpassword-frame">
-            <div className="resetpassword-placeholder-rectangle" />
+      <div className="resetpassword">
+        <div className="resetpassword-div-2">
+          {/* 왼쪽 영역 - 로고 */}
+          <div className="resetpassword-left-section">
+            <div className="resetpassword-left-content">
+              <div className="resetpassword-logo-container">
+                <img
+                  src="/img/AlOG-logo.png"
+                  alt="Alog Logo"
+                />
+              </div>
+            </div>
+          </div>
 
-            <form onSubmit={handleReset}>
+          {/* 오른쪽 영역 - 비밀번호 재설정 폼 */}
+          <div className="resetpassword-right-section">
+            <form autoComplete="off" onSubmit={handleReset}>
               {/* 화면에 보이지 않지만 autofill을 위해 필요한 username 필드 */}
               <input
                 type="text"
@@ -107,62 +157,69 @@ export const ResetPassword = () => {
                 hidden
               />
 
-              <div className="resetpassword-newpw-wrapper">
-                <div className="resetpassword-input-box">
-                  <CommunicationLock className="resetpassword-icon" />
-                  <input
-                    type="password"
-                    name="new-password"
-                    autoComplete="new-password"
-                    placeholder="새 비밀번호 입력 (최소 8자)"
-                    className="resetpassword-input"
-                    value={newPassword}
-                    onChange={(e) => {
-                      setNewPassword(e.target.value);
-                      setPasswordMessage("");
-                      setResultMessage("");
-                    }}
-                    disabled={isSubmitting}
-                  />
-                </div>
-                {passwordMessage && (
-                  <div className="resetpassword-message">{passwordMessage}</div>
-                )}
+              <div className="resetpassword-title">
+                <h2>비밀번호 재설정</h2>
+                <p>새로운 비밀번호를 입력해주세요.</p>
               </div>
 
-              <div className="resetpassword-confirmpw-wrapper">
-                <div className="resetpassword-input-box">
-                  <CommunicationLock className="resetpassword-icon" />
-                  <input
-                    type="password"
-                    name="confirm-password"
-                    autoComplete="new-password"
-                    placeholder="비밀번호 확인"
-                    className="resetpassword-input"
-                    value={confirmPassword}
-                    onChange={(e) => {
-                      setConfirmPassword(e.target.value);
-                      setConfirmMessage("");
-                      setResultMessage("");
-                    }}
-                    disabled={isSubmitting}
-                  />
-                </div>
-                {confirmMessage && (
-                  <div className="resetpassword-message">{confirmMessage}</div>
-                )}
+              {/* 새 비밀번호 입력 필드 */}
+              <div className="resetpassword-password">
+                <input
+                  type="password"
+                  name="new-password"
+                  autoComplete="new-password"
+                  placeholder="새 비밀번호 입력 (최소 8자)"
+                  className="resetpassword-text-input"
+                  value={newPassword}
+                  onChange={handlePasswordChange}
+                  disabled={isSubmitting}
+                />
               </div>
+              {passwordMessage && (
+                <div className={`resetpassword-message ${
+                  passwordMessage.includes("사용 가능한") ? "success" : "error"
+                }`}>
+                  {passwordMessage}
+                </div>
+              )}
 
+              {/* 비밀번호 확인 입력 필드 */}
+              <div className="resetpassword-password">
+                <input
+                  type="password"
+                  name="confirm-password"
+                  autoComplete="new-password"
+                  placeholder="비밀번호 확인"
+                  className="resetpassword-text-input"
+                  value={confirmPassword}
+                  onChange={handleConfirmPasswordChange}
+                  disabled={isSubmitting}
+                />
+              </div>
+              {confirmMessage && (
+                <div className={`resetpassword-message ${
+                  confirmMessage.includes("일치합니다") ? "success" : "error"
+                }`}>
+                  {confirmMessage}
+                </div>
+              )}
+
+              {/* 결과 메시지 */}
               {resultMessage && (
-                <div className="resetpassword-result-message">
+                <div className={`resetpassword-message ${resultMessage.includes("변경되었습니다") ? "success" : "error"}`}>
                   {resultMessage}
                 </div>
               )}
 
+              {/* 재설정 버튼 */}
               <button
                 type="submit"
-                className="resetpassword-submit-button"
-                disabled={isSubmitting}
+                className={`resetpassword-button ${isFormValid ? "active" : ""}`}
+                disabled={isSubmitting || !isFormValid}
+                style={{
+                  cursor: isSubmitting || !isFormValid ? "not-allowed" : "pointer",
+                  opacity: isSubmitting || !isFormValid ? 0.5 : 1,
+                }}
               >
                 <div className="resetpassword-submit-text">
                   {isSubmitting ? "변경 중..." : "비밀번호 재설정"}
@@ -170,18 +227,10 @@ export const ResetPassword = () => {
               </button>
             </form>
           </div>
-
-          <div className="resetpassword-logo-container">
-            <AlogIcon
-              className="resetpassword-logo"
-              onClick={() => navigate("/mainpagebefore")}
-              style={{ cursor: "pointer" }}
-            />
-          </div>
         </div>
       </div>
     </PageTransitionWrapper>
   );
 };
 
-export default ResetPassword;
+export default ResetPassword; 
