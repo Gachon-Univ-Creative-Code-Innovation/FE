@@ -7,7 +7,7 @@ import SendIcon from "../../icons/SendIcon/SendIcon";
 import MatchingModal from "../../components/MatchingModal/MatchingModal";
 import { useNavigate, useLocation } from "react-router-dom";
 import { MatchingCategories } from "../../constants/categories";
-import api from "../../api/local-instance"
+import api from "../../api/instance"
 
 
 
