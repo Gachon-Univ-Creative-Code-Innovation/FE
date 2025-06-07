@@ -3,170 +3,220 @@
   flex-direction: column;
   align-items: center;
   background-color: #a3b3bf;
-  /* 높이를 뷰포트 전체로 설정 */
   min-height: 100vh;
   padding-top: 120px;
 }
-  
-  .myblog-content-frame {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .myblog-header {
-    width: 1100px;
-    height: 330px;
-    border-radius: 10px;
-    position: relative;
-  }
-  
-  .myblog-profile-container {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center; /* 수평 중앙 정렬 */
-    align-items: center;     /* 수직 중앙 정렬 */
-    gap: 40px;               /* 이미지, 소개, 버튼 사이 간격 */
-    padding: 20px 0;
-    position: relative;
-  }
-  
-  .myblog-profile-image {
-    width: 180px;
-    height: 240px;
-    object-fit: cover;
-    border-radius: 10px;
-  }
-  
-  .myblog-profile-details {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    padding: 14px 34px;
-    width: 468px;
-    max-width: 100%;
-  }
-  
-  .myblog-username-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 30px;
-    width: 400px;
-    margin-bottom: 20px;
-  }
-  
+
+.myblog-content-frame {
+  display: flex;
+  flex-direction: column;
+}
+
+.myblog-header {
+  width: 1100px;
+  height: 330px;
+  border-radius: 10px;
+  position: relative;
+}
+
+.myblog-profile-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  padding: 20px 0;
+  position: relative;
+}
+
+.myblog-profile-image {
+  width: 180px;
+  height: 240px;
+  background-color: #d9d9d9;
+  background-size: cover;
+  background-position: center;
+  border-radius: 10px;
+}
+
+.myblog-profile-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 14px 34px;
+  width: 468px;
+  max-width: 100%;
+}
+
+.myblog-username-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  width: 400px;
+  margin-bottom: 20px;
+}
+
 .myblog-username {
   font-family: "GmarketSans", sans-serif;
   font-size: 37px;
   font-weight: 700;
   color: #ffffff;
-  display: inline-block;
-  max-width: 350px;
   white-space: nowrap;
   overflow: hidden; 
   text-overflow: ellipsis; 
 }
-  
-  .myblog-icon-subtract {
-    width: 25px;
-    height: 25px;
-  }
-  
-  .myblog-follow-info {
-    display: flex;
-    gap: 70px;
-    justify-content: center;
-    margin-bottom: 20px;
-  }
-  
-  .myblog-follow-box {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-  
-  .myblog-follow-label,
-  .myblog-follow-count {
-    color: #ffffff;
-    font-family: "GmarketSans", sans-serif;
-    font-size: 15px;
-  }
-  
-  .myblog-description-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    width: 400px;
-    margin-bottom: 20px;
-  }
-  
-  .myblog-description {
-    color: #ffffff;
-    font-family: "GmarketSans", sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    white-space: nowrap;
-  }
-  
-  .myblog-icon-vector {
-    width: 13px;
-    height: 13px;
-  }
-  
-  .myblog-side-buttons {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 30px;
-  }
-  
-  .myblog-btn-default {
-    width: 100px;
-    height: 30px;
-  }
-  
-  .myblog-btn-github {
-    width: 100px;
-    height: 30px;
-    margin-left: 32px;
-  }
-  
-  .myblog-post-section {
-    width: 1100px;
-    background-color: #fafdffb2;
-    border-radius: 50px 50px 0 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 50px;
-  }
-  
-  .myblog-post-header {
-    width: 100%;
-    padding: 30px 20px;
-    display: flex;
-    justify-content: center;
-  }
-  
-  .myblog-tab-latest {
-    display: flex;
-    justify-content: center;
-    padding: 0 70px;
-    border-radius: 30px;
-  }
-  
-  .myblog-post-title {
-    font-family: "GmarketSans", sans-serif;
-    font-size: 20px;
-    font-weight: 700;
-    text-align: center;
-  }
-  
+
+.myblog-icon-subtract {
+  width: 25px;
+  height: 25px;
+}
+
+.myblog-follow-info {
+  display: flex;
+  gap: 70px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.myblog-follow-box {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.myblog-follow-label,
+.myblog-follow-count {
+  color: #ffffff;
+  font-family: "GmarketSans", sans-serif;
+  font-size: 15px;
+}
+
+.myblog-side-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.myblog-btn-default,
+.myblog-btn-github {
+  width: 100px;
+  height: 30px;
+}
+
+.myblog-btn-github {
+  margin-left: 20px;
+}
+
+.myblog-post-section {
+  width: 1100px;
+  background-color: #fafdffb2;
+  border-radius: 50px 50px 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 50px;
+}
+
+.myblog-post-header {
+  width: 100%;
+  padding: 30px 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.myblog-tab-latest {
+  display: flex;
+  justify-content: center;
+  padding: 0 70px;
+  border-radius: 30px;
+}
+
+.myblog-post-title {
+  font-family: "GmarketSans", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  text-align: center;
+}
+
 .myblog-post-list {
   position: relative;
+}
+
+.myblog-post-list::-webkit-scrollbar {
+  display: none;
+}
+
+.myblog-post-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 50px 65px;
+  padding: 5px 18px;
+}
+
+.myblog-post-card {
+  width: 180px;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+/* 썸네일 placeholder + background-image */
+.myblog-post-image {
+  width: 100%;
+  height: 180px;
+  background-color: #d9d9d9;
+}
+
+.myblog-post-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.myblog-post-snippet {
+  font-family: "GmarketSans", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  font-style: italic;
+}
+
+.myblog-post-meta {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  align-items: center;
+}
+
+.myblog-post-date {
+  font-size: 8px;
+  font-family: "GmarketSans", sans-serif;
+  font-style: italic;
+  color: #a0a0a0;
+}
+
+.myblog-post-comment {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+
+.myblog-comment-icon {
+  width: 10px;
+  height: 10px;
+}
+
+.myblog-comment-count {
+  font-size: 10px;
+  font-family: "GmarketSans", sans-serif;
+  color: #a0a0a0;
+  font-style: italic;
 }
 
 .myblog-empty-message {
@@ -178,104 +228,17 @@
   font-size: 15px;
   color: #555;
 }
-  
-  .myblog-post-list::-webkit-scrollbar {
-    display: none;
-  }
-  
-  .myblog-post-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 50px 65px;
-    padding: 5px 18px;
-  }
-  
-  .myblog-post-card {
-    width: 180px;
-    height: 250px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
-  }
-  
-  .myblog-post-image,
-  .myblog-post-placeholder {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-    background-color: #d9d9d9;
-  }
-  
-  .myblog-post-content {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-  }
-  
-  .myblog-post-snippet {
-    font-family: "GmarketSans", sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    font-style: italic;
-  }
-  
-  .myblog-post-meta {
-    display: flex;
-    gap: 14px;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .myblog-post-date {
-    font-size: 8px;
-    font-family: "GmarketSans", sans-serif;
-    font-style: italic;
-    color: #a0a0a0;
-  }
-  
-  .myblog-post-comment {
-    display: flex;
-    gap: 2px;
-    align-items: center;
-  }
-  
-  .myblog-comment-icon {
-    width: 10px;
-    height: 10px;
-  }
-  
-  .myblog-comment-count {
-    font-size: 10px;
-    font-family: "GmarketSans", sans-serif;
-    color: #a0a0a0;
-    font-style: italic;
-  }
-  
-  .navbar {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    height: 80px;
-    z-index: 1600;
-    background-color: #f9fcff;
-  }
-  
-  .myblog-description-input {
-    font-family: "GmarketSans", sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    background-color: transparent;
-    border: none;
-    border-bottom: 1px solid white;
-    color: white;
-    width: 100%;
-    outline: none;
-  }
 
-/* 파도타기 효과 스타일 */
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 80px;
+  z-index: 1600;
+  background-color: #f9fcff;
+}
+
+/* 파도타기 효과 */
 .wave-letter {
   display: inline-block;
   transition: transform 0.3s ease;
@@ -287,10 +250,6 @@
 }
 
 @keyframes wave-bounce {
-  0%, 70%, 100% {
-    transform: translateY(0px);
-  }
-  35% {
-    transform: translateY(-15px);
-  }
+  0%, 70%, 100% { transform: translateY(0); }
+  35%         { transform: translateY(-15px); }
 }

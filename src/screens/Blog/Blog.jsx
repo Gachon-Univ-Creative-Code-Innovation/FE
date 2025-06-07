@@ -1,3 +1,4 @@
+// src/screens/Blog/Blog.jsx
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import GoGitHub from "../../components/GoGitHub/GoGitHub";
@@ -33,7 +34,7 @@ export const Blog = () => {
     api
       .get(`/user-service/details/${viewedUserId}`)
       .then((res) => {
-        const data = res.data.data;
+        const data = res.data.data || {};
         setNickname(data.nickname || "");
         setProfileUrl(data.profileUrl || "");
         setGithubUrl(data.githubUrl || "");
@@ -158,13 +159,12 @@ export const Blog = () => {
         <div className="blog-content-frame">
           <header className="blog-header">
             <div className="blog-profile-container">
-              <img
+              {/* 프로필도 background-image 처리 */}
+              <div
                 className="blog-profile-image"
-                alt="Profile"
-                src={profileUrl || "/img/basic_profile_photo.png"}
-                onError={(e) =>
-                  (e.currentTarget.src = "/img/basic_profile_photo.png")
-                }
+                style={{
+                  backgroundImage: profileUrl ? `url(${profileUrl})` : "none",
+                }}
               />
               <div className="blog-profile-details">
                 <div className="blog-username-row">
@@ -195,7 +195,7 @@ export const Blog = () => {
                   }
                   style={{
                     cursor: githubUrl ? "pointer" : "default",
-                    marginLeft: "8px",
+                    marginLeft: 8,
                   }}
                 >
                   <GoGitHub className="blog-btn-github" property1="default" />
@@ -220,13 +220,18 @@ export const Blog = () => {
                       key={post.postId}
                       ref={isLast ? lastPostRef : null}
                     >
-                      <div className="blog-post-image">
-                        <img
-                          className="blog-post-image"
-                          alt="Thumbnail"
-                          src={post.thumbnail}
-                        />
-                      </div>
+                      {/* 썸네일 background-image 처리 */}
+                      <div
+                        className="blog-post-image"
+                        style={{
+                          backgroundColor: "#d9d9d9",
+                          backgroundImage: post.thumbnail
+                            ? `url(${post.thumbnail})`
+                            : "none",
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                        }}
+                      />
                       <div className="blog-post-content">
                         <p className="blog-post-snippet">{post.summary}</p>
                         <div className="blog-post-meta">

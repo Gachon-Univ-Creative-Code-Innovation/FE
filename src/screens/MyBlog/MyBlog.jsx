@@ -16,34 +16,25 @@ const WaveText = ({ text, className }) => {
   useEffect(() => {
     const startWaveLoop = () => {
       setStartWaveAnimation(true);
-      
-      const totalAnimationTime = (text.length * 0.15 + 0.6) * 1000;
-      
+      const totalTime = (text.length * 0.15 + 0.6) * 1000;
       setTimeout(() => {
         setStartWaveAnimation(false);
-        setTimeout(() => {
-          startWaveLoop();
-        }, 3000);
-      }, totalAnimationTime);
+        setTimeout(startWaveLoop, 3000);
+      }, totalTime);
     };
-
-    // 컴포넌트 마운트 후 잠시 대기 후 시작
-    const timer = setTimeout(() => {
-      startWaveLoop();
-    }, 1000);
-
+    const timer = setTimeout(startWaveLoop, 1000);
     return () => clearTimeout(timer);
   }, [text]);
 
   return (
     <div className={className}>
-      {text.split('').map((letter, index) => (
+      {text.split("").map((ch, i) => (
         <span
-          key={index}
-          className={`wave-letter ${startWaveAnimation ? 'wave-animate' : ''}`}
-          style={{ '--delay': `${index * 0.15}s` }}
+          key={i}
+          className={`wave-letter ${startWaveAnimation ? "wave-animate" : ""}`}
+          style={{ "--delay": `${i * 0.15}s` }}
         >
-          {letter === ' ' ? '\u00A0' : letter}
+          {ch === " " ? "\u00A0" : ch}
         </span>
       ))}
     </div>
@@ -52,41 +43,33 @@ const WaveText = ({ text, className }) => {
 
 export const MyBlog = () => {
   const navigate = useNavigate();
-
-  // 로그인 토큰만 있으면 내 블로그 접근 가능
   const jwtToken = localStorage.getItem("jwtToken") || "";
 
-  // 프로필 정보 상태
+  // 프로필 정보
   const [nickname, setNickname] = useState("");
   const [profileUrl, setProfileUrl] = useState("");
   const [githubUrl, setGithubUrl] = useState("");
   const [followerCount, setFollowerCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
 
-  // 게시글 상태
+  // 게시글
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-
   const observer = useRef();
 
   // 1) 내 정보 & 팔로우/팔로잉 조회
   useEffect(() => {
-    if (!jwtToken) {
-      navigate("/login");
-      return;
-    }
+    if (!jwtToken) return navigate("/login");
 
     api
-      .get("/user-service/user/patch", {
-        headers: { Authorization: jwtToken },
-      })
+      .get("/user-service/user/patch", { headers: { Authorization: jwtToken } })
       .then((res) => {
-        const data = res.data.data;
-        setNickname(data.nickname || "");
-        setProfileUrl(data.profileUrl || "");
-        setGithubUrl(data.githubUrl || "");
+        const d = res.data.data;
+        setNickname(d.nickname || "");
+        setProfileUrl(d.profileUrl || "");
+        setGithubUrl(d.githubUrl || "");
       })
       .catch((err) => console.error("내 정보 조회 에러:", err));
 
@@ -105,7 +88,7 @@ export const MyBlog = () => {
       .catch((err) => console.error("팔로잉 조회 에러:", err));
   }, [jwtToken, navigate]);
 
-  // 2) 내 게시글 목록 불러오기
+  // 2) 내 게시글 불러오기
   useEffect(() => {
     if (!jwtToken || !hasMore) return;
     setLoading(true);
@@ -117,15 +100,13 @@ export const MyBlog = () => {
       .then((res) => {
         const data = res.data.data || [];
         setPosts((prev) => [...prev, ...data]);
-        if (data.length === 0) {
-          setHasMore(false);
-        }
+        if (data.length === 0) setHasMore(false);
       })
       .catch((err) => console.error("게시글 조회 에러:", err))
       .finally(() => setLoading(false));
   }, [page, hasMore, jwtToken]);
 
-  // 3) 무한 스크롤: 마지막 카드 보이면 페이지 증가
+  // 3) 무한 스크롤
   const lastPostRef = useCallback(
     (node) => {
       if (loading) return;
@@ -142,7 +123,6 @@ export const MyBlog = () => {
 
   return (
     <PageTransitionWrapper>
-      {/* 내 블로그이므로 Navbar */}
       <Navbar isLoggedIn={true} onShowPopup={() => {}} />
 
       <div className="myblog-wrapper">
@@ -150,18 +130,16 @@ export const MyBlog = () => {
           {/* 프로필 헤더 */}
           <header className="myblog-header">
             <div className="myblog-profile-container">
-              <img
+              {/* 기본 placeholder는 CSS 배경색으로, profileUrl 있으면 background-image 덮어쓰기 */}
+              <div
                 className="myblog-profile-image"
-                alt="Profile"
-                src={profileUrl || "/img/default-profile.png"}
-                onError={(e) =>
-                  (e.currentTarget.src = "/img/default-profile.png")
-                }
+                style={{
+                  backgroundImage: profileUrl ? `url(${profileUrl})` : "none",
+                }}
               />
               <div className="myblog-profile-details">
                 <div className="myblog-username-row">
                   <div className="myblog-username">{nickname || "사용자"}</div>
-                  {/* 설정 아이콘 */}
                   <SettingIcon
                     className="myblog-icon-subtract"
                     style={{ cursor: "pointer" }}
@@ -170,11 +148,11 @@ export const MyBlog = () => {
                 </div>
                 <div className="myblog-follow-info">
                   <div className="myblog-follow-box">
-                                    <div className="myblog-follow-label">팔로워</div>
-                <div className="myblog-follow-count">{followerCount}</div>
-              </div>
-              <div className="myblog-follow-box">
-                <div className="myblog-follow-label">팔로잉</div>
+                    <div className="myblog-follow-label">팔로워</div>
+                    <div className="myblog-follow-count">{followerCount}</div>
+                  </div>
+                  <div className="myblog-follow-box">
+                    <div className="myblog-follow-label">팔로잉</div>
                     <div className="myblog-follow-count">{followingCount}</div>
                   </div>
                 </div>
@@ -191,12 +169,10 @@ export const MyBlog = () => {
                   />
                 </div>
                 <div
-                  onClick={() =>
-                    githubUrl ? window.open(githubUrl, "_blank") : null
-                  }
+                  onClick={() => githubUrl && window.open(githubUrl, "_blank")}
                   style={{
                     cursor: githubUrl ? "pointer" : "default",
-                    marginLeft: "8px",
+                    marginLeft: 8,
                   }}
                 >
                   <GoGitHub className="myblog-btn-github" property1="default" />
@@ -222,13 +198,17 @@ export const MyBlog = () => {
                       key={post.postId}
                       ref={isLast ? lastPostRef : null}
                     >
-                      <div className="myblog-post-image">
-                        <img
-                          className="myblog-post-image"
-                          alt="Thumbnail"
-                          src={post.thumbnail}
-                        />
-                      </div>
+                      <div
+                        className="myblog-post-image"
+                        style={{
+                          backgroundColor: "#d9d9d9",
+                          backgroundImage: post.thumbnail
+                            ? `url(${post.thumbnail})`
+                            : "none",
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                        }}
+                      />
                       <div className="myblog-post-content">
                         <p className="myblog-post-snippet">{post.summary}</p>
                         <div className="myblog-post-meta">
@@ -247,10 +227,11 @@ export const MyBlog = () => {
                   );
                 })}
               </div>
-
-              {/* 게시글이 없을 때 */}
               {!loading && posts.length === 0 && (
-                <WaveText text="당신의 이야기를 기다리고 있습니다 ✍️" className="myblog-empty-message" />
+                <WaveText
+                  text="당신의 이야기를 기다리고 있습니다 ✍️"
+                  className="myblog-empty-message"
+                />
               )}
             </div>
           </div>
