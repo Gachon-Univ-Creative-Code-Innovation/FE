@@ -222,19 +222,40 @@ const CommunityViewPost = () => {
   }, [editReplyId]);
 
   // 댓글 등록
-  const handleAddComment = () => {
+  const handleAddComment = async() => {
     if (!commentValue.trim()) return;
-    setComments([
-      ...comments,
-      {
-        id: Date.now(),
-        author: myName,
-        text: commentValue,
-        date: new Date().toISOString().slice(0, 10).replace(/-/g, '.'),
-        replies: [],
-      },
-    ]);
-    setCommentValue("");
+    try {
+      const token = localStorage.getItem("jwtToken");
+      const payload = {
+        postId: Number(postId),       // 현재 보고 있는 글의 ID
+        parentCommentId: null,        // 루트 댓글이므로 null
+        content: commentValue.trim(), // 입력된 댓글 내용
+      };
+
+      await api.post(
+        "/blog-service/comments",
+        payload,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setCommentValue("");
+      fetchComments();
+    } catch (e) {
+      console.error("댓글 등록 실패", e);
+    }
+
+
+    // setComments([
+    //   ...comments,
+    //   {
+    //     id: Date.now(),
+    //     author: myName,
+    //     text: commentValue,
+    //     date: new Date().toISOString().slice(0, 10).replace(/-/g, '.'),
+    //     replies: [],
+    //   },
+    // ]);
+    // setCommentValue("");
   };
 
   // 답글 등록
@@ -260,26 +281,26 @@ const CommunityViewPost = () => {
     setReplyTo(null);
   };
 
+  //댓글 조회
+  const fetchComments = async () => {
+    try {
+      const token = localStorage.getItem("jwtToken");
+      // “postId별 댓글 조회” API 호출
+      const res = await api.get(
+        `/blog-service/comments/${postId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const flatList = res.data.data.commentList;
+      console.log("댓글 데이터:", flatList);
+      const nested = buildNestedComments(flatList);
+      setComments(nested);
+    } catch (err) {
+      console.error("댓글 조회 실패:", err);
+    }
+  };
 
   // 댓글 조회
   useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const token = localStorage.getItem("jwtToken");
-        // “postId별 댓글 조회” API 호출
-        const res = await api.get(
-          `/blog-service/comments/${postId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        const flatList = res.data.data.commentList;
-        console.log("댓글 데이터:", flatList);
-        const nested = buildNestedComments(flatList);
-        setComments(nested);
-      } catch (err) {
-        console.error("댓글 조회 실패:", err);
-      }
-    };
-
     fetchComments();
   }, [postId]);
 
