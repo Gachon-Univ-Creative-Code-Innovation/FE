@@ -360,56 +360,45 @@ const CommunityViewPost = () => {
     } catch (e) {
       console.error("댓글 수정 실패", e);
     }
-
-
-    // setComments(comments.map(comment =>
-    //   comment.id === commentId
-    //     ? { ...comment, text: editCommentValue }
-    //     : comment
-    // ));
-    // setEditCommentId(null);
-    // setEditCommentValue("");
-
-
   };
 
   // 답글 수정 저장
-  const handleSaveEditReply = (commentId, replyId) => {
+  const handleSaveEditReply = async(commentId, replyId) => {
     if (!editReplyValue.trim()) return;
-    setComments(comments.map(comment =>
-      comment.id === commentId
-        ? {
-            ...comment,
-            replies: comment.replies.map(reply =>
-              reply.id === replyId
-                ? { ...reply, text: editReplyValue }
-                : reply
-            )
-          }
-        : comment
-    ));
-    setEditReplyId(null);
-    setEditReplyValue("");
+    try {
+      const token = localStorage.getItem("jwtToken");
+
+      await api.patch(
+        `/blog-service/comments/${replyId}`,
+        { content: editReplyValue },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setEditReplyId(null);
+      setEditReplyValue("");
+      fetchComments();
+    } catch (e) {
+      console.error("답글 수정 실패", e);
+    }
   };
 
   // 글 수정 버튼 클릭 - Write 페이지로 이동
-  const handleEditPost = () => {
-    console.log("navigate state:", { editMode: true, post });
+  // const handleEditPost = () => {
+  //   console.log("navigate state:", { editMode: true, post });
 
-    navigate('/community/write', { 
-      state: { 
-        editMode: true,
-        postData: {
-          title: post.title,
-          category: post.category,
-          content: post.content,
-          tags: post.tag,
-          id: post.id
-        }
-      }
-    });
-    setOpenMenuId(null);
-  };
+  //   navigate('/community/write', { 
+  //     state: { 
+  //       editMode: true,
+  //       postData: {
+  //         title: post.title,
+  //         category: post.category,
+  //         content: post.content,
+  //         tags: post.tag,
+  //         id: post.id
+  //       }
+  //     }
+  //   });
+  //   setOpenMenuId(null);
+  // };
 
   // 글 삭제 버튼 클릭
   const handleDeletePost = async() => {
