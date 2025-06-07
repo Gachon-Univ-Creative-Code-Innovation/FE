@@ -296,9 +296,6 @@ const CommunityViewPost = () => {
 
   // 댓글 삭제
   const handleDeleteComment = async(commentId) => {
-    // setComments(comments.filter(comment => comment.id !== commentId));
-    // setOpenMenuId(null);
-
     try {
       const token = localStorage.getItem("jwtToken");
 
@@ -314,16 +311,18 @@ const CommunityViewPost = () => {
   };
 
   // 답글 삭제
-  const handleDeleteReply = (commentId, replyId) => {
-    setComments(comments.map(comment =>
-      comment.id === commentId
-        ? {
-            ...comment,
-            replies: comment.replies.filter(reply => reply.id !== replyId)
-          }
-        : comment
-    ));
-    setOpenMenuId(null);
+  const handleDeleteReply = async(commentId, replyId) => {
+    try {
+      const token = localStorage.getItem("jwtToken");
+
+      await api.delete(`/blog-service/comments/${replyId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setOpenMenuId(null);
+      fetchComments();
+    } catch (e) {
+      console.error("답글 삭제 실패", e);
+    }
   };
 
   // 댓글 수정 모드 진입
