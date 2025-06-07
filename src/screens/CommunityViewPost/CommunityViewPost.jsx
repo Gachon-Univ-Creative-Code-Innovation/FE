@@ -343,15 +343,34 @@ const CommunityViewPost = () => {
   };
 
   // 댓글 수정 저장
-  const handleSaveEditComment = (commentId) => {
+  const handleSaveEditComment = async(commentId) => {
     if (!editCommentValue.trim()) return;
-    setComments(comments.map(comment =>
-      comment.id === commentId
-        ? { ...comment, text: editCommentValue }
-        : comment
-    ));
-    setEditCommentId(null);
-    setEditCommentValue("");
+
+    try {
+      const token = localStorage.getItem("jwtToken");
+
+      await api.patch(
+        `/blog-service/comments/${commentId}`,
+        { content: editCommentValue },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setEditCommentId(null);
+      setEditCommentValue("");
+      fetchComments();
+    } catch (e) {
+      console.error("댓글 수정 실패", e);
+    }
+
+
+    // setComments(comments.map(comment =>
+    //   comment.id === commentId
+    //     ? { ...comment, text: editCommentValue }
+    //     : comment
+    // ));
+    // setEditCommentId(null);
+    // setEditCommentValue("");
+
+
   };
 
   // 답글 수정 저장
