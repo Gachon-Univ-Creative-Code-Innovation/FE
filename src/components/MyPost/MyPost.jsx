@@ -72,14 +72,14 @@ export const MyPost = () => {
 
           <div className="mypost-follow">
             <div className="mypost-label" onClick={handleFollowClick}>
-              Follower
+              팔로워
             </div>
             <div className="mypost-count">{userInfo.followers}</div>
 
             <div className="mypost-divider" />
 
             <div className="mypost-label" onClick={handleFollowClick}>
-              Following
+              팔로잉
             </div>
             <div className="mypost-count">{userInfo.following}</div>
           </div>

@@ -2,12 +2,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(215, 228, 238, 1);
+  border: 2px solid rgba(215, 228, 238, 1);
   border-radius: 6px;
   padding: 0;
   height: 23px;
   width: 60px;
-  background: rgba(215, 228, 238, 0.1);
+  background: rgba(215, 228, 238, 0.2);
   box-sizing: border-box;
   cursor: pointer;
   transition: all 0.3s ease;

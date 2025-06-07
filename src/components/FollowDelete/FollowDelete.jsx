@@ -3,7 +3,7 @@ import React from "react";
 import "./FollowDelete.css";
 
 export const FollowDelete = ({ className, tabType, onDelete }) => {
-  const buttonText = tabType === "follower" ? "Delete" : "Unfollow";
+  const buttonText = tabType === "follower" ? "삭제" : "팔로우취소";
 
   return (
     <div className={`follow-delete-wrapper ${className}`} onClick={onDelete}>

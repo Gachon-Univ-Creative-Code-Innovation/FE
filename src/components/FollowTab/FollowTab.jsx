@@ -3,7 +3,7 @@ import React from "react";
 import "./FollowTab.css";
 
 const FollowTab = ({ type, isSelected, onClick }) => {
-  const label = type === "follow" ? "Following" : "Follower";
+  const label = type === "follow" ? "팔로잉" : "팔로워";
 
   return (
     <div className="followtab-wrapper" onClick={onClick}>
