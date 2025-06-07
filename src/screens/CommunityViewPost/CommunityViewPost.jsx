@@ -571,7 +571,11 @@ if (!post) {
             <div className="comment-list">
               {comments.map((comment) => (
                 <div key={comment.id} className="comment-item">
-                  <div className="comment-profile"></div>
+                  <div className="comment-profile-wrapper">
+                    {comment.authorProfileUrl && (
+                      <img src={comment.authorProfileUrl} alt="comment" className="comment-profile-img" />
+                    )}
+                  </div>
                   <div className="comment-content-block">
                     <div className="comment-author">{comment.author}</div>
                     {editCommentId === comment.id ? (
@@ -621,7 +625,11 @@ if (!post) {
                       <div className="comment-replies-list">
                         {comment.replies.map(reply => (
                           <div key={reply.id} className="comment-reply-item">
-                            <div className="comment-profile"></div>
+                            <div className="comment-profile-wrapper">
+                              {reply.authorProfileUrl && (
+                                <img src={reply.authorProfileUrl} alt="comment" className="comment-profile-img" />
+                              )}
+                            </div>
                             <div className="reply-content">
                               <div className="comment-author">{reply.author}</div>
                               {editReplyId === reply.id ? (
