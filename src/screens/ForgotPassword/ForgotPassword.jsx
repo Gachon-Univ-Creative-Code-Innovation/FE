@@ -54,58 +54,69 @@ export const ForgotPassword = () => {
 
   return (
     <PageTransitionWrapper>
-      {/* 뒤로가기 아이콘 */}
-      <GoBackIcon
-        className="forgotpassword-goback-icon"
-        onClick={() => navigate(-1)}
-      />
+      <GoBackIcon className="forgotpassword-goback-icon" onClick={() => navigate(-1)} />
 
-      <div className="forgotpassword-wrapper">
-        <div className="forgotpassword-container">
-          <div className="forgotpassword-frame">
-            <div className="forgotpassword-placeholder-rectangle" />
-
-            {/* 이메일 입력 영역 */}
-            <div className="forgotpassword-email-wrapper">
-              <div className="forgotpassword-input-box">
-                <CommunicationMail className="forgotpassword-icon" />
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="forgotpassword-input"
-                  value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                    setEmailMessage(""); // 입력 변경 시 메시지 초기화
-                  }}
-                  disabled={isSending}
+      <div className="forgotpassword">
+        <div className="forgotpassword-div-2">
+          {/* 왼쪽 영역 - 로고 */}
+          <div className="forgotpassword-left-section">
+            <div className="forgotpassword-left-content">
+              <div className="forgotpassword-logo-container">
+                <img
+                  src="/img/AlOG-logo.png"
+                  alt="Alog Logo"
                 />
-                <div
-                  className={`forgotpassword-button-wrapper ${
-                    email && !isSending ? "active" : ""
-                  }`}
-                  onClick={!isSending && email ? handleSendEmail : undefined}
-                  style={{
-                    cursor: email && !isSending ? "pointer" : "not-allowed",
-                  }}
-                >
-                  <div className="forgotpassword-button-text">
-                    {isSending ? "요청 중..." : "Get certified"}
-                  </div>
-                </div>
               </div>
-              {/* 안내 메시지 */}
-              <div className="forgotpassword-message">{emailMessage}</div>
             </div>
           </div>
 
-          {/* Alog 로고 */}
-          <div className="forgotpassword-logo-container">
-            <AlogIcon
-              className="forgotpassword-logo"
-              onClick={() => navigate("/mainpagebefore")}
-              style={{ cursor: "pointer" }}
-            />
+          {/* 오른쪽 영역 - 비밀번호 찾기 폼 */}
+          <div className="forgotpassword-right-section">
+            <form autoComplete="off" onSubmit={(e) => e.preventDefault()}>
+              <div className="forgotpassword-title">
+                <h2>비밀번호를 잊으셨나요?</h2>
+                <p>가입하신 이메일 주소를 입력해주세요.</p>
+              </div>
+
+              {/* 이메일 입력 필드 */}
+              <div className="forgotpassword-email">
+                <CommunicationMail />
+                <input
+                  type="email"
+                  className="forgotpassword-text-input"
+                  placeholder="이메일"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setEmailMessage("");
+                  }}
+                  disabled={isSending}
+                />
+              </div>
+
+              {/* 안내 메시지 */}
+              {emailMessage && (
+                <div className={`forgotpassword-message ${emailMessage.includes("발송") ? "success" : "error"}`}>
+                  {emailMessage}
+                </div>
+              )}
+
+              {/* 인증 메일 발송 버튼 */}
+              <button
+                type="button"
+                className="forgotpassword-button"
+                onClick={handleSendEmail}
+                disabled={isSending || !email}
+                style={{
+                  cursor: isSending || !email ? "not-allowed" : "pointer",
+                  opacity: isSending || !email ? 0.5 : 1,
+                }}
+              >
+                <div className="forgotpassword-button-text">
+                  {isSending ? "요청 중..." : "인증 메일 발송"}
+                </div>
+              </button>
+            </form>
           </div>
         </div>
       </div>
