@@ -1,14 +1,25 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import "./CommunityViewPost.css";
 import Navbar2 from "../../components/Navbar2/Navbar2";
 import FollowButton from "../../components/FollowButton/FollowButton";
 import SendIcon from "../../icons/SendIcon/SendIcon";
 import MatchingModal from "../../components/MatchingModal/MatchingModal";
 import { useNavigate, useLocation } from "react-router-dom";
-import api from "../../api/local-instance";
+import { MatchingCategories } from "../../constants/categories";
+import api from "../../api/instance"
+
+
+
+function getLabelByKey(key) {
+  const category = MatchingCategories.find((c) => c.key === key);
+  return category ? category.label : "";
+}
+
 
 const CommunityViewPost = () => {
   const navigate = useNavigate();
+  const { postId } = useParams();
   const location = useLocation();
   
   const [replyTo, setReplyTo] = useState(null);
@@ -35,21 +46,14 @@ const CommunityViewPost = () => {
   const [matchedIds, setMatchedIds] = useState([]);
 
   const myName = "배고픈 송희";
+  const myUserId = Number(localStorage.getItem("userId"));
+  
+
 
   // 글 데이터를 상태로 관리
-  const [post, setPost] = useState({
-    id: 1,
-    title: "Title",
-    author: "배고픈 송희",
-    date: "2025.03.26",
-    category: "공모전",
-    tag: "#배고파",
-    content: `집에 들어서자마자 은은하게 퍼지는 포근한 향기, 침대에 누울 때마다 느껴지는 산뜻한 상쾌함. 혹시 이런 감각을 경험해 보셨나요? 오늘은 일상의 작은 행복을 주는 숨겨진 아이템 '리넨워터(Linen Water)'를 소개하려 합니다.
+  const [post, setPost] = useState(null);
+  const [loadingPost, setLoadingPost] = useState(true);
 
-리넨워터란 무엇일까요? 이름만 들으면 조금 생소할 수도 있지만, 쉽게 말해 리넨워터는 천연 에센셜 오일과 정제수 등을 섞어 만든 섬유 전용 향수라고 할 수 있습니다. 주로 침구류나 옷감에 뿌려서 사용하는 제품인데요, 일반적인 섬유유연제와는 다르게 끈적이지 않고 잔여물이 거의 없어 옷감이나 피부에 부담 없이 사용할 수 있는 게 큰 장점입니다.
-
-리넨워터의 가장 큰 특징은 바로 그 은은한 향기입니다. 일반적인 향수나 섬유유연제보다 훨씬 가벼운 느낌으로, 자극적이지 않은 부드러운 향기가 오랫동안 지속됩니다. 또한, 향기뿐 아니라 탈취와 항균 효과까지 있어서 생활 속 다양한 상황에서 활용도가 높습니다.`,
-  });
 
   // HTML 컨텐츠를 안전하게 렌더링하는 함수 (이미지 포함)
   const renderContent = (content) => {
@@ -69,35 +73,70 @@ const CommunityViewPost = () => {
     );
   };
 
-  // 수정된 데이터를 받아와서 글 정보 업데이트
+  // // 수정된 데이터를 받아와서 글 정보 업데이트
+  // useEffect(() => {
+  //   if (location.state?.updatedPost) {
+  //     const updatedPost = location.state.updatedPost;
+  //     setPost(prevPost => ({
+  //       ...prevPost,
+  //       title: updatedPost.title || prevPost.title,
+  //       category: updatedPost.category || prevPost.category,
+  //       content: updatedPost.content || prevPost.content,
+  //       tag: updatedPost.tags || prevPost.tag, // tags -> tag 매핑
+  //       id: updatedPost.id || prevPost.id
+  //     }));
+  //     // state 정리
+  //     window.history.replaceState({}, document.title);
+  //   } else if (location.state?.newPost) {
+  //     // 새 글인 경우
+  //     const newPost = location.state.newPost;
+  //     setPost({
+  //       id: newPost.id,
+  //       title: newPost.title,
+  //       author: newPost.author,
+  //       date: new Date(newPost.createdAt).toISOString().slice(0, 10).replace(/-/g, '.'),
+  //       category: newPost.category,
+  //       tag: newPost.tags,
+  //       content: newPost.content
+  //     });
+  //     window.history.replaceState({}, document.title);
+  //   }
+  // }, [location.state]);
+
+  // 게시글 상세 조회
   useEffect(() => {
-    if (location.state?.updatedPost) {
-      const updatedPost = location.state.updatedPost;
-      setPost(prevPost => ({
-        ...prevPost,
-        title: updatedPost.title || prevPost.title,
-        category: updatedPost.category || prevPost.category,
-        content: updatedPost.content || prevPost.content,
-        tag: updatedPost.tags || prevPost.tag, // tags -> tag 매핑
-        id: updatedPost.id || prevPost.id
-      }));
-      // state 정리
-      window.history.replaceState({}, document.title);
-    } else if (location.state?.newPost) {
-      // 새 글인 경우
-      const newPost = location.state.newPost;
-      setPost({
-        id: newPost.id,
-        title: newPost.title,
-        author: newPost.author,
-        date: new Date(newPost.createdAt).toISOString().slice(0, 10).replace(/-/g, '.'),
-        category: newPost.category,
-        tag: newPost.tags,
-        content: newPost.content
-      });
-      window.history.replaceState({}, document.title);
-    }
-  }, [location.state]);
+    const fetchPostDetail = async () => {
+      try {
+        console.log("postid", postId)
+        const token = localStorage.getItem("jwtToken");
+        const res = await api.get(`/blog-service/posts/${postId}`,{
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = res.data.data;
+        console.log("data ", data)
+        setPost({
+          id: data.postId,
+          title: data.title,
+          author: data.authorNickname,
+          authorId: data.authorId,
+          profileUrl: data.profileUrl,
+          date: new Date(data.createdAt).toISOString().slice(0, 10).replace(/-/g, "."),
+          category: data.categoryCode, // categoryName이 아니라면 추후 매핑 필요
+          tag: data.tagNameList,
+          content: data.content,
+        });
+
+      } catch (err) {
+        console.error("게시글 상세 조회 실패", err);
+        navigate("/community");
+      } finally {
+        setLoadingPost(false);
+      }
+    };
+
+    fetchPostDetail();
+  }, [postId]);
+
 
   // 바깥 클릭 시 메뉴 닫기
   useEffect(() => {
@@ -246,6 +285,8 @@ const CommunityViewPost = () => {
 
   // 글 수정 버튼 클릭 - Write 페이지로 이동
   const handleEditPost = () => {
+    console.log("navigate state:", { editMode: true, post });
+
     navigate('/community/write', { 
       state: { 
         editMode: true,
@@ -262,12 +303,24 @@ const CommunityViewPost = () => {
   };
 
   // 글 삭제 버튼 클릭
-  const handleDeletePost = () => {
+  const handleDeletePost = async() => {
     if (window.confirm("정말로 이 글을 삭제하시겠습니까?")) {
       console.log("글 삭제하기");
       setOpenMenuId(null);
-      // navigate('/community');
-    }
+
+      // 게시글 삭제 API 호출 함수
+    try {
+      const token = localStorage.getItem("jwtToken");
+      await api.delete(`/blog-service/posts/${postId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      alert("글이 정상적으로 삭제되었습니다.");
+      navigate("/community");
+    } catch (err) {
+      console.error("삭제 실패:", err);
+      const msg = err.response?.data?.message;
+      alert(msg || "삭제 중 오류가 발생했습니다.");
+    }}
   };
 
 const handleMatchingClick = async () => {
@@ -297,7 +350,27 @@ const handleMatchingClick = async () => {
 };
 
 
-  const isMyPost = post.author === myName;
+
+// --- 포스트 조회 로딩 중일 때 처리 ---
+if (loadingPost) {
+  return (
+    <div className="view-post-bg">
+      <Navbar2 />
+      <div className="viewpost-loading">로딩 중...</div>
+    </div>
+  );
+}
+
+// --- 게시글이 없을 때 처리 ---
+if (!post) {
+  return (
+    <div className="view-post-bg">
+      <Navbar2 />
+      <div className="viewpost-notfound">게시글을 찾을 수 없습니다.</div>
+    </div>
+  );
+}
+
 
   return (
     <div className="view-post-bg">
@@ -307,7 +380,7 @@ const handleMatchingClick = async () => {
         <div className="view-post-header">
           <div className="view-post-title-line" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h1 className="view-post-title">{post.title}</h1>
-            {isMyPost && (
+            {post.authorId == myUserId && (
               <div className="comment-menu-wrapper">
                 <div
                   className="comment-menu"
@@ -323,7 +396,10 @@ const handleMatchingClick = async () => {
                   <div className="comment-menu-popup" ref={menuRef}>
                     <button 
                       className="comment-menu-item"
-                      onClick={handleEditPost}
+                      // onClick={handleEditPost}
+                      onClick={() => {
+                        navigate(`/community/write/${postId}`);
+                      }}
                     >
                       수정하기
                     </button>
@@ -340,14 +416,23 @@ const handleMatchingClick = async () => {
           </div>
           <div className="view-post-meta-line">
             <div className="view-post-meta">
-              <span>{post.author}</span>
-              <span>{post.date}</span>
+              <div className="post-profile-wrapper">
+                {post.profileUrl && (
+                  <img src={post.profileUrl} alt="post" className="post-profile-img" />
+                )}
+              </div>
+              <div className="view-post-meta-text">{post.author}</div>
+              <div className="view-post-meta-text">{post.date}</div>
             </div>
-            {!isMyPost && <FollowButton />}
+            {post.authorId !== myUserId  && <FollowButton />}
           </div>
           <div className="view-post-tags-line">
-            <span className="view-post-category">{post.category}</span>
-            <span className="view-post-tags">{post.tag}</span>
+            <span className="view-post-category">{getLabelByKey(post.category)}</span>
+            {post.tag && post.tag.length > 0 && (
+              <span className="view-post-tags">
+                {post.tag.map((tag) => `#${tag}`).join(" ")}
+              </span>
+            )}
           </div>
         </div>
 
@@ -358,7 +443,7 @@ const handleMatchingClick = async () => {
               {renderContent(post.content)}
             </div>
             {/* 본인 글인 경우 매칭하기 버튼 */}
-            {isMyPost && (
+            {post.authorId === myUserId  && (
               <div className="matching-button-wrapper">
                 <button className="matching-button" onClick={handleMatchingClick}>
                   🔗 USER 매칭 ✨
@@ -461,7 +546,7 @@ const handleMatchingClick = async () => {
                                 <span>{reply.date}</span>
                               </div>
                             </div>
-                            {reply.author === myName && (
+                            {reply.authorId === myUserId && (
                               <div className="comment-menu-wrapper">
                                 <div
                                   className="comment-menu"
@@ -496,7 +581,7 @@ const handleMatchingClick = async () => {
                       </div>
                     )}
                   </div>
-                  {comment.author === myName && (
+                  {comment.authorId === myUserId && (
                     <div className="comment-menu-wrapper">
                       <div
                         className="comment-menu"

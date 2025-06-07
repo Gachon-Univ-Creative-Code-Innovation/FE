@@ -1,0 +1,184 @@
+/* src/components/SearchModal/SearchModal.css */
+
+.summary-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.summary-popup-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 800px;
+  width: 90%;
+  max-height: 90%;
+  overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.popup-title {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.search-modal-close-icon {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    position: static !important;
+    cursor: pointer;
+    height: 24px;
+    width: 24px;
+}
+
+
+/* 검색 바 구성 */
+.search-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+
+.search-input {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.search-button {
+  padding: 10px 20px;
+  background-color: #1d1652;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.loading-text {
+  text-align: center;
+}
+
+.no-results-text {
+  text-align: center;
+  color: #888;
+}
+
+.results-list {
+  list-style: none;
+  padding: 0;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.result-item {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+/* 페이지네이션 스타일 CommunityPostList 처럼 추가 */
+.communitypost-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin: 32px 0 0 0;
+}
+
+.communitypost-pagination-btn,
+.communitypost-pagination-arrow {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #888;
+  cursor: pointer;
+  padding: 0 8px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.communitypost-pagination-btn.active {
+  color: #1D1652;
+  font-weight: bold;
+  font-size: 22px;
+}
+
+.communitypost-pagination-btn:disabled,
+.communitypost-pagination-arrow:disabled {
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+.communitypost-pagination-arrow {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  background: #fafbfc;
+}
+
+.results-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  max-height: none;
+}
+
+.results-list.has-results {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.results-list.has-results::-webkit-scrollbar {
+  width: 6px;
+}
+
+.results-list.has-results::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 3px;
+}
+
+.results-list.has-results::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+/* ✨ 정렬 탭 transition 스타일 */
+.sort-tab {
+  transition: color 0.3s ease, font-weight 0.3s ease, border-color 0.3s ease;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.sort-tab.default {
+  color: #888;
+  font-weight: 400;
+}
+
+.sort-tab.active {
+  color: #1d1652;
+  font-weight: 600;
+  border-bottom: 2px solid #1d1652;
+}

@@ -15,6 +15,7 @@ import LoginRequiredPopup from "../../components/LoginRequiredPopup/LoginRequire
 import Navbar from "../../components/Navbar/Navbar";
 import "./MainPageBefore.css";
 import api from "../../api/instance";
+import SearchModal from "../../components/SearchModal/SearchModal";//추가
 
 // 파도타기 효과 컴포넌트
 const WaveText = ({ text, className }) => {
@@ -64,6 +65,7 @@ export const MainPageBefore = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedTab, setSelectedTab] = useState("Hot");
   const [scrolled, setScrolled] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false); //추가
   const observer = useRef();
   const navigate = useNavigate();
 
@@ -219,6 +221,7 @@ export const MainPageBefore = () => {
         <Navbar
           onShowPopup={() => setShowPopup(true)}
           onReadmeClick={handleReadmeClick}
+          onSearch={() => setIsSearchOpen(true)} //추가
           scrolled={scrolled}
           isLoggedIn={false}
         />
@@ -290,6 +293,10 @@ export const MainPageBefore = () => {
             <LoginRequiredPopup onClose={() => setShowPopup(false)} />
           )}
         </AnimatePresence>
+
+        {isSearchOpen && (
+          <SearchModal onClose={() => setIsSearchOpen(false)} /> //추가
+        )}
       </div>
     </PageTransitionWrapper>
   );

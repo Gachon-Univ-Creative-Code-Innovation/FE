@@ -2,9 +2,10 @@ import PropTypes from "prop-types";
 import React, { useState } from "react";
 import "./PostComponent.css";
 
-export const PostComponent = ({ property1, onClick }) => {
+export const PostComponent = ({ property1, onClick, text }) => {
   const [buttonState, setButtonState] = useState("default"); // ✅ 기본 상태 설정
 
+  
   return (
     <button
       className={`post-component ${buttonState}`}
