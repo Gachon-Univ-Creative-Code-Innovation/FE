@@ -219,8 +219,8 @@
   gap: 10px;
   position: relative;
   width: 308px;
+  min-width: 0;
 }
-
 
 .main-page-after .author-profile-wrapper {
   align-self: stretch;
@@ -251,6 +251,10 @@
   position: relative;
   text-align: center;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 250px;
+  flex-shrink: 1;
   width: fit-content;
 }
 

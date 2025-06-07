@@ -17,7 +17,7 @@ export const FeedComponent = ({
       className={`feedcomponent feedcomponent-${property1} ${className}`}
       onClick={onClick}
     >
-      <div className={finalTextClass}>Feed</div>
+      <div className={finalTextClass}>이웃</div>
     </div>
   );
 };

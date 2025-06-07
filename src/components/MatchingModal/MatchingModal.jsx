@@ -38,7 +38,7 @@ const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
                 const copy = [...prev];
                 if (copy[idx]) {
                   copy[idx].name = data.data.nickname || `유저${userId}`;
-                  copy[idx].profileImage = data.data.profileUrl ? data.data.profileUrl : "https://upload.wikimedia.org/wikipedia/commons/b/bc/Unknown_person.jpg";
+                  copy[idx].profileImage = data.data.profileUrl ? data.data.profileUrl : "/img/basic_profile_photo.png";
                   copy[idx].githubUrl = data.data.githubUrl;
                   copy[idx].blogUrl = data.data.email ? `mailto:${data.data.email}` : null;
                   copy[idx].experience = data.data.email || "";
@@ -50,7 +50,7 @@ const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
                 const copy = [...prev];
                 if (copy[idx]) {
                   copy[idx].name = "unknown";
-                  copy[idx].profileImage = "https://upload.wikimedia.org/wikipedia/commons/b/bc/Unknown_person.jpg";
+                  copy[idx].profileImage = "/img/basic_profile_photo.png";
                 }
                 return copy;
               });
@@ -61,7 +61,7 @@ const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
               const copy = [...prev];
               if (copy[idx]) {
                 copy[idx].name = "unknown";
-                copy[idx].profileImage = "https://upload.wikimedia.org/wikipedia/commons/b/bc/Unknown_person.jpg";
+                copy[idx].profileImage = "/img/basic_profile_photo.png";
               }
               return copy;
             });
@@ -153,10 +153,11 @@ const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
               <div className="matching-user-profile">
                 <div className="matching-user-avatar">
                   <img
+                    className="matching-modal-profile-image"
+                    alt="Profile"
                     src={user.profileImage ? user.profileImage : "/img/basic_profile_photo.png"}
-                    alt="profile"
                     onError={(e) => {
-                      e.target.src = "/img/basic_profile_photo.png";
+                      e.currentTarget.src = "/img/basic_profile_photo.png";
                     }}
                   />
                 </div>

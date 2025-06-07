@@ -1,3 +1,4 @@
+// src/screens/MyBlog/MyBlog.jsx
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import GoGitHub from "../../components/GoGitHub/GoGitHub";
@@ -66,7 +67,7 @@ export const MyBlog = () => {
     api
       .get("/user-service/user/patch", { headers: { Authorization: jwtToken } })
       .then((res) => {
-        const d = res.data.data;
+        const d = res.data.data || {};
         setNickname(d.nickname || "");
         setProfileUrl(d.profileUrl || "");
         setGithubUrl(d.githubUrl || "");
@@ -130,10 +131,11 @@ export const MyBlog = () => {
           {/* 프로필 헤더 */}
           <header className="myblog-header">
             <div className="myblog-profile-container">
-              {/* 기본 placeholder는 CSS 배경색으로, profileUrl 있으면 background-image 덮어쓰기 */}
+              {/* CSS placeholder + background-image */}
               <div
                 className="myblog-profile-image"
                 style={{
+                  backgroundColor: "#d9d9d9",
                   backgroundImage: profileUrl ? `url(${profileUrl})` : "none",
                 }}
               />
@@ -169,7 +171,9 @@ export const MyBlog = () => {
                   />
                 </div>
                 <div
-                  onClick={() => githubUrl && window.open(githubUrl, "_blank")}
+                  onClick={() =>
+                    githubUrl ? window.open(githubUrl, "_blank") : null
+                  }
                   style={{
                     cursor: githubUrl ? "pointer" : "default",
                     marginLeft: 8,
@@ -197,7 +201,10 @@ export const MyBlog = () => {
                       className="myblog-post-card"
                       key={post.postId}
                       ref={isLast ? lastPostRef : null}
+                      onClick={() => navigate(`/viewpost/${post.postId}`)}
+                      style={{ cursor: "pointer" }}
                     >
+                      {/* 썸네일 placeholder + background-image */}
                       <div
                         className="myblog-post-image"
                         style={{
@@ -227,6 +234,7 @@ export const MyBlog = () => {
                   );
                 })}
               </div>
+
               {!loading && posts.length === 0 && (
                 <WaveText
                   text="당신의 이야기를 기다리고 있습니다 ✍️"

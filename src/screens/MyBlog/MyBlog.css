@@ -1,3 +1,4 @@
+/* src/screens/MyBlog/MyBlog.css */
 .myblog-wrapper {
   display: flex;
   flex-direction: column;
@@ -30,6 +31,7 @@
   position: relative;
 }
 
+/* 프로필 이미지 */
 .myblog-profile-image {
   width: 180px;
   height: 240px;
@@ -58,14 +60,17 @@
   margin-bottom: 20px;
 }
 
+/* 여러 줄 허용, 가운데 정렬 */
 .myblog-username {
   font-family: "GmarketSans", sans-serif;
   font-size: 37px;
   font-weight: 700;
   color: #ffffff;
-  white-space: nowrap;
-  overflow: hidden; 
-  text-overflow: ellipsis; 
+  display: block;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.2;
+  word-break: break-word;
 }
 
 .myblog-icon-subtract {

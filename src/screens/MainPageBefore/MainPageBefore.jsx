@@ -172,9 +172,14 @@ export const MainPageBefore = () => {
           <div className="author">
             <div className="frame-4">
               <div className="author-profile-wrapper">
-                {post.profileUrl && (
-                  <img src={post.profileUrl} alt="post" className="author-profile-img" />
-                )}
+                        <img 
+          src={post.profileUrl || "/img/basic_profile_photo.png"} 
+          alt="post" 
+          className="author-profile-img"
+          onError={(e) => {
+            e.currentTarget.src = "/img/basic_profile_photo.png";
+          }}
+        />
               </div>
               <div className="text-wrapper-10">{post.author}</div>
             </div>
@@ -198,9 +203,14 @@ export const MainPageBefore = () => {
           </div>
         </div>
         <div className="post-img-wrapper">
-          {post.imageUrl && (
-            <img src={post.imageUrl} alt="post" className="post-img" />
-          )}
+          <img 
+            src={post.imageUrl || "/img/AlOG-logo.png"} 
+            alt="post" 
+            className="post-img"
+            onError={(e) => {
+              e.currentTarget.src = "/img/AlOG-logo.png";
+            }}
+          />
         </div>
       </div>
     </div>

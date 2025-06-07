@@ -1,19 +1,19 @@
 /* src/screens/CommunityWrite/CommunityWrite.css */
 
-.community-write-editor {
+.community-write {
   background: #FAFDFF;
   min-height: 100vh;
   color: #222;
 }
 
-.community-editor-top-bar {
+.editor-top-bar {
   padding: 18px 40px 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.community-editor-mode-select {
+.editor-mode-select {
   font-size: 16px;
   padding: 6px 12px;
   border-radius: 6px;
@@ -22,21 +22,21 @@
   cursor: pointer;
 }
 
-.community-editor-content {
+.editor-content {
   max-width: 1240px;
   width: 90%;
   margin: 20px auto 0;
   padding: 0 24px;
 }
 
-.community-editor-title-row {
+.editor-title-category {
   display: flex;
   align-items: center;
   gap: 16px;
   margin-bottom: 24px;
 }
 
-.community-editor-title-input {
+.editor-title-input {
   flex: 1;
   border: none;
   outline: none;
@@ -46,66 +46,41 @@
   color: #444;
 }
 
-.community-editor-category-select {
-  font-size: 1rem;
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: 1px solid #eee;
-  background: #fff;
+.editor-category-select,
+.editor-mode-select {
+  font-size: 16px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #FAFDFF;
   cursor: pointer;
+  width: auto;
   min-width: 150px;
   flex-shrink: 0;
-  color: #222;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  background-size: 16px;
-  padding-right: 40px;
 }
 
-.community-editor-category-select:hover {
-  border-color: #1D1652;
-  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.15);
-  transform: translateY(-1px);
-}
-
-.community-editor-category-select:focus {
+.editor-tag-input {
+  flex: 1;
+  font-size: 16px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  background: #FAFDFF;
+  margin-right: 12px;
   outline: none;
-  border-color: #1D1652;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 4px 16px rgba(59, 130, 246, 0.15);
 }
 
-.community-editor-category-select option {
-  padding: 8px;
-  font-size: 1rem;
-  color: #222;
-  background: #fff;
-}
-
-.community-editor-category-select option:first-child {
-  color: #888;
-}
-
-.community-editor-area {
+.editor-area {
   min-height: 550px;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  margin-bottom: 48px;
-  overflow: hidden;
 }
 
 /* ReactQuill 툴바 스타일 수정 */
 .ql-toolbar {
-  border: none !important;
-  border-bottom: 1px solid #eee !important;
+  border: 1px solid #ccc !important;
+  border-bottom: none !important;
   background: #fff !important;
-  padding: 12px 24px !important;
-  border-top-left-radius: 16px !important;
-  border-top-right-radius: 16px !important;
+  border-top-left-radius: 6px !important;
+  border-top-right-radius: 6px !important;
 }
 
 .ql-toolbar .ql-formats {
@@ -125,12 +100,12 @@
 }
 
 .ql-toolbar button:hover {
-  background: #f5f5f5 !important;
+  background: #e6e6e6 !important;
   color: #000 !important;
 }
 
 .ql-toolbar button.ql-active {
-  background: #f0f0f0 !important;
+  background: #ccc !important;
   color: #000 !important;
 }
 
@@ -153,22 +128,20 @@
 
 /* 에디터 본문 스타일 */
 .ql-container {
-  border: none !important;
+  border: 1px solid #ccc !important;
+  border-top: none !important;
   font-family: inherit !important;
-  border-bottom-left-radius: 16px !important;
-  border-bottom-right-radius: 16px !important;
-  overflow: hidden;
+  border-bottom-left-radius: 6px !important;
+  border-bottom-right-radius: 6px !important;
 }
 
 .ql-editor {
   min-height: 550px;
   background: #fff;
-  padding: 32px 60px;
+  padding: 12px;
   line-height: 1.6;
-  font-size: 1.25rem;
-  color: #222;
-  border-bottom-left-radius: 16px !important;
-  border-bottom-right-radius: 16px !important;
+  font-size: 16px;
+  color: #333;
 }
 
 /* 에디터 내 텍스트 포맷팅이 제대로 표시되도록 */
@@ -190,36 +163,36 @@
 
 /* 인용구 스타일 */
 .ql-editor blockquote {
-  border-left: 4px solid #eee !important;
-  margin: 24px 0 !important;
-  padding: 12px 24px !important;
-  background-color: #fafafa !important;
+  border-left: 4px solid #ccc !important;
+  margin: 16px 0 !important;
+  padding: 8px 16px !important;
+  background-color: #f9f9f9 !important;
   font-style: italic !important;
   color: #666 !important;
 }
 
 /* 코드 블록 스타일 */
 .ql-editor pre {
-  background-color: #f8f8f8 !important;
-  border: 1px solid #eee !important;
-  border-radius: 8px !important;
-  padding: 16px !important;
-  margin: 24px 0 !important;
+  background-color: #f4f4f4 !important;
+  border: 1px solid #ddd !important;
+  border-radius: 4px !important;
+  padding: 12px !important;
+  margin: 16px 0 !important;
   overflow-x: auto !important;
   font-family: 'Courier New', Consolas, monospace !important;
-  font-size: 0.95rem !important;
-  line-height: 1.5 !important;
+  font-size: 14px !important;
+  line-height: 1.4 !important;
   color: #333 !important;
 }
 
 /* 인라인 코드 스타일 */
 .ql-editor code {
-  background-color: #f8f8f8 !important;
-  border: 1px solid #eee !important;
-  border-radius: 4px !important;
-  padding: 2px 6px !important;
+  background-color: #f4f4f4 !important;
+  border: 1px solid #ddd !important;
+  border-radius: 3px !important;
+  padding: 2px 4px !important;
   font-family: 'Courier New', Consolas, monospace !important;
-  font-size: 0.95rem !important;
+  font-size: 14px !important;
   color: #d14 !important;
 }
 
@@ -227,11 +200,9 @@
 .ql-editor.ql-blank::before {
   color: #aaa;
   font-style: normal;
-  font-size: 1.25rem;
-  left: 60px;
 }
 
-.community-editor-actions {
+.editor-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -239,18 +210,7 @@
   margin-top: 20px;
 }
 
-.community-editor-tags-input {
-  flex: 1;
-  border: none;
-  outline: none;
-  font-size: 1rem;
-  padding: 0;
-  background: #FAFDFF;
-  color: #666;
-  margin-right: 16px;
-}
-
-.community-editor-button-group {
+.editor-button-group {
   display: flex;
   gap: 12px;
 }
