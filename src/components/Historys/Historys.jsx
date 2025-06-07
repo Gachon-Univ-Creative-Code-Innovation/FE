@@ -8,7 +8,7 @@ export const Historys = ({ property1, className }) => {
   return (
     <div className={`history ${stateClass} ${className}`}>
       <div className="frame">
-        <div className="text-wrapper">History</div>
+        <div className="text-wrapper">내 작업실</div>
       </div>
     </div>
   );
