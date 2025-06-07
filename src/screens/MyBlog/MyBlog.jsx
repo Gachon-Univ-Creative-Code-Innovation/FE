@@ -116,6 +116,7 @@ export const MyBlog = () => {
       })
       .then((res) => {
         const data = res.data.data || [];
+        console.log("MyBlog 게시글 API 응답:", data);
         setPosts((prev) => [...prev, ...data]);
         if (data.length === 0) {
           setHasMore(false);
@@ -153,10 +154,10 @@ export const MyBlog = () => {
               <img
                 className="myblog-profile-image"
                 alt="Profile"
-                src={profileUrl || "/img/default-profile.png"}
-                onError={(e) =>
-                  (e.currentTarget.src = "/img/default-profile.png")
-                }
+                src={profileUrl || "/img/basic_profile_photo.png"}
+                onError={(e) => {
+                  e.currentTarget.src = "/img/basic_profile_photo.png";
+                }}
               />
               <div className="myblog-profile-details">
                 <div className="myblog-username-row">
@@ -221,12 +222,17 @@ export const MyBlog = () => {
                       className="myblog-post-card"
                       key={post.postId}
                       ref={isLast ? lastPostRef : null}
+                      onClick={() => navigate(`/viewpost/${post.postId}`)}
+                      style={{ cursor: "pointer" }}
                     >
                       <div className="myblog-post-image">
                         <img
                           className="myblog-post-image"
                           alt="Thumbnail"
-                          src={post.thumbnail}
+                          src={post.thumbnail || "/img/AlOG-logo.png"}
+                          onError={(e) => {
+                            e.currentTarget.src = "/img/AlOG-logo.png";
+                          }}
                         />
                       </div>
                       <div className="myblog-post-content">

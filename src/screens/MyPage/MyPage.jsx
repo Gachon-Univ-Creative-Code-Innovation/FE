@@ -63,7 +63,10 @@ export const MyPage = () => {
             <img
               className="mypage-profile-img"
               alt="프로필"
-              src={userInfo.profileUrl || "/img/profile-img.png"}
+              src={userInfo.profileUrl || "/img/basic_profile_photo.png"}
+              onError={(e) => {
+                e.currentTarget.src = "/img/basic_profile_photo.png";
+              }}
             />
             <div className="mypage-name-wrapper">
               <div className="mypage-name">

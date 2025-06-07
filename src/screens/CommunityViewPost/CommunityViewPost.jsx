@@ -417,9 +417,14 @@ if (!post) {
           <div className="view-post-meta-line">
             <div className="view-post-meta">
               <div className="post-profile-wrapper">
-                {post.profileUrl && (
-                  <img src={post.profileUrl} alt="post" className="post-profile-img" />
-                )}
+                        <img 
+          src={post.profileUrl || "/img/basic_profile_photo.png"} 
+          alt="post" 
+          className="post-profile-img"
+          onError={(e) => {
+            e.currentTarget.src = "/img/basic_profile_photo.png";
+          }}
+        />
               </div>
               <div className="view-post-meta-text">{post.author}</div>
               <div className="view-post-meta-text">{post.date}</div>

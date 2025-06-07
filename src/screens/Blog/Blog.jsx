@@ -162,9 +162,9 @@ export const Blog = () => {
                 className="blog-profile-image"
                 alt="Profile"
                 src={profileUrl || "/img/basic_profile_photo.png"}
-                onError={(e) =>
-                  (e.currentTarget.src = "/img/basic_profile_photo.png")
-                }
+                onError={(e) => {
+                  e.currentTarget.src = "/img/basic_profile_photo.png";
+                }}
               />
               <div className="blog-profile-details">
                 <div className="blog-username-row">
@@ -219,12 +219,17 @@ export const Blog = () => {
                       className="blog-post-card"
                       key={post.postId}
                       ref={isLast ? lastPostRef : null}
+                      onClick={() => navigate(`/viewpost/${post.postId}`)}
+                      style={{ cursor: "pointer" }}
                     >
                       <div className="blog-post-image">
                         <img
                           className="blog-post-image"
                           alt="Thumbnail"
-                          src={post.thumbnail}
+                          src={post.thumbnail || "/img/AlOG-logo.png"}
+                          onError={(e) => {
+                            e.currentTarget.src = "/img/AlOG-logo.png";
+                          }}
                         />
                       </div>
                       <div className="blog-post-content">
