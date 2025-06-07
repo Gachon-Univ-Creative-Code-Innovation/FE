@@ -41,3 +41,8 @@
   color: #1d1652;
   font-weight: 600;
 }
+
+.allcomponent:hover .allcomponent-text {
+  color: #1d1652;
+  font-weight: 600;
+}

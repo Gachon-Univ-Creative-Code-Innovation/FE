@@ -17,7 +17,7 @@ export const AllComponent = ({
       className={`allcomponent allcomponent-${property1} ${className}`}
       onClick={onClick}
     >
-      <div className={finalTextClass}>All</div>
+      <div className={finalTextClass}>전체</div>
     </div>
   );
 };

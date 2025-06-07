@@ -17,7 +17,7 @@ export const RecommendComponent = ({
       className={`recommendcomponent recommendcomponent-${property1} ${className}`}
       onClick={onClick}
     >
-      <div className={finalTextClass}>Recommend</div>
+      <div className={finalTextClass}>추천</div>
     </div>
   );
 };

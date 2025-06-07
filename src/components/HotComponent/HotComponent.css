@@ -28,7 +28,7 @@
   transform: scaleX(1);
 }
 
-.hotcomponent-text {
+.hotcomponent .hotcomponent-text {
   font-family: "GmarketSans", sans-serif;
   font-size: 20px;
   letter-spacing: 0;
@@ -42,6 +42,11 @@
 .hotcomponent.hotcomponent-hover .hotcomponent-text {
   color: #1d1652;
   font-weight: 600;
+}
+
+.hotcomponent:hover .hotcomponent-text {
+  color: #1d1652 !important;
+  font-weight: 600 !important;
 }
 
 .hotcomponent.hotcomponent-default .hotcomponent-text {
