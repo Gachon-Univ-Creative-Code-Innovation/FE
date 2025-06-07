@@ -204,9 +204,12 @@ export const EditUser = () => {
               <div className="edituser-view">
                 <div className="edituser-div-wrapper">
                   <img
-                    src={profileUrl || "/img/profile-img.png"}
-                    alt="프로필"
+                    src={profileUrl || "/img/basic_profile_photo.png"}
+                    alt="Profile"
                     className="edituser-profile-img"
+                    onError={(e) => {
+                      e.currentTarget.src = "/img/basic_profile_photo.png";
+                    }}
                   />
                 </div>
                 <div

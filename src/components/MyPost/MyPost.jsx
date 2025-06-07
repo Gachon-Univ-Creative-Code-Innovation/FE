@@ -40,15 +40,14 @@ export const MyPost = () => {
     <div className="mypost-wrapper">
       <header className="mypost-header">
         <div className="mypost-profile-img">
-          {userInfo.profileUrl ? (
-            <img
-              src={userInfo.profileUrl}
-              alt="프로필 이미지"
-              className="mypost-profile-img-tag"
-            />
-          ) : (
-            <div className="mypost-profile-placeholder" />
-          )}
+          <img
+            src={userInfo.profileUrl || "/img/basic_profile_photo.png"}
+            alt="프로필 이미지"
+            className="mypost-profile-img-tag"
+            onError={(e) => {
+              e.currentTarget.src = "/img/basic_profile_photo.png";
+            }}
+          />
         </div>
 
         <div className="mypost-userinfo">
