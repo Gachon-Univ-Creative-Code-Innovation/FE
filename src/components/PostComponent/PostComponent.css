@@ -6,9 +6,9 @@
     cursor: pointer;
     display: inline-flex;
     gap: 10px;
-    height: 38px;
+    height: 48px;
     justify-content: center;
-    padding: 0px 20px;
+    padding: 0px 28px;
     position: relative;
     pointer-events: auto;
   }
@@ -16,10 +16,10 @@
   .post-component .text-wrapper {
     font-family: 'GmarketSans', sans-serif;
     color: #ffffff;
-    font-size: 12px;
-    font-weight: 400;
+    font-size: 14px;
+    font-weight: 500;
     letter-spacing: 0;
-    line-height: 30px;
+    line-height: 36px;
     position: relative;
     text-align: center;
     white-space: nowrap;

@@ -26,7 +26,7 @@ const LoginRequiredPopup = ({ onClose }) => {
         initial={{ scale: 0.8, y: 30, opacity: 0 }}
         animate={{ scale: 1, y: 0, opacity: 1 }}
         exit={{ scale: 0.8, opacity: 0 }}
-        transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
+        transition={{ duration: 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
       >
         {/* 로그인 아이콘 */}
         <div className="login-required-popup__icon">

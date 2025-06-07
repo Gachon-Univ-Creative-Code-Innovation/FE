@@ -1,26 +1,37 @@
 .btn {
   all: unset;
   align-items: center;
-  background-color: #1d1652;
-  border: 1px solid;
-  border-color: #1d1652;
+  background: linear-gradient(135deg, #1d1652 0%, #2c2373 100%);
+  border: none;
+  border-radius: 16px;
   box-sizing: border-box;
   display: inline-flex;
   gap: 10px;
   justify-content: center;
-  padding: 15px;
+  padding: 18px 28px;
   position: relative;
   cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 100px;
+  height: 56px;
+}
+
+.btn:hover {
+  background: linear-gradient(135deg, #252169 0%, #34267d 100%);
+  transform: scale(1.02);
+}
+
+.btn:active {
+  transform: scale(0.98);
 }
 
 .btn .text-wrapper-9 {
   color: #ffffff;
   font-family: 'GmarketSans', sans-serif;
-  font-size: 20px;
-  font-weight: 400;
-  letter-spacing: 0;
-  line-height: 14px;
-  margin-top: -0.50px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  line-height: 1;
   position: relative;
   text-align: center;
   white-space: nowrap;

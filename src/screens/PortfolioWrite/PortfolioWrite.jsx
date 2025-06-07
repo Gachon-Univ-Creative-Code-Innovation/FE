@@ -4,7 +4,7 @@ import "react-quill/dist/quill.snow.css";
 import "./PortfolioWrite.css";
 import Component18 from "../../icons/GoBackIcon/GoBackIcon";
 import CloseIcon from "../../icons/CloseIcon/CloseIcon";
-import { SaveDraftComponent } from "../../components/SaveDraftComponent/SaveDraftComponent";
+
 import { PostComponent } from "../../components/PostComponent/PostComponent";
 import { useNavigate, useLocation } from "react-router-dom";
 import api from "../../api/local-instance";
@@ -150,46 +150,7 @@ export default function PortfolioWrite() {
     return miss;
   };
 
-  const handleSaveDraft = async () => {
-    const miss = getMissingFields();
-    if (miss.length) return alert(`${miss.join(", ")}을(를) 입력해 주세요!`);
 
-    let imageUrl = '';
-    try {
-      const imgTagMatch = basicValue.match(/<img[^>]*src=["']([^"']+)["'][^>]*>/i);
-      if (imgTagMatch && imgTagMatch[1]) {
-        imageUrl = imgTagMatch[1];
-      } else {
-        const mdImgMatch = basicValue.match(/!\[[^\]]*\]\(([^)]+)\)/);
-        if (mdImgMatch && mdImgMatch[1]) {
-          imageUrl = mdImgMatch[1];
-        }
-      }
-    } catch (e) {
-      imageUrl = '';
-    }
-
-    try {
-      const params = {
-        title: title,
-        content: basicValue,
-        is_public: "false",
-        isTemp: "false",
-        image: imageUrl
-      };
-      const response = await api.post('http://localhost:8080/api/portfolio-service/save', null, { params, headers: { 'accept': 'application/json' } });
-      //http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/portfolio-service/save
-      const result = response.data;
-      if (result.status === 200) {
-        alert("임시 저장되었습니다!");
-        navigate("/portfolio");
-      } else {
-        alert(result.message || "임시 저장 실패");
-      }
-    } catch (err) {
-      alert("요청 중 오류가 발생했습니다.");
-    }
-  };
 
   const handlePost = async () => {
     const miss = getMissingFields();
@@ -358,7 +319,6 @@ export default function PortfolioWrite() {
               🔮 AI 도우미 ✨
             </button>
             <div className="action-buttons-group">
-              <SaveDraftComponent onClick={handleSaveDraft} />
               <PostComponent onClick={handlePost} />
             </div>
           </div>

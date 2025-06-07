@@ -3,7 +3,7 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "./CommunityWrite.css";
 import Component18 from "../../icons/GoBackIcon/GoBackIcon";
-import { SaveDraftComponent } from "../../components/SaveDraftComponent/SaveDraftComponent";
+
 import { PostComponent } from "../../components/PostComponent/PostComponent";
 import { useLocation, useNavigate } from "react-router-dom";
 import PostSuccessPopup from "../../components/PostSuccessPopup/PostSuccessPopup";
@@ -95,30 +95,7 @@ export default function CommunityWrite() {
     return miss;
   };
 
-  const handleSaveDraft = () => {
-    const miss = getMissingFields();
-    if (miss.length) return alert(`${miss.join(", ")}을(를) 입력해 주세요!`);
-    
-    // 임시 저장 로직 (localStorage 또는 서버 API 호출)
-    const draftData = {
-      title,
-      category,
-      content,
-      tags,
-      savedAt: new Date().toISOString(),
-      isEditMode,
-      originalId: postData?.id
-    };
-    
-    // localStorage에 임시 저장 (실제로는 서버 API 사용 권장)
-    localStorage.setItem('communityDraft', JSON.stringify(draftData));
-    
-    if (isEditMode) {
-      alert("수정 내용이 임시 저장되었습니다!");
-    } else {
-      alert("임시 저장되었습니다!");
-    }
-  };
+
 
   const handlePost = async () => {
     const miss = getMissingFields();
@@ -282,7 +259,6 @@ export default function CommunityWrite() {
             className="community-editor-tags-input"
           />
           <div className="community-editor-button-group">
-            <SaveDraftComponent onClick={handleSaveDraft} />
             <PostComponent 
               onClick={handlePost}
               text={isEditMode ? "수정하기" : "게시하기"} // 버튼 텍스트 동적 변경
