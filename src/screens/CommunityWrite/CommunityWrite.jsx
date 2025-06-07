@@ -74,7 +74,15 @@ export default function CommunityWrite() {
     const miss = [];
     if (!title.trim()) miss.push("제목");
     if (!category) miss.push("카테고리");
-    if (!content.trim()) miss.push("내용");
+    
+    // ReactQuill의 빈 상태를 더 정확히 검사
+    const trimmedContent = content.trim();
+    const isContentEmpty = !trimmedContent || 
+                          trimmedContent === '<p><br></p>' || 
+                          trimmedContent === '<p></p>' ||
+                          trimmedContent.replace(/<[^>]*>/g, '').trim() === '';
+    
+    if (isContentEmpty) miss.push("내용");
     return miss;
   };
 
@@ -317,33 +325,27 @@ export default function CommunityWrite() {
 
   return (
     <div className="community-write">
-      
-      <div className="header">
-        <Component18 className="goback-icon" onClick={() => navigate(-1)} />
-        <h1>{isEditMode ? "글 수정" : "글쓰기"}</h1>
+      <div className="editor-top-bar">
+        <Component18 onClick={() => navigate(-1)} />
       </div>
 
-      <div className="form-section">
-        <div className="form-row">
-          <label className="label">제목</label>
+      <div className="editor-content">
+        {/* 제목 입력 & 카테고리 선택 */}
+        <div className="editor-title-category">
           <input
             type="text"
-            className="title-input"
-            placeholder="제목을 입력하세요"
+            placeholder="Enter a title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            className="editor-title-input"
           />
-        </div>
-
-        <div className="form-row">
-          <label className="label">카테고리</label>
           <select
-            className="category-select"
             value={category || ""}
             onChange={(e) => setCategory(e.target.value ? Number(e.target.value) : null)}
+            className="editor-category-select"
           >
             <option value="">카테고리를 선택하세요</option>
-            {MatchingCategories.map((cat) => (
+            {MatchingCategories.filter(cat => cat.categoryCode !== 0).map((cat) => (
               <option key={cat.categoryCode} value={cat.categoryCode}>
                 {cat.categoryName}
               </option>
@@ -351,47 +353,43 @@ export default function CommunityWrite() {
           </select>
         </div>
 
-        <div className="form-row">
-          <label className="label">태그</label>
-          <input
-            type="text"
-            className="tags-input"
-            placeholder="#태그1 #태그2 #태그3"
-            value={tags}
-            onChange={(e) => setTags(e.target.value)}
-          />
-        </div>
-      </div>
-
-      <div className="editor-section">
-        <label className="label">내용</label>
-        <div className="quill-container">
+        {/* 에디터 영역 */}
+        <div className="editor-area">
           <ReactQuill
-            theme="snow"
+            ref={reactQuillRef}
             value={content}
             onChange={setContent}
-            ref={reactQuillRef}
+            theme="snow"
             modules={modules}
             formats={formats}
             placeholder="내용을 입력하세요..."
           />
+          {/* 숨겨진 파일 입력창 (이미지 선택 시 onQuillImageSelect 실행) */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept="image/*"
+            style={{ display: "none" }}
+            onChange={onQuillImageSelect}
+          />
         </div>
-      </div>
 
-      {/* 숨겨진 파일 input (이미지 업로드용) */}
-      <input
-        type="file"
-        accept="image/*"
-        ref={fileInputRef}
-        style={{ display: "none" }}
-        onChange={onQuillImageSelect}
-      />
-
-      <div className="button-section">
-        <PostComponent 
-          text={isEditMode ? "수정" : "게시"}
-          onClick={handlePost}
-        />
+        {/* 태그 입력 & 버튼 그룹 */}
+        <div className="editor-actions">
+          <input
+            type="text"
+            placeholder="#태그를 입력하세요 (예: #JavaScript, #React)"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            className="editor-tag-input"
+          />
+          <div className="editor-button-group">
+            <PostComponent 
+              text={isEditMode ? "수정" : "게시"}
+              onClick={handlePost}
+            />
+          </div>
+        </div>
       </div>
 
       <AnimatePresence>
