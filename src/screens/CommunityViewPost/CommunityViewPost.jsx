@@ -269,26 +269,6 @@ const CommunityViewPost = () => {
     } catch (e) {
       console.error("답글 등록 실패", e);
     }
-
-
-    // setComments(comments.map(comment =>
-    //   comment.id === commentId
-    //     ? {
-    //         ...comment,
-    //         replies: [
-    //           ...(comment.replies || []),
-    //           {
-    //             id: Date.now(),
-    //             author: myName,
-    //             text: replyValue,
-    //             date: new Date().toISOString().slice(0, 10).replace(/-/g, '.'),
-    //           },
-    //         ],
-    //       }
-    //     : comment
-    // ));
-    // setReplyValue("");
-    // setReplyTo(null);
   };
 
   //댓글 조회
@@ -315,9 +295,22 @@ const CommunityViewPost = () => {
   }, [postId]);
 
   // 댓글 삭제
-  const handleDeleteComment = (commentId) => {
-    setComments(comments.filter(comment => comment.id !== commentId));
-    setOpenMenuId(null);
+  const handleDeleteComment = async(commentId) => {
+    // setComments(comments.filter(comment => comment.id !== commentId));
+    // setOpenMenuId(null);
+
+    try {
+      const token = localStorage.getItem("jwtToken");
+
+      await api.delete(`/blog-service/comments/${commentId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      setOpenMenuId(null);
+      fetchComments();
+    } catch (e) {
+      console.error("댓글 삭제 실패", e);
+    }
   };
 
   // 답글 삭제
