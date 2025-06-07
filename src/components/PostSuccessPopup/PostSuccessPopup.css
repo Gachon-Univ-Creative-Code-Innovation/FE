@@ -1,6 +1,6 @@
-/* LoginRequiredPopup.css */
+/* PostSuccessPopup.css */
 
-.login-required-popup {
+.post-success-popup {
   position: fixed;
   top: 0;
   left: 0;
@@ -12,10 +12,10 @@
   justify-content: center;
   align-items: center;
   z-index: 9999;
-  animation: login-required-fade-in 0.1s ease-out;
+  animation: post-success-fade-in 0.2s ease-out;
 }
 
-.login-required-popup__container {
+.post-success-popup__container {
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
   border: 1px solid rgba(226, 232, 240, 0.8);
   border-radius: 24px;
@@ -32,7 +32,7 @@
   overflow: hidden;
 }
 
-.login-required-popup__container::before {
+.post-success-popup__container::before {
   content: '';
   position: absolute;
   top: 0;
@@ -42,17 +42,17 @@
   background: linear-gradient(90deg, transparent, rgba(29, 22, 82, 0.4), transparent);
 }
 
-.login-required-popup__icon {
+.post-success-popup__icon {
   margin-bottom: 4px;
-  animation: login-required-bounce 0.2s ease-out 0.05s both;
+  animation: post-success-bounce 0.4s ease-out 0.1s both;
 }
 
-.login-required-popup__content {
+.post-success-popup__content {
   text-align: center;
   max-width: 320px;
 }
 
-.login-required-popup__title {
+.post-success-popup__title {
   color: #1e293b;
   font-family: "GmarketSans", sans-serif;
   font-size: 22px;
@@ -62,7 +62,7 @@
   letter-spacing: -0.025em;
 }
 
-.login-required-popup__description {
+.post-success-popup__description {
   color: #64748b;
   font-family: "GmarketSans", sans-serif;
   font-size: 15px;
@@ -72,40 +72,30 @@
   letter-spacing: -0.01em;
 }
 
-.login-required-popup__button-group {
-  display: flex;
-  gap: 12px;
-  width: 100%;
-  max-width: 280px;
-}
-
-.login-required-popup__button {
+.post-success-popup__button {
+  background: linear-gradient(135deg, #1d1652 0%, #2a1f6b 100%);
   border: none;
   border-radius: 16px;
+  color: white;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   font-family: "GmarketSans", sans-serif;
-  font-size: 15px;
-  font-weight: 600;
-  padding: 16px 24px;
-  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 12px 28px;
+  min-width: 140px;
   position: relative;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  letter-spacing: -0.01em;
-}
-
-.login-required-popup__button.primary {
-  background: linear-gradient(135deg, #1d1652 0%, #2a1f6b 100%);
-  color: white;
   box-shadow: 
     0 4px 6px -1px rgba(29, 22, 82, 0.4),
     0 2px 4px -1px rgba(29, 22, 82, 0.2);
+  letter-spacing: -0.01em;
 }
 
-.login-required-popup__button.primary:hover {
+.post-success-popup__button:hover {
   background: linear-gradient(135deg, #16134a 0%, #221a5e 100%);
   transform: translateY(-1px);
   box-shadow: 
@@ -113,41 +103,27 @@
     0 4px 6px -2px rgba(29, 22, 82, 0.3);
 }
 
-.login-required-popup__button.secondary {
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-  color: #475569;
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  box-shadow: 
-    0 1px 2px 0 rgba(0, 0, 0, 0.05);
-}
-
-.login-required-popup__button.secondary:hover {
-  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
-  color: #334155;
-  transform: translateY(-1px);
-  box-shadow: 
-    0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-.login-required-popup__button:active {
+.post-success-popup__button:active {
   transform: translateY(0);
+  box-shadow: 
+    0 4px 6px -1px rgba(29, 22, 82, 0.4),
+    0 2px 4px -1px rgba(29, 22, 82, 0.2);
 }
 
-.login-required-popup__button-text {
+.post-success-popup__button-text {
   position: relative;
   z-index: 1;
 }
 
-.login-required-popup__button-icon {
+.post-success-popup__button-icon {
   transition: transform 0.2s ease;
 }
 
-.login-required-popup__button.primary:hover .login-required-popup__button-icon {
+.post-success-popup__button:hover .post-success-popup__button-icon {
   transform: translateX(2px);
 }
 
-@keyframes login-required-fade-in {
+@keyframes post-success-fade-in {
   from {
     opacity: 0;
     backdrop-filter: blur(0px);
@@ -158,7 +134,7 @@
   }
 }
 
-@keyframes login-required-bounce {
+@keyframes post-success-bounce {
   0% {
     opacity: 0;
     transform: scale(0.3) translateY(20px);
@@ -178,27 +154,16 @@
 
 /* 다크모드 대응을 위한 미디어 쿼리 */
 @media (prefers-color-scheme: dark) {
-  .login-required-popup__container {
+  .post-success-popup__container {
     background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
     border-color: rgba(71, 85, 105, 0.8);
   }
   
-  .login-required-popup__title {
+  .post-success-popup__title {
     color: #f1f5f9;
   }
   
-  .login-required-popup__description {
+  .post-success-popup__description {
     color: #94a3b8;
   }
-  
-  .login-required-popup__button.secondary {
-    background: linear-gradient(135deg, #334155 0%, #475569 100%);
-    color: #cbd5e1;
-    border-color: rgba(71, 85, 105, 0.8);
-  }
-  
-  .login-required-popup__button.secondary:hover {
-    background: linear-gradient(135deg, #475569 0%, #64748b 100%);
-    color: #e2e8f0;
-  }
-}
+} 

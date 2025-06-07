@@ -74,7 +74,7 @@
 
 /* 제목 */
 .communitypost-text-5 {
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 13px;
   font-style: italic;
   font-weight: 600;
@@ -94,7 +94,7 @@
 }
 
 .communitypost-text-3 {
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 8px;
   font-style: italic;
   color: #a0a0a0;
@@ -114,7 +114,7 @@
 }
 
 .communitypost-text-4 {
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 10px;
   font-style: italic;
   color: #a0a0a0;

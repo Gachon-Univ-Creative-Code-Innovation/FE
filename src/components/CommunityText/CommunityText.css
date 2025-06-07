@@ -1,7 +1,7 @@
 .communitytext-frame {
   position: relative;
   width: 100%;
-  height: 654px;
+  height: 500px;
   background-color: #1d1652;
   display: flex;
   align-items: center;
@@ -12,23 +12,25 @@
   display: flex;
   flex-direction: column;
   gap: 30px;
-  margin-left:100px;
+  margin-left: 120px;
   margin-top:40px;
 }
 
 .communitytext-line {
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transform: translateY(40px) scale(0.8);
+  filter: blur(8px);
+  transition: all 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .communitytext-line.fade-in {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
+  filter: blur(0px);
 }
 
 .communitytext-text {
-  font-family: "Inter", Helvetica;
+  font-family: 'GmarketSans', sans-serif;
   font-size: 36px;
   font-weight: 400;
   color: #ffffff;
@@ -58,54 +60,134 @@
 
 .communitytext-cone {
   position: absolute;
-  top: 143px;
-  left: 1185px;
-  width: 141px;
-  height: 152px;
+  top: 130px;
+  left: 1210px;
+  width: 120px;
+  height: 130px;
   background-image: url("/img/cone-white-glossy-1.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+  animation: float-cone 4s ease-in-out infinite;
 }
 
 .communitytext-cube {
   position: absolute;
-  top: 265px;
-  left: 981px;
-  width: 153px;
-  height: 152px;
+  top: 190px;
+  left: 950px;
+  width: 130px;
+  height: 130px;
   background-image: url("/img/roundcube-iridescent-1.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+  animation: float-cube 5s ease-in-out infinite;
 }
 
 .communitytext-donut {
   position: absolute;
-  top: 417px;
-  left: 1151px;
-  width: 162px;
-  height: 162px;
+  top: 310px;
+  left: 1100px;
+  width: 140px;
+  height: 140px;
   background-image: url("/img/supertoroid-purple-glossy-1.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+  animation: float-donut 6s ease-in-out infinite;
 }
 
-.communitytext-line {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+@keyframes float-cone {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-15px) rotate(2deg);
+  }
+  66% {
+    transform: translateY(-8px) rotate(-1deg);
+  }
 }
 
-.communitytext-line.fade-in {
-  opacity: 1;
-  transform: translateY(0);
+@keyframes float-cube {
+  0%, 100% {
+    transform: translateX(0px) translateY(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateX(8px) translateY(-12px) rotate(1deg);
+  }
+  50% {
+    transform: translateX(-5px) translateY(-20px) rotate(-1deg);
+  }
+  75% {
+    transform: translateX(3px) translateY(-8px) rotate(0.5deg);
+  }
+}
+
+@keyframes float-donut {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  40% {
+    transform: translateY(-18px) rotate(-2deg) scale(1.05);
+  }
+  80% {
+    transform: translateY(-5px) rotate(1deg) scale(0.98);
+  }
 }
 
 .communitytext-text.highlight {
   color: #ffffff;
   font-weight: 600;
   font-size: 55px;
+}
+
+.communitytext-typing-container {
+  opacity: 1;
+  transition: all 2.5s ease-in-out;
+  position: relative;
+}
+
+.communitytext-typing-container.blur-out {
+  opacity: 0;
+  filter: blur(15px);
+  transform: scale(0.9);
+}
+
+.typing-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 40px;
+  background-color: #ffffff;
+  margin-left: 2px;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+.wave-letter {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.wave-letter.wave-animate {
+  animation: wave-bounce 0.6s ease-in-out;
+  animation-delay: var(--delay);
+}
+
+@keyframes wave-bounce {
+  0%, 70%, 100% {
+    transform: translateY(0px);
+  }
+  35% {
+    transform: translateY(-15px);
+  }
 }
 

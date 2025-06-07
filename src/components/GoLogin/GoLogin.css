@@ -3,13 +3,14 @@
   position: relative;
   width: 131px;
   cursor: pointer;
+  animation: buttonPulse 2s ease-in-out infinite;
 }
 
 .gologin-span-wrapper {
   color: #1d1652;
-  font-family: "Inter", Helvetica;
+  font-family: 'GmarketSans', sans-serif;
   font-size: 20px;
-  font-weight: 400;
+  font-weight: 700;
   left: 0;
   letter-spacing: 0;
   line-height: 30px;
@@ -27,9 +28,22 @@
 
 .gologin-text-wrapper {
   color: #1d1652;
-  font-family: "Inter", Helvetica;
+  font-family: 'GmarketSans', sans-serif;
   font-size: 20px;
-  font-weight: 400;
+  font-weight: 700;
   letter-spacing: 0;
   line-height: 30px;
+}
+
+/* Button Pulse Animation */
+@keyframes buttonPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }

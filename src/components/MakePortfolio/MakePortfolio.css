@@ -21,7 +21,7 @@
 
 .makeportfolio-title {
   color: transparent;
-  font-family: "Inter", Helvetica;
+  font-family: 'GmarketSans', sans-serif;
   font-size: 20px;
   font-weight: 900;
   letter-spacing: 0;
@@ -42,7 +42,7 @@
 
 .makeportfolio-subtitle {
   color: transparent;
-  font-family: "Inter", Helvetica;
+  font-family: 'GmarketSans', sans-serif;
   font-size: 15px;
   font-weight: 400;
   letter-spacing: 0;
@@ -64,36 +64,52 @@
 
 .makeportfolio-button {
   align-items: center;
-  background-color: #ffffff;
+  background: #ffffff;
   display: inline-flex;
   flex: 0 0 auto;
-  gap: 10px;
+  gap: 12px;
   justify-content: center;
-  padding: 10px 20px;
+  padding: 16px 32px;
   position: relative;
   cursor: pointer;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(215, 228, 238, 0.6);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+  overflow: hidden;
 }
 
 .makeportfolio-button:hover {
-  opacity: 0.9;
-  transition: opacity 0.2s ease;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(215, 228, 238, 0.8);
+}
+
+.makeportfolio-button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(215, 228, 238, 0.7);
 }
 
 .makeportfolio-button-text {
   color: #1d1652;
-  font-family: "Inter", Helvetica;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0;
-  line-height: 30px;
-  margin-top: -1px;
+  font-family: 'GmarketSans', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  line-height: 1;
   position: relative;
   white-space: nowrap;
   width: fit-content;
+  z-index: 2;
 }
 
 .makeportfolio-vector {
-  height: 10px;
+  height: 14px;
   position: relative;
-  width: 18px;
+  width: 20px;
+  z-index: 2;
+  transition: transform 0.3s ease;
+}
+
+.makeportfolio-button:hover .makeportfolio-vector {
+  transform: translateX(4px);
 }

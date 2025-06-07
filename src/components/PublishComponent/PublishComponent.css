@@ -5,20 +5,20 @@
     border-radius: 50px;
     box-shadow: inset 0px 4px 10px #00000040;
     gap: 4px; /* ✅ 여백을 조금 늘려서 요소들이 균형 있게 배치되도록 함 */
-    height: 38px;
-    padding: 0px 0px 0px 20px; /* ✅ 좌우 여백 조정 */
+    height: 48px;
+    padding: 0px 0px 0px 28px; /* ✅ 좌우 여백 조정 */
     position: relative;
     cursor: pointer; /* ✅ 마우스 올렸을 때 커서 변경 */
     transition: background-color 0.4s ease-in-out;
   }
   
   .publish-component .text-wrapper {
-    font-family: "Inter-Medium", Helvetica;
+    font-family: "GmarketSans", sans-serif;
     color: #ffffff;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 500;
     letter-spacing: 0;
-    line-height: 38px; /* ✅ 높이를 부모 요소(`publish-component`)에 맞춤 */
+    line-height: 48px; /* ✅ 높이를 부모 요소(`publish-component`)에 맞춤 */
     text-align: center;
     white-space: nowrap;
   }
@@ -27,14 +27,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
+    width: 48px;
   }
   
   .publish-component .overlap-group {
     background-color: #1d1652;
-    border-radius: 19px;
-    height: 38px;
-    width: 40px;
+    border-radius: 24px;
+    height: 48px;
+    width: 48px;
     display: flex; /* ✅ 내부 요소 정렬 */
     align-items: center;
     justify-content: center;
@@ -42,8 +42,8 @@
   
   .publish-component .div {
     color: #ffffff;
-    font-family: "Inter-Medium", Helvetica;
-    font-size: 12px;
+    font-family: "GmarketSans", sans-serif;
+    font-size: 14px;
     font-weight: 500;
     text-align: center;
   }
@@ -53,25 +53,25 @@
     .publish-component.hover {
       background-color: #1d165259;
       display: inline-flex;
-      width: 129px;
+      width: 145px;
     }
     
     .publish-component.default {
       background-color: #1d1652;
       display: flex;
-      width: 129px;
+      width: 145px;
     }
     
     .publish-component.hover .text-wrapper {
-      width: 58.5px;
+      width: 66px;
     }
     
     .publish-component.default .text-wrapper {
-      width: 58.5px;
+      width: 66px;
     }
     
     
     .publish-component.default .group {
-      height: 38px;
+      height: 48px;
     }
     

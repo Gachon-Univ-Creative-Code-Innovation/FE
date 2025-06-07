@@ -11,7 +11,7 @@
 
 /* 텍스트 스타일 */
 .component .text-wrapper {
-  font-family: "Inter", Helvetica;
+  font-family: 'GmarketSans', sans-serif;
   font-size: 16px;
   font-weight: 700;
   letter-spacing: 0;

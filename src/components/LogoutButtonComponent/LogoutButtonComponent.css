@@ -19,7 +19,7 @@
   align-items: center;            /* ✅ 추가 */
   width: 100%;                    /* ✅ 버튼 영역에 맞게 꽉 채움 */
   height: 100%;                   /* ✅ 수직 정렬 위해 높이도 */
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 10px;
   font-weight: 400;
   line-height: 12px;

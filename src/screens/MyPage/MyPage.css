@@ -45,7 +45,7 @@
 
 .mypage-name {
   color: #000000;
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 39px;
   font-weight: 700;
   letter-spacing: 0;
@@ -100,7 +100,7 @@
 .mypage-text {
   color: #000000;
   flex: 1;
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 15px;
   font-weight: 400;
   letter-spacing: 0;

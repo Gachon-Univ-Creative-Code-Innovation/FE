@@ -9,6 +9,47 @@ import CommentIcon2 from "../../icons/CommentIcon2/CommentIcon2";
 import api from "../../api/instance";
 import "./MyBlog.css";
 
+// 파도타기 효과 컴포넌트
+const WaveText = ({ text, className }) => {
+  const [startWaveAnimation, setStartWaveAnimation] = useState(false);
+
+  useEffect(() => {
+    const startWaveLoop = () => {
+      setStartWaveAnimation(true);
+      
+      const totalAnimationTime = (text.length * 0.15 + 0.6) * 1000;
+      
+      setTimeout(() => {
+        setStartWaveAnimation(false);
+        setTimeout(() => {
+          startWaveLoop();
+        }, 3000);
+      }, totalAnimationTime);
+    };
+
+    // 컴포넌트 마운트 후 잠시 대기 후 시작
+    const timer = setTimeout(() => {
+      startWaveLoop();
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [text]);
+
+  return (
+    <div className={className}>
+      {text.split('').map((letter, index) => (
+        <span
+          key={index}
+          className={`wave-letter ${startWaveAnimation ? 'wave-animate' : ''}`}
+          style={{ '--delay': `${index * 0.15}s` }}
+        >
+          {letter === ' ' ? '\u00A0' : letter}
+        </span>
+      ))}
+    </div>
+  );
+};
+
 export const MyBlog = () => {
   const navigate = useNavigate();
 
@@ -209,9 +250,7 @@ export const MyBlog = () => {
 
               {/* 게시글이 없을 때 */}
               {!loading && posts.length === 0 && (
-                <div className="myblog-empty-message">
-                  당신의 이야기를 기다리고 있습니다 ✍️
-                </div>
+                <WaveText text="당신의 이야기를 기다리고 있습니다 ✍️" className="myblog-empty-message" />
               )}
             </div>
           </div>
