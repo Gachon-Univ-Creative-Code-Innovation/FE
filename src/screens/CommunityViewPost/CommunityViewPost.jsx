@@ -17,6 +17,50 @@ function getLabelByKey(key) {
 }
 
 
+/**
+ * 백엔드에서 내려준 flat list를 nested structure({ replies: [] })로 바꿔준다.
+ * @param {Array<Object>} flatComments
+ *   └ 백엔드 GetComment DTO 배열. 각 항목에 commentId, parentCommentId, authorNickname, content, createTime 등이 있음.
+ * @returns {Array<Object>} nestedComments
+ */
+function buildNestedComments(flatComments) {
+  // 1) 모든 댓글을 id → 새로운 객체(프론트용)로 매핑
+  const map = {};
+  flatComments.forEach((c) => {
+    map[c.commentId] = {
+      id: c.commentId,
+      author: c.authorNickname,
+      text: c.content,
+      authorId: c.authorId, // 댓글 작성자의 ID
+      authorProfileUrl: c.authorProfileUrl, // 댓글 작성자의 프로필 이미지 URL
+      isDeleted : c.isDeleted,
+      // createTime(예: "2025-06-03T05:00:00")을 "2025.06.03" 형태로 포맷
+      date: c.createTime.slice(0, 10).replace(/-/g, "."),
+      replies: []
+    };
+  });
+
+  // 2) parentCommentId가 있으면, 해당 parent의 replies 배열에 push
+  //    없으면 최상위(root) 댓글 목록에 추가
+  const nested = [];
+  flatComments.forEach((c) => {
+    const node = map[c.commentId];
+    if (c.parentCommentId) {
+      const parentNode = map[c.parentCommentId];
+      if (parentNode) {
+        parentNode.replies.push(node);
+      }
+      // 만약 parentNode가 없다면 (비정상 케이스) 그냥 무시해도 됩니다.
+    } else {
+      nested.push(node);
+    }
+  });
+
+  return nested;
+}
+
+
+
 const CommunityViewPost = () => {
   const navigate = useNavigate();
   const { postId } = useParams();
@@ -178,61 +222,107 @@ const CommunityViewPost = () => {
   }, [editReplyId]);
 
   // 댓글 등록
-  const handleAddComment = () => {
+  const handleAddComment = async() => {
     if (!commentValue.trim()) return;
-    setComments([
-      ...comments,
-      {
-        id: Date.now(),
-        author: myName,
-        text: commentValue,
-        date: new Date().toISOString().slice(0, 10).replace(/-/g, '.'),
-        replies: [],
-      },
-    ]);
-    setCommentValue("");
+    try {
+      const token = localStorage.getItem("jwtToken");
+      const payload = {
+        postId: Number(postId),       // 현재 보고 있는 글의 ID
+        parentCommentId: null,        // 루트 댓글이므로 null
+        content: commentValue.trim(), // 입력된 댓글 내용
+      };
+
+      await api.post(
+        "/blog-service/comments",
+        payload,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setCommentValue("");
+      fetchComments();
+    } catch (e) {
+      console.error("댓글 등록 실패", e);
+    }
   };
 
   // 답글 등록
-  const handleAddReply = (commentId) => {
+  const handleAddReply = async(commentId) => {
     if (!replyValue.trim()) return;
-    setComments(comments.map(comment =>
-      comment.id === commentId
-        ? {
-            ...comment,
-            replies: [
-              ...(comment.replies || []),
-              {
-                id: Date.now(),
-                author: myName,
-                text: replyValue,
-                date: new Date().toISOString().slice(0, 10).replace(/-/g, '.'),
-              },
-            ],
-          }
-        : comment
-    ));
-    setReplyValue("");
-    setReplyTo(null);
+
+    try {
+      const token = localStorage.getItem("jwtToken");
+      const payload = {
+        postId: Number(postId),             // 현재 보고 있는 게시글 ID
+        parentCommentId: commentId,         // 답글을 다는 부모 댓글 ID
+        content: replyValue.trim(),         // 입력된 답글 내용
+      };
+
+      await api.post(
+        "/blog-service/comments",
+        payload,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setReplyValue("");
+      setReplyTo(null);
+      fetchComments();
+    } catch (e) {
+      console.error("답글 등록 실패", e);
+    }
   };
 
+  //댓글 조회
+  const fetchComments = async () => {
+    try {
+      const token = localStorage.getItem("jwtToken");
+      // “postId별 댓글 조회” API 호출
+      const res = await api.get(
+        `/blog-service/comments/${postId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const flatList = res.data.data.commentList;
+      console.log("댓글 데이터:", flatList);
+      const nested = buildNestedComments(flatList);
+      setComments(nested);
+    } catch (err) {
+      console.error("댓글 조회 실패:", err);
+    }
+  };
+
+  // 댓글 조회
+  useEffect(() => {
+    fetchComments();
+  }, [postId]);
+
   // 댓글 삭제
-  const handleDeleteComment = (commentId) => {
-    setComments(comments.filter(comment => comment.id !== commentId));
-    setOpenMenuId(null);
+  const handleDeleteComment = async(commentId) => {
+    try {
+      const token = localStorage.getItem("jwtToken");
+
+      await api.delete(`/blog-service/comments/${commentId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      setOpenMenuId(null);
+      fetchComments();
+    } catch (e) {
+      console.error("댓글 삭제 실패", e);
+    }
   };
 
   // 답글 삭제
-  const handleDeleteReply = (commentId, replyId) => {
-    setComments(comments.map(comment =>
-      comment.id === commentId
-        ? {
-            ...comment,
-            replies: comment.replies.filter(reply => reply.id !== replyId)
-          }
-        : comment
-    ));
-    setOpenMenuId(null);
+  const handleDeleteReply = async(commentId, replyId) => {
+    try {
+      const token = localStorage.getItem("jwtToken");
+
+      await api.delete(`/blog-service/comments/${replyId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setOpenMenuId(null);
+      fetchComments();
+    } catch (e) {
+      console.error("답글 삭제 실패", e);
+    }
   };
 
   // 댓글 수정 모드 진입
@@ -253,54 +343,62 @@ const CommunityViewPost = () => {
   };
 
   // 댓글 수정 저장
-  const handleSaveEditComment = (commentId) => {
+  const handleSaveEditComment = async(commentId) => {
     if (!editCommentValue.trim()) return;
-    setComments(comments.map(comment =>
-      comment.id === commentId
-        ? { ...comment, text: editCommentValue }
-        : comment
-    ));
-    setEditCommentId(null);
-    setEditCommentValue("");
+
+    try {
+      const token = localStorage.getItem("jwtToken");
+
+      await api.patch(
+        `/blog-service/comments/${commentId}`,
+        { content: editCommentValue },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setEditCommentId(null);
+      setEditCommentValue("");
+      fetchComments();
+    } catch (e) {
+      console.error("댓글 수정 실패", e);
+    }
   };
 
   // 답글 수정 저장
-  const handleSaveEditReply = (commentId, replyId) => {
+  const handleSaveEditReply = async(commentId, replyId) => {
     if (!editReplyValue.trim()) return;
-    setComments(comments.map(comment =>
-      comment.id === commentId
-        ? {
-            ...comment,
-            replies: comment.replies.map(reply =>
-              reply.id === replyId
-                ? { ...reply, text: editReplyValue }
-                : reply
-            )
-          }
-        : comment
-    ));
-    setEditReplyId(null);
-    setEditReplyValue("");
+    try {
+      const token = localStorage.getItem("jwtToken");
+
+      await api.patch(
+        `/blog-service/comments/${replyId}`,
+        { content: editReplyValue },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setEditReplyId(null);
+      setEditReplyValue("");
+      fetchComments();
+    } catch (e) {
+      console.error("답글 수정 실패", e);
+    }
   };
 
   // 글 수정 버튼 클릭 - Write 페이지로 이동
-  const handleEditPost = () => {
-    console.log("navigate state:", { editMode: true, post });
+  // const handleEditPost = () => {
+  //   console.log("navigate state:", { editMode: true, post });
 
-    navigate('/community/write', { 
-      state: { 
-        editMode: true,
-        postData: {
-          title: post.title,
-          category: post.category,
-          content: post.content,
-          tags: post.tag,
-          id: post.id
-        }
-      }
-    });
-    setOpenMenuId(null);
-  };
+  //   navigate('/community/write', { 
+  //     state: { 
+  //       editMode: true,
+  //       postData: {
+  //         title: post.title,
+  //         category: post.category,
+  //         content: post.content,
+  //         tags: post.tag,
+  //         id: post.id
+  //       }
+  //     }
+  //   });
+  //   setOpenMenuId(null);
+  // };
 
   // 글 삭제 버튼 클릭
   const handleDeletePost = async() => {
@@ -478,7 +576,11 @@ if (!post) {
             <div className="comment-list">
               {comments.map((comment) => (
                 <div key={comment.id} className="comment-item">
-                  <div className="comment-profile"></div>
+                  <div className="comment-profile-wrapper">
+                    {comment.authorProfileUrl && (
+                      <img src={comment.authorProfileUrl} alt="comment" className="comment-profile-img" />
+                    )}
+                  </div>
                   <div className="comment-content-block">
                     <div className="comment-author">{comment.author}</div>
                     {editCommentId === comment.id ? (
@@ -499,13 +601,13 @@ if (!post) {
                     )}
                     <div className="comment-meta">
                       <span>{comment.date}</span>
-                      <span
+                      {!comment.isDeleted && (<span
                         className="reply-btn"
                         style={{ cursor: "pointer", color: "#6c6c8a", marginLeft: 8 }}
                         onClick={() => setReplyTo(replyTo === comment.id ? null : comment.id)}
                       >
                         reply
-                      </span>
+                      </span>)}
                     </div>
                     {/* 답글 입력창 */}
                     {replyTo === comment.id && (
@@ -528,7 +630,11 @@ if (!post) {
                       <div className="comment-replies-list">
                         {comment.replies.map(reply => (
                           <div key={reply.id} className="comment-reply-item">
-                            <div className="comment-profile"></div>
+                            <div className="comment-profile-wrapper">
+                              {reply.authorProfileUrl && (
+                                <img src={reply.authorProfileUrl} alt="comment" className="comment-profile-img" />
+                              )}
+                            </div>
                             <div className="reply-content">
                               <div className="comment-author">{reply.author}</div>
                               {editReplyId === reply.id ? (
