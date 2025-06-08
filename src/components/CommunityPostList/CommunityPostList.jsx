@@ -9,6 +9,12 @@ import "./CommunityPostList.css";
 const ITEMS_PER_PAGE = 15;
 const POST_TYPE = "MATCHING";
 
+// 날짜를 "YYYY.MM.DD" 형식으로 포맷팅하는 헬퍼
+const formatDate = (isoString) => {
+  if (!isoString) return "날짜 없음";
+  return isoString.split("T")[0].replace(/-/g, ".");
+};
+
 export const CommunityPostList = ({ sortBy, category }) => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
@@ -78,9 +84,7 @@ export const CommunityPostList = ({ sortBy, category }) => {
               <p className="communitypost-text-5">{post.title}</p>
               <div className="communitypost-frame-5">
                 <div className="communitypost-text-3">
-                  {post.createdAt
-                    ? post.createdAt.split("T")[0].replace(/-/g, ".")
-                    : "날짜 없음"}
+                  {formatDate(post.createdAt)}
                 </div>
                 <div className="communitypost-comment">
                   <CommentIcon className="communitypost-comment-icon" />

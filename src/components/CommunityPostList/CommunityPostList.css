@@ -59,6 +59,7 @@
   height: 100%;
   object-fit: cover; /* cover: 박스를 가득 채우면서 비율 유지, 잘리는 부분 발생 */
   object-position: center;
+  border-radius: 8px;
 }
 
 /* 제목, 날짜, 댓글 컨테이너 */

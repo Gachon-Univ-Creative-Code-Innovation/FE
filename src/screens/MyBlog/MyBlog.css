@@ -176,6 +176,7 @@
   width: 100%;
   height: 180px;
   background-color: #d9d9d9;
+  border-radius: 8px;
 }
 
 .myblog-post-content {
@@ -194,12 +195,14 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   line-height: 16px;
+  text-align: center;
+  width: 100%;
 }
 
 .myblog-post-meta {
   display: flex;
   gap: 14px;
-  justify-content: left;
+  justify-content: center;
   align-items: center;
 }
 

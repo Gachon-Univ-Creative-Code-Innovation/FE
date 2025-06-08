@@ -18,7 +18,6 @@ export const MyPost = () => {
   });
   const [posts, setPosts] = useState([]);
 
-
   const handleFollowClick = () => navigate("/follow");
 
   useEffect(() => {
@@ -38,7 +37,7 @@ export const MyPost = () => {
         });
         // resPosts.data.data 는 List<PostResponseDTO.GetPost>
         setPosts(resPosts.data.data.postList);
-        console.log(resPosts.data.data.postList)
+        console.log(resPosts.data.data.postList);
       } catch (err) {
         console.error("사용자 정보 불러오기 실패:", err);
       }
@@ -101,10 +100,10 @@ export const MyPost = () => {
       </header>
 
       <div className="mypost-body">
-      {posts.length === 0 ? (
+        {posts.length === 0 ? (
           <div className="mypost-empty">작성한 글이 없습니다.</div>
         ) : (
-          posts.slice(0, 6).map((post, idx)  => (
+          posts.slice(0, 6).map((post, idx) => (
             <div
               key={post.postId}
               className={idx === 0 ? "mypost-post" : "mypost-post-2"}
@@ -137,11 +136,11 @@ export const MyPost = () => {
               </div>
               <div className="mypost-thumbnail-wrapper">
                 <img
-                  src={post.thumbnail || "/img/AlOG-logo.png"}
+                  src={post.thumbnail || "/img/blog_basic_photo.png"}
                   alt="post"
                   className="mypost-thumbnail"
-                  onError={e => {
-                    e.currentTarget.src = "/img/AlOG-logo.png";
+                  onError={(e) => {
+                    e.currentTarget.src = "/img/blog_basic_photo.png";
                   }}
                 />
               </div>

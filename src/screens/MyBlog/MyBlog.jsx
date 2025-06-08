@@ -233,7 +233,7 @@ export const MyBlog = () => {
                           backgroundColor: "#a3b3bf",
                           backgroundImage: post.thumbnail
                             ? `url(${post.thumbnail})`
-                            : "none",
+                            : "url('/img/blog_basic_photo.png')",
                           backgroundSize: "cover",
                           backgroundPosition: "center",
                         }}
@@ -243,7 +243,6 @@ export const MyBlog = () => {
                         <div className="myblog-post-meta">
                           <div className="myblog-post-date">
                             {formatDate(post.createdAt)}
-                          {post.createdAt?.split("T")[0].replace(/-/g, ".")  || "날짜 없음"}
                           </div>
                           <div className="myblog-post-comment">
                             <CommentIcon2 className="myblog-comment-icon" />
