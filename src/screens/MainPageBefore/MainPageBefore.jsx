@@ -166,7 +166,12 @@ export const MainPageBefore = () => {
   );
 
   const postRender = (post, index) => (
-    <div key={post.id} ref={index === posts.length - 1 ? lastPostRef : null}>
+    <div 
+      key={post.id} 
+      ref={index === posts.length - 1 ? lastPostRef : null}
+      onClick={() => navigate(`/viewpost/${post.id}`)}
+      style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
+    >
       <div className="frame-2">
         <div className="frame-3">
           <div className="author">
