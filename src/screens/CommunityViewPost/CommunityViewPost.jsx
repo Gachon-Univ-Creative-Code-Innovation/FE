@@ -513,7 +513,7 @@ if (!post) {
           </div>
           <div className="view-post-meta-line">
             <div className="view-post-meta"
-            onClick={() => navigate(`/myblog/${post.authorId}`)}
+            onClick={() => navigate(`/blog/${post.authorId}`)}
             style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
             >
               <div className="post-profile-wrapper">

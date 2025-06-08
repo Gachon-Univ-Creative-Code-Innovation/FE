@@ -430,7 +430,7 @@ const ViewPost = () => {
         <h1 className="view-post-title">{postData.title}</h1>
           <div className="view-post-meta-line">
             <div className="view-post-meta"
-              onClick={() => navigate(`/myblog/${postData.authorId}`)}
+              onClick={() => navigate(`/blog/${postData.authorId}`)}
               style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
             >
               <div className="post-profile-wrapper">
@@ -530,7 +530,7 @@ const ViewPost = () => {
               {comments.map((comment) => (
                 <div key={comment.id} className="comment-item">
                   <div className="comment-profile-wrapper"
-                  onClick={() => navigate(`/myblog/${comment.authorId}`)}
+                  onClick={() => navigate(`/blog/${comment.authorId}`)}
                   style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
                   >
                             <img 
@@ -544,7 +544,7 @@ const ViewPost = () => {
                   </div>
                   <div className="comment-content-block">
                     <div className="comment-author"
-                    onClick={() => navigate(`/myblog/${comment.authorId}`)}
+                    onClick={() => navigate(`/blog/${comment.authorId}`)}
                     style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
                     >{comment.author}</div>
                     {editCommentId === comment.id ? (
@@ -597,7 +597,7 @@ const ViewPost = () => {
                         {comment.replies.map(reply => (
                           <div key={reply.id} className="comment-reply-item">
                             <div className="comment-profile-wrapper"
-                            onClick={() => navigate(`/myblog/${reply.authorId}`)}
+                            onClick={() => navigate(`/blog/${reply.authorId}`)}
                             style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
                             >
                                           <img 
@@ -611,7 +611,7 @@ const ViewPost = () => {
                             </div>
                             <div className="reply-content">
                               <div className="comment-author"
-                              onClick={() => navigate(`/myblog/${reply.authorId}`)}
+                              onClick={() => navigate(`/blog/${reply.authorId}`)}
                               style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
                               >{reply.author}</div>
                               {editReplyId === reply.id ? (
