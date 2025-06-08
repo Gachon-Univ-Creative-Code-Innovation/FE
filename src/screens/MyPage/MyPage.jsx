@@ -32,6 +32,8 @@ export const MyPage = () => {
           },
         });
         const { nickname, profileUrl } = res.data.data;
+        console.log("MyPage API 응답:", res.data.data); // 디버깅 로그 추가
+        console.log("profileUrl 값:", profileUrl); // profileUrl 값 확인
         setUserInfo({ nickname, profileUrl });
       } catch (err) {
         console.error("사용자 정보 불러오기 실패:", err);
@@ -63,9 +65,13 @@ export const MyPage = () => {
             <img
               className="mypage-profile-img"
               alt="프로필"
-              src={userInfo.profileUrl || "/img/basic_profile_photo.png"}
+              src={userInfo.profileUrl || "/img/basic_profile_photo2.jpeg"}
               onError={(e) => {
-                e.currentTarget.src = "/img/basic_profile_photo.png";
+                console.log("프로필 이미지 로딩 실패:", e.currentTarget.src);
+                e.currentTarget.src = "/img/basic_profile_photo2.jpeg";
+              }}
+              onLoad={() => {
+                console.log("프로필 이미지 로딩 성공:", userInfo.profileUrl || "/img/basic_profile_photo2.jpeg");
               }}
             />
             <div className="mypage-name-wrapper">
