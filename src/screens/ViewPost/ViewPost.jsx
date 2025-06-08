@@ -488,12 +488,16 @@ const ViewPost = () => {
       <div className="view-post-header">
         <h1 className="view-post-title">{postData.title}</h1>
           <div className="view-post-meta-line">
-            <div className="view-post-meta">
+            <div className="view-post-meta"
+              onClick={() => navigate(`/blog/${postData.authorId}`)}
+              style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
+            >
               <div className="post-profile-wrapper">
                         <img 
           src={postData.profileUrl || "/img/basic_profile_photo.png"} 
           alt="post" 
           className="post-profile-img"
+          
           onError={(e) => {
             e.currentTarget.src = "/img/basic_profile_photo.png";
           }}
@@ -596,7 +600,10 @@ const ViewPost = () => {
             <div className="comment-list">
               {comments.map((comment) => (
                 <div key={comment.id} className="comment-item">
-                  <div className="comment-profile-wrapper">
+                  <div className="comment-profile-wrapper"
+                  onClick={() => navigate(`/blog/${comment.authorId}`)}
+                  style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
+                  >
                             <img 
           src={comment.authorProfileUrl || "/img/basic_profile_photo.png"} 
           alt="comment" 
@@ -607,7 +614,10 @@ const ViewPost = () => {
         />
                   </div>
                   <div className="comment-content-block">
-                    <div className="comment-author">{comment.author}</div>
+                    <div className="comment-author"
+                    onClick={() => navigate(`/blog/${comment.authorId}`)}
+                    style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
+                    >{comment.author}</div>
                     {editCommentId === comment.id ? (
                       <div className="comment-edit-wrapper" ref={editCommentInputRef}>
                         <input
@@ -665,7 +675,10 @@ const ViewPost = () => {
                       <div className="comment-replies-list">
                         {comment.replies.map(reply => (
                           <div key={reply.id} className="comment-reply-item">
-                            <div className="comment-profile-wrapper">
+                            <div className="comment-profile-wrapper"
+                            onClick={() => navigate(`/blog/${reply.authorId}`)}
+                            style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
+                            >
                                           <img 
               src={reply.authorProfileUrl || "/img/basic_profile_photo.png"} 
               alt="reply" 
@@ -676,7 +689,10 @@ const ViewPost = () => {
             />
                             </div>
                             <div className="reply-content">
-                              <div className="comment-author">{reply.author}</div>
+                              <div className="comment-author"
+                              onClick={() => navigate(`/blog/${reply.authorId}`)}
+                              style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
+                              >{reply.author}</div>
                               {editReplyId === reply.id ? (
                                 <div className="comment-edit-wrapper" ref={editReplyInputRef}>
                                   <input

@@ -1,6 +1,6 @@
 // src/screens/MyBlog/MyBlog.jsx
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import GoGitHub from "../../components/GoGitHub/GoGitHub";
 import GoPortfolio from "../../components/GoPortfolio/GoPortfolio";
 import Navbar from "../../components/Navbar/Navbar";
@@ -43,6 +43,7 @@ const WaveText = ({ text, className }) => {
 };
 
 export const MyBlog = () => {
+  const { authorId } = useParams();
   const navigate = useNavigate();
   const jwtToken = localStorage.getItem("jwtToken") || "";
 
@@ -55,7 +56,7 @@ export const MyBlog = () => {
 
   // 게시글
   const [posts, setPosts] = useState([]);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const observer = useRef();
@@ -64,48 +65,94 @@ export const MyBlog = () => {
   useEffect(() => {
     if (!jwtToken) return navigate("/login");
 
-    api
-      .get("/user-service/user/patch", { headers: { Authorization: jwtToken } })
-      .then((res) => {
-        const d = res.data.data || {};
-        setNickname(d.nickname || "");
-        setProfileUrl(d.profileUrl || "");
-        setGithubUrl(d.githubUrl || "");
-      })
-      .catch((err) => console.error("내 정보 조회 에러:", err));
-
-    api
+    if (authorId == null){
+      api
+        .get("/user-service/user/patch", { headers: { Authorization: jwtToken } })
+        .then((res) => {
+          const d = res.data.data || {};
+          setNickname(d.nickname || "");
+          setProfileUrl(d.profileUrl || "");
+          setGithubUrl(d.githubUrl || "");
+        })
+        .catch((err) => console.error("내 정보 조회 에러:", err));
+      api
       .get("/user-service/follow/followers", {
         headers: { Authorization: jwtToken },
       })
       .then((res) => setFollowerCount((res.data.data || []).length))
       .catch((err) => console.error("팔로워 조회 에러:", err));
-
-    api
-      .get("/user-service/follow/followees", {
-        headers: { Authorization: jwtToken },
+  
+      api
+        .get("/user-service/follow/followees", {
+          headers: { Authorization: jwtToken },
+        })
+        .then((res) => setFollowingCount((res.data.data || []).length))
+        .catch((err) => console.error("팔로잉 조회 에러:", err));
+    }
+    else  {
+      const userId = authorId;
+      api
+        .get(`/user-service/details/${userId}`, {})
+        .then((res) => {
+          const d = res.data.data || {};
+          console.log("user", d)
+          setNickname(d.nickname || "");
+          setProfileUrl(d.profileUrl || "");
+          setGithubUrl(d.githubUrl || "");
+        })
+        .catch((err) => console.error("내 정보 조회 에러:", err));
+      api
+      .get(`/user-service/follow/followers/${userId}`, {
       })
-      .then((res) => setFollowingCount((res.data.data || []).length))
-      .catch((err) => console.error("팔로잉 조회 에러:", err));
+      .then((res) => setFollowerCount((res.data.data || []).length))
+      .catch((err) => console.error("팔로워 조회 에러:", err));
+  
+      api
+        .get(`/user-service/follow/followees/${userId}`, {
+        })
+        .then((res) => setFollowingCount((res.data.data || []).length))
+        .catch((err) => console.error("팔로잉 조회 에러:", err));
+    }
+    
   }, [jwtToken, navigate]);
 
   // 2) 내 게시글 불러오기
   useEffect(() => {
     if (!jwtToken || !hasMore) return;
     setLoading(true);
-
-    api
+    console.log("authorId" ,authorId)
+    if(authorId == null){
+      api
       .get(`/blog-service/posts?page=${page}`, {
         headers: { Authorization: jwtToken },
       })
       .then((res) => {
-        const data = res.data.data || [];
+        const data = res.data.data.postList || [];
+        console.log("my data", data)
         setPosts((prev) => [...prev, ...data]);
         if (data.length === 0) setHasMore(false);
       })
       .catch((err) => console.error("게시글 조회 에러:", err))
       .finally(() => setLoading(false));
+    }
+    else {
+      const userId = authorId
+      api
+      .get(`/blog-service/posts/user/${userId}?page=${page}`, {
+        headers: { Authorization: jwtToken },
+      })
+      .then((res) => {
+        const data = res.data.data.postList || [];
+        console.log("my data",userId, res.data.data)
+        setPosts((prev) => [...prev, ...data]);
+        
+        if (data.length === 0) setHasMore(false);
+      })
+      .catch((err) => console.error("게시글 조회 에러:", err))
+      .finally(() => setLoading(false));
+    }
   }, [page, hasMore, jwtToken]);
+
 
   // 3) 무한 스크롤
   const lastPostRef = useCallback(
