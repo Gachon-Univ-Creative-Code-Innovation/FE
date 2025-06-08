@@ -8,7 +8,7 @@ import Navbar2 from "../../components/Navbar2/Navbar2";
 import PortfolioCardList from "../../components/PortfolioCardList/PortfolioCardList";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import "./PortfolioScreen.css";
-import api from "../../api/local-instance";
+import api from "../../api/instance";
 
 const ITEMS_PER_PAGE = 12;
 const PAGE_GROUP_SIZE = 5;
@@ -38,10 +38,9 @@ export const PortfolioScreen = () => {
       
     const fetchExplorePortfolio = async () => {
       try {
-        const url = new URL("http://localhost:8080/api/portfolio-service/all");
-        // const url = new URL("http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8080/api/portfolio-service/all");
-        Object.entries(params).forEach(([k, v]) => url.searchParams.append(k, v));
-        const res = await api.get(url.toString(), {
+        const searchParams = new URLSearchParams(params).toString();
+        const url = "/portfolio-service/all" + (searchParams ? `?${searchParams}` : "");
+        const res = await api.get(url, {
           headers: { Accept: "application/json" }
         });
         if (res.data && res.data.status === 200 && Array.isArray(res.data.data)) {
@@ -63,10 +62,9 @@ export const PortfolioScreen = () => {
 
     const fetchMyPortfolio = async () => {
       try {
-        const url = new URL("http://localhost:8080/api/portfolio-service/list");
-        // const url = new URL("http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8080/api/portfolio-service/list");
-        Object.entries(params).forEach(([k, v]) => url.searchParams.append(k, v));
-        const res = await api.get(url.toString(), {
+        const searchParams = new URLSearchParams(params).toString();
+        const url = "/portfolio-service/list" + (searchParams ? `?${searchParams}` : "");
+        const res = await api.get(url, {
           headers: { Accept: "application/json" }
         });
         if (res.data && res.data.status === 200 && Array.isArray(res.data.data)) {
