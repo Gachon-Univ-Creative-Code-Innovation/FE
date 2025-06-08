@@ -426,8 +426,7 @@ const handleMatchingClick = async () => {
         let tags = post.tag;
         if (Array.isArray(tags)) tags = tags.join(",");
         tags = encodeURIComponent(tags);
-        const url = `http://localhost/api/matching-service/search-user`;
-        // const url = `http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/matching-service/search-user`;
+        const url = `/matching-service/search-user`;
         const res = await api.get(url, {
           params: { tags, topK: 5, topKperTag: 5 },
           headers: { 'accept': 'application/json' }
