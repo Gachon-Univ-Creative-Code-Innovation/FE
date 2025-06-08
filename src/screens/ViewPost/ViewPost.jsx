@@ -172,9 +172,14 @@ const ViewPost = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [editReplyId]);
 
+  const [isSending, setIsSending] = useState(false);
+  const [isReplySending, setIsReplySending] = useState(false);
 
   // 댓글 등록
   const handleAddComment = async() => {
+    if (isSending) return;
+    if (!commentValue.trim()) return;
+    setIsSending(true);
     try {
       const token = localStorage.getItem("jwtToken");
       const payload = {
@@ -192,7 +197,6 @@ const ViewPost = () => {
   
       setCommentValue("");
 
-
       // 생성 후 전체 댓글을 다시 로드해서 가장 최신 상태를 반영
       const res2 = await api.get(
         `/blog-service/comments/${postId}`,
@@ -205,14 +209,17 @@ const ViewPost = () => {
       console.error("댓글 생성 실패:", err);
       const errMsg = err.response?.data?.message || "댓글 생성 중 오류가 발생했습니다.";
       alert(errMsg);
+    } finally {
+      setIsSending(false);
     }
   };
 
 
   // 답글 등록
   const handleAddReply = async(commentId) => {
+    if (isReplySending) return;
     if (!replyValue.trim()) return;
-
+    setIsReplySending(true);
     try {
       const token = localStorage.getItem("jwtToken");
       const payload = {
@@ -243,6 +250,8 @@ const ViewPost = () => {
     } catch (err) {
       console.error("답글 생성 실패:", err.response?.data ?? err);
       alert(err.response?.data?.message || "답글 생성 중 오류가 발생했습니다.");
+    } finally {
+      setIsReplySending(false);
     }
   };
 
@@ -562,20 +571,28 @@ const ViewPost = () => {
           <div className="view-post-comments-section">
             {/* 댓글 입력 */}
             <div className="comment-input-wrapper">
-          <input
-            type="text"
-            placeholder="댓글 작성"
+              <textarea
+                placeholder="댓글 작성"
                 className="comment-input"
                 value={commentValue}
                 onChange={e => setCommentValue(e.target.value)}
-                onKeyDown={e => { if (e.key === "Enter") handleAddComment(); }}
-          />
-          <button className="comment-send-btn" onClick={handleAddComment}>
+                onKeyDown={e => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleAddComment();
+                  }
+                  // Shift+Enter는 기본 동작(줄바꿈)
+                }}
+                rows={1}
+                style={{ resize: "none" }}
+                disabled={isSending}
+              />
+              <button className="comment-send-btn" onClick={handleAddComment} disabled={isSending}>
                 <SendIcon />
-          </button>
-        </div>
+              </button>
+            </div>
 
-        {/* 댓글 목록 */}
+            {/* 댓글 목록 */}
             <div className="comment-list">
               {comments.map((comment) => (
                 <div key={comment.id} className="comment-item">
@@ -622,15 +639,23 @@ const ViewPost = () => {
                     {/* 답글 입력창 */}
                     {replyTo === comment.id && (
                       <div className="comment-reply-input-wrapper">
-                        <input
-                          type="text"
+                        <textarea
                           placeholder="답글 작성"
                           className="comment-input"
                           value={replyValue}
                           onChange={e => setReplyValue(e.target.value)}
-                          onKeyDown={e => { if (e.key === "Enter") handleAddReply(comment.id); }}
+                          onKeyDown={e => {
+                            if (e.key === "Enter" && !e.shiftKey) {
+                              e.preventDefault();
+                              handleAddReply(comment.id);
+                            }
+                            // Shift+Enter는 기본 동작(줄바꿈)
+                          }}
+                          rows={1}
+                          style={{ resize: "none" }}
+                          disabled={isReplySending}
                         />
-                        <button className="comment-send-btn" onClick={() => handleAddReply(comment.id)}>
+                        <button className="comment-send-btn" onClick={() => handleAddReply(comment.id)} disabled={isReplySending}>
                           <SendIcon />
                         </button>
                       </div>
