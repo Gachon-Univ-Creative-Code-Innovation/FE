@@ -18,6 +18,47 @@ import SearchModal from "../../components/SearchModal/SearchModal";
 
 
 
+// 파도타기 효과 컴포넌트
+const WaveText = ({ text, className }) => {
+  const [startWaveAnimation, setStartWaveAnimation] = useState(false);
+
+  useEffect(() => {
+    const startWaveLoop = () => {
+      setStartWaveAnimation(true);
+      
+      const totalAnimationTime = (text.length * 0.15 + 0.6) * 1000;
+      
+      setTimeout(() => {
+        setStartWaveAnimation(false);
+        setTimeout(() => {
+          startWaveLoop();
+        }, 3000);
+      }, totalAnimationTime);
+    };
+
+    // 컴포넌트 마운트 후 잠시 대기 후 시작
+    const timer = setTimeout(() => {
+      startWaveLoop();
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [text]);
+
+  return (
+    <div className={className}>
+      {text.split('').map((letter, index) => (
+        <span
+          key={index}
+          className={`wave-letter ${startWaveAnimation ? 'wave-animate' : ''}`}
+          style={{ '--delay': `${index * 0.15}s` }}
+        >
+          {letter === ' ' ? '\u00A0' : letter}
+        </span>
+      ))}
+    </div>
+  );
+};
+
 export const MainPageAfter = () => {
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(0);
@@ -159,9 +200,14 @@ export const MainPageAfter = () => {
           <div className="author">
             <div className="frame-4">
               <div className="author-profile-wrapper">
-                {post.profileUrl && (
-                  <img src={post.profileUrl} alt="post" className="author-profile-img" />
-                )}
+                        <img 
+          src={post.profileUrl || "/img/basic_profile_photo.png"} 
+          alt="post" 
+          className="author-profile-img"
+          onError={(e) => {
+            e.currentTarget.src = "/img/basic_profile_photo.png";
+          }}
+        />
               </div>
               <div className="text-wrapper-10">{post.author}</div>
             </div>
@@ -185,9 +231,14 @@ export const MainPageAfter = () => {
           </div>
         </div>
         <div className="post-img-wrapper">
-          {post.imageUrl && (
-            <img src={post.imageUrl} alt="post" className="post-img" />
-          )}
+          <img 
+            src={post.imageUrl || "/img/AlOG-logo.png"} 
+            alt="post" 
+            className="post-img"
+            onError={(e) => {
+              e.currentTarget.src = "/img/AlOG-logo.png";
+            }}
+          />
         </div>
       </div>
     </div>
@@ -263,20 +314,7 @@ export const MainPageAfter = () => {
 
             {!hasMore && (
               <div className="end-message-wrapper">
-                <div className="end-message">
-                  당신의 이야기를 기다리고 있습니다 ✍️
-                </div>
-                <div className="sparkle-extra orbit1 sparkle-yellow" />
-                <div className="sparkle-extra orbit2 sparkle-yellow" />
-                <div className="sparkle-extra orbit3 sparkle-yellow" />
-                <div className="sparkle-extra orbit4 sparkle-purple" />
-                <div className="sparkle-extra orbit5 sparkle-blue" />
-                <div className="sparkle-extra orbit6 sparkle-yellow" />
-                <div className="sparkle-extra orbit7 sparkle-blue" />
-                <div className="sparkle-extra orbit8 sparkle-purple" />
-                <div className="sparkle-extra orbit9 sparkle-purple" />
-                <div className="sparkle-extra orbit10 sparkle-pink" />
-                <div className="sparkle-extra orbit11 sparkle-pink" />
+                <WaveText text="당신의 이야기를 기다리고 있습니다 ✍️" className="end-message" />
               </div>
               
             )}

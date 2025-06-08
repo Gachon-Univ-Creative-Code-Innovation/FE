@@ -9,7 +9,7 @@
 
 /* 내부 텍스트 기본 스타일 */
 .seeall-container .seeall-text {
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0;

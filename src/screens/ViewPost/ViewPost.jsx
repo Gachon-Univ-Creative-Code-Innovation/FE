@@ -431,9 +431,14 @@ const ViewPost = () => {
           <div className="view-post-meta-line">
             <div className="view-post-meta">
               <div className="post-profile-wrapper">
-                {postData.profileUrl && (
-                  <img src={postData.profileUrl} alt="post" className="post-profile-img" />
-                )}
+                        <img 
+          src={postData.profileUrl || "/img/basic_profile_photo.png"} 
+          alt="post" 
+          className="post-profile-img"
+          onError={(e) => {
+            e.currentTarget.src = "/img/basic_profile_photo.png";
+          }}
+        />
               </div>
               <div className="view-post-meta-text">{postData.authorNickname}</div>
               <div className="view-post-meta-text">{formattedDate}</div>
@@ -521,9 +526,14 @@ const ViewPost = () => {
               {comments.map((comment) => (
                 <div key={comment.id} className="comment-item">
                   <div className="comment-profile-wrapper">
-                    {comment.authorProfileUrl && (
-                      <img src={comment.authorProfileUrl} alt="comment" className="comment-profile-img" />
-                    )}
+                            <img 
+          src={comment.authorProfileUrl || "/img/basic_profile_photo.png"} 
+          alt="comment" 
+          className="comment-profile-img"
+          onError={(e) => {
+            e.currentTarget.src = "/img/basic_profile_photo.png";
+          }}
+        />
                   </div>
                   <div className="comment-content-block">
                     <div className="comment-author">{comment.author}</div>
@@ -577,9 +587,14 @@ const ViewPost = () => {
                         {comment.replies.map(reply => (
                           <div key={reply.id} className="comment-reply-item">
                             <div className="comment-profile-wrapper">
-                              {reply.authorProfileUrl && (
-                                <img src={reply.authorProfileUrl} alt="reply" className="comment-profile-img" />
-                              )}
+                                          <img 
+              src={reply.authorProfileUrl || "/img/basic_profile_photo.png"} 
+              alt="reply" 
+              className="comment-profile-img"
+              onError={(e) => {
+                e.currentTarget.src = "/img/basic_profile_photo.png";
+              }}
+            />
                             </div>
                             <div className="reply-content">
                               <div className="comment-author">{reply.author}</div>

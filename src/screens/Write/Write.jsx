@@ -11,10 +11,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import Component18 from "../../icons/GoBackIcon/GoBackIcon";
 import CloseIcon from "../../icons/CloseIcon/CloseIcon";
 import { SpellCheckComponent } from "../../components/SpellCheckComponent/SpellCheckComponent";
-import { SaveDraftComponent } from "../../components/SaveDraftComponent/SaveDraftComponent";
+
 import { PostComponent } from "../../components/PostComponent/PostComponent";
 import { PublishComponent } from "../../components/PublishComponent/PublishComponent";
 import { PostCategories } from "../../constants/categories";
+import PostSuccessPopup from "../../components/PostSuccessPopup/PostSuccessPopup";
+import { AnimatePresence } from "framer-motion";
 import api from "../../api/instance";
 
 
@@ -35,8 +37,10 @@ export default function Write() {
   const [loadingSummary, setLoadingSummary] = useState(false);
   const [showGithubUrlInput, setShowGithubUrlInput] = useState(false);
   const [githubUrl, setGithubUrl] = useState("");
-  const [url, setUrl] = useState("");
+  // const [url, setUrl] = useState(""); // 현재 사용하지 않음
   const [fadeOut, setFadeOut] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [newPostData, setNewPostData] = useState(null);
 
   const tagInputRef = useRef(null);
   const reactQuillRef = useRef(null);
@@ -67,8 +71,8 @@ export default function Write() {
           setSummaryText(data.summary);
 
 
-        } catch (err) {
-          console.error("수정할 게시글 로딩 실패:", err);
+        } catch (error) {
+          console.error("수정할 게시글 로딩 실패:", error);
           alert("게시글을 불러오는 중 오류가 발생했습니다.");
           navigate(-1); // 뒤로 가기
         }
@@ -78,7 +82,7 @@ export default function Write() {
   }, [postId, navigate]);
 
 
-  // =============================================================================
+  // ==========================================================================
   // 1) Quill 이미지 업로드 핸들러 함수들 (modules 선언보다 위에 위치)
   // =============================================================================
   // **이미지 data URL ↔ 원본 파일명 매핑을 보관할 Map**
@@ -223,26 +227,27 @@ export default function Write() {
   };
 
   const fetchSummary = async (content) => {
-    const res = await fetch(
-      "http://localhost:8500/api/summarize-service/summarize",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ post_id: 0, context: content }),
-      }
-    );
-    const json = await res.json();
-    if (json.status !== 200) {
-      throw new Error(json.message);
+    let res, json;
+    try {
+      res = await fetch(
+        "/summarize-service/summarize",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ post_id: 0, context: content }),
+        }
+      );
+      json = await res.json();
+    } catch (err) {
+      throw new Error("서버에서 올바른 JSON 응답을 받지 못했습니다.");
+    }
+    if (!json || json.status !== 200) {
+      throw new Error(json?.message || "요약 생성에 실패했습니다.");
     }
     return json.data;
   };
 
-  const handleSaveDraft = () => {
-    const miss = getMissingFields();
-    if (miss.length) return alert(`${miss.join(", ")}을(를) 입력해 주세요!`);
-    alert("임시 저장되었습니다!");
-  };
+
 
   const handlePost = async () => {
     const miss = getMissingFields();
@@ -257,7 +262,8 @@ export default function Write() {
     try {
       const summary = await fetchSummary(content);
       setSummaryText(summary);
-    } catch (err) {
+    } catch (error) {
+      console.error("요약 생성 에러:", error);
       alert("요약 생성에 실패했습니다. 요약을 수동 입력해주세요!");
     } finally {
       setLoadingSummary(false);
@@ -372,17 +378,26 @@ export default function Write() {
         );
       }
 
-      const msg = response.data?.message;
-      alert(msg);
-      navigate("/MainPageAfter");
+      const postData = response.data?.data || response.data;
+      setNewPostData(postData);
+      setShowSuccessPopup(true);
  
-    } catch (err) {
-      console.error(err);
-      if (err.response?.data?.message) {
-        alert(err.response.data.message);
-      } else {
-        alert("게시글 생성 중 오류가 발생했습니다.");
+          } catch (error) {
+        console.error(error);
+        if (error.response?.data?.message) {
+          alert(error.response.data.message);
+        } else {
+          alert("게시글 생성 중 오류가 발생했습니다.");
+        }
       }
+  };
+
+  const handleSuccessPopupConfirm = () => {
+    setShowSuccessPopup(false);
+    if (newPostData && newPostData.id) {
+      navigate(`/blog/${newPostData.id}`);
+    } else {
+      navigate("/MainPageAfter");
     }
   };
 
@@ -396,7 +411,6 @@ export default function Write() {
   const handleGithubUrlKeyDown = async (e) => {
     if (e.key === "Enter") {
       const gitUrl = githubUrl;
-      setUrl(gitUrl);
       setGithubUrl("");
       setShowGithubUrlInput(false);
       setTimeout(() => {
@@ -405,7 +419,6 @@ export default function Write() {
       try {
         const response = await api.post(
           "/github-service/tag",
-          // http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/github-service/tag
           { git_url: gitUrl },
           { headers: { Accept: "application/json" } }
         );
@@ -415,7 +428,8 @@ export default function Write() {
           const tagString = tagArr.map((tag) => `#${tag}`).join(", ");
           setTags((prev) => (prev ? prev + ", " + tagString : tagString));
         }
-      } catch (err) {
+      } catch (error) {
+        console.error("깃허브 태그 추출 에러:", error);
         alert("깃허브 태그 추출에 실패했습니다.");
       }
     }
@@ -478,9 +492,7 @@ export default function Write() {
                 type="text"
                 placeholder="깃허브 저장소 URL을 입력하세요"
                 value={githubUrl}
-                onChange={(e) => setGithubUrl(e
-
-              )}
+                onChange={(e) => setGithubUrl(e.target.value)}
                 onKeyDown={handleGithubUrlKeyDown}
                 className="editor-github-url-input editor-github-url-input-animated"
               />
@@ -537,10 +549,8 @@ export default function Write() {
 
         {/* 버튼 그룹 (맞춤형 컴포넌트) */}
         <div className="editor-actions">
-          {/* SpellCheckComponent가 className 프로퍼티를 함수로 받도록 수정해야 경고가 사라집니다. */}
           <SpellCheckComponent className={() => "spell-check-container"} />
           <div className="editor-button-group">
-            <SaveDraftComponent onClick={handleSaveDraft} />
             <PostComponent onClick={handlePost} />
           </div>
         </div>
@@ -590,6 +600,17 @@ export default function Write() {
           </div>
         </div>
       )}
+
+      {/* 게시 성공 팝업 */}
+      <AnimatePresence>
+        {showSuccessPopup && (
+          <PostSuccessPopup
+            onConfirm={handleSuccessPopupConfirm}
+            title="게시물 작성 완료!"
+            message="성공적으로 게시되었어요!"
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

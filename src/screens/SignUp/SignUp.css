@@ -157,7 +157,7 @@
 .signup-text-input {
   flex: 1;                                 /* 최대 폭 차지 */
   color: #333;
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 16px;
   font-weight: 400;
   background-color: transparent;
@@ -186,7 +186,7 @@
   padding: 8px 12px;
   background: rgba(29, 21, 82, 0.1);
   color: #fff;
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 14px;
   font-weight: 500;
   border-radius: 8px;
@@ -247,7 +247,7 @@
 }
 
 .checkbox-item label {
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 14px;
   color: #333;
   cursor: pointer;
@@ -317,7 +317,7 @@
 
 .signup-before-button {
   color: #1d1652;
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 16px;
   letter-spacing: 1px;
   text-align: center;
@@ -327,7 +327,7 @@
 
 .signup-next-button {
   color: #1d165533;                       /* 비활성 상태 텍스트 색 */
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 16px;
   letter-spacing: 1px;
   text-align: center;

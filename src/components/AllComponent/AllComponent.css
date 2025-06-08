@@ -28,7 +28,7 @@
 }
 
 .allcomponent .allcomponent-text {
-  font-family: "Inter", Helvetica;
+  font-family: "GmarketSans", sans-serif;
   font-size: 20px;
   white-space: nowrap;
   font-weight: 400;
@@ -38,6 +38,11 @@
 }
 
 .allcomponent.allcomponent-hover .allcomponent-text {
+  color: #1d1652;
+  font-weight: 600;
+}
+
+.allcomponent:hover .allcomponent-text {
   color: #1d1652;
   font-weight: 600;
 }

@@ -17,7 +17,7 @@ export const CategoryComponent = ({
       className={`categorycomponent categorycomponent-${property1} ${className}`}
       onClick={onClick}
     >
-      <div className={finalTextClass}>Category</div>
+      <div className={finalTextClass}>카테고리</div>
     </div>
   );
 };

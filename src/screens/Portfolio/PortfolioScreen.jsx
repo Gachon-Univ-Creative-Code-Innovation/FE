@@ -8,7 +8,6 @@ import Navbar2 from "../../components/Navbar2/Navbar2";
 import PortfolioCardList from "../../components/PortfolioCardList/PortfolioCardList";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import "./PortfolioScreen.css";
-// import api from "../../api/local-instance";
 import api from "../../api/instance";
 
 const ITEMS_PER_PAGE = 12;
@@ -22,6 +21,9 @@ export const PortfolioScreen = () => {
   const [selectedSort, setSelectedSort] = useState("최신순");
   const [page, setPage] = useState(0);
   const [pageGroup, setPageGroup] = useState(0);
+  
+  // 로그인 상태 확인
+  const isLoggedIn = !!localStorage.getItem("jwtToken");
 
   const getSortParams = () => {
     if (selectedSort === "최신순") return { isDesc: true };
@@ -36,10 +38,9 @@ export const PortfolioScreen = () => {
       
     const fetchExplorePortfolio = async () => {
       try {
-        const url = new URL("http://localhost:8080/api/portfolio-service/all");
-        // const url = new URL("http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8080/api/portfolio-service/all");
-        Object.entries(params).forEach(([k, v]) => url.searchParams.append(k, v));
-        const res = await api.get(url.toString(), {
+        const searchParams = new URLSearchParams(params).toString();
+        const url = "/portfolio-service/all" + (searchParams ? `?${searchParams}` : "");
+        const res = await api.get(url, {
           headers: { Accept: "application/json" }
         });
         if (res.data && res.data.status === 200 && Array.isArray(res.data.data)) {
@@ -61,10 +62,9 @@ export const PortfolioScreen = () => {
 
     const fetchMyPortfolio = async () => {
       try {
-        const url = new URL("http://localhost:8080/api/portfolio-service/list");
-        // const url = new URL("http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8080/api/portfolio-service/list");
-        Object.entries(params).forEach(([k, v]) => url.searchParams.append(k, v));
-        const res = await api.get(url.toString(), {
+        const searchParams = new URLSearchParams(params).toString();
+        const url = "/portfolio-service/list" + (searchParams ? `?${searchParams}` : "");
+        const res = await api.get(url, {
           headers: { Accept: "application/json" }
         });
         if (res.data && res.data.status === 200 && Array.isArray(res.data.data)) {
@@ -124,13 +124,17 @@ export const PortfolioScreen = () => {
               onClick={() => handleTabChange("explore")}
             />
           </div>
-          <Filter selectedSort={selectedSort} onSortChange={setSelectedSort} />
+          {!(selectedTab === "workspace" && !isLoggedIn) && (
+            <Filter selectedSort={selectedSort} onSortChange={setSelectedSort} />
+          )}
           <PortfolioCardList
             data={currentData}
             page={page}
             itemsPerPage={ITEMS_PER_PAGE}
+            showIntro={selectedTab === "workspace" && myData.length === 0 && !isLoggedIn}
           />
-          <div className="portfolio-pagination">
+          {!(selectedTab === "workspace" && !isLoggedIn) && (
+            <div className="portfolio-pagination">
             <button
               className="portfolio-pagination-arrow"
               disabled={page === 0}
@@ -175,6 +179,7 @@ export const PortfolioScreen = () => {
               &#62;
             </button>
           </div>
+          )}
         </div>
       </div>
     </PageTransitionWrapper>

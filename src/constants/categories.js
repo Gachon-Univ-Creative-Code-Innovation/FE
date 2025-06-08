@@ -29,9 +29,9 @@ export const Categories = [
   ];
 
   export const MatchingCategories = [
-    { key: null, label: "전체" },
-    { key: 6,  label: "프로젝트" },
-    { key: 11, label: "스터디" },
-    { key: 12, label: "공모전" },
-    { key: 10, label: "기타" },
+    { categoryCode: 0, categoryName: "전체" },
+    { categoryCode: 1, categoryName: "프로젝트" },
+    { categoryCode: 2, categoryName: "스터디" },
+    { categoryCode: 3, categoryName: "공모전" },
+    { categoryCode: 4, categoryName: "기타" },
   ]

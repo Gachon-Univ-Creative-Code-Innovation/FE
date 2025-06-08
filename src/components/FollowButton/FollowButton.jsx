@@ -15,7 +15,7 @@ const FollowButton = ({
       disabled={disabled}
       type="button"
     >
-      {isFollowing ? "Unfollow" : "Follow"}
+      {isFollowing ? "팔로우취소" : "팔로우"}
     </button>
   );
 };

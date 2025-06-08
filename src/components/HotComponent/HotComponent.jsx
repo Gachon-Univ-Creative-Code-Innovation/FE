@@ -17,7 +17,7 @@ export const HotComponent = ({
       className={`hotcomponent hotcomponent-${property1} ${className}`}
       onClick={onClick}
     >
-      <div className={finalTextClass}>Hot</div>
+      <div className={finalTextClass}>인기글</div>
     </div>
   );
 };

@@ -17,7 +17,7 @@ export const LogoutComponent = ({ className, divClassName }) => {
 
   return (
     <div className={`logout-component ${className}`} onClick={handleLogout}>
-      <div className={`text-wrapper ${divClassName}`}>Logout</div>
+      <div className={`text-wrapper ${divClassName}`}>로그아웃</div>
     </div>
   );
 };

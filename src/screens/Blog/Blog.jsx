@@ -33,7 +33,7 @@ export const Blog = () => {
     api
       .get(`/user-service/details/${viewedUserId}`)
       .then((res) => {
-        const data = res.data.data;
+        const data = res.data.data || {};
         setNickname(data.nickname || "");
         setProfileUrl(data.profileUrl || "");
         setGithubUrl(data.githubUrl || "");
@@ -67,7 +67,7 @@ export const Blog = () => {
       .finally(() => setLoading(false));
   }, [page, viewedUserId, hasMore]);
 
-  // 마지막 포스트 관찰하여 페이지 증가
+  // 무한 스크롤 처리
   const lastPostRef = useCallback(
     (node) => {
       if (loading) return;
@@ -82,39 +82,33 @@ export const Blog = () => {
     [loading, hasMore]
   );
 
-  // 팔로우/언팔로우 처리
+  // 팔로우/언팔로우
   const handleFollow = () => {
     if (!jwtToken) {
       navigate("/login");
       return;
     }
-
+    const config = {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    };
     if (isFollowing) {
       api
         .delete(`/user-service/follow`, {
-          headers: { Authorization: `Bearer ${jwtToken}` },
+          ...config,
           data: { followeeId: viewedUserId },
         })
         .then(() => setIsFollowing(false))
         .catch((err) => {
-          const status = err.response?.status;
-          if (status === 400) console.error(err.response.data.message);
-          else if (status === 401) navigate("/login");
+          if (err.response?.status === 401) navigate("/login");
           else console.error("언팔로우 실패:", err);
         });
     } else {
       api
-        .post(
-          `/user-service/follow`,
-          { followeeId: viewedUserId },
-          { headers: { Authorization: `Bearer ${jwtToken}` } }
-        )
+        .post(`/user-service/follow`, { followeeId: viewedUserId }, config)
         .then(() => setIsFollowing(true))
         .catch((err) => {
           const status = err.response?.status;
-          if (status === 409) console.error("이미 팔로우된 사용자입니다.");
-          else if (status === 400) console.error(err.response.data.message);
-          else if (status === 401) navigate("/login");
+          if (status === 401) navigate("/login");
           else console.error("팔로우 실패:", err);
         });
     }
@@ -128,12 +122,9 @@ export const Blog = () => {
         headers: { accept: "application/json" },
       })
       .then((res) => {
-        const data = res.data;
-        if (data.status === 200 && data.data) {
-          navigate(`/portfolio/view/${data.data}`);
-        } else {
-          navigate("/portfolio");
-        }
+        const { status, data } = res.data;
+        if (status === 200 && data) navigate(`/portfolio/view/${data}`);
+        else navigate("/portfolio");
       })
       .catch(() => {
         console.error("포트폴리오 조회 실패");
@@ -141,12 +132,9 @@ export const Blog = () => {
       });
   };
 
-  // MailIcon 클릭 → 채팅방으로 이동
+  // 채팅방 이동
   const handleChatClick = () => {
-    if (!jwtToken) {
-      navigate("/login");
-      return;
-    }
+    if (!jwtToken) return navigate("/login");
     navigate(`/message-room/${viewedUserId}`);
   };
 
@@ -158,13 +146,12 @@ export const Blog = () => {
         <div className="blog-content-frame">
           <header className="blog-header">
             <div className="blog-profile-container">
-              <img
+              {/* 프로필 background-image */}
+              <div
                 className="blog-profile-image"
-                alt="Profile"
-                src={profileUrl || "/img/basic_profile_photo.png"}
-                onError={(e) =>
-                  (e.currentTarget.src = "/img/basic_profile_photo.png")
-                }
+                style={{
+                  backgroundImage: profileUrl ? `url(${profileUrl})` : "none",
+                }}
               />
               <div className="blog-profile-details">
                 <div className="blog-username-row">
@@ -190,12 +177,10 @@ export const Blog = () => {
                   />
                 </div>
                 <div
-                  onClick={() =>
-                    githubUrl ? window.open(githubUrl, "_blank") : null
-                  }
+                  onClick={() => githubUrl && window.open(githubUrl, "_blank")}
                   style={{
                     cursor: githubUrl ? "pointer" : "default",
-                    marginLeft: "8px",
+                    marginLeft: 8,
                   }}
                 >
                   <GoGitHub className="blog-btn-github" property1="default" />
@@ -219,14 +204,21 @@ export const Blog = () => {
                       className="blog-post-card"
                       key={post.postId}
                       ref={isLast ? lastPostRef : null}
+                      onClick={() => navigate(`/viewpost/${post.postId}`)}
+                      style={{ cursor: "pointer" }}
                     >
-                      <div className="blog-post-image">
-                        <img
-                          className="blog-post-image"
-                          alt="Thumbnail"
-                          src={post.thumbnail}
-                        />
-                      </div>
+                      {/* 썸네일 background-image */}
+                      <div
+                        className="blog-post-image"
+                        style={{
+                          backgroundColor: "#d9d9d9",
+                          backgroundImage: post.thumbnail
+                            ? `url(${post.thumbnail})`
+                            : "none",
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                        }}
+                      />
                       <div className="blog-post-content">
                         <p className="blog-post-snippet">{post.summary}</p>
                         <div className="blog-post-meta">

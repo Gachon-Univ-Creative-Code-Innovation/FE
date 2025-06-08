@@ -5,7 +5,7 @@ import "./UnfollowComponent.css";
 export const UnfollowComponent = ({ property1, className }) => {
   return (
     <div className={`component-28 property-1-${property1} ${className}`}>
-      <div className="text-wrapper-4">Unfollow</div>
+      <div className="text-wrapper-4">팔로우취소</div>
     </div>
   );
 };

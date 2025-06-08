@@ -3,15 +3,16 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "./CommunityWrite.css";
 import Component18 from "../../icons/GoBackIcon/GoBackIcon";
-import { SaveDraftComponent } from "../../components/SaveDraftComponent/SaveDraftComponent";
+
 import { PostComponent } from "../../components/PostComponent/PostComponent";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { MatchingCategories } from "../../constants/categories";
-import api from "../../api/instance"
+import api from "../../api/instance";
+import PostSuccessPopup from "../../components/PostSuccessPopup/PostSuccessPopup";
+import { AnimatePresence } from "framer-motion";
 
 
 export default function CommunityWrite() {
-  const location = useLocation();
   const { postId } = useParams();    // URL에 :postId가 없으면 undefined
   const navigate = useNavigate();
   
@@ -25,6 +26,8 @@ export default function CommunityWrite() {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState(null);
   const [tags, setTags] = useState("");
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [newPostData, setNewPostData] = useState(null);
 
   //이미지
   const reactQuillRef = useRef(null);
@@ -71,33 +74,16 @@ export default function CommunityWrite() {
     const miss = [];
     if (!title.trim()) miss.push("제목");
     if (!category) miss.push("카테고리");
-    if (!content.trim()) miss.push("내용");
+    
+    // ReactQuill의 빈 상태를 더 정확히 검사
+    const trimmedContent = content.trim();
+    const isContentEmpty = !trimmedContent || 
+                          trimmedContent === '<p><br></p>' || 
+                          trimmedContent === '<p></p>' ||
+                          trimmedContent.replace(/<[^>]*>/g, '').trim() === '';
+    
+    if (isContentEmpty) miss.push("내용");
     return miss;
-  };
-
-  const handleSaveDraft = () => {
-    const miss = getMissingFields();
-    if (miss.length) return alert(`${miss.join(", ")}을(를) 입력해 주세요!`);
-    
-    // 임시 저장 로직 (localStorage 또는 서버 API 호출)
-    const draftData = {
-      title,
-      category,
-      content,
-      tags,
-      savedAt: new Date().toISOString(),
-      // isEditMode,
-      originalId: postData?.id
-    };
-    
-    // localStorage에 임시 저장 (실제로는 서버 API 사용 권장)
-    localStorage.setItem('communityDraft', JSON.stringify(draftData));
-    
-    if (isEditMode) {
-      alert("수정 내용이 임시 저장되었습니다!");
-    } else {
-      alert("임시 저장되었습니다!");
-    }
   };
 
   const handlePost = async () => {
@@ -168,39 +154,18 @@ export default function CommunityWrite() {
     let response;
     if (isEditMode) {
       // 수정 모드인 경우
-      // const updatedPostData = {
-      //   id: postData?.id,
-      //   title,
-      //   category,
-      //   content,
-      //   tags,
-      //   updatedAt: new Date().toISOString()
-      // };
-      
       try {
-        // 실제 서비스에서는 여기서 API 호출
-        // await updatePost(updatedPostData);
-
         response = await api.patch(`/blog-service/posts/${postId}`, payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
         
-        // console.log("글 수정 완료:", updatedPostData);
-        alert("글이 수정되었습니다!");
-        
         // 임시 저장된 초안 삭제
         localStorage.removeItem('communityDraft');
         
-        // 수정된 데이터를 ViewPost에 전달하면서 이동
-        // 동적 라우팅을 위해 postId 사용
-        navigate(`/community/viewpost/${postId}`)
-
-        // navigate(`/community/viewpost/id:${postData?.id || 1}`, {
-        //   state: {
-        //     updatedPost: updatedPostData,
-        //     isUpdated: true // 업데이트 플래그 추가
-        //   }
-        // });
+        // 팝업 데이터 설정 후 팝업 표시
+        const updatedPostData = { id: postId };
+        setNewPostData(updatedPostData);
+        setShowSuccessPopup(true);
       } catch (error) {
         console.error("글 수정 실패:", error);
         console.error(error.response?.data);
@@ -215,14 +180,14 @@ export default function CommunityWrite() {
         
         const msg = response.data?.data; // 예: "503 글이 정상적으로 생성되었습니다."
         const newPostId = msg?.split(" ")[0];
-        console.log("새 글 작성 완료:", newPostId);
-        alert("게시되었습니다!");
         
         // 임시 저장된 초안 삭제
         localStorage.removeItem('communityDraft');
         
-        // 새로 작성된 글로 이동
-        navigate(`/community/viewpost/${newPostId}`)
+        // 팝업 데이터 설정 후 팝업 표시
+        const newPostData = { id: newPostId };
+        setNewPostData(newPostData);
+        setShowSuccessPopup(true);
       } catch (error) {
         console.error("글 작성 실패:", error);
         console.error(error.response?.data);
@@ -233,6 +198,17 @@ export default function CommunityWrite() {
     }
   };
 
+  const handlePopupConfirm = () => {
+    setShowSuccessPopup(false);
+    
+    if (isEditMode) {
+      // 수정된 데이터를 ViewPost에 전달하면서 이동
+      navigate(`/community/viewpost/${postId}`);
+    } else {
+      // 새로 작성된 글로 이동
+      navigate(`/community/viewpost/${newPostData?.id}`);
+    }
+  };
 
   // =============================================================================
   // 1) Quill 이미지 업로드 핸들러 함수들 (modules 선언보다 위에 위치)
@@ -240,7 +216,7 @@ export default function CommunityWrite() {
   // **이미지 data URL ↔ 원본 파일명 매핑을 보관할 Map**
   const imageNameMap = useRef({});
 
-  // (a) 툴바의 “이미지” 버튼을 클릭하면, 숨겨둔 file input 열기
+  // (a) 툴바의 "이미지" 버튼을 클릭하면, 숨겨둔 file input 열기
   const handleImageInsert = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
@@ -327,9 +303,6 @@ export default function CommunityWrite() {
     "link", "image", "video"
   ]}, []);
 
-
-  
-
   // 임시 저장된 초안 불러오기
   const loadDraft = () => {
     const savedDraft = localStorage.getItem('communityDraft');
@@ -340,57 +313,48 @@ export default function CommunityWrite() {
         setCategory(draftData.category || null);
         setContent(draftData.content || "");
         setTags(draftData.tags || "");
+        alert("임시 저장된 초안을 불러왔습니다.");
       }
     }
   };
 
-  // 컴포넌트 마운트 시 초안 확인
   useEffect(() => {
     loadDraft();
   }, []);
 
+
   return (
-    <div className="community-write-editor">
-      <div className="community-editor-top-bar">
-        <Component18 />
-        {/* 수정 모드임을 표시 */}
-        {isEditMode && (
-          <div style={{ 
-            marginLeft: '20px', 
-            color: '#667eea', 
-            fontWeight: '600',
-            fontSize: '1.1rem'
-          }}>
-            글 수정하기
-          </div>
-        )}
+    <div className="community-write">
+      <div className="editor-top-bar">
+        <Component18 onClick={() => navigate(-1)} />
       </div>
 
-      <div className="community-editor-content">
-        <div className="community-editor-title-row">
-          <select
-            value={category ?? ""}
-            onChange={(e) => {
-              console.log("선택된 카테고리 key:", e.target.value);
-              setCategory(e.target.value || null);}}
-            className="community-editor-category-select"
-          >
-            {MatchingCategories.map(c => (
-              <option key={c.key ?? "default"} value={c.key ?? ""}>
-                {c.label}
-              </option>
-            ))}
-          </select>
+      <div className="editor-content">
+        {/* 제목 입력 & 카테고리 선택 */}
+        <div className="editor-title-category">
           <input
             type="text"
             placeholder="Enter a title"
             value={title}
-            onChange={e => setTitle(e.target.value)}
-            className="community-editor-title-input"
+            onChange={(e) => setTitle(e.target.value)}
+            className="editor-title-input"
           />
+          <select
+            value={category || ""}
+            onChange={(e) => setCategory(e.target.value ? Number(e.target.value) : null)}
+            className="editor-category-select"
+          >
+            <option value="">카테고리를 선택하세요</option>
+            {MatchingCategories.filter(cat => cat.categoryCode !== 0).map((cat) => (
+              <option key={cat.categoryCode} value={cat.categoryCode}>
+                {cat.categoryName}
+              </option>
+            ))}
+          </select>
         </div>
 
-        <div className="community-editor-area">
+        {/* 에디터 영역 */}
+        <div className="editor-area">
           <ReactQuill
             ref={reactQuillRef}
             value={content}
@@ -410,23 +374,38 @@ export default function CommunityWrite() {
           />
         </div>
 
-        <div className="community-editor-actions">
+        {/* 태그 입력 & 버튼 그룹 */}
+        <div className="editor-actions">
           <input
             type="text"
-            placeholder="#태그를 입력하세요 (#JavaScript #React ...)"
+            placeholder="#태그를 입력하세요 (예: #JavaScript, #React)"
             value={tags}
-            onChange={e => setTags(e.target.value)}
-            className="community-editor-tags-input"
+            onChange={(e) => setTags(e.target.value)}
+            className="editor-tag-input"
           />
-          <div className="community-editor-button-group">
-            <SaveDraftComponent onClick={handleSaveDraft} />
+          <div className="editor-button-group">
             <PostComponent 
+              text={isEditMode ? "수정" : "게시"}
               onClick={handlePost}
-              text={isEditMode ? "수정하기" : "게시하기"} // 버튼 텍스트 동적 변경
             />
           </div>
         </div>
       </div>
+
+      <AnimatePresence>
+        {showSuccessPopup && newPostData && (
+          <PostSuccessPopup
+            title={isEditMode ? "글 수정 완료!" : "게시 완료!"}
+            message={
+              isEditMode 
+                ? "글이 성공적으로 수정되었습니다."
+                : "글이 성공적으로 게시되었습니다."
+            }
+            confirmText="확인"
+            onConfirm={handlePopupConfirm}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

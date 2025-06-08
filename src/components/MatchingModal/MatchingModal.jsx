@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./MatchingModal.css";
 import CloseIcon from "../../icons/CloseIcon/CloseIcon";
-// import api from "../../api/local-instance";
 import api from "../../api/instance";
 
 const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
@@ -31,7 +30,7 @@ const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
 
       fixedMatchedIds.forEach((userId, idx) => {
         // 유저 기본 정보 fetch
-        api.get(`http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/user-service/details/${userId}`)
+        api.get(`/user-service/details/${userId}`)
           .then((res) => {
             const data = res.data;
             if (data.status === 200 && data.data) {
@@ -39,7 +38,7 @@ const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
                 const copy = [...prev];
                 if (copy[idx]) {
                   copy[idx].name = data.data.nickname || `유저${userId}`;
-                  copy[idx].profileImage = data.data.profileUrl ? data.data.profileUrl : "https://upload.wikimedia.org/wikipedia/commons/b/bc/Unknown_person.jpg";
+                  copy[idx].profileImage = data.data.profileUrl ? data.data.profileUrl : "/img/basic_profile_photo.png";
                   copy[idx].githubUrl = data.data.githubUrl;
                   copy[idx].blogUrl = data.data.email ? `mailto:${data.data.email}` : null;
                   copy[idx].experience = data.data.email || "";
@@ -51,7 +50,7 @@ const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
                 const copy = [...prev];
                 if (copy[idx]) {
                   copy[idx].name = "unknown";
-                  copy[idx].profileImage = "https://upload.wikimedia.org/wikipedia/commons/b/bc/Unknown_person.jpg";
+                  copy[idx].profileImage = "/img/basic_profile_photo.png";
                 }
                 return copy;
               });
@@ -62,14 +61,14 @@ const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
               const copy = [...prev];
               if (copy[idx]) {
                 copy[idx].name = "unknown";
-                copy[idx].profileImage = "https://upload.wikimedia.org/wikipedia/commons/b/bc/Unknown_person.jpg";
+                copy[idx].profileImage = "/img/basic_profile_photo.png";
               }
               return copy;
             });
           });
 
-        // http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/matching-service/represent-tags
-        api.get(`http://localhost/api/matching-service/represent-tags`, { params: { userID: userId, topK: 4 }, headers: { accept: "application/json" } })
+
+        api.get(`/matching-service/represent-tags`, { params: { userID: userId, topK: 4 }, headers: { accept: "application/json" } })
           .then((res) => {
             const data = res.data;
             if (data.status === 200 && Array.isArray(data.data)) {
@@ -82,8 +81,8 @@ const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
           })
           .catch(() => {});
 
-        // http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/portfolio-service/user
-        api.get(`http://localhost:8080/api/portfolio-service/user`, { params: { userID: userId }, headers: { accept: "application/json" } })
+
+        api.get(`/portfolio-service/user`, { params: { userID: userId }, headers: { accept: "application/json" } })
           .then((res) => {
             const data = res.data;
             if (data.status === 200 && data.data) {
@@ -154,10 +153,11 @@ const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
               <div className="matching-user-profile">
                 <div className="matching-user-avatar">
                   <img
+                    className="matching-modal-profile-image"
+                    alt="Profile"
                     src={user.profileImage ? user.profileImage : "/img/basic_profile_photo.png"}
-                    alt="profile"
                     onError={(e) => {
-                      e.target.src = "/img/basic_profile_photo.png";
+                      e.currentTarget.src = "/img/basic_profile_photo.png";
                     }}
                   />
                 </div>

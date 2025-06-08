@@ -1,3 +1,4 @@
+// README 생성 화면 - 사용자 경험 개선 완료 (UI 한국어화, 타이핑 애니메이션 등)
 import React, { useState, useEffect } from "react";
 import GenerateReadme from "../../components/GenerateReadme/GenerateReadme";
 import Historys from "../../components/Historys/Historys";
@@ -29,26 +30,31 @@ export const GenerateReadmeScreen = () => {
     setShowLoader(true);
 
     try {
-      const apiUrl = `http://localhost:8000/api/github-service/readme`;
-      //http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/github-service/readme  
-
+      const apiUrl = "/github-service/readme";
       const response = await api.post(
-        `/github-service/readme`,
-        { git_url: url },
-        { headers: { Accept: "application/json" } }
+        apiUrl,
+          { git_url: url },
+          { headers: { Accept: "application/json" } }
       );
 
       if (response.data.status !== 200 || !response.data.data) {
         throw new Error("README 정보를 불러오지 못했습니다.");
       }
       const downloadUrl = response.data.data;
+      console.log("[DEBUG] downloadUrl:", downloadUrl); // 디버깅용 출력
       if (!downloadUrl) {
         throw new Error("README 다운로드 URL이 없습니다.");
       }
 
-      const mdResp = await fetch(downloadUrl);
-      if (!mdResp.ok) throw new Error("README 파일을 불러오지 못했습니다.");
-      const markdown = await mdResp.text();
+      let markdown = "";
+      try {
+        const mdResp = await fetch(downloadUrl);
+        if (!mdResp.ok) throw new Error("README 파일을 불러오지 못했습니다. status: " + mdResp.status);
+        markdown = await mdResp.text();
+      } catch (fetchErr) {
+        console.error("[DEBUG] fetch error:", fetchErr);
+        throw fetchErr;
+      }
 
       // 히스토리 업데이트
       setHistoryItems((prev) => {
@@ -113,11 +119,8 @@ export const GenerateReadmeScreen = () => {
       const fetchHistory = async () => {
         setShowLoader(true);
         try {
-          const apiUrl = `http://localhost:8000/api/github-service/db/user`;
-          // http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/github-service/db/user
-          
-            
-          const response = await api.get(`github-service/db/user`, { headers: { Accept: "application/json" } });
+          const apiUrl = `github-service/db/user`;            
+          const response = await api.get(apiUrl, { headers: { Accept: "application/json" } });
 
           if (
             response.data.status !== 200 ||
