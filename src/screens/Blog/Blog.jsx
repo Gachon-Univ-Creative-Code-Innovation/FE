@@ -20,7 +20,7 @@ export const Blog = () => {
   const [githubUrl, setGithubUrl] = useState("");
 
   const [posts, setPosts] = useState([]);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
@@ -59,7 +59,8 @@ export const Blog = () => {
     api
       .get(`/blog-service/posts/user/${viewedUserId}?page=${page}`)
       .then((res) => {
-        const data = res.data.data || [];
+        const data = res.data.data.postList || [];
+        console.log(res.data.data)
         setPosts((prev) => [...prev, ...data]);
         if (data.length === 0) setHasMore(false);
       })
@@ -220,9 +221,11 @@ export const Blog = () => {
                         }}
                       />
                       <div className="blog-post-content">
-                        <p className="blog-post-snippet">{post.summary}</p>
+                        <p className="blog-post-snippet">{post.title}</p>
                         <div className="blog-post-meta">
-                          <div className="blog-post-date">{post.createdAt}</div>
+                          <div className="blog-post-date">
+                            {post.createdAt?.split("T")[0].replace(/-/g, ".")  || "날짜 없음"}
+                            </div>
                           <div className="blog-post-comment">
                             <CommentIcon2 className="blog-comment-icon" />
                             <div className="blog-comment-count">
