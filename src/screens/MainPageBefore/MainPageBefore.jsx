@@ -114,7 +114,7 @@ export const MainPageBefore = () => {
           profileUrl: p.profileUrl,
           imageUrl: p.thumbnail || null, // 이미지가 없을 경우 null 처리
           date: formattedDate,
-          comments: 0,
+          comments: p.commentCount,
           views: p.view,
         };
       });

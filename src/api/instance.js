@@ -1,8 +1,9 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://a-log.site/api",
-  // baseURL: "http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api",
+  // baseURL: "https://a-log.site/api",
+  baseURL:
+  "http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api",
 });
 //
 // 요청 인터셉터: access token 자동 첨부
