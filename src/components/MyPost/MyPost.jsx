@@ -33,11 +33,11 @@ export const MyPost = () => {
 
         const myUserId = Number(localStorage.getItem("userId"));
         // 2) 내 게시글 조회
-        const resPosts = await api.get(`/blog-service/posts/user/${myUserId}`, {
+        const resPosts = await api.get(`/blog-service/posts?page=0`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         // resPosts.data.data 는 List<PostResponseDTO.GetPost>
-        setPosts(resPosts.data.data);
+        setPosts(resPosts.data.data.postList);
       } catch (err) {
         console.error("사용자 정보 불러오기 실패:", err);
       }
