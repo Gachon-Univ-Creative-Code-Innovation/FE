@@ -70,11 +70,15 @@ export const MainPageAfter = () => {
       if (t === "Feed") url = "/blog-service/posts/following";
       if (t === "Recommend") url = "/blog-service/posts/recommend";
 
-      const { data } = await api.get(url, {
+      const response = await api.get(url, {
         headers: { Authorization: `Bearer ${token}` },
         params,
       });
-      const list = data.data.postList.map((p) => ({
+
+      const getPostList = response.data.data;
+      const rawPosts = getPostList.postList;
+
+      const newPosts = rawPosts.map((p) => ({
         id: p.postId,
         author: p.authorNickname,
         title: p.title,
@@ -82,12 +86,16 @@ export const MainPageAfter = () => {
         profileUrl: p.profileUrl,
         imageUrl: p.thumbnail || null,
         date: p.createdAt.split("T")[0].replace(/-/g, "."),
-        comments: 0,
+        comments: p.commentCount,
         views: p.view,
       }));
-      setPosts((prev) => (pg === 0 ? list : [...prev, ...list]));
-      if (data.data.isLast || list.length < PER_PAGE) setHasMore(false);
-    } catch {
+
+      setPosts((prev) => (pg === 0 ? newPosts : [...prev, ...newPosts]));
+      if (getPostList.isLast || newPosts.length < PER_PAGE) {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error("게시글 로딩 실패:", error);
       setHasMore(false);
     }
   };
@@ -100,8 +108,10 @@ export const MainPageAfter = () => {
   }, [tab]);
 
   useEffect(() => {
-    if (page > 0 && hasMore) fetchPosts(page, tab);
-  }, [page]);
+    if (page > 0 && hasMore) {
+      fetchPosts(page, tab);
+    }
+  }, [page, hasMore, tab]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 0);
@@ -113,8 +123,10 @@ export const MainPageAfter = () => {
     (node) => {
       if (!hasMore) return;
       if (observer.current) observer.current.disconnect();
-      observer.current = new IntersectionObserver(([e]) => {
-        if (e.isIntersecting) setPage((p) => p + 1);
+      observer.current = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) {
+          setPage((p) => p + 1);
+        }
       });
       if (node) observer.current.observe(node);
     },
@@ -163,20 +175,18 @@ export const MainPageAfter = () => {
             </div>
           </div>
         </div>
-        <div className="post-img-wrapper">
-          {post.imageUrl && (
-            <div className="post-img-wrapper">
-              <img
-                src={post.imageUrl}
-                alt="post"
-                className="post-img"
-                onError={(e) => {
-                  e.currentTarget.style.display = "none";
-                }}
-              />
-            </div>
-          )}
-        </div>
+        {post.imageUrl && (
+          <div className="post-img-wrapper">
+            <img
+              src={post.imageUrl}
+              alt="post"
+              className="post-img"
+              onError={(e) => {
+                e.currentTarget.style.display = "none";
+              }}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import React from "react";
 import XButton from "../../icons/XButton/XButton";
 import "./ShowRoadMap.css";
 
-const RoadmapPopup = ({ onClose, image, title }) => {
+const RoadmapPopup = ({ image, title, onClose }) => {
   return (
     <div className="readme-popup-overlay">
       <div className="roadmappopup-container">
@@ -18,10 +18,9 @@ const RoadmapPopup = ({ onClose, image, title }) => {
             <div className="roadmappopup-center-title">{title} Roadmap</div>
           </div>
 
-          <img
-            src={image}
-            alt="Roadmap Preview"
+          <div
             className="roadmappopup-preview-image"
+            dangerouslySetInnerHTML={{ __html: image }}
           />
         </div>
       </div>

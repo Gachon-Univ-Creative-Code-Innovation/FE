@@ -83,6 +83,56 @@ const ViewPost = () => {
   // 현재 로그인한 사용자의 ID
   const myUserId = Number(localStorage.getItem("userId"));
   
+  // 팔로우 상태
+  const [isFollowing, setIsFollowing] = useState(false);
+  // 게시글 작성자 ID
+  const authorId = postData?.authorId;
+
+  // 팔로우 상태 조회
+  useEffect(() => {
+    const fetchFollowStatus = async () => {
+      if (!authorId || !myUserId || authorId === myUserId) return;
+      const token = localStorage.getItem("jwtToken");
+      try {
+        const res = await api.get("/user-service/follow/followees", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setIsFollowing((res.data.data || []).includes(authorId));
+      } catch {
+        setIsFollowing(false);
+      }
+    };
+    fetchFollowStatus();
+  }, [authorId, myUserId]);
+
+  // 팔로우/언팔로우 핸들러
+  const handleFollow = async () => {
+    const token = localStorage.getItem("jwtToken");
+    if (!token) {
+      alert("로그인이 필요합니다.");
+      // navigate("/login");
+      return;
+    }
+    try {
+      if (isFollowing) {
+        await api.delete("/user-service/follow", {
+          headers: { Authorization: `Bearer ${token}` },
+          data: { followeeId: authorId },
+        });
+        setIsFollowing(false);
+      } else {
+        await api.post(
+          "/user-service/follow",
+          { followeeId: authorId },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setIsFollowing(true);
+      }
+    } catch (err) {
+      alert("팔로우 처리에 실패했습니다.");
+    }
+  };
+
   // 바깥 클릭 시 메뉴 닫기
   useEffect(() => {
     function handleClickOutside(e) {
@@ -122,9 +172,14 @@ const ViewPost = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [editReplyId]);
 
+  const [isSending, setIsSending] = useState(false);
+  const [isReplySending, setIsReplySending] = useState(false);
 
   // 댓글 등록
   const handleAddComment = async() => {
+    if (isSending) return;
+    if (!commentValue.trim()) return;
+    setIsSending(true);
     try {
       const token = localStorage.getItem("jwtToken");
       const payload = {
@@ -142,7 +197,6 @@ const ViewPost = () => {
   
       setCommentValue("");
 
-
       // 생성 후 전체 댓글을 다시 로드해서 가장 최신 상태를 반영
       const res2 = await api.get(
         `/blog-service/comments/${postId}`,
@@ -155,14 +209,17 @@ const ViewPost = () => {
       console.error("댓글 생성 실패:", err);
       const errMsg = err.response?.data?.message || "댓글 생성 중 오류가 발생했습니다.";
       alert(errMsg);
+    } finally {
+      setIsSending(false);
     }
   };
 
 
   // 답글 등록
   const handleAddReply = async(commentId) => {
+    if (isReplySending) return;
     if (!replyValue.trim()) return;
-
+    setIsReplySending(true);
     try {
       const token = localStorage.getItem("jwtToken");
       const payload = {
@@ -193,6 +250,8 @@ const ViewPost = () => {
     } catch (err) {
       console.error("답글 생성 실패:", err.response?.data ?? err);
       alert(err.response?.data?.message || "답글 생성 중 오류가 발생했습니다.");
+    } finally {
+      setIsReplySending(false);
     }
   };
 
@@ -203,7 +262,7 @@ const ViewPost = () => {
     const fetchComments = async () => {
       try {
         const token = localStorage.getItem("jwtToken");
-        // “postId별 댓글 조회” API 호출
+        // "postId별 댓글 조회" API 호출
         const res = await api.get(
           `/blog-service/comments/${postId}`,
           { headers: { Authorization: `Bearer ${token}` } }
@@ -429,12 +488,16 @@ const ViewPost = () => {
       <div className="view-post-header">
         <h1 className="view-post-title">{postData.title}</h1>
           <div className="view-post-meta-line">
-            <div className="view-post-meta">
+            <div className="view-post-meta"
+              onClick={() => navigate(`/blog/${postData.authorId}`)}
+              style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
+            >
               <div className="post-profile-wrapper">
                         <img 
           src={postData.profileUrl || "/img/basic_profile_photo.png"} 
           alt="post" 
           className="post-profile-img"
+          
           onError={(e) => {
             e.currentTarget.src = "/img/basic_profile_photo.png";
           }}
@@ -443,7 +506,11 @@ const ViewPost = () => {
               <div className="view-post-meta-text">{postData.authorNickname}</div>
               <div className="view-post-meta-text">{formattedDate}</div>
             </div>
-            <FollowButton />
+            <FollowButton 
+              isFollowing={isFollowing}
+              onClick={handleFollow}
+              disabled={authorId === myUserId}
+            />
           </div>
           <div className="view-post-tags-line">
             <span className="view-post-category">{getLabelByKey(postData.categoryCode)}</span>
@@ -508,24 +575,35 @@ const ViewPost = () => {
           <div className="view-post-comments-section">
             {/* 댓글 입력 */}
             <div className="comment-input-wrapper">
-          <input
-            type="text"
-            placeholder="댓글 작성"
+              <textarea
+                placeholder="댓글 작성"
                 className="comment-input"
                 value={commentValue}
                 onChange={e => setCommentValue(e.target.value)}
-                onKeyDown={e => { if (e.key === "Enter") handleAddComment(); }}
-          />
-          <button className="comment-send-btn" onClick={handleAddComment}>
+                onKeyDown={e => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleAddComment();
+                  }
+                  // Shift+Enter는 기본 동작(줄바꿈)
+                }}
+                rows={1}
+                style={{ resize: "none" }}
+                disabled={isSending}
+              />
+              <button className="comment-send-btn" onClick={handleAddComment} disabled={isSending}>
                 <SendIcon />
-          </button>
-        </div>
+              </button>
+            </div>
 
-        {/* 댓글 목록 */}
+            {/* 댓글 목록 */}
             <div className="comment-list">
               {comments.map((comment) => (
                 <div key={comment.id} className="comment-item">
-                  <div className="comment-profile-wrapper">
+                  <div className="comment-profile-wrapper"
+                  onClick={() => navigate(`/blog/${comment.authorId}`)}
+                  style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
+                  >
                             <img 
           src={comment.authorProfileUrl || "/img/basic_profile_photo.png"} 
           alt="comment" 
@@ -536,7 +614,10 @@ const ViewPost = () => {
         />
                   </div>
                   <div className="comment-content-block">
-                    <div className="comment-author">{comment.author}</div>
+                    <div className="comment-author"
+                    onClick={() => navigate(`/blog/${comment.authorId}`)}
+                    style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
+                    >{comment.author}</div>
                     {editCommentId === comment.id ? (
                       <div className="comment-edit-wrapper" ref={editCommentInputRef}>
                         <input
@@ -568,15 +649,23 @@ const ViewPost = () => {
                     {/* 답글 입력창 */}
                     {replyTo === comment.id && (
                       <div className="comment-reply-input-wrapper">
-                        <input
-                          type="text"
+                        <textarea
                           placeholder="답글 작성"
                           className="comment-input"
                           value={replyValue}
                           onChange={e => setReplyValue(e.target.value)}
-                          onKeyDown={e => { if (e.key === "Enter") handleAddReply(comment.id); }}
+                          onKeyDown={e => {
+                            if (e.key === "Enter" && !e.shiftKey) {
+                              e.preventDefault();
+                              handleAddReply(comment.id);
+                            }
+                            // Shift+Enter는 기본 동작(줄바꿈)
+                          }}
+                          rows={1}
+                          style={{ resize: "none" }}
+                          disabled={isReplySending}
                         />
-                        <button className="comment-send-btn" onClick={() => handleAddReply(comment.id)}>
+                        <button className="comment-send-btn" onClick={() => handleAddReply(comment.id)} disabled={isReplySending}>
                           <SendIcon />
                         </button>
                       </div>
@@ -586,7 +675,10 @@ const ViewPost = () => {
                       <div className="comment-replies-list">
                         {comment.replies.map(reply => (
                           <div key={reply.id} className="comment-reply-item">
-                            <div className="comment-profile-wrapper">
+                            <div className="comment-profile-wrapper"
+                            onClick={() => navigate(`/blog/${reply.authorId}`)}
+                            style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
+                            >
                                           <img 
               src={reply.authorProfileUrl || "/img/basic_profile_photo.png"} 
               alt="reply" 
@@ -597,7 +689,10 @@ const ViewPost = () => {
             />
                             </div>
                             <div className="reply-content">
-                              <div className="comment-author">{reply.author}</div>
+                              <div className="comment-author"
+                              onClick={() => navigate(`/blog/${reply.authorId}`)}
+                              style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
+                              >{reply.author}</div>
                               {editReplyId === reply.id ? (
                                 <div className="comment-edit-wrapper" ref={editReplyInputRef}>
                                   <input

@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useEffect, useRef, useState } from "react";
+import React, { createContext, useContext, useEffect, useRef, useState, useCallback } from "react";
 import api from "../api/instance";
 
 const WS_URL = "wss://a-log.site/ws/chat";
+// const WS_URL = "ws://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/ws/chat";
 const WebSocketContext = createContext();
 
 export const useWebSocket = () => useContext(WebSocketContext);
@@ -11,11 +12,13 @@ export const WebSocketProvider = ({ children }) => {
   const [authSuccess, setAuthSuccess] = useState(false);
   const [eventQueue, setEventQueue] = useState([]);
   const [unreadTotalCount, setUnreadTotalCount] = useState(0);
-
-  useEffect(() => {
-    const token = localStorage.getItem("jwtToken");
+  
+  // WebSocket 연결 함수 (명시적 호출 가능)
+  const connectWebSocket = useCallback((token) => {
     if (!token) return;
-
+    if (ws.current) {
+      try { ws.current.close(); } catch (e) {}
+    }
     ws.current = new window.WebSocket(WS_URL);
 
     const handleOpen = () => {
@@ -54,21 +57,20 @@ export const WebSocketProvider = ({ children }) => {
       }
     }, 30000);
 
-    return () => {
-      try {
-        if (
-          ws.current &&
-          (ws.current.readyState === 0 || ws.current.readyState === 1) &&
-          typeof ws.current.close === "function"
-        ) {
-          ws.current.close();
-        }
-      } catch (e) {
-        // 연결이 이미 닫혔거나 예외 발생 시 무시
-      }
-      clearInterval(pingInterval);
-    };
+    ws.current.pingInterval = pingInterval;
   }, []);
+
+  // mount 시 자동 연결 (토큰 있으면)
+  useEffect(() => {
+    const token = localStorage.getItem("jwtToken");
+    if (token) connectWebSocket(token);
+    return () => {
+      if (ws.current) {
+        try { ws.current.close(); } catch (e) {}
+        if (ws.current.pingInterval) clearInterval(ws.current.pingInterval);
+      }
+    };
+  }, [connectWebSocket]);
 
   // AUTH_SUCCESS 발생 시 REST로 전체 안 읽은 메시지 수 동기화
   useEffect(() => {
@@ -101,7 +103,7 @@ export const WebSocketProvider = ({ children }) => {
   };
 
   return (
-    <WebSocketContext.Provider value={{ ws, authSuccess, useWebSocketEvent, unreadTotalCount, setUnreadTotalCount }}>
+    <WebSocketContext.Provider value={{ ws, authSuccess, useWebSocketEvent, unreadTotalCount, setUnreadTotalCount, connectWebSocket }}>
       {children}
     </WebSocketContext.Provider>
   );

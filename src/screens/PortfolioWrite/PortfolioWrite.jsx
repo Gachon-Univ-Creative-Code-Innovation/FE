@@ -7,7 +7,7 @@ import CloseIcon from "../../icons/CloseIcon/CloseIcon";
 
 import { PostComponent } from "../../components/PostComponent/PostComponent";
 import { useNavigate, useLocation } from "react-router-dom";
-import api from "../../api/local-instance";
+import api from "../../api/instance";
 
 // ReactQuill 모듈 설정
 const modules = {
@@ -45,8 +45,7 @@ const modules = {
           formData.append('title', titleValue);
           formData.append('image', file);
           try {
-            // http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/portfolio-service/upload-image
-            const response = await api.post('http://localhost:8080/api/portfolio-service/upload-image', formData, {
+            const response = await api.post('/portfolio-service/upload-image', formData, {
               headers: { 'Content-Type': 'multipart/form-data' }
             });
             const result = response.data;
@@ -181,8 +180,7 @@ export default function PortfolioWrite() {
           isPublic: "true",
           isTemp: "true"
         };
-        const response = await api.put('http://localhost:8080/api/portfolio-service/update', null, { params, headers: { 'accept': 'application/json' } });
-        // http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/portfolio-service/update
+        const response = await api.put('/portfolio-service/update', null, { params, headers: { 'accept': 'application/json' } });
         const result = response.data;
         if (result.status === 200) {
           alert("수정되었습니다!");
@@ -199,8 +197,7 @@ export default function PortfolioWrite() {
           isTemp: "true",
           image: imageUrl
         };
-        const response = await api.post('http://localhost:8080/api/portfolio-service/save', null, { params, headers: { 'accept': 'application/json' } });
-        // http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/portfolio-service/save
+        const response = await api.post('/portfolio-service/save', null, { params, headers: { 'accept': 'application/json' } });
         const result = response.data;
         if (result.status === 200) {
           alert("게시되었습니다!");
@@ -236,8 +233,7 @@ export default function PortfolioWrite() {
     let result = null;
     let error = null;
     try {
-      const url = `http://localhost:8080/api/portfolio-service/make`;
-      // const url = `http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/portfolio-service/make`;
+      const url = `/portfolio-service/make`;
       const response = await api.get(url, { params: { gitURL: repoUrl.trim() }, headers: { 'accept': 'application/json' } });
       result = response.data;
     } catch (err) {

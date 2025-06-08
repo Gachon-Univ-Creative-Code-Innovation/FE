@@ -114,7 +114,7 @@ export const MainPageBefore = () => {
           profileUrl: p.profileUrl,
           imageUrl: p.thumbnail || null, // 이미지가 없을 경우 null 처리
           date: formattedDate,
-          comments: 0,
+          comments: p.commentCount,
           views: p.view,
         };
       });
@@ -166,7 +166,12 @@ export const MainPageBefore = () => {
   );
 
   const postRender = (post, index) => (
-    <div key={post.id} ref={index === posts.length - 1 ? lastPostRef : null}>
+    <div 
+      key={post.id} 
+      ref={index === posts.length - 1 ? lastPostRef : null}
+      onClick={() => navigate(`/viewpost/${post.id}`)}
+      style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
+    >
       <div className="frame-2">
         <div className="frame-3">
           <div className="author">

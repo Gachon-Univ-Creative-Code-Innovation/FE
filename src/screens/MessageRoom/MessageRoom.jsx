@@ -13,6 +13,7 @@ import { useWebSocket } from "../../contexts/WebSocketContext";
 import ChatImageMessage from "../../components/ChatImageMessage";
 
 const WS_URL = "wss://a-log.site/ws/chat";
+// const WS_URL = "ws://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/ws/chat";
 
 // 시간 포맷팅 함수 (채팅방 내부: 오전/오후 시:분)
 function formatChatTime(isoString) {
@@ -216,7 +217,14 @@ export const MessageRoom = () => {
             profile_url: targetUserInfo.targetProfileUrl
           });
         } else {
-          setTargetUser({ nickname: "" , profile_url: ""});
+          // rooms에 없으면 직접 유저 정보 fetch
+          const userRes = await api.get(`/user-service/details/${id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setTargetUser({
+            nickname: userRes.data.data.nickname,
+            profile_url: userRes.data.data.profileUrl
+          });
         }
       } catch (error) {
         setTargetUser({ nickname: "" , profile_url: ""});

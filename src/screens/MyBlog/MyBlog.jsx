@@ -53,22 +53,21 @@ export const MyBlog = () => {
   const [followerCount, setFollowerCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
 
-  // 게시글
+  // 게시글 상태
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const observer = useRef();
 
-  // 1) 내 정보 & 팔로우/팔로잉 조회
+  // 1) 내 정보 & 팔로워/팔로잉 조회 or 다른 사용자 정보 조회
   useEffect(() => {
     if (!jwtToken) return navigate("/login");
 
     if (authorId == null) {
+      // 내 프로필 조회
       api
-        .get("/user-service/user/patch", {
-          headers: { Authorization: jwtToken },
-        })
+        .get("/user-service/user/patch", { headers: { Authorization: jwtToken } })
         .then((res) => {
           const d = res.data.data || {};
           setNickname(d.nickname || "");
@@ -76,86 +75,67 @@ export const MyBlog = () => {
           setGithubUrl(d.githubUrl || "");
         })
         .catch((err) => console.error("내 정보 조회 에러:", err));
+
       api
-        .get("/user-service/follow/followers", {
-          headers: { Authorization: jwtToken },
-        })
+        .get("/user-service/follow/followers", { headers: { Authorization: jwtToken } })
         .then((res) => setFollowerCount((res.data.data || []).length))
         .catch((err) => console.error("팔로워 조회 에러:", err));
 
       api
-        .get("/user-service/follow/followees", {
-          headers: { Authorization: jwtToken },
-        })
+        .get("/user-service/follow/followees", { headers: { Authorization: jwtToken } })
         .then((res) => setFollowingCount((res.data.data || []).length))
         .catch((err) => console.error("팔로잉 조회 에러:", err));
     } else {
-      const userId = authorId;
+      // 다른 사용자 프로필 조회
       api
-        .get(`/user-service/details/${userId}`, {})
+        .get(`/user-service/details/${authorId}`, { headers: { Authorization: jwtToken } })
         .then((res) => {
           const d = res.data.data || {};
-          console.log("user", d);
           setNickname(d.nickname || "");
           setProfileUrl(d.profileUrl || "");
           setGithubUrl(d.githubUrl || "");
         })
         .catch((err) => console.error("내 정보 조회 에러:", err));
+
       api
-        .get(`/user-service/follow/followers/${userId}`, {})
+        .get(`/user-service/follow/followers/${authorId}`, { headers: { Authorization: jwtToken } })
         .then((res) => setFollowerCount((res.data.data || []).length))
         .catch((err) => console.error("팔로워 조회 에러:", err));
 
       api
-        .get(`/user-service/follow/followees/${userId}`, {})
+        .get(`/user-service/follow/followees/${authorId}`, { headers: { Authorization: jwtToken } })
         .then((res) => setFollowingCount((res.data.data || []).length))
         .catch((err) => console.error("팔로잉 조회 에러:", err));
     }
-  }, [jwtToken, navigate]);
+  }, [jwtToken, navigate, authorId]);
 
-  // 2) 내 게시글 불러오기
+  // 2) 게시글 불러오기 (내/다른 사용자)
   useEffect(() => {
     if (!jwtToken || !hasMore) return;
     setLoading(true);
-    console.log("authorId", authorId);
-    if (authorId == null) {
-      api
-        .get(`/blog-service/posts?page=${page}`, {
-          headers: { Authorization: jwtToken },
-        })
-        .then((res) => {
-          const data = res.data.data.postList || [];
-          console.log("my data", data);
-          setPosts((prev) => [...prev, ...data]);
-          if (data.length === 0) setHasMore(false);
-        })
-        .catch((err) => console.error("게시글 조회 에러:", err))
-        .finally(() => setLoading(false));
-    } else {
-      const userId = authorId;
-      api
-        .get(`/blog-service/posts/user/${userId}?page=${page}`, {
-          headers: { Authorization: jwtToken },
-        })
-        .then((res) => {
-          const data = res.data.data.postList || [];
-          console.log("my data", userId, res.data.data);
-          setPosts((prev) => [...prev, ...data]);
 
-          if (data.length === 0) setHasMore(false);
-        })
-        .catch((err) => console.error("게시글 조회 에러:", err))
-        .finally(() => setLoading(false));
-    }
-  }, [page, hasMore, jwtToken]);
+    const url = authorId == null
+      ? `/blog-service/posts?page=${page}`
+      : `/blog-service/posts/user/${authorId}?page=${page}`;
 
-  // 3) 무한 스크롤
+    api
+      .get(url, { headers: { Authorization: jwtToken } })
+      .then((res) => {
+        const data = res.data.data.postList || [];
+        setPosts((prev) => [...prev, ...data]);
+        if (data.length === 0) setHasMore(false);
+      })
+      .catch((err) => console.error("게시글 조회 에러:", err))
+      .finally(() => setLoading(false));
+  }, [page, hasMore, jwtToken, authorId]);
+
+  // 3) 무한 스크롤 옵저버
   const lastPostRef = useCallback(
     (node) => {
       if (loading) return;
       if (observer.current) observer.current.disconnect();
-      observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && hasMore) {
+      observer.current = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting && hasMore) {
           setPage((prev) => prev + 1);
         }
       });
@@ -166,14 +146,13 @@ export const MyBlog = () => {
 
   return (
     <PageTransitionWrapper>
-      <Navbar isLoggedIn={true} onShowPopup={() => {}} />
+      <Navbar isLoggedIn onShowPopup={() => {}} />
 
       <div className="myblog-wrapper">
         <div className="myblog-content-frame">
           {/* 프로필 헤더 */}
           <header className="myblog-header">
             <div className="myblog-profile-container">
-              {/* CSS placeholder + background-image */}
               <div
                 className="myblog-profile-image"
                 style={{
@@ -201,27 +180,15 @@ export const MyBlog = () => {
                   </div>
                 </div>
               </div>
-
               <div className="myblog-side-buttons">
-                <div
-                  onClick={() => navigate("/portfolio")}
-                  style={{ cursor: "pointer" }}
-                >
-                  <GoPortfolio
-                    className="myblog-btn-default"
-                    property1="default"
-                  />
+                <div onClick={() => navigate("/portfolio")} style={{ cursor: "pointer" }}>
+                  <GoPortfolio property1="default" />
                 </div>
                 <div
-                  onClick={() =>
-                    githubUrl ? window.open(githubUrl, "_blank") : null
-                  }
-                  style={{
-                    cursor: githubUrl ? "pointer" : "default",
-                    marginLeft: 8,
-                  }}
+                  onClick={() => githubUrl && window.open(githubUrl, "_blank")}
+                  style={{ cursor: githubUrl ? "pointer" : "default", marginLeft: 8 }}
                 >
-                  <GoGitHub className="myblog-btn-github" property1="default" />
+                  <GoGitHub property1="default" />
                 </div>
               </div>
             </div>
@@ -246,14 +213,11 @@ export const MyBlog = () => {
                       onClick={() => navigate(`/viewpost/${post.postId}`)}
                       style={{ cursor: "pointer" }}
                     >
-                      {/* 썸네일 placeholder + background-image */}
                       <div
                         className="myblog-post-image"
                         style={{
                           backgroundColor: "#a3b3bf",
-                          backgroundImage: post.thumbnail
-                            ? `url(${post.thumbnail})`
-                            : "none",
+                          backgroundImage: post.thumbnail ? `url(${post.thumbnail})` : "none",
                           backgroundSize: "cover",
                           backgroundPosition: "center",
                         }}
@@ -261,9 +225,7 @@ export const MyBlog = () => {
                       <div className="myblog-post-content">
                         <p className="myblog-post-snippet">{post.summary}</p>
                         <div className="myblog-post-meta">
-                          <div className="myblog-post-date">
-                            {post.createdAt}
-                          </div>
+                          <div className="myblog-post-date">{post.createdAt}</div>
                           <div className="myblog-post-comment">
                             <CommentIcon2 className="myblog-comment-icon" />
                             <div className="myblog-comment-count">
@@ -278,10 +240,7 @@ export const MyBlog = () => {
               </div>
 
               {!loading && posts.length === 0 && (
-                <WaveText
-                  text="당신의 이야기를 기다리고 있습니다 ✍️"
-                  className="myblog-empty-message"
-                />
+                <WaveText text="당신의 이야기를 기다리고 있습니다 ✍️" className="myblog-empty-message" />
               )}
             </div>
           </div>
