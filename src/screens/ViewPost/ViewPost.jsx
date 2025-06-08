@@ -429,12 +429,16 @@ const ViewPost = () => {
       <div className="view-post-header">
         <h1 className="view-post-title">{postData.title}</h1>
           <div className="view-post-meta-line">
-            <div className="view-post-meta">
+            <div className="view-post-meta"
+              onClick={() => navigate(`/myblog/${postData.authorId}`)}
+              style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
+            >
               <div className="post-profile-wrapper">
                         <img 
           src={postData.profileUrl || "/img/basic_profile_photo.png"} 
           alt="post" 
           className="post-profile-img"
+          
           onError={(e) => {
             e.currentTarget.src = "/img/basic_profile_photo.png";
           }}

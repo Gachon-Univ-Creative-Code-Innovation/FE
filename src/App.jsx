@@ -93,6 +93,9 @@ const AnimatedRoutes = () => {
 
         {/* 내 블로그 */}
         <Route path="/myblog" element={<MyBlog />} />
+        <Route path="/myblog/:authorId" element={<MyBlog />} />
+
+
         {/* 타인 블로그: URL에 userId를 붙여서 접근 */}
         <Route path="/blog/:userId" element={<Blog />} />
 
