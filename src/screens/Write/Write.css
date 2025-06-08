@@ -200,15 +200,17 @@
 
 .editor-actions {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   padding-bottom: 40px;
   margin-top: 20px;
+  width: 100%;
 }
 
 .editor-button-group {
   display: flex;
   gap: 12px;
+  margin-left: auto;
 }
 
 .summary-popup-overlay {
