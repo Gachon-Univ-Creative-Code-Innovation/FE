@@ -199,7 +199,7 @@
 .myblog-post-meta {
   display: flex;
   gap: 14px;
-  justify-content: center;
+  justify-content: left;
   align-items: center;
 }
 
