@@ -1,9 +1,9 @@
-// src/screens/MyBlog/MyBlog.jsx
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import GoGitHub from "../../components/GoGitHub/GoGitHub";
 import GoPortfolio from "../../components/GoPortfolio/GoPortfolio";
 import Navbar from "../../components/Navbar/Navbar";
+import SearchModal from "../../components/SearchModal/SearchModal";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import SettingIcon from "../../icons/SettingIcon/SettingIcon";
 import CommentIcon2 from "../../icons/CommentIcon2/CommentIcon2";
@@ -47,6 +47,11 @@ export const MyBlog = () => {
   const navigate = useNavigate();
   const jwtToken = localStorage.getItem("jwtToken") || "";
 
+  // 검색 관련 상태
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+
   // 프로필 정보
   const [nickname, setNickname] = useState("");
   const [profileUrl, setProfileUrl] = useState("");
@@ -61,79 +66,78 @@ export const MyBlog = () => {
   const [hasMore, setHasMore] = useState(true);
   const observer = useRef();
 
-  // 1) 내 정보 & 팔로워/팔로잉 조회 or 다른 사용자 정보 조회
+  // 프로필 & 팔로우 정보 조회
   useEffect(() => {
     if (!jwtToken) return navigate("/login");
-
     const headers = { Authorization: jwtToken };
 
-    if (authorId == null) {
-      // 내 프로필 조회
-      api
-        .get("/user-service/user/patch", { headers })
-        .then((res) => {
-          const d = res.data.data || {};
-          setNickname(d.nickname || "");
-          setProfileUrl(d.profileUrl || "");
-          setGithubUrl(d.githubUrl || "");
-        })
-        .catch((err) => console.error("내 정보 조회 에러:", err));
+    const fetchProfile =
+      authorId == null
+        ? api.get("/user-service/user/patch", { headers })
+        : api.get(`/user-service/details/${authorId}`, { headers });
 
-      api
-        .get("/user-service/follow/followers", { headers })
-        .then((res) => setFollowerCount((res.data.data || []).length))
-        .catch((err) => console.error("팔로워 조회 에러:", err));
+    fetchProfile
+      .then((res) => {
+        const d = res.data.data || {};
+        setNickname(d.nickname || "");
+        setProfileUrl(d.profileUrl || "");
+        setGithubUrl(d.githubUrl || "");
+      })
+      .catch((err) => console.error("프로필 조회 에러:", err));
 
-      api
-        .get("/user-service/follow/followees", { headers })
-        .then((res) => setFollowingCount((res.data.data || []).length))
-        .catch((err) => console.error("팔로잉 조회 에러:", err));
-    } else {
-      // 다른 사용자 프로필 조회
-      api
-        .get(`/user-service/details/${authorId}`, { headers })
-        .then((res) => {
-          const d = res.data.data || {};
-          setNickname(d.nickname || "");
-          setProfileUrl(d.profileUrl || "");
-          setGithubUrl(d.githubUrl || "");
-        })
-        .catch((err) => console.error("사용자 정보 조회 에러:", err));
+    const fetchFollowers =
+      authorId == null
+        ? api.get("/user-service/follow/followers", { headers })
+        : api.get(`/user-service/follow/followers/${authorId}`, { headers });
 
-      api
-        .get(`/user-service/follow/followers/${authorId}`, { headers })
-        .then((res) => setFollowerCount((res.data.data || []).length))
-        .catch((err) => console.error("팔로워 조회 에러:", err));
+    fetchFollowers
+      .then((res) => setFollowerCount((res.data.data || []).length))
+      .catch((err) => console.error("팔로워 조회 에러:", err));
 
-      api
-        .get(`/user-service/follow/followees/${authorId}`, { headers })
-        .then((res) => setFollowingCount((res.data.data || []).length))
-        .catch((err) => console.error("팔로잉 조회 에러:", err));
-    }
-  }, [jwtToken, navigate, authorId]);
+    const fetchFollowing =
+      authorId == null
+        ? api.get("/user-service/follow/followees", { headers })
+        : api.get(`/user-service/follow/followees/${authorId}`, { headers });
 
-  // 2) 게시글 불러오기 (내/다른 사용자)
+    fetchFollowing
+      .then((res) => setFollowingCount((res.data.data || []).length))
+      .catch((err) => console.error("팔로잉 조회 에러:", err));
+  }, [authorId, jwtToken, navigate]);
+
+  // 게시글 불러오기 (검색 or 기본)
   useEffect(() => {
     if (!jwtToken || !hasMore) return;
     setLoading(true);
 
-    const url =
-      authorId == null
-        ? `/blog-service/posts?page=${page}`
-        : `/blog-service/posts/user/${authorId}?page=${page}`;
+    let url = "";
+    const params = { page };
+
+    if (isSearching && searchQuery) {
+      url = "/blog-service/posts/search";
+      params.q = searchQuery;
+    } else if (authorId == null) {
+      url = "/blog-service/posts";
+    } else {
+      url = `/blog-service/posts/user/${authorId}`;
+    }
 
     api
-      .get(url, { headers: { Authorization: jwtToken } })
+      .get(url, { headers: { Authorization: jwtToken }, params })
       .then((res) => {
-        const data = res.data.data.postList || [];
-        setPosts((prev) => [...prev, ...data]);
+        const data = isSearching
+          ? res.data.data.results || []
+          : res.data.data.postList || [];
+        setPosts((prev) => (page === 0 ? data : [...prev, ...data]));
         if (data.length === 0) setHasMore(false);
       })
-      .catch((err) => console.error("게시글 조회 에러:", err))
+      .catch((err) => {
+        console.error("게시글 조회 에러:", err);
+        setHasMore(false);
+      })
       .finally(() => setLoading(false));
-  }, [page, hasMore, jwtToken, authorId]);
+  }, [authorId, jwtToken, page, hasMore, isSearching, searchQuery]);
 
-  // 3) 무한 스크롤 옵저버
+  // 무한 스크롤 옵저버
   const lastPostRef = useCallback(
     (node) => {
       if (loading) return;
@@ -154,7 +158,15 @@ export const MyBlog = () => {
 
   return (
     <PageTransitionWrapper>
-      <Navbar isLoggedIn onShowPopup={() => {}} />
+      <Navbar
+        isLoggedIn
+        onSearch={() => {
+          setSearchOpen(true);
+          setSearchQuery("");
+          setIsSearching(false);
+        }}
+        onShowPopup={() => {}}
+      />
 
       <div className="myblog-wrapper">
         <div className="myblog-content-frame">
@@ -212,7 +224,9 @@ export const MyBlog = () => {
           <div className="myblog-post-section">
             <div className="myblog-post-header">
               <div className="myblog-tab-latest">
-                <div className="myblog-post-title">최신글</div>
+                <div className="myblog-post-title">
+                  {isSearching ? `검색 결과: "${searchQuery}"` : "최신글"}
+                </div>
               </div>
             </div>
             <div className="myblog-post-list">
@@ -222,9 +236,11 @@ export const MyBlog = () => {
                   return (
                     <div
                       className="myblog-post-card"
-                      key={post.postId}
+                      key={post.postId || post.id}
                       ref={isLast ? lastPostRef : null}
-                      onClick={() => navigate(`/viewpost/${post.postId}`)}
+                      onClick={() =>
+                        navigate(`/viewpost/${post.postId || post.id}`)
+                      }
                       style={{ cursor: "pointer" }}
                     >
                       <div
@@ -239,15 +255,17 @@ export const MyBlog = () => {
                         }}
                       />
                       <div className="myblog-post-content">
-                        <p className="myblog-post-snippet">{post.title}</p>
+                        <p className="myblog-post-snippet">
+                          {post.title || post.title}
+                        </p>
                         <div className="myblog-post-meta">
                           <div className="myblog-post-date">
-                            {formatDate(post.createdAt)}
+                            {formatDate(post.createdAt || post.date)}
                           </div>
                           <div className="myblog-post-comment">
                             <CommentIcon2 className="myblog-comment-icon" />
                             <div className="myblog-comment-count">
-                              {post.commentCount}
+                              {post.commentCount || post.comments}
                             </div>
                           </div>
                         </div>
@@ -267,6 +285,22 @@ export const MyBlog = () => {
           </div>
         </div>
       </div>
+
+      {/* 검색 모달 */}
+      {searchOpen && (
+        <SearchModal
+          initialValue={searchQuery}
+          onClose={() => setSearchOpen(false)}
+          onSearch={(q) => {
+            setSearchQuery(q);
+            setIsSearching(true);
+            setPosts([]);
+            setPage(0);
+            setHasMore(true);
+            setSearchOpen(false);
+          }}
+        />
+      )}
     </PageTransitionWrapper>
   );
 };
