@@ -130,7 +130,7 @@ export const MainPageAfter = () => {
           profileUrl: p.profileUrl,
           imageUrl: p.thumbnail || null, // 이미지가 없을 경우 null 처리
           date: formattedDate,
-          comments: 0, // DTO에 댓글 개수 필드가 없다면 0으로 두거나, 실제 필드명으로 수정
+          comments: p.commentCount, // DTO에 댓글 개수 필드가 없다면 0으로 두거나, 실제 필드명으로 수정
           views: p.view,
         };
       });

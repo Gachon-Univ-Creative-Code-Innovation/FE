@@ -70,7 +70,7 @@ export const CommunityPostList = ({sortBy, category}) => {
             className="communitypost-frame-3" 
             key={post.postId}
             style={{ cursor: "pointer" }}
-            onClick={() => navigate(`/community/viewpost/${post.postId}`)} // ← 여기가 핵심
+            onClick={() => navigate(`/community/viewpost/${post.postId}`)}
           >
             <div className="communitypost-thumbnail-wrapper">
               {post.thumbnail && (
@@ -81,7 +81,7 @@ export const CommunityPostList = ({sortBy, category}) => {
               <p className="communitypost-text-5">{post.title}</p>
               <div className="communitypost-frame-5">
                 <div className="communitypost-text-3">
-                  {post.createdAt?.split("T")[0] || "날짜 없음"}
+                  {post.createdAt?.split("T")[0].replace(/-/g, ".")  || "날짜 없음"}
                 </div>
                 <div className="communitypost-comment">
                   <CommentIcon className="communitypost-comment-icon" />
