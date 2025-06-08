@@ -67,8 +67,8 @@ export const MainPageAfter = () => {
   const [hasMore, setHasMore] = useState(true);
   const [tab, setTab] = useState("Hot");
   const [scrolled, setScrolled] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false); //추가
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategoryLabel, setSelectedCategoryLabel] = useState("전체");
   const [searchOpen, setSearchOpen] = useState(false);
   const observer = useRef();
   const navigate = useNavigate();
@@ -286,19 +286,30 @@ export const MainPageAfter = () => {
               })}
             </div>
 
-            {/* 카테고리 탭일 때만 드롭다운 노출 */}
+            {/* 카테고리 탭일 때만 카테고리 목록 노출 */}
             {tab === "Category" && (
-              <div style={{ margin: "16px 0" }}>
-                <select
-                  value={selectedCategory || ""}
-                  onChange={e => setSelectedCategory(e.target.value ? Number(e.target.value) : null)}
-                  style={{ fontSize: 16, padding: 6, borderRadius: 6 }}
+              <div className="blog-category-tabs">
+                <div 
+                  className={`blog-category-tab ${selectedCategoryLabel === "전체" ? "active" : ""}`}
+                  onClick={() => {
+                    setSelectedCategoryLabel("전체");
+                    setSelectedCategory(null);
+                  }}
                 >
-                  <option value="">카테고리 선택</option>
-                  {BLOG_CATEGORY_LIST.map(cat => (
-                    <option key={cat.code} value={cat.code}>{cat.label}</option>
-                  ))}
-                </select>
+                  전체
+                </div>
+                {BLOG_CATEGORY_LIST.map((category) => (
+                  <div
+                    key={category.code}
+                    className={`blog-category-tab ${selectedCategoryLabel === category.label ? "active" : ""}`}
+                    onClick={() => {
+                      setSelectedCategoryLabel(category.label);
+                      setSelectedCategory(category.code);
+                    }}
+                  >
+                    {category.label}
+                  </div>
+                ))}
               </div>
             )}
 
