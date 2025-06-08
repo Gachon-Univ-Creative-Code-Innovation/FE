@@ -243,6 +243,7 @@ export const MyBlog = () => {
                         <div className="myblog-post-meta">
                           <div className="myblog-post-date">
                             {formatDate(post.createdAt)}
+                          {post.createdAt?.split("T")[0].replace(/-/g, ".")  || "날짜 없음"}
                           </div>
                           <div className="myblog-post-comment">
                             <CommentIcon2 className="myblog-comment-icon" />

@@ -38,6 +38,7 @@ export const MyPost = () => {
         });
         // resPosts.data.data 는 List<PostResponseDTO.GetPost>
         setPosts(resPosts.data.data.postList);
+        console.log(resPosts.data.data.postList)
       } catch (err) {
         console.error("사용자 정보 불러오기 실패:", err);
       }
@@ -108,7 +109,13 @@ export const MyPost = () => {
               key={post.postId}
               className={idx === 0 ? "mypost-post" : "mypost-post-2"}
               style={{ cursor: "pointer" }}
-              onClick={() => navigate(`/community/viewpost/${post.postId}`)}
+              onClick={() => {
+                if (post.postType == "POST") {
+                  navigate(`/viewpost/${post.postId}`);
+                } else if (post.postType == "MATCHING") {
+                  navigate(`/community/viewpost/${post.postId}`);
+                }
+              }}
             >
               <div className="mypost-post-info">
                 <div className="mypost-title">{post.title}</div>
