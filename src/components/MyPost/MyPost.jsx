@@ -103,7 +103,7 @@ export const MyPost = () => {
       {posts.length === 0 ? (
           <div className="mypost-empty">작성한 글이 없습니다.</div>
         ) : (
-          posts.map((post, idx) => (
+          posts.slice(0, 6).map((post, idx)  => (
             <div
               key={post.postId}
               className={idx === 0 ? "mypost-post" : "mypost-post-2"}
