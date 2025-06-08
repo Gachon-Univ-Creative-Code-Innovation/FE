@@ -83,6 +83,56 @@ const ViewPost = () => {
   // 현재 로그인한 사용자의 ID
   const myUserId = Number(localStorage.getItem("userId"));
   
+  // 팔로우 상태
+  const [isFollowing, setIsFollowing] = useState(false);
+  // 게시글 작성자 ID
+  const authorId = postData?.authorId;
+
+  // 팔로우 상태 조회
+  useEffect(() => {
+    const fetchFollowStatus = async () => {
+      if (!authorId || !myUserId || authorId === myUserId) return;
+      const token = localStorage.getItem("jwtToken");
+      try {
+        const res = await api.get("/user-service/follow/followees", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setIsFollowing((res.data.data || []).includes(authorId));
+      } catch {
+        setIsFollowing(false);
+      }
+    };
+    fetchFollowStatus();
+  }, [authorId, myUserId]);
+
+  // 팔로우/언팔로우 핸들러
+  const handleFollow = async () => {
+    const token = localStorage.getItem("jwtToken");
+    if (!token) {
+      alert("로그인이 필요합니다.");
+      // navigate("/login");
+      return;
+    }
+    try {
+      if (isFollowing) {
+        await api.delete("/user-service/follow", {
+          headers: { Authorization: `Bearer ${token}` },
+          data: { followeeId: authorId },
+        });
+        setIsFollowing(false);
+      } else {
+        await api.post(
+          "/user-service/follow",
+          { followeeId: authorId },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setIsFollowing(true);
+      }
+    } catch (err) {
+      alert("팔로우 처리에 실패했습니다.");
+    }
+  };
+
   // 바깥 클릭 시 메뉴 닫기
   useEffect(() => {
     function handleClickOutside(e) {
@@ -203,7 +253,7 @@ const ViewPost = () => {
     const fetchComments = async () => {
       try {
         const token = localStorage.getItem("jwtToken");
-        // “postId별 댓글 조회” API 호출
+        // "postId별 댓글 조회" API 호출
         const res = await api.get(
           `/blog-service/comments/${postId}`,
           { headers: { Authorization: `Bearer ${token}` } }
@@ -443,7 +493,11 @@ const ViewPost = () => {
               <div className="view-post-meta-text">{postData.authorNickname}</div>
               <div className="view-post-meta-text">{formattedDate}</div>
             </div>
-            <FollowButton />
+            <FollowButton 
+              isFollowing={isFollowing}
+              onClick={handleFollow}
+              disabled={authorId === myUserId}
+            />
           </div>
           <div className="view-post-tags-line">
             <span className="view-post-category">{getLabelByKey(postData.categoryCode)}</span>
