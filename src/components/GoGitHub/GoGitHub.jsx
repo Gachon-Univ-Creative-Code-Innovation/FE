@@ -2,10 +2,10 @@ import PropTypes from "prop-types";
 import React from "react";
 import "./GoGitHub.css";
 
-export const GoGitHub = ({ property1, className }) => {
+export const GoGitHub = ({ className }) => {
   return (
     <div className={`git-hub ${className}`}>
-      <div className="div">GitHub ⟶</div>
+      <div className="div">깃허브</div>
     </div>
   );
 };

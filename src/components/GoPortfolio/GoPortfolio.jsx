@@ -2,10 +2,10 @@ import PropTypes from "prop-types";
 import React from "react";
 import "./GoPortfolio.css";
 
-export const GoPortfolio = ({ property1, className }) => {
+export const GoPortfolio = ({ className }) => {
   return (
     <div className={`property-default-wrapper ${className}`}>
-      <div className="text-wrapper">포트폴리오 ⟶</div>
+      <div className="text-wrapper">포트폴리오</div>
     </div>
   );
 };

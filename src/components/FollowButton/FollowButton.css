@@ -1,20 +1,26 @@
 .follow-btn-component {
-  border: 1px solid #1d1652;
+  border: 1px solid #ffffff;
   border-radius: 16px;
-  background: #fff;
-  color: #1d1652;
-  padding: 5px 16px;
+  background: transparent;
+  color: #ffffff;
+  padding: 8px 12px;
   font-size: 0.95rem;
   font-family: 'GmarketSans', sans-serif;
   font-weight: 400;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
   outline: none;
+  min-width: 90px;
+  white-space: nowrap;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .follow-btn-component:hover:not(:disabled) {
-  background: #1d1652;
-  color: #fff;
+  background: #ffffff;
+  color: #a3b3bf;
 }
 
 .follow-btn-component:disabled {

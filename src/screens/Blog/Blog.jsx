@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import GoGitHub from "../../components/GoGitHub/GoGitHub";
-import GoPortfolio from "../../components/GoPortfolio/GoPortfolio";
+
 import Navbar2 from "../../components/Navbar2/Navbar2";
 import FollowButton from "../../components/FollowButton/FollowButton";
-import MailIcon from "../../icons/MailIcon/MailIcon";
+
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import CommentIcon2 from "../../icons/CommentIcon2/CommentIcon2";
 import api from "../../api/instance";
@@ -155,36 +154,35 @@ export const Blog = () => {
                 }}
               />
               <div className="blog-profile-details">
-                <div className="blog-username-row">
+                <div className="blog-top-row">
                   <div className="blog-username">{nickname || "사용자"}</div>
-                  <div className="blog-follow-with-icon">
+                  <div className="blog-action-buttons">
                     <FollowButton
                       isFollowing={isFollowing}
                       onClick={handleFollow}
                     />
-                    <MailIcon className="mail-icon" onClick={handleChatClick} />
                   </div>
                 </div>
-              </div>
-
-              <div className="blog-side-buttons">
-                <div
-                  onClick={handlePortfolioClick}
-                  style={{ cursor: "pointer" }}
-                >
-                  <GoPortfolio
-                    className="blog-btn-default"
-                    property1="default"
-                  />
-                </div>
-                <div
-                  onClick={() => githubUrl && window.open(githubUrl, "_blank")}
-                  style={{
-                    cursor: githubUrl ? "pointer" : "default",
-                    marginLeft: 8,
-                  }}
-                >
-                  <GoGitHub className="blog-btn-github" property1="default" />
+                <div className="blog-bottom-buttons">
+                  <button
+                    className="blog-btn-unified"
+                    onClick={handlePortfolioClick}
+                  >
+                    포트폴리오
+                  </button>
+                  <button
+                    className="blog-btn-unified"
+                    onClick={() => githubUrl && window.open(githubUrl, "_blank")}
+                    disabled={!githubUrl}
+                  >
+                    깃허브
+                  </button>
+                  <button 
+                    className="blog-btn-unified" 
+                    onClick={handleChatClick}
+                  >
+                    쪽지 보내기
+                  </button>
                 </div>
               </div>
             </div>
