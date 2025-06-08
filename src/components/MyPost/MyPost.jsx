@@ -16,6 +16,7 @@ export const MyPost = () => {
     followers: 0,
     following: 0,
   });
+  const [posts, setPosts] = useState([]);
 
   const handleFollowClick = () => navigate("/follow");
 
@@ -28,6 +29,15 @@ export const MyPost = () => {
         });
         const { nickname, profileUrl, followers, following } = res.data.data;
         setUserInfo({ nickname, profileUrl, followers, following });
+
+        const myUserId = Number(localStorage.getItem("userId"));
+        // 2) 내 게시글 조회
+        const resPosts = await api.get(`/blog-service/posts?page=0`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        // resPosts.data.data 는 List<PostResponseDTO.GetPost>
+        setPosts(resPosts.data.data.postList);
+        console.log(resPosts.data.data.postList);
       } catch (err) {
         console.error("사용자 정보 불러오기 실패:", err);
       }
@@ -35,6 +45,10 @@ export const MyPost = () => {
 
     fetchUserInfo();
   }, []);
+
+  // 날짜 포맷 헬퍼
+  const formatDate = (iso) =>
+    iso ? iso.split("T")[0].replace(/-/g, ".") : "날짜 없음";
 
   return (
     <div className="mypost-wrapper">
@@ -86,7 +100,54 @@ export const MyPost = () => {
       </header>
 
       <div className="mypost-body">
-        {[...Array(6)].map((_, index) => (
+        {posts.length === 0 ? (
+          <div className="mypost-empty">작성한 글이 없습니다.</div>
+        ) : (
+          posts.slice(0, 6).map((post, idx) => (
+            <div
+              key={post.postId}
+              className={idx === 0 ? "mypost-post" : "mypost-post-2"}
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                if (post.postType == "POST") {
+                  navigate(`/viewpost/${post.postId}`);
+                } else if (post.postType == "MATCHING") {
+                  navigate(`/community/viewpost/${post.postId}`);
+                }
+              }}
+            >
+              <div className="mypost-post-info">
+                <div className="mypost-title">{post.title}</div>
+                <div className="mypost-meta">
+                  <div className="mypost-date">
+                    {formatDate(post.createdAt)}
+                  </div>
+                  <div className="mypost-comment">
+                    <CommentIcon2 className="mypost-comment-icon" />
+                    <div className="mypost-comment-count">
+                      {post.commentCount}
+                    </div>
+                  </div>
+                  <div className="mypost-views">
+                    <div className="mypost-date">조회수</div>
+                    <div className="mypost-views-count">{post.view}</div>
+                  </div>
+                </div>
+              </div>
+              <div className="mypost-thumbnail-wrapper">
+                <img
+                  src={post.thumbnail || "/img/blog_basic_photo.png"}
+                  alt="post"
+                  className="mypost-thumbnail"
+                  onError={(e) => {
+                    e.currentTarget.src = "/img/blog_basic_photo.png";
+                  }}
+                />
+              </div>
+            </div>
+          ))
+        )}
+        {/* {[...Array(6)].map((_, index) => (
           <div
             key={index}
             className={index === 0 ? "mypost-post" : "mypost-post-2"}
@@ -107,7 +168,7 @@ export const MyPost = () => {
             </div>
             <div className="mypost-thumbnail" />
           </div>
-        ))}
+        ))} */}
       </div>
 
       <div className="mypost-footer">

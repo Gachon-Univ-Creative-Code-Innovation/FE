@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
 import Navbar from "../../components/Navbar/Navbar";
 import MyPost from "../../components/MyPost/MyPost";
 import HotComponent from "../../components/HotComponent/HotComponent";
@@ -12,9 +11,9 @@ import MakePortfolioCard from "../../components/MakePortfolioCard/MakePortfolioC
 import ScrollUp from "../../icons/ScrollUp/ScrollUp";
 import CommentIcon from "../../icons/CommentIcon/CommentIcon";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
-import "./MainPageAfter.css";
-import api from "../../api/instance";
 import SearchModal from "../../components/SearchModal/SearchModal";
+import api from "../../api/instance";
+import "./MainPageAfter.css";
 
 // 블로그에서 사용하는 카테고리만 (스터디, 공모전 제외)
 const BLOG_CATEGORY_LIST = [
@@ -31,40 +30,31 @@ const BLOG_CATEGORY_LIST = [
 ];
 
 // 파도타기 효과 컴포넌트
+// 물결 애니메이션
 const WaveText = ({ text, className }) => {
-  const [startWaveAnimation, setStartWaveAnimation] = useState(false);
+  const [wave, setWave] = useState(false);
 
   useEffect(() => {
-    const startWaveLoop = () => {
-      setStartWaveAnimation(true);
-      
-      const totalAnimationTime = (text.length * 0.15 + 0.6) * 1000;
-      
+    const loop = () => {
+      setWave(true);
       setTimeout(() => {
-        setStartWaveAnimation(false);
-        setTimeout(() => {
-          startWaveLoop();
-        }, 3000);
-      }, totalAnimationTime);
+        setWave(false);
+        setTimeout(loop, 3000);
+      }, (text.length * 0.15 + 0.6) * 1000);
     };
-
-    // 컴포넌트 마운트 후 잠시 대기 후 시작
-    const timer = setTimeout(() => {
-      startWaveLoop();
-    }, 1000);
-
-    return () => clearTimeout(timer);
+    const t = setTimeout(loop, 1000);
+    return () => clearTimeout(t);
   }, [text]);
 
   return (
     <div className={className}>
-      {text.split('').map((letter, index) => (
+      {text.split("").map((ch, i) => (
         <span
-          key={index}
-          className={`wave-letter ${startWaveAnimation ? 'wave-animate' : ''}`}
-          style={{ '--delay': `${index * 0.15}s` }}
+          key={i}
+          className={`wave-letter ${wave ? "wave-animate" : ""}`}
+          style={{ "--delay": `${i * 0.15}s` }}
         >
-          {letter === ' ' ? '\u00A0' : letter}
+          {ch === " " ? "\u00A0" : ch}
         </span>
       ))}
     </div>
@@ -75,12 +65,14 @@ export const MainPageAfter = () => {
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  const [selectedTab, setSelectedTab] = useState("Hot");
+  const [tab, setTab] = useState("Hot");
   const [scrolled, setScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false); //추가
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [searchOpen, setSearchOpen] = useState(false);
   const observer = useRef();
   const navigate = useNavigate();
+  const PER_PAGE = 10;
 
   const POSTS_PER_PAGE = 10;
   const MAX_PAGES = 5;
@@ -120,6 +112,8 @@ export const MainPageAfter = () => {
           url = "/blog-service/posts/all";
           params.postType = "POST";
       }
+      if (t === "Feed") url = "/blog-service/posts/following";
+      if (t === "Recommend") url = "/blog-service/posts/recommend";
 
       const response = await api.get(url, {
         headers: { Authorization: `Bearer ${token}` },
@@ -127,7 +121,6 @@ export const MainPageAfter = () => {
       });
 
       const getPostList = response.data.data;
-      console.log("Fetched posts:", getPostList);
       const rawPosts = getPostList.postList;
 
       const newPosts = rawPosts.map((p) => {
@@ -159,7 +152,6 @@ export const MainPageAfter = () => {
     }
   };
 
-  // 1) 탭이 변경될 때마다: posts 초기화, page=1, hasMore=true, 그리고 첫 페이지 데이터 로드
   useEffect(() => {
     setPosts([]);
     setPage(0);
@@ -167,29 +159,25 @@ export const MainPageAfter = () => {
     fetchPosts(0, selectedTab, selectedCategory);
   }, [selectedTab, selectedCategory]);
 
-  // 2) page가 변경될 때마다(탭 변경 시 첫 페이지 로드는 위 useEffect에서,
-  //    이후 무한 스크롤로 page가 +1 될 때마다 이쪽에서 추가 로드)
   useEffect(() => {
     if (page !== 0 && hasMore) {
       fetchPosts(page, selectedTab, selectedCategory);
     }
-  }, [page]);
+  }, [page, hasMore, tab]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 0);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 0);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const lastPostRef = useCallback(
+  const lastRef = useCallback(
     (node) => {
       if (!hasMore) return;
       if (observer.current) observer.current.disconnect();
-      observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting) {
-          setPage((prev) => prev + 1);
+      observer.current = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) {
+          setPage((p) => p + 1);
         }
       });
       if (node) observer.current.observe(node);
@@ -197,27 +185,26 @@ export const MainPageAfter = () => {
     [hasMore]
   );
 
-  const postRender = (post, index) => (
+  const renderPost = (post, idx) => (
     <div
       key={post.id}
-      ref={index === posts.length - 1 ? lastPostRef : null}
-      // 여기를 클릭 가능 영역으로 만들어 줍니다.
+      ref={idx === posts.length - 1 ? lastRef : null}
       onClick={() => navigate(`/viewpost/${post.id}`)}
-      style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
+      style={{ cursor: "pointer" }}
     >
       <div className="frame-2">
         <div className="frame-3">
           <div className="author">
             <div className="frame-4">
               <div className="author-profile-wrapper">
-                        <img 
-          src={post.profileUrl || "/img/basic_profile_photo.png"} 
-          alt="post" 
-          className="author-profile-img"
-          onError={(e) => {
-            e.currentTarget.src = "/img/basic_profile_photo.png";
-          }}
-        />
+                <img
+                  src={post.profileUrl || "/img/basic_profile_photo.png"}
+                  alt="author"
+                  className="author-profile-img"
+                  onError={(e) =>
+                    (e.currentTarget.src = "/img/basic_profile_photo.png")
+                  }
+                />
               </div>
               <div className="text-wrapper-10">{post.author}</div>
             </div>
@@ -241,36 +228,31 @@ export const MainPageAfter = () => {
           </div>
         </div>
         <div className="post-img-wrapper">
-          <img 
-            src={post.imageUrl || "/img/AlOG-logo.png"} 
-            alt="post" 
-            className="post-img"
-            onError={(e) => {
-              e.currentTarget.src = "/img/AlOG-logo.png";
-            }}
-          />
+          {post.imageUrl ? (
+            <img
+              src={post.imageUrl}
+              alt="post"
+              className="post-img"
+              onError={(e) => {
+                e.currentTarget.style.visibility = "hidden";
+              }}
+            />
+          ) : (
+            <div style={{ width: "100%", height: "100%" }} />
+          )}
         </div>
       </div>
     </div>
   );
 
-  const handleReadmeClick = () => {
-    navigate("/generate-readme");
-  };
-
-  const handlePortfolioClick = () => {
-    navigate("/portfolio");
-  };
-
   return (
     <PageTransitionWrapper>
       <div className="main-page-after">
         <Navbar
-          onSearch={() => setIsSearchOpen(true)} //추가
-          onReadmeClick={handleReadmeClick}
-          onShowPopup={() => {}}
+          onSearch={() => setSearchOpen(true)}
+          onReadmeClick={() => navigate("/generate-readme")}
           scrolled={scrolled}
-          isLoggedIn={true}
+          isLoggedIn
         />
 
         <div className="div-2">
@@ -281,41 +263,29 @@ export const MainPageAfter = () => {
           <MakePortfolioCard
             className="component-15"
             property1="front-real"
-            onClick={handlePortfolioClick}
+            onClick={() => navigate("/portfolio")}
           />
 
           <div className="post-list-hot">
             <div className="category">
-              <HotComponent
-                className="component-instance"
-                divClassName="hotcomponent-text"
-                property1={selectedTab === "Hot" ? "hover" : "default"}
-                onClick={() => setSelectedTab("Hot")}
-              />
-              <AllComponent
-                className="component-instance"
-                divClassName="allcomponent-text"
-                property1={selectedTab === "All" ? "hover" : "default"}
-                onClick={() => setSelectedTab("All")}
-              />
-              <CategoryComponent
-                className="component-instance"
-                divClassName="categorycomponent-text"
-                property1={selectedTab === "Category" ? "hover" : "default"}
-                onClick={() => setSelectedTab("Category")}
-              />
-              <FeedComponent
-                className="component-instance"
-                divClassName="feedcomponent-text"
-                property1={selectedTab === "Feed" ? "hover" : "default"}
-                onClick={() => setSelectedTab("Feed")}
-              />
-              <RecommendComponent
-                className="component-instance"
-                divClassName="recommendcomponent-text"
-                property1={selectedTab === "Recommend" ? "hover" : "default"}
-                onClick={() => setSelectedTab("Recommend")}
-              />
+              {["Hot", "All", "Category", "Feed", "Recommend"].map((t) => {
+                const Comp = {
+                  Hot: HotComponent,
+                  All: AllComponent,
+                  Category: CategoryComponent,
+                  Feed: FeedComponent,
+                  Recommend: RecommendComponent,
+                }[t];
+                return (
+                  <Comp
+                    key={t}
+                    className="component-instance"
+                    divClassName={`${t.toLowerCase()}-text`}
+                    property1={tab === t ? "hover" : "default"}
+                    onClick={() => setTab(t)}
+                  />
+                );
+              })}
             </div>
 
             {/* 카테고리 탭일 때만 드롭다운 노출 */}
@@ -335,14 +305,16 @@ export const MainPageAfter = () => {
             )}
 
             <div className="post-list">
-              {posts.map((post, index) => postRender(post, index))}
+              {posts.map((post, index) => renderPost(post, index))}
             </div>
 
             {!hasMore && (
               <div className="end-message-wrapper">
-                <WaveText text="당신의 이야기를 기다리고 있습니다 ✍️" className="end-message" />
+                <WaveText
+                  text="당신의 이야기를 기다리고 있습니다 ✍️"
+                  className="end-message"
+                />
               </div>
-              
             )}
           </div>
 
@@ -350,15 +322,11 @@ export const MainPageAfter = () => {
             className="overlap-wrapper"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           >
-            <div className="overlap">
-              <ScrollUp className="component-19" />
-            </div>
+            <ScrollUp className="component-19" />
           </div>
         </div>
-        {isSearchOpen && (
-          <SearchModal onClose={() => setIsSearchOpen(false)} /> //추가
-        )}
 
+        {searchOpen && <SearchModal onClose={() => setSearchOpen(false)} />}
       </div>
     </PageTransitionWrapper>
   );

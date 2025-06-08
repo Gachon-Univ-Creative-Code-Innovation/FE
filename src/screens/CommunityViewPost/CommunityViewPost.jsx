@@ -512,7 +512,10 @@ if (!post) {
             )}
           </div>
           <div className="view-post-meta-line">
-            <div className="view-post-meta">
+            <div className="view-post-meta"
+            onClick={() => navigate(`/blog/${post.authorId}`)}
+            style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
+            >
               <div className="post-profile-wrapper">
                         <img 
           src={post.profileUrl || "/img/basic_profile_photo.png"} 
@@ -575,13 +578,19 @@ if (!post) {
             <div className="comment-list">
               {comments.map((comment) => (
                 <div key={comment.id} className="comment-item">
-                  <div className="comment-profile-wrapper">
+                  <div className="comment-profile-wrapper"
+                  onClick={() => navigate(`/myblog/${comment.authorId}`)}
+                  style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
+                  >
                     {comment.authorProfileUrl && (
                       <img src={comment.authorProfileUrl} alt="comment" className="comment-profile-img" />
                     )}
                   </div>
                   <div className="comment-content-block">
-                    <div className="comment-author">{comment.author}</div>
+                    <div className="comment-author"
+                    onClick={() => navigate(`/myblog/${comment.authorId}`)}
+                    style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
+                    >{comment.author}</div>
                     {editCommentId === comment.id ? (
                       <div className="comment-edit-wrapper" ref={editCommentInputRef}>
                         <input
@@ -629,13 +638,19 @@ if (!post) {
                       <div className="comment-replies-list">
                         {comment.replies.map(reply => (
                           <div key={reply.id} className="comment-reply-item">
-                            <div className="comment-profile-wrapper">
+                            <div className="comment-profile-wrapper"
+                            onClick={() => navigate(`/myblog/${reply.authorId}`)}
+                            style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
+                            >
                               {reply.authorProfileUrl && (
                                 <img src={reply.authorProfileUrl} alt="comment" className="comment-profile-img" />
                               )}
                             </div>
                             <div className="reply-content">
-                              <div className="comment-author">{reply.author}</div>
+                              <div className="comment-author"
+                              onClick={() => navigate(`/myblog/${reply.authorId}`)}
+                              style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
+                              >{reply.author}</div>
                               {editReplyId === reply.id ? (
                                 <div className="comment-edit-wrapper" ref={editReplyInputRef}>
                                   <input

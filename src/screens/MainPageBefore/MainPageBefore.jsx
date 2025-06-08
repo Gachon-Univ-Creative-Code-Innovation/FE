@@ -15,7 +15,7 @@ import LoginRequiredPopup from "../../components/LoginRequiredPopup/LoginRequire
 import Navbar from "../../components/Navbar/Navbar";
 import "./MainPageBefore.css";
 import api from "../../api/instance";
-import SearchModal from "../../components/SearchModal/SearchModal";//추가
+import SearchModal from "../../components/SearchModal/SearchModal"; //추가
 
 // 파도타기 효과 컴포넌트
 const WaveText = ({ text, className }) => {
@@ -24,9 +24,9 @@ const WaveText = ({ text, className }) => {
   useEffect(() => {
     const startWaveLoop = () => {
       setStartWaveAnimation(true);
-      
+
       const totalAnimationTime = (text.length * 0.15 + 0.6) * 1000;
-      
+
       setTimeout(() => {
         setStartWaveAnimation(false);
         setTimeout(() => {
@@ -45,13 +45,13 @@ const WaveText = ({ text, className }) => {
 
   return (
     <div className={className}>
-      {text.split('').map((letter, index) => (
+      {text.split("").map((letter, index) => (
         <span
           key={index}
-          className={`wave-letter ${startWaveAnimation ? 'wave-animate' : ''}`}
-          style={{ '--delay': `${index * 0.15}s` }}
+          className={`wave-letter ${startWaveAnimation ? "wave-animate" : ""}`}
+          style={{ "--delay": `${index * 0.15}s` }}
         >
-          {letter === ' ' ? '\u00A0' : letter}
+          {letter === " " ? "\u00A0" : letter}
         </span>
       ))}
     </div>
@@ -166,20 +166,25 @@ export const MainPageBefore = () => {
   );
 
   const postRender = (post, index) => (
-    <div key={post.id} ref={index === posts.length - 1 ? lastPostRef : null}>
+    <div
+      key={post.id}
+      ref={index === posts.length - 1 ? lastPostRef : null}
+      onClick={() => navigate(`/viewpost/${post.id}`)}
+      style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
+    >
       <div className="frame-2">
         <div className="frame-3">
           <div className="author">
             <div className="frame-4">
               <div className="author-profile-wrapper">
-                        <img 
-          src={post.profileUrl || "/img/basic_profile_photo.png"} 
-          alt="post" 
-          className="author-profile-img"
-          onError={(e) => {
-            e.currentTarget.src = "/img/basic_profile_photo.png";
-          }}
-        />
+                <img
+                  src={post.profileUrl || "/img/basic_profile_photo.png"}
+                  alt="post"
+                  className="author-profile-img"
+                  onError={(e) => {
+                    e.currentTarget.src = "/img/basic_profile_photo.png";
+                  }}
+                />
               </div>
               <div className="text-wrapper-10">{post.author}</div>
             </div>
@@ -203,14 +208,18 @@ export const MainPageBefore = () => {
           </div>
         </div>
         <div className="post-img-wrapper">
-          <img 
-            src={post.imageUrl || "/img/AlOG-logo.png"} 
-            alt="post" 
-            className="post-img"
-            onError={(e) => {
-              e.currentTarget.src = "/img/AlOG-logo.png";
-            }}
-          />
+          {post.imageUrl ? (
+            <img
+              src={post.imageUrl}
+              alt="post"
+              className="post-img"
+              onError={(e) => {
+                e.currentTarget.style.visibility = "hidden";
+              }}
+            />
+          ) : (
+            <div style={{ width: "100%", height: "100%" }} />
+          )}
         </div>
       </div>
     </div>
@@ -284,7 +293,10 @@ export const MainPageBefore = () => {
 
             {!hasMore && (
               <div className="end-message-wrapper">
-                <WaveText text="당신의 이야기를 기다리고 있습니다 ✍️" className="end-message" />
+                <WaveText
+                  text="당신의 이야기를 기다리고 있습니다 ✍️"
+                  className="end-message"
+                />
               </div>
             )}
           </div>
