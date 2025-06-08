@@ -98,6 +98,18 @@ function NotificationItem({
   );
 }
 
+// 알림 타입에 따라 이동할 링크 생성 함수
+function getAlarmLink(notice) {
+  const baseUrl = window.location.origin; // 환경에 따라 자동 결정
+  if (["COMMENT", "REPLY", "POST"].includes(notice.type)) {
+    return `${baseUrl}/viewpost/${notice.targetUrl}`;
+  }
+  if (notice.type === "FOLLOW") {
+    return `${baseUrl}/blog/${notice.targetUrl}`;
+  }
+  return null;
+}
+
 export const Notice = () => {
   const [selectedTab, setSelectedTab] = useState("전체");
   const [notifications, setNotifications] = useState([]);
@@ -241,6 +253,11 @@ export const Notice = () => {
                   menuOpen={menuOpenId}
                   onMarkAsRead={markAsRead}
                   onDelete={handleDeleteOne}
+                  onClick={async (notice) => {
+                    await markAsRead(notice.id);
+                    const url = getAlarmLink(notice);
+                    if (url) window.open(url, "_blank");
+                  }}
                 />
               ))}
             </div>
