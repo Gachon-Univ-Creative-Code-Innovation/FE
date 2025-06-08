@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./MatchingModal.css";
 import CloseIcon from "../../icons/CloseIcon/CloseIcon";
-import api from "../../api/local-instance";
+import api from "../../api/instance";
 
 const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
   // 더미데이터 제거, 빈 배열로 초기화
@@ -30,7 +30,7 @@ const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
 
       fixedMatchedIds.forEach((userId, idx) => {
         // 유저 기본 정보 fetch
-        api.get(`http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/user-service/details/${userId}`)
+        api.get(`/user-service/details/${userId}`)
           .then((res) => {
             const data = res.data;
             if (data.status === 200 && data.data) {
@@ -67,8 +67,8 @@ const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
             });
           });
 
-        // http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/matching-service/represent-tags
-        api.get(`http://localhost/api/matching-service/represent-tags`, { params: { userID: userId, topK: 4 }, headers: { accept: "application/json" } })
+
+        api.get(`/matching-service/represent-tags`, { params: { userID: userId, topK: 4 }, headers: { accept: "application/json" } })
           .then((res) => {
             const data = res.data;
             if (data.status === 200 && Array.isArray(data.data)) {
@@ -81,8 +81,8 @@ const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
           })
           .catch(() => {});
 
-        // http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/portfolio-service/user
-        api.get(`http://localhost:8080/api/portfolio-service/user`, { params: { userID: userId }, headers: { accept: "application/json" } })
+
+        api.get(`/portfolio-service/user`, { params: { userID: userId }, headers: { accept: "application/json" } })
           .then((res) => {
             const data = res.data;
             if (data.status === 200 && data.data) {
