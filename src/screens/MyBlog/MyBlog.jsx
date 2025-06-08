@@ -1,3 +1,4 @@
+// src/screens/MyBlog/MyBlog.jsx
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import GoGitHub from "../../components/GoGitHub/GoGitHub";
@@ -64,10 +65,12 @@ export const MyBlog = () => {
   useEffect(() => {
     if (!jwtToken) return navigate("/login");
 
+    const headers = { Authorization: jwtToken };
+
     if (authorId == null) {
       // 내 프로필 조회
       api
-        .get("/user-service/user/patch", { headers: { Authorization: jwtToken } })
+        .get("/user-service/user/patch", { headers })
         .then((res) => {
           const d = res.data.data || {};
           setNickname(d.nickname || "");
@@ -77,33 +80,33 @@ export const MyBlog = () => {
         .catch((err) => console.error("내 정보 조회 에러:", err));
 
       api
-        .get("/user-service/follow/followers", { headers: { Authorization: jwtToken } })
+        .get("/user-service/follow/followers", { headers })
         .then((res) => setFollowerCount((res.data.data || []).length))
         .catch((err) => console.error("팔로워 조회 에러:", err));
 
       api
-        .get("/user-service/follow/followees", { headers: { Authorization: jwtToken } })
+        .get("/user-service/follow/followees", { headers })
         .then((res) => setFollowingCount((res.data.data || []).length))
         .catch((err) => console.error("팔로잉 조회 에러:", err));
     } else {
       // 다른 사용자 프로필 조회
       api
-        .get(`/user-service/details/${authorId}`, { headers: { Authorization: jwtToken } })
+        .get(`/user-service/details/${authorId}`, { headers })
         .then((res) => {
           const d = res.data.data || {};
           setNickname(d.nickname || "");
           setProfileUrl(d.profileUrl || "");
           setGithubUrl(d.githubUrl || "");
         })
-        .catch((err) => console.error("내 정보 조회 에러:", err));
+        .catch((err) => console.error("사용자 정보 조회 에러:", err));
 
       api
-        .get(`/user-service/follow/followers/${authorId}`, { headers: { Authorization: jwtToken } })
+        .get(`/user-service/follow/followers/${authorId}`, { headers })
         .then((res) => setFollowerCount((res.data.data || []).length))
         .catch((err) => console.error("팔로워 조회 에러:", err));
 
       api
-        .get(`/user-service/follow/followees/${authorId}`, { headers: { Authorization: jwtToken } })
+        .get(`/user-service/follow/followees/${authorId}`, { headers })
         .then((res) => setFollowingCount((res.data.data || []).length))
         .catch((err) => console.error("팔로잉 조회 에러:", err));
     }
@@ -114,9 +117,10 @@ export const MyBlog = () => {
     if (!jwtToken || !hasMore) return;
     setLoading(true);
 
-    const url = authorId == null
-      ? `/blog-service/posts?page=${page}`
-      : `/blog-service/posts/user/${authorId}?page=${page}`;
+    const url =
+      authorId == null
+        ? `/blog-service/posts?page=${page}`
+        : `/blog-service/posts/user/${authorId}?page=${page}`;
 
     api
       .get(url, { headers: { Authorization: jwtToken } })
@@ -143,6 +147,10 @@ export const MyBlog = () => {
     },
     [loading, hasMore]
   );
+
+  // 날짜 포맷 헬퍼
+  const formatDate = (iso) =>
+    iso ? iso.split("T")[0].replace(/-/g, ".") : "날짜 없음";
 
   return (
     <PageTransitionWrapper>
@@ -181,12 +189,18 @@ export const MyBlog = () => {
                 </div>
               </div>
               <div className="myblog-side-buttons">
-                <div onClick={() => navigate("/portfolio")} style={{ cursor: "pointer" }}>
+                <div
+                  onClick={() => navigate("/portfolio")}
+                  style={{ cursor: "pointer" }}
+                >
                   <GoPortfolio property1="default" />
                 </div>
                 <div
                   onClick={() => githubUrl && window.open(githubUrl, "_blank")}
-                  style={{ cursor: githubUrl ? "pointer" : "default", marginLeft: 8 }}
+                  style={{
+                    cursor: githubUrl ? "pointer" : "default",
+                    marginLeft: 8,
+                  }}
                 >
                   <GoGitHub property1="default" />
                 </div>
@@ -217,7 +231,9 @@ export const MyBlog = () => {
                         className="myblog-post-image"
                         style={{
                           backgroundColor: "#a3b3bf",
-                          backgroundImage: post.thumbnail ? `url(${post.thumbnail})` : "none",
+                          backgroundImage: post.thumbnail
+                            ? `url(${post.thumbnail})`
+                            : "none",
                           backgroundSize: "cover",
                           backgroundPosition: "center",
                         }}
@@ -226,6 +242,7 @@ export const MyBlog = () => {
                         <p className="myblog-post-snippet">{post.title}</p>
                         <div className="myblog-post-meta">
                           <div className="myblog-post-date">
+                            {formatDate(post.createdAt)}
                           {post.createdAt?.split("T")[0].replace(/-/g, ".")  || "날짜 없음"}
                           </div>
                           <div className="myblog-post-comment">
@@ -242,7 +259,10 @@ export const MyBlog = () => {
               </div>
 
               {!loading && posts.length === 0 && (
-                <WaveText text="당신의 이야기를 기다리고 있습니다 ✍️" className="myblog-empty-message" />
+                <WaveText
+                  text="당신의 이야기를 기다리고 있습니다 ✍️"
+                  className="myblog-empty-message"
+                />
               )}
             </div>
           </div>

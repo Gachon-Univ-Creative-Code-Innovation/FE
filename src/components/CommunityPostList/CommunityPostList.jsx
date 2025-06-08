@@ -1,50 +1,43 @@
-import React, { useState, useEffect } from "react";
-import CommentIcon from "../../icons/CommentIcon/CommentIcon";
-import "./CommunityPostList.css";
+// src/components/CommunityPostList/CommunityPostList.jsx
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../../api/instance"
+import CommentIcon from "../../icons/CommentIcon/CommentIcon";
+import api from "../../api/instance";
 import { MatchingCategories } from "../../constants/categories";
-
+import "./CommunityPostList.css";
 
 const ITEMS_PER_PAGE = 15;
+const POST_TYPE = "MATCHING";
 
-export const CommunityPostList = ({sortBy, category}) => {
+export const CommunityPostList = ({ sortBy, category }) => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const ITEMS_PER_PAGE = 15;
-  const POST_TYPE = "MATCHING";
-  
-
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const token = localStorage.getItem("jwtToken");
         let url = "";
-        const params = {page:page}
+        const params = { page, size: ITEMS_PER_PAGE };
 
-        if(category == "전체"){
-            url = `/blog-service/posts/all`
-            params.postType = POST_TYPE;
-        } 
-        else {
-          // find()로 해당 label을 가진 객체를 찾는다
-          const found = MatchingCategories.find((cat) => cat.label === category);
+        if (category === "전체") {
+          url = `/blog-service/posts/all`;
+          params.postType = POST_TYPE;
+        } else {
+          const found = MatchingCategories.find(
+            (cat) => cat.label === category
+          );
           const key = found ? found.key : null;
-          url = `/blog-service/posts/matching/category/${key}`
-
+          url = `/blog-service/posts/matching/category/${key}`;
         }
-        
-        const res = await api.get(
-          url, {
-            headers: { Authorization: `Bearer ${token}` },
-            params,
-          }
-        );
+
+        const res = await api.get(url, {
+          headers: { Authorization: `Bearer ${token}` },
+          params,
+        });
         const data = res.data.data;
-        console.log("data ", data)
         setPosts(data.postList);
         setTotalPages(data.totalPages);
       } catch (error) {
@@ -56,9 +49,8 @@ export const CommunityPostList = ({sortBy, category}) => {
   }, [category, page]);
 
   const handlePageChange = (newPage) => {
-    if (newPage >= 0 && newPage <= totalPages-1) {
+    if (newPage >= 0 && newPage < totalPages) {
       setPage(newPage);
-      console.log("page", newPage, page)
     }
   };
 
@@ -66,26 +58,35 @@ export const CommunityPostList = ({sortBy, category}) => {
     <div className="communitypost-list">
       <div className="communitypost-frame-2">
         {posts.map((post) => (
-          <div 
-            className="communitypost-frame-3" 
+          <div
             key={post.postId}
+            className="communitypost-frame-3"
             style={{ cursor: "pointer" }}
             onClick={() => navigate(`/community/viewpost/${post.postId}`)}
           >
             <div className="communitypost-thumbnail-wrapper">
-              {post.thumbnail && (
-                <img src={post.thumbnail} alt="post" className="communitypost-thumbnail-img" />
-              )}
+              <img
+                src={post.thumbnail || "/img/basic_photo.png"}
+                alt="post"
+                className="communitypost-thumbnail-img"
+                onError={(e) => {
+                  e.currentTarget.src = "/img/basic_photo.png";
+                }}
+              />
             </div>
             <div className="communitypost-frame-4">
               <p className="communitypost-text-5">{post.title}</p>
               <div className="communitypost-frame-5">
                 <div className="communitypost-text-3">
-                  {post.createdAt?.split("T")[0].replace(/-/g, ".")  || "날짜 없음"}
+                  {post.createdAt
+                    ? post.createdAt.split("T")[0].replace(/-/g, ".")
+                    : "날짜 없음"}
                 </div>
                 <div className="communitypost-comment">
                   <CommentIcon className="communitypost-comment-icon" />
-                  <div className="communitypost-text-4">{post.commentCount}</div>
+                  <div className="communitypost-text-4">
+                    {post.commentCount}
+                  </div>
                 </div>
               </div>
             </div>
@@ -125,14 +126,14 @@ export const CommunityPostList = ({sortBy, category}) => {
         <button
           className="communitypost-pagination-arrow"
           onClick={() => handlePageChange(page + 1)}
-          disabled={page === totalPages-1}
+          disabled={page === totalPages - 1}
         >
           &#62;
         </button>
         <button
           className="communitypost-pagination-arrow"
           onClick={() => handlePageChange(totalPages - 1)}
-          disabled={page === totalPages-1}
+          disabled={page === totalPages - 1}
         >
           &#187;
         </button>

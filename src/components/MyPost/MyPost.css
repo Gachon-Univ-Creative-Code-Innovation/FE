@@ -50,6 +50,7 @@
   flex-grow: 1;
   margin-left: 10px;
   max-width: 190px;
+
 }
 
 .mypost-top {
@@ -102,7 +103,7 @@
 
 .mypost-logout-text {
   font-size: 11px !important;
-  line-height: 1 !important;
+  line-height: 14px !important;
   width: 100% !important;
   text-align: center !important;
   padding: 0 !important;
@@ -173,20 +174,26 @@
   align-items: flex-start;
   gap: 15px;
   flex: 1;
-  margin-top: -7.5px;
-  margin-bottom: -5.5px;
+  margin-bottom: -7.5px;
+  min-width: 0;
 }
 
 .mypost-title {
   color: #000;
   font-size: 12px;
   font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  line-height: 17px;
 }
 
 .mypost-meta {
   display: inline-flex;
   gap: 10px;
   height: 14px;
+  align-items: center;
 }
 
 .mypost-date,
@@ -197,6 +204,8 @@
   font-weight: 400;
   color: #a3b3bf;
   text-align: center;
+  line-height: 14px;
+  margin: 0;
 }
 
 .mypost-comment,
@@ -204,7 +213,7 @@
   display: flex;
   align-items: center;
   gap: 2px;
-  padding: 2px;
+  padding: 0 2px;
 }
 
 .mypost-comment-icon {
@@ -219,6 +228,7 @@
   width: 45px;
   height: 45px;
   flex-shrink: 0;
+  
 }
 
 .mypost-thumbnail {
@@ -226,6 +236,7 @@
   height: 100%;
   object-fit: cover; /* cover: 박스를 가득 채우면서 비율 유지, 잘리는 부분 발생 */
   object-position: center;
+  border-radius: 4px;
 }
 
 .mypost-footer {

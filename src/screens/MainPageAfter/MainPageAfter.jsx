@@ -175,18 +175,20 @@ export const MainPageAfter = () => {
             </div>
           </div>
         </div>
-        {post.imageUrl && (
-          <div className="post-img-wrapper">
+        <div className="post-img-wrapper">
+          {post.imageUrl ? (
             <img
               src={post.imageUrl}
               alt="post"
               className="post-img"
               onError={(e) => {
-                e.currentTarget.style.display = "none";
+                e.currentTarget.style.visibility = "hidden";
               }}
             />
-          </div>
-        )}
+          ) : (
+            <div style={{ width: "100%", height: "100%" }} />
+          )}
+        </div>
       </div>
     </div>
   );
