@@ -9,9 +9,17 @@ import SortButton from "../../components/SortButton/SortButton";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import "./Community.css";
 
+const COMMUNITY_CATEGORIES = [
+  { key: null, label: "전체" },
+  { key: 1, label: "프로젝트" },
+  { key: 2, label: "스터디" },
+  { key: 3, label: "공모전" },
+  { key: 4, label: "기타" },
+];
+
 export const Community = () => {
   const navigate = useNavigate();
-  const [selectedTab, setSelectedTab] = useState("전체");
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSort, setSelectedSort] = useState("최신순");
 
   const handleRecruitClick = () => {
@@ -46,16 +54,18 @@ export const Community = () => {
             />
           </div>
 
-          <CommunityTab 
-            selectedTab={selectedTab}
-            onTabChange={(tab) => setSelectedTab(tab)}
+          {/* 기존 CommunityTab 컴포넌트 활용, 카테고리 5개만 */}
+          <CommunityTab
+            categories={COMMUNITY_CATEGORIES}
+            selectedTab={selectedCategory}
+            onTabChange={setSelectedCategory}
           />
-          {/*검색할 때에만 보이게하면 안될까요? - 기본 글 목록 조회시에는 최신순으로만 보여줌!*/}
+
           <div className="community-frame-sort">
             <SortButton onChange={(option) => setSelectedSort(option)} />
           </div>
 
-          <CommunityPostList sortBy={selectedSort} category = {selectedTab} />
+          <CommunityPostList sortBy={selectedSort} categoryId={selectedCategory} />
         </div>
       </div>
     </PageTransitionWrapper>

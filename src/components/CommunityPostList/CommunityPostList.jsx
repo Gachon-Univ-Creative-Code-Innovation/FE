@@ -15,7 +15,7 @@ const formatDate = (isoString) => {
   return isoString.split("T")[0].replace(/-/g, ".");
 };
 
-export const CommunityPostList = ({ sortBy, category }) => {
+export const CommunityPostList = ({ sortBy, categoryId }) => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(0);
@@ -24,25 +24,13 @@ export const CommunityPostList = ({ sortBy, category }) => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const token = localStorage.getItem("jwtToken");
         let url = "";
-        const params = { page, size: ITEMS_PER_PAGE };
-
-        if (category === "전체") {
-          url = `/blog-service/posts/all`;
-          params.postType = POST_TYPE;
+        if (categoryId === null || categoryId === undefined) {
+          url = `/blog-service/posts/all?page=${page}&postType=MATCHING`;
         } else {
-          const found = MatchingCategories.find(
-            (cat) => cat.label === category
-          );
-          const key = found ? found.key : null;
-          url = `/blog-service/posts/matching/category/${key}`;
+          url = `/blog-service/posts/matching/category/${categoryId}?page=${page}`;
         }
-
-        const res = await api.get(url, {
-          headers: { Authorization: `Bearer ${token}` },
-          params,
-        });
+        const res = await api.get(url);
         const data = res.data.data;
         setPosts(data.postList);
         setTotalPages(data.totalPages);
@@ -50,9 +38,8 @@ export const CommunityPostList = ({ sortBy, category }) => {
         console.error("게시글 목록 조회 실패:", error);
       }
     };
-
     fetchPosts();
-  }, [category, page]);
+  }, [categoryId, page]);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 0 && newPage < totalPages) {
