@@ -9,12 +9,14 @@ import SocialGoogle from "./SocialGoogle";
 import "./Login.css";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import api from "../../api/instance";
+import { useWebSocket } from "../../contexts/WebSocketContext";
 
 export const Login = () => {
   const navigate = useNavigate();
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const { connectWebSocket } = useWebSocket();
 
   const handleLogin = async () => {
     setErrorMessage("");
@@ -28,7 +30,8 @@ export const Login = () => {
       localStorage.setItem("jwtToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
       if (userId) localStorage.setItem("userId", userId);
-      window.location.href = "/MainPageAfter";
+      connectWebSocket(accessToken);
+      navigate("/MainPageAfter");
     } catch (error) {
       const message = error.response?.data?.message || "로그인에 실패했습니다.";
       setErrorMessage(message);

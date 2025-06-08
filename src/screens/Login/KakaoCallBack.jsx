@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import api from "../../api/instance";
+import { useWebSocket } from "../../contexts/WebSocketContext";
 
 const KakaoCallback = () => {
   const navigate = useNavigate();
   const { search } = useLocation();
   const [loading, setLoading] = useState(true);
+  const { connectWebSocket } = useWebSocket();
 
   useEffect(() => {
     const code = new URL(window.location.href).searchParams.get("code");
@@ -20,6 +22,7 @@ const KakaoCallback = () => {
         localStorage.setItem("userId", data.data.userId);
         localStorage.setItem("jwtToken", data.data.accessToken);
         localStorage.setItem("refreshToken", data.data.refreshToken);
+        connectWebSocket(data.data.accessToken);
         navigate("/MainPageAfter");
       })
       .catch((err) => {
@@ -30,7 +33,7 @@ const KakaoCallback = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [search, navigate]);
+  }, [search, navigate, connectWebSocket]);
 
   if (loading) {
     return (

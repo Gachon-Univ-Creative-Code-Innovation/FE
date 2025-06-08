@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import api from "../../api/instance";
+import { useWebSocket } from "../../contexts/WebSocketContext";
 
 const GoogleCallback = () => {
   const navigate = useNavigate();
   const { search } = useLocation();
   const [loading, setLoading] = useState(true);
+  const { connectWebSocket } = useWebSocket();
 
   useEffect(() => {
     console.log("현재 콜백 URL:", window.location.href);
@@ -26,8 +28,7 @@ const GoogleCallback = () => {
         if (userId) localStorage.setItem("userId", userId);
         localStorage.setItem("jwtToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
-
-        // 4) 로그인 완료 후 메인 페이지로 이동
+        connectWebSocket(accessToken);
         navigate("/MainPageAfter");
       })
       .catch((err) => {
@@ -39,7 +40,7 @@ const GoogleCallback = () => {
         // 로딩 상태 해제
         setLoading(false);
       });
-  }, [search, navigate]);
+  }, [search, navigate, connectWebSocket]);
 
   // 로딩 중 표시
   if (loading) {
