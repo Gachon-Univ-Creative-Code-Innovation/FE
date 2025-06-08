@@ -168,7 +168,7 @@
   display: flex;
   flex: 0 0 auto;
   flex-direction: column;
-  gap: 30px;
+  gap: 20px;
   padding: 10px 0px 10px 10px;
   position: relative;
   width: 100%;
@@ -186,9 +186,10 @@
   height: 202px;
   margin-left: -1.00px;
   margin-right: -1.00px;
-  padding: 15px 0px 30px 23px;
+  padding: 15px 5px 30px 20px;
   position: relative;
   width: 100%;
+    margin-top:-5px;
 }
 
 .main-page-after .frame-3 {
@@ -200,6 +201,7 @@
   flex-grow: 1;
   justify-content: space-between;
   position: relative;
+
 }
 
 .main-page-after .author {
@@ -378,17 +380,19 @@
 }
 
 .main-page-after .post-img-wrapper {
-  align-self: stretch;
-  background-color: transparent;
-  overflow: hidden;/* 컨테이너 범위 벗어나면 숨김 */
-  position: relative;
   width: 120px;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  position: relative;
+  border-radius: 8px;
 }
 
 .main-page-after .post-img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* cover: 박스를 가득 채우면서 비율 유지, 잘리는 부분 발생 */
+  object-fit: cover;
+  display: block;
+  border-radius: 0;
 }
 
 .main-page-after .frame-7 {
