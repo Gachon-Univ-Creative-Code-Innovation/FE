@@ -223,9 +223,11 @@ export const MyBlog = () => {
                         }}
                       />
                       <div className="myblog-post-content">
-                        <p className="myblog-post-snippet">{post.summary}</p>
+                        <p className="myblog-post-snippet">{post.title}</p>
                         <div className="myblog-post-meta">
-                          <div className="myblog-post-date">{post.createdAt}</div>
+                          <div className="myblog-post-date">
+                          {post.createdAt?.split("T")[0].replace(/-/g, ".")  || "날짜 없음"}
+                          </div>
                           <div className="myblog-post-comment">
                             <CommentIcon2 className="myblog-comment-icon" />
                             <div className="myblog-comment-count">
