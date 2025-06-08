@@ -7,7 +7,8 @@ import CloseIcon from "../../icons/CloseIcon/CloseIcon";
 import { SaveDraftComponent } from "../../components/SaveDraftComponent/SaveDraftComponent";
 import { PostComponent } from "../../components/PostComponent/PostComponent";
 import { useNavigate, useLocation } from "react-router-dom";
-import api from "../../api/local-instance";
+// import api from "../../api/local-instance";
+import api from "../../api/instance";
 
 // ReactQuill 모듈 설정
 const modules = {

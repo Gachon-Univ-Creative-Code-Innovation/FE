@@ -8,7 +8,8 @@ import Navbar2 from "../../components/Navbar2/Navbar2";
 import PortfolioCardList from "../../components/PortfolioCardList/PortfolioCardList";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
 import "./PortfolioScreen.css";
-import api from "../../api/local-instance";
+// import api from "../../api/local-instance";
+import api from "../../api/instance";
 
 const ITEMS_PER_PAGE = 12;
 const PAGE_GROUP_SIZE = 5;

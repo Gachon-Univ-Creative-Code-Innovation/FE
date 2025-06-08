@@ -404,7 +404,7 @@ export default function Write() {
       }, 0);
       try {
         const response = await api.post(
-          "http://localhost:8000/api/github-service/tag",
+          "/github-service/tag",
           // http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/github-service/tag
           { git_url: gitUrl },
           { headers: { Accept: "application/json" } }

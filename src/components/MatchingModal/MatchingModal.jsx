@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "./MatchingModal.css";
 import CloseIcon from "../../icons/CloseIcon/CloseIcon";
-import api from "../../api/local-instance";
+// import api from "../../api/local-instance";
+import api from "../../api/instance";
 
 const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
   // 더미데이터 제거, 빈 배열로 초기화

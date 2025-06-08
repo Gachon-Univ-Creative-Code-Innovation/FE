@@ -12,7 +12,8 @@ import "./MessageRoom.css";
 import { useWebSocket } from "../../contexts/WebSocketContext";
 import ChatImageMessage from "../../components/ChatImageMessage";
 
-const WS_URL = "wss://a-log.site/ws/chat";
+// const WS_URL = "wss://a-log.site/ws/chat";
+const WS_URL = "ws://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/ws/chat";
 
 // 시간 포맷팅 함수 (채팅방 내부: 오전/오후 시:분)
 function formatChatTime(isoString) {

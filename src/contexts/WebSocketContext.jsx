@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import api from "../api/instance";
 
-const WS_URL = "wss://a-log.site/ws/chat";
+// const WS_URL = "wss://a-log.site/ws/chat";
+const WS_URL = "ws://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/ws/chat";
 const WebSocketContext = createContext();
 
 export const useWebSocket = () => useContext(WebSocketContext);
@@ -11,7 +12,7 @@ export const WebSocketProvider = ({ children }) => {
   const [authSuccess, setAuthSuccess] = useState(false);
   const [eventQueue, setEventQueue] = useState([]);
   const [unreadTotalCount, setUnreadTotalCount] = useState(0);
-
+  
   useEffect(() => {
     const token = localStorage.getItem("jwtToken");
     if (!token) return;

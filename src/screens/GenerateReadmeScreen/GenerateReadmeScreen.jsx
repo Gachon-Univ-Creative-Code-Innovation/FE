@@ -7,7 +7,7 @@ import PaperPlaneIcon from "../../icons/PaperPlaneIcon/PaperPlaneIcon";
 import HistoryList from "../../components/HistoryList/HistoryList";
 import Readme from "../ShowReadme/ShowReadme";
 import Navbar2 from "../../components/Navbar2/Navbar2";
-import api from "../../api/local-instance";
+import api from "../../api/instance";
 import "./GenerateReadmeScreen.css";
 
 export const GenerateReadmeScreen = () => {
@@ -33,7 +33,7 @@ export const GenerateReadmeScreen = () => {
       //http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/github-service/readme  
 
       const response = await api.post(
-        apiUrl,
+        `/github-service/readme`,
         { git_url: url },
         { headers: { Accept: "application/json" } }
       );
@@ -117,7 +117,7 @@ export const GenerateReadmeScreen = () => {
           // http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/github-service/db/user
           
             
-          const response = await api.get(apiUrl, { headers: { Accept: "application/json" } });
+          const response = await api.get(`github-service/db/user`, { headers: { Accept: "application/json" } });
 
           if (
             response.data.status !== 200 ||
