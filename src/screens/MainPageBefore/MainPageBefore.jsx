@@ -166,8 +166,8 @@ export const MainPageBefore = () => {
   );
 
   const postRender = (post, index) => (
-    <div 
-      key={post.id} 
+    <div
+      key={post.id}
       ref={index === posts.length - 1 ? lastPostRef : null}
       onClick={() => navigate(`/viewpost/${post.id}`)}
       style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
@@ -207,18 +207,20 @@ export const MainPageBefore = () => {
             </div>
           </div>
         </div>
-        {post.imageUrl && (
-          <div className="post-img-wrapper">
+        <div className="post-img-wrapper">
+          {post.imageUrl ? (
             <img
               src={post.imageUrl}
               alt="post"
               className="post-img"
               onError={(e) => {
-                e.currentTarget.style.display = "none";
+                e.currentTarget.style.visibility = "hidden";
               }}
             />
-          </div>
-        )}
+          ) : (
+            <div style={{ width: "100%", height: "100%" }} />
+          )}
+        </div>
       </div>
     </div>
   );

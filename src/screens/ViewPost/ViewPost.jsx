@@ -6,7 +6,7 @@ import FollowButton from "../../components/FollowButton/FollowButton";
 import SendIcon from "../../icons/SendIcon/SendIcon";
 import dompurify from "dompurify";
 import { Categories } from "../../constants/categories";
-import api from "../../api/instance"; 
+import api from "../../api/instance";
 
 function getLabelByKey(key) {
   const category = Categories.find((c) => c.key === key);
@@ -29,10 +29,10 @@ function buildNestedComments(flatComments) {
       text: c.content,
       authorId: c.authorId, // 댓글 작성자의 ID
       authorProfileUrl: c.authorProfileUrl, // 댓글 작성자의 프로필 이미지 URL
-      isDeleted : c.isDeleted,
+      isDeleted: c.isDeleted,
       // createTime(예: "2025-06-03T05:00:00")을 "2025.06.03" 형태로 포맷
       date: c.createTime.slice(0, 10).replace(/-/g, "."),
-      replies: []
+      replies: [],
     };
   });
 
@@ -58,7 +58,7 @@ function buildNestedComments(flatComments) {
 const ViewPost = () => {
   const { postId } = useParams();
   const navigate = useNavigate();
-  
+
   // 스크립트를 활용하여 javascript와 HTML로 악성 코드를 웹 브라우저에 심어, 사용자 접속시 그 악성코드가 실행되는 것을 XSS, 보안을 위해 sanitize 추가
   const sanitizer = dompurify.sanitize;
 
@@ -82,7 +82,7 @@ const ViewPost = () => {
 
   // 현재 로그인한 사용자의 ID
   const myUserId = Number(localStorage.getItem("userId"));
-  
+
   // 팔로우 상태
   const [isFollowing, setIsFollowing] = useState(false);
   // 게시글 작성자 ID
@@ -142,7 +142,8 @@ const ViewPost = () => {
     }
     if (openMenuId !== null) {
       document.addEventListener("mousedown", handleClickOutside);
-      return () => document.removeEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [openMenuId]);
 
@@ -150,7 +151,10 @@ const ViewPost = () => {
   useEffect(() => {
     if (editCommentId === null) return;
     function handleClickOutside(e) {
-      if (editCommentInputRef.current && !editCommentInputRef.current.contains(e.target)) {
+      if (
+        editCommentInputRef.current &&
+        !editCommentInputRef.current.contains(e.target)
+      ) {
         setEditCommentId(null);
         setEditCommentValue("");
       }
@@ -163,7 +167,10 @@ const ViewPost = () => {
   useEffect(() => {
     if (editReplyId === null) return;
     function handleClickOutside(e) {
-      if (editReplyInputRef.current && !editReplyInputRef.current.contains(e.target)) {
+      if (
+        editReplyInputRef.current &&
+        !editReplyInputRef.current.contains(e.target)
+      ) {
         setEditReplyId(null);
         setEditReplyValue("");
       }
@@ -176,77 +183,69 @@ const ViewPost = () => {
   const [isReplySending, setIsReplySending] = useState(false);
 
   // 댓글 등록
-  const handleAddComment = async() => {
+  const handleAddComment = async () => {
     if (isSending) return;
     if (!commentValue.trim()) return;
     setIsSending(true);
     try {
       const token = localStorage.getItem("jwtToken");
       const payload = {
-        postId: Number(postId),       // 현재 보고 있는 글의 ID
-        parentCommentId: null,        // 루트 댓글이므로 null
+        postId: Number(postId), // 현재 보고 있는 글의 ID
+        parentCommentId: null, // 루트 댓글이므로 null
         content: commentValue.trim(), // 입력된 댓글 내용
       };
-  
+
       // 댓글 생성 API 호출
-      const response = await api.post(
-        "/blog-service/comments",
-        payload,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-  
+      const response = await api.post("/blog-service/comments", payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       setCommentValue("");
 
       // 생성 후 전체 댓글을 다시 로드해서 가장 최신 상태를 반영
-      const res2 = await api.get(
-        `/blog-service/comments/${postId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const res2 = await api.get(`/blog-service/comments/${postId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const nested = buildNestedComments(res2.data.data.commentList);
       setComments(nested);
-
     } catch (err) {
       console.error("댓글 생성 실패:", err);
-      const errMsg = err.response?.data?.message || "댓글 생성 중 오류가 발생했습니다.";
+      const errMsg =
+        err.response?.data?.message || "댓글 생성 중 오류가 발생했습니다.";
       alert(errMsg);
     } finally {
       setIsSending(false);
     }
   };
 
-
   // 답글 등록
-  const handleAddReply = async(commentId) => {
+  const handleAddReply = async (commentId) => {
     if (isReplySending) return;
     if (!replyValue.trim()) return;
     setIsReplySending(true);
     try {
       const token = localStorage.getItem("jwtToken");
       const payload = {
-        postId: Number(postId),             // 현재 보고 있는 게시글 ID
-        parentCommentId: commentId,         // 답글을 다는 부모 댓글 ID
-        content: replyValue.trim(),         // 입력된 답글 내용
+        postId: Number(postId), // 현재 보고 있는 게시글 ID
+        parentCommentId: commentId, // 답글을 다는 부모 댓글 ID
+        content: replyValue.trim(), // 입력된 답글 내용
       };
-  
+
       // 1) 답글 생성 API 호출
-      await api.post(
-        "/blog-service/comments",
-        payload,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-  
+      await api.post("/blog-service/comments", payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       setReplyValue("");
       setReplyTo(null);
-  
+
       // 2) 생성 후 전체 댓글을 다시 조회해서, 최신 상태의 중첩 구조를 반영
-      const res = await api.get(
-        `/blog-service/comments/${postId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const res = await api.get(`/blog-service/comments/${postId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const flatList = res.data.data.commentList;
       const nested = buildNestedComments(flatList);
       setComments(nested);
-  
     } catch (err) {
       console.error("답글 생성 실패:", err.response?.data ?? err);
       alert(err.response?.data?.message || "답글 생성 중 오류가 발생했습니다.");
@@ -255,18 +254,15 @@ const ViewPost = () => {
     }
   };
 
-
-
   // 댓글 조회
   useEffect(() => {
     const fetchComments = async () => {
       try {
         const token = localStorage.getItem("jwtToken");
         // "postId별 댓글 조회" API 호출
-        const res = await api.get(
-          `/blog-service/comments/${postId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        const res = await api.get(`/blog-service/comments/${postId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         const flatList = res.data.data.commentList;
         console.log("댓글 데이터:", flatList);
         const nested = buildNestedComments(flatList);
@@ -280,24 +276,22 @@ const ViewPost = () => {
   }, [postId]);
 
   // 댓글 삭제
-  const handleDeleteComment = async(commentId) => {
+  const handleDeleteComment = async (commentId) => {
     try {
       const token = localStorage.getItem("jwtToken");
       await api.delete(`/blog-service/comments/${commentId}`, {
         headers: {
-          Authorization: `Bearer ${token}` // 토큰 필요 시
-        }
+          Authorization: `Bearer ${token}`, // 토큰 필요 시
+        },
       });
-  
+
       // 2) 생성 후 전체 댓글을 다시 조회해서, 최신 상태의 중첩 구조를 반영
-      const res = await api.get(
-        `/blog-service/comments/${postId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const res = await api.get(`/blog-service/comments/${postId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const flatList = res.data.data.commentList;
       const nested = buildNestedComments(flatList);
       setComments(nested);
-
     } catch (error) {
       console.error("댓글 삭제 실패:", error);
       alert("댓글 삭제에 실패했습니다.");
@@ -305,24 +299,22 @@ const ViewPost = () => {
   };
 
   // 답글 삭제
-  const handleDeleteReply = async(commentId, replyId) => {
+  const handleDeleteReply = async (commentId, replyId) => {
     try {
       const token = localStorage.getItem("jwtToken");
       await api.delete(`/blog-service/comments/${replyId}`, {
         headers: {
-          Authorization: `Bearer ${token}` // 토큰 필요 시
-        }
+          Authorization: `Bearer ${token}`, // 토큰 필요 시
+        },
       });
-  
+
       // 2) 생성 후 전체 댓글을 다시 조회해서, 최신 상태의 중첩 구조를 반영
-      const res = await api.get(
-        `/blog-service/comments/${postId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const res = await api.get(`/blog-service/comments/${postId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const flatList = res.data.data.commentList;
       const nested = buildNestedComments(flatList);
       setComments(nested);
-
     } catch (error) {
       console.error("답글 삭제 실패:", error);
       alert("답글 삭제에 실패했습니다.");
@@ -331,7 +323,7 @@ const ViewPost = () => {
 
   // 댓글 수정 모드 진입
   const handleEditComment = (commentId) => {
-    const comment = comments.find(c => c.id === commentId);
+    const comment = comments.find((c) => c.id === commentId);
     setEditCommentId(commentId);
     setEditCommentValue(comment.text);
     setOpenMenuId(null);
@@ -339,31 +331,34 @@ const ViewPost = () => {
 
   // 답글 수정 모드 진입
   const handleEditReply = (commentId, replyId) => {
-    const comment = comments.find(c => c.id === commentId);
-    const reply = comment.replies.find(r => r.id === replyId);
+    const comment = comments.find((c) => c.id === commentId);
+    const reply = comment.replies.find((r) => r.id === replyId);
     setEditReplyId(replyId);
     setEditReplyValue(reply.text);
     setOpenMenuId(null);
   };
 
   // 댓글 수정 저장
-  const handleSaveEditComment = async(commentId) => {
+  const handleSaveEditComment = async (commentId) => {
     if (!editCommentValue.trim()) return;
     try {
       const token = localStorage.getItem("jwtToken");
-      await api.patch(`/blog-service/comments/${commentId}`, {
-        content: editCommentValue,
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`
+      await api.patch(
+        `/blog-service/comments/${commentId}`,
+        {
+          content: editCommentValue,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
-  
-       // 2) 생성 후 전체 댓글을 다시 조회해서, 최신 상태의 중첩 구조를 반영
-       const res = await api.get(
-        `/blog-service/comments/${postId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
       );
+
+      // 2) 생성 후 전체 댓글을 다시 조회해서, 최신 상태의 중첩 구조를 반영
+      const res = await api.get(`/blog-service/comments/${postId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const flatList = res.data.data.commentList;
       const nested = buildNestedComments(flatList);
       setComments(nested);
@@ -378,24 +373,26 @@ const ViewPost = () => {
   };
 
   // 답글 수정 저장
-  const handleSaveEditReply = async(commentId, replyId) => {
+  const handleSaveEditReply = async (commentId, replyId) => {
     if (!editReplyValue.trim()) return;
     try {
       const token = localStorage.getItem("jwtToken");
-      await api.patch(`/blog-service/comments/${replyId}`, {
-        content: editReplyValue,
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`
+      await api.patch(
+        `/blog-service/comments/${replyId}`,
+        {
+          content: editReplyValue,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
-  
-
-       // 2) 생성 후 전체 댓글을 다시 조회해서, 최신 상태의 중첩 구조를 반영
-       const res = await api.get(
-        `/blog-service/comments/${postId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
       );
+
+      // 2) 생성 후 전체 댓글을 다시 조회해서, 최신 상태의 중첩 구조를 반영
+      const res = await api.get(`/blog-service/comments/${postId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const flatList = res.data.data.commentList;
       const nested = buildNestedComments(flatList);
       setComments(nested);
@@ -424,8 +421,6 @@ const ViewPost = () => {
         const resComment = await api.get(`/blog-service/comments/${postId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        
-
       } catch (err) {
         console.error("상세 포스트 불러오기 실패:", err);
         alert("게시글을 불러오는 데 실패했습니다.");
@@ -437,7 +432,6 @@ const ViewPost = () => {
 
     fetchPostDetail();
   }, [postId]);
-  
 
   // --- 포스트 조회 로딩 중일 때 처리 ---
   if (loadingPost) {
@@ -463,7 +457,6 @@ const ViewPost = () => {
   const datePart = postData.createdAt.split("T")[0].replace(/-/g, ".");
   const formattedDate = datePart;
 
-
   // 게시글 삭제 API 호출 함수
   const handleDeletePost = async () => {
     try {
@@ -485,65 +478,80 @@ const ViewPost = () => {
       <Navbar2 />
       <div className="view-post-container" style={{ marginTop: "100px" }}>
         {/* 내용 외 정보 */}
-      <div className="view-post-header">
-        <h1 className="view-post-title">{postData.title}</h1>
+        <div className="view-post-header">
+          <h1 className="view-post-title">{postData.title}</h1>
           <div className="view-post-meta-line">
-            <div className="view-post-meta"
+            <div
+              className="view-post-meta"
               onClick={() => navigate(`/blog/${postData.authorId}`)}
               style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
             >
               <div className="post-profile-wrapper">
-                        <img 
-          src={postData.profileUrl || "/img/basic_profile_photo.png"} 
-          alt="post" 
-          className="post-profile-img"
-          
-          onError={(e) => {
-            e.currentTarget.src = "/img/basic_profile_photo.png";
-          }}
-        />
+                <img
+                  src={postData.profileUrl || "/img/basic_profile_photo.png"}
+                  alt="post"
+                  className="post-profile-img"
+                  onError={(e) => {
+                    e.currentTarget.src = "/img/basic_profile_photo.png";
+                  }}
+                />
               </div>
-              <div className="view-post-meta-text">{postData.authorNickname}</div>
+              <div className="view-post-meta-text">
+                {postData.authorNickname}
+              </div>
               <div className="view-post-meta-text">{formattedDate}</div>
             </div>
-            <FollowButton 
+            <FollowButton
               isFollowing={isFollowing}
               onClick={handleFollow}
               disabled={authorId === myUserId}
             />
           </div>
           <div className="view-post-tags-line">
-            <span className="view-post-category">{getLabelByKey(postData.categoryCode)}</span>
+            <span className="view-post-category">
+              {getLabelByKey(postData.categoryCode)}
+            </span>
             {postData.tagNameList && postData.tagNameList.length > 0 && (
               <span className="view-post-tags">
                 {postData.tagNameList.map((tag) => `#${tag}`).join(", ")}
               </span>
             )}
-          
+
             {/* 포스트 메뉴 (본인이 작성한 포스트인 경우만) */}
             {postData.authorId == myUserId && (
               <div className="view-post-menu-wrapper">
                 <div
                   className="view-post-menu"
-                  onClick={() => setOpenMenuId(openMenuId === `reply-${postData.postId}` ? null : `reply-${postData.postId}`)}
+                  onClick={() =>
+                    setOpenMenuId(
+                      openMenuId === `reply-${postData.postId}`
+                        ? null
+                        : `reply-${postData.postId}`
+                    )
+                  }
                 >
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                    <circle cx="3" cy="8" r="1.5"/>
-                    <circle cx="8" cy="8" r="1.5"/>
-                    <circle cx="13" cy="8" r="1.5"/>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    fill="currentColor"
+                  >
+                    <circle cx="3" cy="8" r="1.5" />
+                    <circle cx="8" cy="8" r="1.5" />
+                    <circle cx="13" cy="8" r="1.5" />
                   </svg>
                 </div>
                 {openMenuId === `reply-${postData.postId}` && (
                   <div className="view-post-menu-popup" ref={menuRef}>
-                    <button 
+                    <button
                       className="view-post-menu-item"
                       onClick={() => {
                         navigate(`/write/${postId}`);
-                      }}                    
-                      >
+                      }}
+                    >
                       수정하기
                     </button>
-                    <button 
+                    <button
                       className="view-post-menu-item"
                       onClick={() => {
                         // ① 사용자 확인 대화상자 표시
@@ -565,9 +573,11 @@ const ViewPost = () => {
         {/* 본문 카드 */}
         <div className="view-post-card">
           <div className="view-post-content">
-            <div 
+            <div
               className="view-post-body"
-              dangerouslySetInnerHTML={{ __html: sanitizer(String(postData.content)) }}
+              dangerouslySetInnerHTML={{
+                __html: sanitizer(String(postData.content)),
+              }}
             />
           </div>
 
@@ -579,8 +589,8 @@ const ViewPost = () => {
                 placeholder="댓글 작성"
                 className="comment-input"
                 value={commentValue}
-                onChange={e => setCommentValue(e.target.value)}
-                onKeyDown={e => {
+                onChange={(e) => setCommentValue(e.target.value)}
+                onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
                     handleAddComment();
@@ -591,7 +601,11 @@ const ViewPost = () => {
                 style={{ resize: "none" }}
                 disabled={isSending}
               />
-              <button className="comment-send-btn" onClick={handleAddComment} disabled={isSending}>
+              <button
+                className="comment-send-btn"
+                onClick={handleAddComment}
+                disabled={isSending}
+              >
                 <SendIcon />
               </button>
             </div>
@@ -600,34 +614,50 @@ const ViewPost = () => {
             <div className="comment-list">
               {comments.map((comment) => (
                 <div key={comment.id} className="comment-item">
-                  <div className="comment-profile-wrapper"
-                  onClick={() => navigate(`/blog/${comment.authorId}`)}
-                  style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
-                  >
-                            <img 
-          src={comment.authorProfileUrl || "/img/basic_profile_photo.png"} 
-          alt="comment" 
-          className="comment-profile-img"
-          onError={(e) => {
-            e.currentTarget.src = "/img/basic_profile_photo.png";
-          }}
-        />
-                  </div>
-                  <div className="comment-content-block">
-                    <div className="comment-author"
+                  <div
+                    className="comment-profile-wrapper"
                     onClick={() => navigate(`/blog/${comment.authorId}`)}
                     style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
-                    >{comment.author}</div>
+                  >
+                    <img
+                      src={
+                        comment.authorProfileUrl ||
+                        "/img/basic_profile_photo.png"
+                      }
+                      alt="comment"
+                      className="comment-profile-img"
+                      onError={(e) => {
+                        e.currentTarget.src = "/img/basic_profile_photo.png";
+                      }}
+                    />
+                  </div>
+                  <div className="comment-content-block">
+                    <div
+                      className="comment-author"
+                      onClick={() => navigate(`/blog/${comment.authorId}`)}
+                      style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
+                    >
+                      {comment.author}
+                    </div>
                     {editCommentId === comment.id ? (
-                      <div className="comment-edit-wrapper" ref={editCommentInputRef}>
+                      <div
+                        className="comment-edit-wrapper"
+                        ref={editCommentInputRef}
+                      >
                         <input
                           className="comment-input"
                           value={editCommentValue}
-                          onChange={e => setEditCommentValue(e.target.value)}
-                          onKeyDown={e => { if (e.key === "Enter") handleSaveEditComment(comment.id); }}
+                          onChange={(e) => setEditCommentValue(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter")
+                              handleSaveEditComment(comment.id);
+                          }}
                           autoFocus
                         />
-                        <button className="comment-save-btn-inside" onClick={() => handleSaveEditComment(comment.id)}>
+                        <button
+                          className="comment-save-btn-inside"
+                          onClick={() => handleSaveEditComment(comment.id)}
+                        >
                           저장
                         </button>
                       </div>
@@ -639,8 +669,16 @@ const ViewPost = () => {
                       {!comment.isDeleted && (
                         <span
                           className="reply-btn"
-                          style={{ cursor: "pointer", color: "#6c6c8a", marginLeft: 8 }}
-                          onClick={() => setReplyTo(replyTo === comment.id ? null : comment.id)}
+                          style={{
+                            cursor: "pointer",
+                            color: "#6c6c8a",
+                            marginLeft: 8,
+                          }}
+                          onClick={() =>
+                            setReplyTo(
+                              replyTo === comment.id ? null : comment.id
+                            )
+                          }
                         >
                           reply
                         </span>
@@ -653,8 +691,8 @@ const ViewPost = () => {
                           placeholder="답글 작성"
                           className="comment-input"
                           value={replyValue}
-                          onChange={e => setReplyValue(e.target.value)}
-                          onKeyDown={e => {
+                          onChange={(e) => setReplyValue(e.target.value)}
+                          onKeyDown={(e) => {
                             if (e.key === "Enter" && !e.shiftKey) {
                               e.preventDefault();
                               handleAddReply(comment.id);
@@ -665,7 +703,11 @@ const ViewPost = () => {
                           style={{ resize: "none" }}
                           disabled={isReplySending}
                         />
-                        <button className="comment-send-btn" onClick={() => handleAddReply(comment.id)} disabled={isReplySending}>
+                        <button
+                          className="comment-send-btn"
+                          onClick={() => handleAddReply(comment.id)}
+                          disabled={isReplySending}
+                        >
                           <SendIcon />
                         </button>
                       </div>
@@ -673,36 +715,64 @@ const ViewPost = () => {
                     {/* 답글 목록 */}
                     {comment.replies && comment.replies.length > 0 && (
                       <div className="comment-replies-list">
-                        {comment.replies.map(reply => (
+                        {comment.replies.map((reply) => (
                           <div key={reply.id} className="comment-reply-item">
-                            <div className="comment-profile-wrapper"
-                            onClick={() => navigate(`/blog/${reply.authorId}`)}
-                            style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
+                            <div
+                              className="comment-profile-wrapper"
+                              onClick={() =>
+                                navigate(`/blog/${reply.authorId}`)
+                              }
+                              style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
                             >
-                                          <img 
-              src={reply.authorProfileUrl || "/img/basic_profile_photo.png"} 
-              alt="reply" 
-              className="comment-profile-img"
-              onError={(e) => {
-                e.currentTarget.src = "/img/basic_profile_photo.png";
-              }}
-            />
+                              <img
+                                src={
+                                  reply.authorProfileUrl ||
+                                  "/img/basic_profile_photo.png"
+                                }
+                                alt="reply"
+                                className="comment-profile-img"
+                                onError={(e) => {
+                                  e.currentTarget.src =
+                                    "/img/basic_profile_photo.png";
+                                }}
+                              />
                             </div>
                             <div className="reply-content">
-                              <div className="comment-author"
-                              onClick={() => navigate(`/blog/${reply.authorId}`)}
-                              style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
-                              >{reply.author}</div>
+                              <div
+                                className="comment-author"
+                                onClick={() =>
+                                  navigate(`/blog/${reply.authorId}`)
+                                }
+                                style={{ cursor: "pointer" }} // 마우스 포인터가 버튼처럼 바뀌게
+                              >
+                                {reply.author}
+                              </div>
                               {editReplyId === reply.id ? (
-                                <div className="comment-edit-wrapper" ref={editReplyInputRef}>
+                                <div
+                                  className="comment-edit-wrapper"
+                                  ref={editReplyInputRef}
+                                >
                                   <input
                                     className="comment-input"
                                     value={editReplyValue}
-                                    onChange={e => setEditReplyValue(e.target.value)}
-                                    onKeyDown={e => { if (e.key === "Enter") handleSaveEditReply(comment.id, reply.id); }}
+                                    onChange={(e) =>
+                                      setEditReplyValue(e.target.value)
+                                    }
+                                    onKeyDown={(e) => {
+                                      if (e.key === "Enter")
+                                        handleSaveEditReply(
+                                          comment.id,
+                                          reply.id
+                                        );
+                                    }}
                                     autoFocus
                                   />
-                                  <button className="comment-save-btn-inside" onClick={() => handleSaveEditReply(comment.id, reply.id)}>
+                                  <button
+                                    className="comment-save-btn-inside"
+                                    onClick={() =>
+                                      handleSaveEditReply(comment.id, reply.id)
+                                    }
+                                  >
                                     저장
                                   </button>
                                 </div>
@@ -718,25 +788,43 @@ const ViewPost = () => {
                               <div className="comment-menu-wrapper">
                                 <div
                                   className="comment-menu"
-                                  onClick={() => setOpenMenuId(openMenuId === `reply-${reply.id}` ? null : `reply-${reply.id}`)}
+                                  onClick={() =>
+                                    setOpenMenuId(
+                                      openMenuId === `reply-${reply.id}`
+                                        ? null
+                                        : `reply-${reply.id}`
+                                    )
+                                  }
                                 >
-                                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                                    <circle cx="3" cy="8" r="1.5"/>
-                                    <circle cx="8" cy="8" r="1.5"/>
-                                    <circle cx="13" cy="8" r="1.5"/>
+                                  <svg
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 16 16"
+                                    fill="currentColor"
+                                  >
+                                    <circle cx="3" cy="8" r="1.5" />
+                                    <circle cx="8" cy="8" r="1.5" />
+                                    <circle cx="13" cy="8" r="1.5" />
                                   </svg>
                                 </div>
                                 {openMenuId === `reply-${reply.id}` && (
-                                  <div className="comment-menu-popup" ref={menuRef}>
-                                    <button 
+                                  <div
+                                    className="comment-menu-popup"
+                                    ref={menuRef}
+                                  >
+                                    <button
                                       className="comment-menu-item"
-                                      onClick={() => handleEditReply(comment.id, reply.id)}
+                                      onClick={() =>
+                                        handleEditReply(comment.id, reply.id)
+                                      }
                                     >
                                       수정하기
                                     </button>
-                                    <button 
+                                    <button
                                       className="comment-menu-item"
-                                      onClick={() => handleDeleteReply(comment.id, reply.id)}
+                                      onClick={() =>
+                                        handleDeleteReply(comment.id, reply.id)
+                                      }
                                     >
                                       삭제하기
                                     </button>
@@ -754,23 +842,32 @@ const ViewPost = () => {
                     <div className="comment-menu-wrapper">
                       <div
                         className="comment-menu"
-                        onClick={() => setOpenMenuId(openMenuId === comment.id ? null : comment.id)}
+                        onClick={() =>
+                          setOpenMenuId(
+                            openMenuId === comment.id ? null : comment.id
+                          )
+                        }
                       >
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                          <circle cx="3" cy="8" r="1.5"/>
-                          <circle cx="8" cy="8" r="1.5"/>
-                          <circle cx="13" cy="8" r="1.5"/>
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 16 16"
+                          fill="currentColor"
+                        >
+                          <circle cx="3" cy="8" r="1.5" />
+                          <circle cx="8" cy="8" r="1.5" />
+                          <circle cx="13" cy="8" r="1.5" />
                         </svg>
                       </div>
                       {openMenuId === comment.id && (
                         <div className="comment-menu-popup" ref={menuRef}>
-                          <button 
+                          <button
                             className="comment-menu-item"
                             onClick={() => handleEditComment(comment.id)}
                           >
                             수정하기
                           </button>
-                          <button 
+                          <button
                             className="comment-menu-item"
                             onClick={() => handleDeleteComment(comment.id)}
                           >

@@ -95,10 +95,6 @@ const AnimatedRoutes = () => {
         <Route path="/myblog" element={<MyBlog />} />
         <Route path="/blog/:authorId" element={<MyBlog />} />
 
-
-        {/* 타인 블로그: URL에 userId를 붙여서 접근 */}
-        {/* <Route path="/blog/:userId" element={<Blog />} /> */}
-
         {/* 게시글 상세 보기 */}
         <Route path="/viewpost" element={<ViewPost />} />
         <Route path="/viewpost/:postId" element={<ViewPost />} />
@@ -111,7 +107,10 @@ const AnimatedRoutes = () => {
         <Route path="/community" element={<Community />} />
         <Route path="/community/write" element={<CommunityWrite />} />
         <Route path="/community/write/:postId" element={<CommunityWrite />} />
-        <Route path="/community/viewpost/:postId" element={<CommunityViewPost />} />
+        <Route
+          path="/community/viewpost/:postId"
+          element={<CommunityViewPost />}
+        />
 
         {/* 포트폴리오 */}
         <Route path="/portfolio" element={<PortfolioScreen />} />
