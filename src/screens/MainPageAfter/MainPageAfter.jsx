@@ -112,8 +112,6 @@ export const MainPageAfter = () => {
           url = "/blog-service/posts/all";
           params.postType = "POST";
       }
-      if (t === "Feed") url = "/blog-service/posts/following";
-      if (t === "Recommend") url = "/blog-service/posts/recommend";
 
       const response = await api.get(url, {
         headers: { Authorization: `Bearer ${token}` },
@@ -156,14 +154,14 @@ export const MainPageAfter = () => {
     setPosts([]);
     setPage(0);
     setHasMore(true);
-    fetchPosts(0, selectedTab, selectedCategory);
-  }, [selectedTab, selectedCategory]);
+    fetchPosts(0, tab, selectedCategory);
+  }, [tab, selectedCategory]);
 
   useEffect(() => {
     if (page !== 0 && hasMore) {
-      fetchPosts(page, selectedTab, selectedCategory);
+      fetchPosts(page, tab, selectedCategory);
     }
-  }, [page, hasMore, tab]);
+  }, [page, hasMore, tab, selectedCategory]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 0);
@@ -289,7 +287,7 @@ export const MainPageAfter = () => {
             </div>
 
             {/* 카테고리 탭일 때만 드롭다운 노출 */}
-            {selectedTab === "Category" && (
+            {tab === "Category" && (
               <div style={{ margin: "16px 0" }}>
                 <select
                   value={selectedCategory || ""}
