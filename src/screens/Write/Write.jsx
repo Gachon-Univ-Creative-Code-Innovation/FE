@@ -10,7 +10,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import Component18 from "../../icons/GoBackIcon/GoBackIcon";
 import CloseIcon from "../../icons/CloseIcon/CloseIcon";
-import { SpellCheckComponent } from "../../components/SpellCheckComponent/SpellCheckComponent";
+
 
 import { PostComponent } from "../../components/PostComponent/PostComponent";
 import { PublishComponent } from "../../components/PublishComponent/PublishComponent";
@@ -556,9 +556,8 @@ export default function Write() {
           )}
         </div>
 
-        {/* 버튼 그룹 (맞춤형 컴포넌트) */}
+        {/* 버튼 그룹 */}
         <div className="editor-actions">
-          <SpellCheckComponent className={() => "spell-check-container"} />
           <div className="editor-button-group">
             <PostComponent onClick={handlePost} />
           </div>
