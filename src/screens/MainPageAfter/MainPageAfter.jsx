@@ -16,7 +16,19 @@ import "./MainPageAfter.css";
 import api from "../../api/instance";
 import SearchModal from "../../components/SearchModal/SearchModal";
 
-
+// 블로그에서 사용하는 카테고리만 (스터디, 공모전 제외)
+const BLOG_CATEGORY_LIST = [
+  { code: 1, label: "개발" },
+  { code: 2, label: "클라우드 & 인프라" },
+  { code: 3, label: "AI" },
+  { code: 4, label: "데이터베이스" },
+  { code: 5, label: "CS 지식" },
+  { code: 6, label: "프로젝트" },
+  { code: 7, label: "문제해결(트러블 슈팅)" },
+  { code: 8, label: "성장 기록" },
+  { code: 9, label: "IT 뉴스" },
+  { code: 10, label: "기타" },
+];
 
 // 파도타기 효과 컴포넌트
 const WaveText = ({ text, className }) => {
@@ -66,18 +78,19 @@ export const MainPageAfter = () => {
   const [selectedTab, setSelectedTab] = useState("Hot");
   const [scrolled, setScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false); //추가
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const observer = useRef();
   const navigate = useNavigate();
 
   const POSTS_PER_PAGE = 10;
   const MAX_PAGES = 5;
 
-  const fetchPosts = async (pageNum, tab) => {
+  const fetchPosts = async (pageNum, tab, categoryId) => {
     try {
       const token = localStorage.getItem("jwtToken");
       let url = "";
       let params = { page: pageNum };
-      console.log("Fetching posts for tab:", tab, "Page:", pageNum);
+      console.log("Fetching posts for tab:", tab, "Page:", pageNum, "Category:", categoryId);
 
       switch (tab) {
         case "Hot":
@@ -91,7 +104,7 @@ export const MainPageAfter = () => {
           break;
 
         case "Category":
-          params.categoryId = 1; // 임시로 1번 카테고리로 설정
+          params.categoryId = categoryId || 1; // 선택된 카테고리, 없으면 1번
           url = `/blog-service/posts/category/${params.categoryId}`;
           break;
 
@@ -135,11 +148,8 @@ export const MainPageAfter = () => {
         };
       });
 
-      // 페이지 0은 완전히 초기 상태이므로 덮어쓰기
-      // 그 외 페이지는 기존 포스트 뒤에 붙이기
       setPosts((prev) => (pageNum === 0 ? newPosts : [...prev, ...newPosts]));
 
-      // 마지막 페이지인지 확인
       if (getPostList.isLast || newPosts.length < POSTS_PER_PAGE) {
         setHasMore(false);
       }
@@ -154,14 +164,14 @@ export const MainPageAfter = () => {
     setPosts([]);
     setPage(0);
     setHasMore(true);
-    fetchPosts(0, selectedTab);
-  }, [selectedTab]);
+    fetchPosts(0, selectedTab, selectedCategory);
+  }, [selectedTab, selectedCategory]);
 
   // 2) page가 변경될 때마다(탭 변경 시 첫 페이지 로드는 위 useEffect에서,
   //    이후 무한 스크롤로 page가 +1 될 때마다 이쪽에서 추가 로드)
   useEffect(() => {
     if (page !== 0 && hasMore) {
-      fetchPosts(page, selectedTab);
+      fetchPosts(page, selectedTab, selectedCategory);
     }
   }, [page]);
 
@@ -307,6 +317,22 @@ export const MainPageAfter = () => {
                 onClick={() => setSelectedTab("Recommend")}
               />
             </div>
+
+            {/* 카테고리 탭일 때만 드롭다운 노출 */}
+            {selectedTab === "Category" && (
+              <div style={{ margin: "16px 0" }}>
+                <select
+                  value={selectedCategory || ""}
+                  onChange={e => setSelectedCategory(e.target.value ? Number(e.target.value) : null)}
+                  style={{ fontSize: 16, padding: 6, borderRadius: 6 }}
+                >
+                  <option value="">카테고리 선택</option>
+                  {BLOG_CATEGORY_LIST.map(cat => (
+                    <option key={cat.code} value={cat.code}>{cat.label}</option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             <div className="post-list">
               {posts.map((post, index) => postRender(post, index))}
