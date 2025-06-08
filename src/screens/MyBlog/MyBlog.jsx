@@ -101,7 +101,7 @@ export const MyBlog = () => {
           setGithubUrl(d.githubUrl || "");
         })
         .catch((err) => console.error("내 정보 조회 에러:", err));
-        api
+      api
       .get(`/user-service/follow/followers/${userId}`, {
       })
       .then((res) => setFollowerCount((res.data.data || []).length))
