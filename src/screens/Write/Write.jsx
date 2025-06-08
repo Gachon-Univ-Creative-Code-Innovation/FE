@@ -227,17 +227,22 @@ export default function Write() {
   };
 
   const fetchSummary = async (content) => {
-    const res = await fetch(
-      "http://localhost:8500/api/summarize-service/summarize",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ post_id: 0, context: content }),
-      }
-    );
-    const json = await res.json();
-    if (json.status !== 200) {
-      throw new Error(json.message);
+    let res, json;
+    try {
+      res = await fetch(
+        "/summarize-service/summarize",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ post_id: 0, context: content }),
+        }
+      );
+      json = await res.json();
+    } catch (err) {
+      throw new Error("서버에서 올바른 JSON 응답을 받지 못했습니다.");
+    }
+    if (!json || json.status !== 200) {
+      throw new Error(json?.message || "요약 생성에 실패했습니다.");
     }
     return json.data;
   };
@@ -413,8 +418,7 @@ export default function Write() {
       }, 0);
       try {
         const response = await api.post(
-          "http://localhost:8000/api/github-service/tag",
-          // http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/github-service/tag
+          "/github-service/tag",
           { git_url: gitUrl },
           { headers: { Accept: "application/json" } }
         );
@@ -488,9 +492,7 @@ export default function Write() {
                 type="text"
                 placeholder="깃허브 저장소 URL을 입력하세요"
                 value={githubUrl}
-                onChange={(e) => setGithubUrl(e
-
-              )}
+                onChange={(e) => setGithubUrl(e.target.value)}
                 onKeyDown={handleGithubUrlKeyDown}
                 className="editor-github-url-input editor-github-url-input-animated"
               />
