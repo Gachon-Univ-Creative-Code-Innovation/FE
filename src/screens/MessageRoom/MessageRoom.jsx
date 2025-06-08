@@ -217,7 +217,14 @@ export const MessageRoom = () => {
             profile_url: targetUserInfo.targetProfileUrl
           });
         } else {
-          setTargetUser({ nickname: "" , profile_url: ""});
+          // rooms에 없으면 직접 유저 정보 fetch
+          const userRes = await api.get(`/user-service/details/${id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setTargetUser({
+            nickname: userRes.data.data.nickname,
+            profile_url: userRes.data.data.profileUrl
+          });
         }
       } catch (error) {
         setTargetUser({ nickname: "" , profile_url: ""});
