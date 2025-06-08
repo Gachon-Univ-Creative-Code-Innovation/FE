@@ -47,6 +47,7 @@ export default function Write() {
   const fileInputRef = useRef(null);
   const textAreaRef = useRef(null);
   const popupRef = useRef(null);
+  const cursorPosRef = useRef(null); // 커서 위치 저장용
 
   // postId가 있으면 수정 모드
   useEffect(() => {
@@ -217,6 +218,13 @@ export default function Write() {
     if (isSummaryPopupOpen) setFadeOut(false);
   }, [isSummaryPopupOpen]);
 
+  // summaryText가 바뀔 때 커서 위치 복원
+  useEffect(() => {
+    if (textAreaRef.current && cursorPosRef.current !== null) {
+      textAreaRef.current.setSelectionRange(cursorPosRef.current, cursorPosRef.current);
+    }
+  }, [summaryText]);
+
   const getMissingFields = () => {
     const miss = [];
     if (!title.trim()) miss.push("제목");
@@ -227,24 +235,20 @@ export default function Write() {
   };
 
   const fetchSummary = async (content) => {
-    let res, json;
     try {
-      res = await fetch(
+      const response = await api.post(
         "/summarize-service/summarize",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ post_id: 0, context: content }),
-        }
+        { post_id: 0, context: content },
+        { headers: { "Content-Type": "application/json" } }
       );
-      json = await res.json();
+      const json = response.data;
+      if (!json || json.status !== 200) {
+        throw new Error(json?.message || "요약 생성에 실패했습니다.");
+      }
+      return json.data;
     } catch (err) {
       throw new Error("서버에서 올바른 JSON 응답을 받지 못했습니다.");
     }
-    if (!json || json.status !== 200) {
-      throw new Error(json?.message || "요약 생성에 실패했습니다.");
-    }
-    return json.data;
   };
 
 
@@ -338,7 +342,6 @@ export default function Write() {
 
     //치환된 HTML 문자열을 다시 얻기
     const updatedHtml = doc.body.innerHTML;
-    console.log("업데이트된 HTML:", updatedHtml);
 
     const tagNameList = tags
       .split(",")
@@ -433,6 +436,12 @@ export default function Write() {
         alert("깃허브 태그 추출에 실패했습니다.");
       }
     }
+  };
+
+  // textarea의 onChange에서 사용할 핸들러 정의
+  const handleSummaryChange = (e) => {
+    setSummaryText(e.target.value);
+    cursorPosRef.current = e.target.selectionStart;
   };
 
   // =============================================================================
@@ -581,12 +590,11 @@ export default function Write() {
               <textarea
                 ref={textAreaRef}
                 value={summaryText}
-                onChange={(e) => setSummaryText(e.target.value)}
+                onChange={handleSummaryChange}
                 className="summary-textarea"
                 style={{
                   height:
-                    Math.min(80 + summaryText.split("\n").length * 20, 450) +
-                    "px",
+                    Math.min(80 + summaryText.split("\n").length * 20, 450) + "px",
                   overflowY:
                     summaryText.split("\n").length > 10 ? "auto" : "hidden",
                 }}
