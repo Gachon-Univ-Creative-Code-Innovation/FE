@@ -1,3 +1,4 @@
+// src/screens/MyBlog/MyBlog.jsx
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import GoGitHub from "../../components/GoGitHub/GoGitHub";
@@ -64,12 +65,12 @@ export const MyBlog = () => {
   useEffect(() => {
     if (!jwtToken) return navigate("/login");
 
+    const headers = { Authorization: jwtToken };
+
     if (authorId == null) {
       // 내 프로필 조회
       api
-        .get("/user-service/user/patch", {
-          headers: { Authorization: jwtToken },
-        })
+        .get("/user-service/user/patch", { headers })
         .then((res) => {
           const d = res.data.data || {};
           setNickname(d.nickname || "");
@@ -79,43 +80,33 @@ export const MyBlog = () => {
         .catch((err) => console.error("내 정보 조회 에러:", err));
 
       api
-        .get("/user-service/follow/followers", {
-          headers: { Authorization: jwtToken },
-        })
+        .get("/user-service/follow/followers", { headers })
         .then((res) => setFollowerCount((res.data.data || []).length))
         .catch((err) => console.error("팔로워 조회 에러:", err));
 
       api
-        .get("/user-service/follow/followees", {
-          headers: { Authorization: jwtToken },
-        })
+        .get("/user-service/follow/followees", { headers })
         .then((res) => setFollowingCount((res.data.data || []).length))
         .catch((err) => console.error("팔로잉 조회 에러:", err));
     } else {
       // 다른 사용자 프로필 조회
       api
-        .get(`/user-service/details/${authorId}`, {
-          headers: { Authorization: jwtToken },
-        })
+        .get(`/user-service/details/${authorId}`, { headers })
         .then((res) => {
           const d = res.data.data || {};
           setNickname(d.nickname || "");
           setProfileUrl(d.profileUrl || "");
           setGithubUrl(d.githubUrl || "");
         })
-        .catch((err) => console.error("내 정보 조회 에러:", err));
+        .catch((err) => console.error("사용자 정보 조회 에러:", err));
 
       api
-        .get(`/user-service/follow/followers/${authorId}`, {
-          headers: { Authorization: jwtToken },
-        })
+        .get(`/user-service/follow/followers/${authorId}`, { headers })
         .then((res) => setFollowerCount((res.data.data || []).length))
         .catch((err) => console.error("팔로워 조회 에러:", err));
 
       api
-        .get(`/user-service/follow/followees/${authorId}`, {
-          headers: { Authorization: jwtToken },
-        })
+        .get(`/user-service/follow/followees/${authorId}`, { headers })
         .then((res) => setFollowingCount((res.data.data || []).length))
         .catch((err) => console.error("팔로잉 조회 에러:", err));
     }
@@ -156,6 +147,10 @@ export const MyBlog = () => {
     },
     [loading, hasMore]
   );
+
+  // 날짜 포맷 헬퍼
+  const formatDate = (iso) =>
+    iso ? iso.split("T")[0].replace(/-/g, ".") : "날짜 없음";
 
   return (
     <PageTransitionWrapper>
@@ -247,7 +242,7 @@ export const MyBlog = () => {
                         <p className="myblog-post-snippet">{post.title}</p>
                         <div className="myblog-post-meta">
                           <div className="myblog-post-date">
-                            {post.createdAt}
+                            {formatDate(post.createdAt)}
                           </div>
                           <div className="myblog-post-comment">
                             <CommentIcon2 className="myblog-comment-icon" />
