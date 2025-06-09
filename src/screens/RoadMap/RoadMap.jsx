@@ -8,7 +8,7 @@ import RoadmapPopup from "../ShowRoadMap/ShowRoadMap";
 import { Canvas } from "@react-three/fiber";
 import Navbar2 from "../../components/Navbar2/Navbar2";
 import "./RoadMap.css";
-import api from "../../api/local-instance";
+import api from "../../api/instance";
 
 
 const AnalysisResult = ({ userName, roadmapName, svgText }) => {
@@ -84,7 +84,7 @@ export const RoadMap = () => {
   useEffect(() => {
     const fetcRecommended = async () => {
       try {
-        const apiUrl = "http://localhost:8080/api/roadmap/ai-recommend";
+        const apiUrl = "/roadmap/ai-recommend";
         console.log("로드맵 API 호출 시작: ", apiUrl);
         const response = await api.post(
         apiUrl,
@@ -118,7 +118,7 @@ export const RoadMap = () => {
 
     const fetchRoadmaps = async () => {
       try {
-        const apiUrl = "http://localhost:8080/api/roadmap";
+        const apiUrl = "/roadmap";
         console.log("로드맵 API 호출 시작: ", apiUrl);
         const response = await api.get(
           apiUrl, 
