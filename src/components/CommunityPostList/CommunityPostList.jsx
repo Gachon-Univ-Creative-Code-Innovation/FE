@@ -15,34 +15,29 @@ const formatDate = (isoString) => {
   return isoString.split("T")[0].replace(/-/g, ".");
 };
 
-export const CommunityPostList = ({ sortBy, category }) => {
+export const CommunityPostList = ({ posts: propPosts, sortBy, categoryId }) => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
+    console.log("propPosts", propPosts);
+    if (propPosts !== undefined) {
+      setPosts(propPosts);
+      setTotalPages(1); // 검색 결과는 페이지네이션 1페이지로 고정
+      setPage(0); // 검색 시 페이지도 0으로 초기화
+      return;
+    }
     const fetchPosts = async () => {
       try {
-        const token = localStorage.getItem("jwtToken");
         let url = "";
-        const params = { page, size: ITEMS_PER_PAGE };
-
-        if (category === "전체") {
-          url = `/blog-service/posts/all`;
-          params.postType = POST_TYPE;
+        if (categoryId === null || categoryId === undefined) {
+          url = `/blog-service/posts/all?page=${page}&postType=MATCHING`;
         } else {
-          const found = MatchingCategories.find(
-            (cat) => cat.label === category
-          );
-          const key = found ? found.key : null;
-          url = `/blog-service/posts/matching/category/${key}`;
+          url = `/blog-service/posts/matching/category/${categoryId}?page=${page}`;
         }
-
-        const res = await api.get(url, {
-          headers: { Authorization: `Bearer ${token}` },
-          params,
-        });
+        const res = await api.get(url);
         const data = res.data.data;
         setPosts(data.postList);
         setTotalPages(data.totalPages);
@@ -50,9 +45,8 @@ export const CommunityPostList = ({ sortBy, category }) => {
         console.error("게시글 목록 조회 실패:", error);
       }
     };
-
     fetchPosts();
-  }, [category, page]);
+  }, [categoryId, page, propPosts]);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 0 && newPage < totalPages) {
@@ -60,42 +54,49 @@ export const CommunityPostList = ({ sortBy, category }) => {
     }
   };
 
+  console.log("posts", posts);
   return (
     <div className="communitypost-list">
       <div className="communitypost-frame-2">
-        {posts.map((post) => (
-          <div
-            key={post.postId}
-            className="communitypost-frame-3"
-            style={{ cursor: "pointer" }}
-            onClick={() => navigate(`/community/viewpost/${post.postId}`)}
-          >
-            <div className="communitypost-thumbnail-wrapper">
-              <img
-                src={post.thumbnail || "/img/basic_photo.png"}
-                alt="post"
-                className="communitypost-thumbnail-img"
-                onError={(e) => {
-                  e.currentTarget.src = "/img/basic_photo.png";
-                }}
-              />
-            </div>
-            <div className="communitypost-frame-4">
-              <p className="communitypost-text-5">{post.title}</p>
-              <div className="communitypost-frame-5">
-                <div className="communitypost-text-3">
-                  {formatDate(post.createdAt)}
-                </div>
-                <div className="communitypost-comment">
-                  <CommentIcon className="communitypost-comment-icon" />
-                  <div className="communitypost-text-4">
-                    {post.commentCount}
+        {(posts && posts.length > 0) ? (
+          posts.map((post) => (
+            <div
+              key={post.postId}
+              className="communitypost-frame-3"
+              style={{ cursor: "pointer" }}
+              onClick={() => navigate(`/community/viewpost/${post.postId}`)}
+            >
+              <div className="communitypost-thumbnail-wrapper">
+                <img
+                  src={post.thumbnail || "/img/basic_photo.png"}
+                  alt="post"
+                  className="communitypost-thumbnail-img"
+                  onError={(e) => {
+                    e.currentTarget.src = "/img/basic_photo.png";
+                  }}
+                />
+              </div>
+              <div className="communitypost-frame-4">
+                <p className="communitypost-text-5">{post.title}</p>
+                <div className="communitypost-frame-5">
+                  <div className="communitypost-text-3">
+                    {formatDate(post.createdAt)}
+                  </div>
+                  <div className="communitypost-comment">
+                    <CommentIcon className="communitypost-comment-icon" />
+                    <div className="communitypost-text-4">
+                      {post.commentCount}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
+          ))
+        ) : (
+          <div style={{ margin: "40px 0", textAlign: "center", color: "#888" }}>
+            검색 결과가 없습니다.
           </div>
-        ))}
+        )}
       </div>
 
       <div className="communitypost-pagination">

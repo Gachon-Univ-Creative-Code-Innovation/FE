@@ -1,20 +1,17 @@
-import React, { useState } from "react";
+import React from "react";
 import CommunityTabTool from "../CommunityTabTool/CommunityTabTool";
 import "./CommunityTab.css";
 
-
-export const CommunityTab = ({selectedTab, onTabChange}) => {
-  const tabs = ["전체", "프로젝트", "공모전", "스터디", "기타"];
-
+export const CommunityTab = ({ categories, selectedTab, onTabChange }) => {
   return (
     <div className="communitytab-wrapper">
-      {tabs.map((tab) => (
+      {categories.map((cat) => (
         <CommunityTabTool
-          key={tab}
+          key={cat.key}
           className="communitytab-instance"
-          property1={selectedTab === tab ? "active" : "default"}
-          text={tab}
-          onClick={() => onTabChange(tab)}
+          property1={selectedTab === cat.key ? "active" : "default"}
+          text={cat.label}
+          onClick={() => onTabChange(cat.key)}
         />
       ))}
     </div>
