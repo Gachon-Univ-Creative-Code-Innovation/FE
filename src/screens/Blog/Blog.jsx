@@ -18,6 +18,9 @@ export const Blog = () => {
   const [profileUrl, setProfileUrl] = useState("");
   const [githubUrl, setGithubUrl] = useState("");
 
+  const [followerCount, setFollowerCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
+
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -27,27 +30,47 @@ export const Blog = () => {
   const observer = useRef();
   const jwtToken = localStorage.getItem("jwtToken") || "";
 
-  // 사용자 정보 및 팔로잉 상태 조회
+  // 사용자 정보, 팔로잉 상태, 팔로워/팔로잉 수 조회
   useEffect(() => {
+    const followConfig = { headers: { Authorization: `Bearer ${jwtToken}` } };
+
+    // 유저 기본 정보
     api
       .get(`/user-service/details/${viewedUserId}`)
       .then((res) => {
-        const data = res.data.data || {};
-        setNickname(data.nickname || "");
-        setProfileUrl(data.profileUrl || "");
-        setGithubUrl(data.githubUrl || "");
+        const d = res.data.data || {};
+        setNickname(d.nickname || "");
+        setProfileUrl(d.profileUrl || "");
+        setGithubUrl(d.githubUrl || "");
       })
       .catch((err) => console.error("사용자 정보 조회 실패:", err));
 
+    // 내가 팔로우한 목록에 이 userId가 있는지
     api
-      .get(`/user-service/follow/followees`, {
-        headers: { Authorization: `Bearer ${jwtToken}` },
-      })
+      .get(`/user-service/follow/followees`, followConfig)
       .then((res) => {
         const followees = res.data.data || [];
         setIsFollowing(followees.includes(viewedUserId));
       })
       .catch(() => setIsFollowing(false));
+
+    // **팔로워 수 조회** (토큰 인증 불필요)
+    api
+      .get(`/user-service/follow/followers/${viewedUserId}`)
+      .then((res) => {
+        const list = res.data.data || [];
+        setFollowerCount(list.length);
+      })
+      .catch((err) => console.error("팔로워 조회 실패:", err));
+
+    // **팔로잉 수 조회**
+    api
+      .get(`/user-service/follow/followees/${viewedUserId}`, followConfig)
+      .then((res) => {
+        const list = res.data.data || [];
+        setFollowingCount(list.length);
+      })
+      .catch((err) => console.error("팔로잉 조회 실패:", err));
   }, [viewedUserId, jwtToken]);
 
   // 게시글 페이징 조회
@@ -59,7 +82,6 @@ export const Blog = () => {
       .get(`/blog-service/posts/user/${viewedUserId}?page=${page}`)
       .then((res) => {
         const data = res.data.data.postList || [];
-        console.log(res.data.data)
         setPosts((prev) => [...prev, ...data]);
         if (data.length === 0) setHasMore(false);
       })
@@ -82,15 +104,14 @@ export const Blog = () => {
     [loading, hasMore]
   );
 
-  // 팔로우/언팔로우
+  // 팔로우/언팔로우 핸들러
   const handleFollow = () => {
     if (!jwtToken) {
       navigate("/login");
       return;
     }
-    const config = {
-      headers: { Authorization: `Bearer ${jwtToken}` },
-    };
+    const config = { headers: { Authorization: `Bearer ${jwtToken}` } };
+
     if (isFollowing) {
       api
         .delete(`/user-service/follow`, {
@@ -98,19 +119,12 @@ export const Blog = () => {
           data: { followeeId: viewedUserId },
         })
         .then(() => setIsFollowing(false))
-        .catch((err) => {
-          if (err.response?.status === 401) navigate("/login");
-          else console.error("언팔로우 실패:", err);
-        });
+        .catch((err) => console.error("언팔로우 실패:", err));
     } else {
       api
         .post(`/user-service/follow`, { followeeId: viewedUserId }, config)
         .then(() => setIsFollowing(true))
-        .catch((err) => {
-          const status = err.response?.status;
-          if (status === 401) navigate("/login");
-          else console.error("팔로우 실패:", err);
-        });
+        .catch((err) => console.error("팔로우 실패:", err));
     }
   };
 
@@ -126,13 +140,10 @@ export const Blog = () => {
         if (status === 200 && data) navigate(`/portfolio/view/${data}`);
         else navigate("/portfolio");
       })
-      .catch(() => {
-        console.error("포트폴리오 조회 실패");
-        navigate("/portfolio");
-      });
+      .catch(() => navigate("/portfolio"));
   };
 
-  // 채팅방 이동
+  // 쪽지 이동
   const handleChatClick = () => {
     if (!jwtToken) return navigate("/login");
     navigate(`/message-room/${viewedUserId}`);
@@ -146,7 +157,6 @@ export const Blog = () => {
         <div className="blog-content-frame">
           <header className="blog-header">
             <div className="blog-profile-container">
-              {/* 프로필 background-image */}
               <div
                 className="blog-profile-image"
                 style={{
@@ -172,22 +182,36 @@ export const Blog = () => {
                   </button>
                   <button
                     className="blog-btn-unified"
-                    onClick={() => githubUrl && window.open(githubUrl, "_blank")}
+                    onClick={() =>
+                      githubUrl && window.open(githubUrl, "_blank")
+                    }
                     disabled={!githubUrl}
                   >
                     깃허브
                   </button>
-                  <button 
-                    className="blog-btn-unified" 
+                  <button
+                    className="blog-btn-unified"
                     onClick={handleChatClick}
                   >
                     쪽지 보내기
                   </button>
                 </div>
+                {/* 팔로워/팔로잉 통계 */}
+                <div className="blog-follow-stats">
+                  <div className="blog-follow-box">
+                    <div className="blog-follow-label">팔로워</div>
+                    <div className="blog-follow-count">{followerCount}</div>
+                  </div>
+                  <div className="blog-follow-box">
+                    <div className="blog-follow-label">팔로잉</div>
+                    <div className="blog-follow-count">{followingCount}</div>
+                  </div>
+                </div>
               </div>
             </div>
           </header>
 
+          {/* 게시글 리스트 */}
           <div className="blog-post-section">
             <div className="blog-post-header">
               <div className="blog-tab-latest">
@@ -206,14 +230,12 @@ export const Blog = () => {
                       onClick={() => navigate(`/viewpost/${post.postId}`)}
                       style={{ cursor: "pointer" }}
                     >
-                      {/* 썸네일 background-image */}
                       <div
                         className="blog-post-image"
                         style={{
-                          backgroundColor: "#d9d9d9",
                           backgroundImage: post.thumbnail
                             ? `url(${post.thumbnail})`
-                            : "none",
+                            : "url('/img/blog_basic_photo.png')",
                           backgroundSize: "cover",
                           backgroundPosition: "center",
                         }}
@@ -222,8 +244,9 @@ export const Blog = () => {
                         <p className="blog-post-snippet">{post.title}</p>
                         <div className="blog-post-meta">
                           <div className="blog-post-date">
-                            {post.createdAt?.split("T")[0].replace(/-/g, ".")  || "날짜 없음"}
-                            </div>
+                            {post.createdAt?.split("T")[0].replace(/-/g, ".") ||
+                              "날짜 없음"}
+                          </div>
                           <div className="blog-post-comment">
                             <CommentIcon2 className="blog-comment-icon" />
                             <div className="blog-comment-count">

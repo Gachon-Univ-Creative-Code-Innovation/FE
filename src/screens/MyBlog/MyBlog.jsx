@@ -176,7 +176,6 @@ export const MyBlog = () => {
               <div
                 className="myblog-profile-image"
                 style={{
-                  backgroundColor: "#d9d9d9",
                   backgroundImage: profileUrl ? `url(${profileUrl})` : "none",
                 }}
               />
@@ -254,7 +253,6 @@ export const MyBlog = () => {
                       <div
                         className="myblog-post-image"
                         style={{
-                          backgroundColor: "#a3b3bf",
                           backgroundImage: post.thumbnail
                             ? `url(${post.thumbnail})`
                             : "url('/img/blog_basic_photo.png')",
