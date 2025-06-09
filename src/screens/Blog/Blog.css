@@ -34,7 +34,6 @@
 .blog-profile-image {
   width: 180px;
   height: 240px;
-  background-color: #d9d9d9;
   background-size: cover;
   background-position: center;
   border-radius: 10px;
@@ -176,7 +175,6 @@
 .blog-post-image {
   width: 100%;
   height: 180px;
-  background-color: #d9d9d9;
   border-radius: 8px;
 }
 
@@ -184,13 +182,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #666;
   font-family: "GmarketSans", sans-serif;
   font-size: 14px;
   font-weight: 400;
   border: 1px solid #ccc;
   border-radius: 8px;
-  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
   object-fit: unset; /* object-fit은 div에 적용되지 않으므로 제거 */
 }
 
@@ -264,3 +260,27 @@
   transition: background 0.2s, color 0.2s;
   outline: none;
 }
+
+.blog-follow-stats {
+  display: flex;
+  gap: 70px;                  /* MyBlog의 gap */
+  justify-content: flex-start;/* 그룹 내 왼쪽 정렬 */
+  width: 100%;                /* 부모(.blog-profile-details)의 전체 너비 차지 */
+  margin-top: 20px;           /* 버튼 영역과의 간격 */
+}
+
+.blog-follow-box {
+  display: flex;
+  gap: 10px;                  /* MyBlog의 gap */
+  align-items: center;        /* 수직 가운데 정렬 */
+}
+
+/* 라벨과 카운트 텍스트 스타일 */
+.blog-follow-label,
+.blog-follow-count {
+  color: #ffffff;             /* MyBlog의 흰 글자 */
+  font-family: "GmarketSans", sans-serif;
+  font-size: 15px;            /* MyBlog와 동일한 폰트 크기 */
+}
+
+
