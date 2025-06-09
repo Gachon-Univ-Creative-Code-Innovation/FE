@@ -11,17 +11,17 @@ import "./RoadMap.css";
 import api from "../../api/local-instance";
 
 
-const AnalysisResult = ({ userId, roadmapName, svgText }) => {
+const AnalysisResult = ({ userName, roadmapName, svgText }) => {
   return (
     <div className="roadmap-result-wrapper">
       <div className="roadmap-result-container">
         <p className="roadmap-result-text">
-          <span>분석 결과, {userId}님은 </span>
+          <span>분석 결과, {userName}님은 </span>
           <span className="highlight">{roadmapName} 개발자</span>
           <span>
             의 역량과 성향을 지니고 있어요.
             <br/>
-            지금부터 {userId}님만을 위한 맞춤 로드맵을 안내해드릴게요.
+            지금부터 {userName}님만을 위한 맞춤 로드맵을 안내해드릴게요.
           </span>
         </p>
 
@@ -30,26 +30,17 @@ const AnalysisResult = ({ userId, roadmapName, svgText }) => {
           style={{
             width: '100%',
             minHeight: '220px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
             background: '#f8fafc',
             borderRadius: '12px',
             boxShadow: '0 2px 12px 0 rgba(60,60,60,0.07)',
             margin: '24px 0',
-            overflow: 'visible',
-            padding: 0,
+            padding: '12px',
+            overflow: 'auto', // SVG 크기 초과 시 스크롤 가능
           }}
         >
-          {svgText ? (
+          {svgText?.trim().startsWith("<svg") ? (
             <div
-              style={{
-                width: '100%',
-                maxWidth: '100vw',
-                minHeight: '220px',
-                display: 'block',
-                overflow: 'visible',
-              }}
+              style={{ width: '100%' }}
               dangerouslySetInnerHTML={{ __html: svgText }}
             />
           ) : (
@@ -79,6 +70,7 @@ export const RoadMap = () => {
   const [svgUrl, setSvgUrl] = useState("");
   const [svgText, setSvgText] = useState("");
   const [roadmaps, setRoadmaps] = useState([]);
+  const [userName, setUserName] = useState("");
 
 
   const handleCardClick = (svgText, title) => {
@@ -97,7 +89,8 @@ export const RoadMap = () => {
         const response = await api.post(
         apiUrl,
         {},
-        { headers: { Accept: "application/json" } }
+        { headers: { Accept: "application/json" } },
+        { }
         );
         console.log("로드맵 API 응답: ", response);
 
@@ -106,11 +99,14 @@ export const RoadMap = () => {
         setRoadmapName(data.recommendedRoadmap.roadmapName);
         setSvgUrl(data.recommendedRoadmap.svgUrl);
 
+        const userRes = await api.get(`http://a6b22e375302341608e5cefe10095821-1897121300.ap-northeast-2.elb.amazonaws.com:8000/api/user-service/details/${data.userId}`);
+        const name = userRes.data?.data?.name || `사용자${data.userId}`;
+        setUserName(name);
 
-        if (data.recommendedRoadmap.svgUrl) {
-          const svgRes = await api.get(data.recommendedRoadmap.svgUrl, { responseType: "text" });
-          setSvgText(svgRes.data);
-        }
+        const svgRes = await api.get(data.recommendedRoadmap.svgUrl, { responseType: "text" });    
+        console.log("SVG 텍스트 로드 완료:", svgRes.data);    
+        setSvgText(svgRes.data);
+
       } catch (err) {
         console.error("추천 로드맵 API 호출 실패:", err);
       }
@@ -213,7 +209,7 @@ export const RoadMap = () => {
               </div>
             ) : selectedTab === "AnalyzeResult" ? (
               <AnalysisResult
-                userId={userId}
+                userName={userName}
                 roadmapName={roadmapName}
                 svgText = {svgText}
               />
