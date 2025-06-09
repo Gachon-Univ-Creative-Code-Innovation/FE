@@ -47,6 +47,7 @@ api.interceptors.response.use(
         localStorage.removeItem("jwtToken");
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("userId");
+        window.location.href = "/login";
         return Promise.reject(refreshError);
       }
     }

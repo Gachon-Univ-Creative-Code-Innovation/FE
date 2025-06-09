@@ -59,7 +59,7 @@ export const Blog = () => {
       .get(`/blog-service/posts/user/${viewedUserId}?page=${page}`)
       .then((res) => {
         const data = res.data.data.postList || [];
-        console.log(res.data.data)
+        console.log(res.data.data);
         setPosts((prev) => [...prev, ...data]);
         if (data.length === 0) setHasMore(false);
       })
@@ -172,13 +172,15 @@ export const Blog = () => {
                   </button>
                   <button
                     className="blog-btn-unified"
-                    onClick={() => githubUrl && window.open(githubUrl, "_blank")}
+                    onClick={() =>
+                      githubUrl && window.open(githubUrl, "_blank")
+                    }
                     disabled={!githubUrl}
                   >
                     깃허브
                   </button>
-                  <button 
-                    className="blog-btn-unified" 
+                  <button
+                    className="blog-btn-unified"
                     onClick={handleChatClick}
                   >
                     쪽지 보내기
@@ -213,7 +215,7 @@ export const Blog = () => {
                           backgroundColor: "#d9d9d9",
                           backgroundImage: post.thumbnail
                             ? `url(${post.thumbnail})`
-                            : "none",
+                            : "url('/img/blog_basic_photo.png')", // 기본 이미지 적용
                           backgroundSize: "cover",
                           backgroundPosition: "center",
                         }}
@@ -222,8 +224,9 @@ export const Blog = () => {
                         <p className="blog-post-snippet">{post.title}</p>
                         <div className="blog-post-meta">
                           <div className="blog-post-date">
-                            {post.createdAt?.split("T")[0].replace(/-/g, ".")  || "날짜 없음"}
-                            </div>
+                            {post.createdAt?.split("T")[0].replace(/-/g, ".") ||
+                              "날짜 없음"}
+                          </div>
                           <div className="blog-post-comment">
                             <CommentIcon2 className="blog-comment-icon" />
                             <div className="blog-comment-count">

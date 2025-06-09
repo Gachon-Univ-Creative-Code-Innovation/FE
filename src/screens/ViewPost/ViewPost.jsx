@@ -680,7 +680,7 @@ const ViewPost = () => {
                             )
                           }
                         >
-                          reply
+                          답글
                         </span>
                       )}
                     </div>
