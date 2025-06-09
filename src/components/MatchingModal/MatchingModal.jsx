@@ -13,10 +13,9 @@ const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
       return;
     }
 
-    const fixedMatchedIds = [253, ...matchedIds.slice(1)];
-
+    // 고정된 값 없이 matchedIds 전체 사용
     const fetchUsers = async () => {
-      const initialUsers = fixedMatchedIds.map((id) => ({
+      const initialUsers = matchedIds.map((id) => ({
         id,
         name: "",
         experience: "",
@@ -28,7 +27,7 @@ const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
       }));
       setUsers(initialUsers);
 
-      fixedMatchedIds.forEach((userId, idx) => {
+      matchedIds.forEach((userId, idx) => {
         // 유저 기본 정보 fetch
         api.get(`/user-service/details/${userId}`)
           .then((res) => {
