@@ -197,7 +197,7 @@ export default function PortfolioWrite() {
           isTemp: "true",
           image: imageUrl
         };
-        const response = await api.post('/portfolio-service/save', null, { params, headers: { 'accept': 'application/json' } });
+        const response = await api.post('/portfolio-service/save', params, { headers: { 'accept': 'application/json' } });
         const result = response.data;
         if (result.status === 200) {
           alert("게시되었습니다!");
