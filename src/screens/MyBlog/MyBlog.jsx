@@ -190,11 +190,19 @@ export const MyBlog = () => {
                   />
                 </div>
                 <div className="myblog-follow-info">
-                  <div className="myblog-follow-box">
+                  <div 
+                    className="myblog-follow-box"
+                    onClick={() => navigate("/follow")}
+                    style={{ cursor: "pointer" }}
+                  >
                     <div className="myblog-follow-label">팔로워</div>
                     <div className="myblog-follow-count">{followerCount}</div>
                   </div>
-                  <div className="myblog-follow-box">
+                  <div 
+                    className="myblog-follow-box"
+                    onClick={() => navigate("/follow")}
+                    style={{ cursor: "pointer" }}
+                  >
                     <div className="myblog-follow-label">팔로잉</div>
                     <div className="myblog-follow-count">{followingCount}</div>
                   </div>

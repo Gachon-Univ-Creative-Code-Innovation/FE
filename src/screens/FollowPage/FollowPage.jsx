@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import FollowTab from "../../components/FollowTab/FollowTab";
 import FollowDelete from "../../components/FollowDelete/FollowDelete";
 import PageTransitionWrapper from "../../components/PageTransitionWrapper/PageTransitionWrapper";
@@ -8,6 +9,7 @@ import api from "../../api/instance";
 import "./FollowPage.css";
 
 export const FollowPage = () => {
+  const navigate = useNavigate();
   const [followers, setFollowers] = useState([]);
   const [followees, setFollowees] = useState([]);
   const [page, setPage] = useState(1);
@@ -174,7 +176,11 @@ export const FollowPage = () => {
                   key={user.id}
                   ref={idx === visibleUsers.length - 1 ? lastUserRef : null}
                 >
-                  <div className="followpage-user-info">
+                  <div 
+                    className="followpage-user-info"
+                    onClick={() => navigate(`/blog/${user.id}`)}
+                    style={{ cursor: "pointer" }}
+                  >
                     <img
                       src={detail?.profileUrl || "/img/basic_profile_photo.png"}
                       alt="profile"
