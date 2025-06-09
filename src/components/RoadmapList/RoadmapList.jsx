@@ -9,7 +9,7 @@ const RoadmapList = ({ onCardClick, shouldFetch }) => {
     if (!shouldFetch) return;
     const fetchRoadmaps = async () => {
       try{
-        const res = await axios.get("http://localhost:8080/api/roadmap/");
+        const res = await axios.get("/roadmap/");
         if (res.data.status === "200") {
           const data = res.data.data;
 
