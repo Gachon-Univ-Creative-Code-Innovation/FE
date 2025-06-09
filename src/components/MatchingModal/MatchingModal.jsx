@@ -113,8 +113,8 @@ const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
     }
   };
 
-  const handleProfileClick = (blogUrl) => {
-    if (blogUrl) window.open(blogUrl, "_blank");
+  const handleProfileClick = (userId) => {
+    if (userId) window.open(`/blog/${userId}`, "_blank");
   };
 
   useEffect(() => {
@@ -148,7 +148,7 @@ const MatchingModal = ({ isOpen, onClose, matchedIds = [] }) => {
             <div
               key={user.id}
               className="matching-user-card"
-              onClick={() => handleProfileClick(user.blogUrl)}
+              onClick={() => handleProfileClick(user.id)}
             >
               <div className="matching-user-profile">
                 <div className="matching-user-avatar">
