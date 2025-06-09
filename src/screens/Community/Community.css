@@ -34,6 +34,7 @@
   width: 100%;
   max-width: 800px;
   margin: 40px auto;
+  overflow: visible;
 }
 
 .community-keyword-box {
@@ -49,8 +50,16 @@
   position: relative;
   box-shadow: 0 4px 20px rgba(29, 22, 82, 0.08), inset 0 0 0 2px #e8f2ff;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
+  overflow: visible;
   max-width: 500px;
+}
+
+.community-keyword-box > :first-child {
+  padding: 0;
+  margin: 0;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
 }
 
 .community-keyword-box:focus-within {
@@ -106,9 +115,9 @@
 
 .community-input {
   flex: 1;
-  padding: 18px 24px;
+  padding: 18px 16px;
   border: none;
-  border-radius: 16px 0 0 16px;
+  border-radius: 0;
   font-size: 16px;
   font-family: 'GmarketSans', sans-serif;
   font-weight: 400;
