@@ -52,7 +52,7 @@ export const Community = () => {
       setSearchResults(res.data.postList);
       setSearchPage(res.data.pageNumber);
       setSearchTotalPages(res.data.totalPages);
-    } catch (err) {
+    } catch {
       setSearchResults([]);
     }
   };
@@ -67,6 +67,7 @@ export const Community = () => {
           {/* 검색창 + 모집 버튼 */}
           <div className="community-frame-keyword">
             <div className="community-keyword-box">
+              <SortButton onChange={setSelectedSort} />
               <input
                 type="text"
                 className="community-input"
@@ -100,9 +101,7 @@ export const Community = () => {
             onTabChange={setSelectedCategory}
           />
 
-          <div className="community-frame-sort">
-            <SortButton onChange={setSelectedSort} />
-          </div>
+
 
           {/* 검색어가 있으면 검색 결과만, 없으면 기존 카테고리별 목록 */}
           {searchKeyword.trim() ? (
